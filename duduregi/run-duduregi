@@ -1,0 +1,10 @@
+#!/bin/bash
+export QT_QPA_PLATFORM=kms
+if [ "$1" == "--init" ]; then
+	#/opt/windriver/wr-amb/run-wr-amb 2>/tmp/kkk &
+	pulseaudio --system &
+	export DBUS_SESSION_BUS_ADDRESS=`dbus-daemon --session --print-addres --fork`
+fi
+#export XDG_RUNTIME_DIR="/run/user/0"
+cd `dirname $0`
+exec ./duduregi -plugin evdevmouse -plugin evdevkeyboard -plugin evdevtouch -plugin evdevtable 
