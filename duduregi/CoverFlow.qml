@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtWebKit 3.0
+import QtWebEngine 0.9
 
 Item {
     id: coverFlow
@@ -221,7 +221,7 @@ Item {
                     height: parent.height
                     visible: background == null
                 }
-                WebView  {
+                WebEngineView  {
                     id: webview
                     url: "about: blank"
                     visible: type == "quick-html5app"

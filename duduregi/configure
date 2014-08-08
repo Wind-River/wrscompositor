@@ -1,0 +1,38 @@
+#!/bin/bash
+
+show_help() {
+echo "Usage: configure [options]"
+echo "Options: [defaults in brackets after descriptions]"
+echo
+echo "Standard options:"
+echo "  --help               print this message"
+echo "  --with-cluster       build with digital cluster feature (on 2nd display)"
+echo "  --with-wlcompositor  build with digital cluster feature"
+}
+
+if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
+then
+    show_help
+fi
+
+DUALDISPLAY=n
+WLCOMPOSITOR=n
+
+for opt do
+    optval="${opt#*=}"
+    case "$opt" in
+    --with-cluster)
+		DUALDISPLAY=y
+	;;
+    --with-wlcompositor)
+		WLCOMPOSITOR=y
+	;;
+    --help)
+	show_help
+	;;
+    esac
+done
+
+echo "Build configuration"
+echo "  DUALDISPLAY=$DUALDISPLAY"
+echo "  WLCOMPOSITOR=$WLCOMPOSITOR"

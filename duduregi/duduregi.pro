@@ -1,16 +1,13 @@
-DEFINES += QT_COMPOSITOR_QUICK
-
-LIBS += -L ../lib
-
 QT += quick qml
 QT += quick-private
-QT += webkitwidgets network
-QT += compositor
+#QT += webkitwidgets network
+QT += webenginewidgets network
 
-#  if you want to compile QtCompositor as part of the application
-#  instead of linking to it, remove the QT += compositor and uncomment
-#  the following line
-#include ../src/compositor/compositor.pri)
+
+#QMAKE_CXXFLAGS += -DWLCOMPOSITOR
+#QT += compositor
+#DEFINES += QT_COMPOSITOR_QUICK
+#LIBS += -L ../lib
 
 HEADERS += Process.h
 SOURCES += main.cpp Process.cpp

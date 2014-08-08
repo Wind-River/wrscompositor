@@ -1,6 +1,8 @@
+#ifdef QT_COMPOSITOR_QUICK_LIB
 #include "qwaylandcompositor.h"
 #include "qwaylandsurface.h"
 #include "qwaylandsurfaceitem.h"
+#endif
 
 #include <QGuiApplication>
 #include <QScreen>
@@ -15,29 +17,41 @@
 
 #include <QQuickItem>
 #include <QQuickView>
+#ifdef QT_WEBENGINEWIDGETS_LIB
+#include <QtWebEngineWidgets>
+#else
 #include <QtWebKitWidgets>
+#endif
 
 #include "Process.h"
 
-class QmlCompositor : public QQuickView, public QWaylandCompositor
+class QmlCompositor : public QQuickView
+#ifdef QT_COMPOSITOR_QUICK_LIB
+                      , public QWaylandCompositor
+#endif
 {
     Q_OBJECT
+#ifdef QT_COMPOSITOR_QUICK_LIB
     Q_PROPERTY(QWaylandSurface* fullscreenSurface READ fullscreenSurface WRITE setFullscreenSurface NOTIFY fullscreenSurfaceChanged)
+#endif
 
 public:
     QmlCompositor()
-        : QWaylandCompositor(this, 0, static_cast<ExtensionFlag>(DefaultExtensions | SubSurfaceExtension))
-        , m_fullscreenSurface(0)
+#ifdef QT_COMPOSITOR_QUICK_LIB
+        : QWaylandCompositor(this, 0, static_cast<ExtensionFlag>(DefaultExtensions | SubSurfaceExtension)), m_fullscreenSurface(0)
+#endif
     {
         setSource(QUrl("main.qml"));
         setResizeMode(QQuickView::SizeRootObjectToView);
         setColor(Qt::black);
         winId();
+#ifdef QT_COMPOSITOR_QUICK_LIB
         setClientFullScreenHint(true);
-
 	connect(this, SIGNAL(frameSwapped()), this, SLOT(frameSwappedSlot()));
+#endif
     }
 
+#ifdef QT_COMPOSITOR_QUICK_LIB
     QWaylandSurface *fullscreenSurface() const
     {
         return m_fullscreenSurface;
@@ -47,6 +61,7 @@ public:
         surface->requestSize(QSize(width, height));
         return true;
     }
+#endif
 
 signals:
     void windowAdded(QVariant window);
@@ -59,6 +74,7 @@ public slots:
         qvariant_cast<QObject *>(window)->deleteLater();
     }
 
+#ifdef QT_COMPOSITOR_QUICK_LIB
     void destroyClientForWindow(QVariant window) {
         QWaylandSurface *surface = qobject_cast<QWaylandSurfaceItem *>(qvariant_cast<QObject *>(window))->surface();
         destroyClientForSurface(surface);
@@ -122,6 +138,7 @@ protected:
 
 private:
     QWaylandSurface *m_fullscreenSurface;
+#endif
 };
 
 int main(int argc, char *argv[])
@@ -133,12 +150,16 @@ int main(int argc, char *argv[])
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
 
 
+    QWebEngine::initialize();
+
+#ifdef DIGITALCLUSTER
     QQuickView kv;
     kv.setSource(QUrl("cluster.qml"));
     kv.setResizeMode(QQuickView::SizeRootObjectToView);
     kv.setScreen(QGuiApplication::screens().at(1));
     kv.setGeometry(screenGeometry);
     kv.show();
+#endif
 
     QmlCompositor compositor;
     compositor.setTitle(QLatin1String("QML Compositor"));
