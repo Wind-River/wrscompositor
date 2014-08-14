@@ -41,6 +41,8 @@ Item {
 
 	    function itemClicked()
 	    {
+		console.log('icon clicked path='+path);
+		console.log('icon clicked type='+type);
 		if(PathView.isCurrentItem) {
                    if(type == "quick-html5app" && !myFlipable.flipped) {
                        myFlipable.width = myPathView.width
@@ -56,8 +58,11 @@ Item {
                    */
                    if(type == "quick-html5app" && myFlipable.flipped) {
                         webview.focus = true
-                        if(webview.url == "about: blank")
+			console.log('icon clicked webview.url='+webview.url);
+                        if(webview.url == "about:blank") {
+			    console.log('icon clicked webview.url='+webview.url);
                             webview.url = path
+                        }
                             /*
                         else {
                             var view = front.children[front.children.length-1]
@@ -86,7 +91,7 @@ Item {
                 if (event.key == Qt.Key_Return) {
                     itemClicked();
                 } else if (event.key == Qt.Key_F2) {
-                    webview.url = "about: blank";
+                    webview.url = "about:blank";
                 } else if (event.key == Qt.Key_F1) {
                     webview.focus = false;
                     itemClicked();
@@ -169,7 +174,7 @@ Item {
 		}
                 Image {
                     id: quitButton
-                    visible: webview.url != "about: blank" && myPathView.currentIndex == index
+                    visible: webview.url != "about:blank" && myPathView.currentIndex == index
                     enabled: visible
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -184,7 +189,7 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             console.log('quit '+name);
-                            webview.url = "about: blank";
+                            webview.url = "about:blank";
                         }
                     }
                 }
@@ -223,7 +228,7 @@ Item {
                 }
                 WebEngineView  {
                     id: webview
-                    url: "about: blank"
+                    url: "about:blank"
                     visible: type == "quick-html5app"
                     anchors.fill: parent
                     Keys.onPressed: {
@@ -235,7 +240,7 @@ Item {
                         } 
                     }
                     onUrlChanged: {
-                        if(url == "about: blank" && webview.focus) {
+                        if(url == "about:blank" && webview.focus) {
                             webview.focus = false;
                             itemClicked()
                             myFlipable.focus = true;
