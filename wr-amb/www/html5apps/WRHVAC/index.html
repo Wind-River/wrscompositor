@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="/usr/share/tizen-web-ui-fw/latest/js/jquery.js"></script>
+    <script src="/usr/share/tizen-web-ui-fw/latest/js/tizen-web-ui-fw-libs.js"></script>
+	<script src="/usr/share/tizen-web-ui-fw/latest/js/tizen-web-ui-fw.js"
+		data-framework-viewport-scale=false>
+	</script>
+
+    <title>GENIVI HVAC</title>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <script src="js/main.js"></script>
+    <script src="js/gsocket.js"></script>
+    <script>
+	function hvacInit() {
+    		console.log("hvac init");
+    		$(document).keydown(function (event) {
+    			console.log("key down: " + event.which + " " + event.keyCode);
+    			var keycode;
+				var socket_controller;
+    			if (event.which) {
+    				keycode = event.which;
+    				if (keycode == 38) {
+    					cb_fanUp();
+    				} else if (keycode == 40) {
+    					cb_fanDown();
+    				} else if ((keycode == 37) || (keycode == 39)) {
+    					cb_AutoManual();
+    				} else if (keycode == 13) {
+    					cb_acOnOff();
+    				}
+    			} else if (event.keyCode) {
+    				keycode = event.which;
+    				if (keycode == 38) {
+    					cb_fanUp();
+    				} else if (keycode == 40) {
+    					cb_fanDown();
+    				} else if ((keycode == 37) || (keycode == 39)) {
+    					cb_AutoManual();
+    				} else if (keycode == 13) {
+    					cb_acOnOff();
+    				}
+    			}
+    		});
+
+			socket_controller = new SocketController();
+			socket_controller.initialize();
+
+			console.log($(window).width() + " " + $(window).height());
+			document.getElementById("main").style.backgroundSize = $(window).width() + "px " + $(window).height() + "px";
+    	}
+    	$(document).delegate("#main", "pageinit", function() {
+				$("#main .ui-btn-back").bind("vclick", function() {
+					console.log("click back")
+					tizen.application.getCurrentApplication().exit();
+  					return false;
+  				});
+  			});
+    </script>
+</head>
+
+<body onload="hvacInit()">
+	<!-- <div data-role="page" id="main" data-add-back-btn="footer"> -->
+	<div data-role="page" id="main">
+		<img id="aircon" src="images/icon_aircon.png" />
+		<br>
+		<span id="aircon-text">A/C</span>
+		<span id="auto-manual">Auto</span>
+		<span id="temperature">24°C</span>
+		<img id="fan" src="images/icon_fan_on.png" />
+		<img id="fan-tmp" src="images/icon_fan_on_tmp.png" style="display: none;">
+		<img id="fan-bar" src="images/fan_bar_0.png" />
+		<img class="arrow" id="arrow_01" src="images/air_arrow_01.png" />
+		<img class="arrow" id="arrow_02" src="images/air_arrow_02.png" />
+		<!-- <div data-role="footer">
+			<div data-role="controlgroup" data-type="horizontal">
+				<a href="#" id="ac_onoff" data-role="button" onclick="cb_acOnOff()">A/C On/Off</a>
+				<a href="#" id="fan_up" data-role="button" onclick="cb_fanUp()">Fan Up</a>
+				<a href="#" id="fan_down" data-role="button" onclick="cb_fanDown()">Fan Down</a>
+				<a href="#" id="auto_manual" data-role="button" onclick="cb_AutoManual()">Auto/Manual</a>
+			</div>
+		</div> -->
+	</div>
+</body>
+</html>

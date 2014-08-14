@@ -1,0 +1,77 @@
+body {       
+	margin: 0;
+	padding: 0
+}
+#logo {
+	position: absolute;
+	width: 20%;
+	left: 75%;
+	top: 8%;
+	
+}
+.text {
+	position: absolute;
+	font-size:  25pt;
+	color: white;
+	font-weight:bold;
+}
+
+#vehicle-on-ground {
+	position: absolute;
+	width: 140%;;
+	height: 100%;;
+	margin: 0px;
+	padding: 0px;
+	top: 40%;
+	left: -20%;
+	/*background-color: #00ff00;*/
+	/*-webkit-transform: rotate(5deg);*/
+	z-index: 0;
+}
+#vehicle {
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	z-index: 1;
+}
+#maxline {
+	margin-top: -200px;
+	padding: 0px;
+	background-color: #ff0000;
+	width: 100%;
+	height: 10px;
+	z-index: 2;
+	opacity: 0.3;
+	-webkit-transform: rotate(0deg);
+}
+
+#water {
+	margin-top: -200px;
+	padding: 0px;
+	background-color: #0000ff;
+	width: 100%;
+	height: 500px;
+	z-index: 2;
+	opacity: 0.4;
+	/*-webkit-transform: rotate(-5deg);*/
+}
+#ground {
+	margin-top: -430px;
+	padding: 0px;
+	background-color: #333333;
+	width: 100%;
+	height: 80%;
+	z-index: 3;
+	-webkit-transform: rotate(0deg);
+}
+
+
+#main {
+	background-color: #000000;
+/*
+	background-image:url('../images/hvac_bg.png');
+	background-repeat:no-repeat;
+	*/
+	z-index: -1;
+}
+

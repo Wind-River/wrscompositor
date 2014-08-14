@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ "$1" == "--init" ]; then
+	#/opt/windriver/wr-amb/run-wr-amb 2>/tmp/kkk &
+	pulseaudio --system &
+	export DBUS_SESSION_BUS_ADDRESS=`dbus-daemon --session --print-addres --fork`
+fi
+cd `dirname $0`
+#/opt/windriver/duduregi/run-duduregi &
+sleep 3
+exec ./wr-amb

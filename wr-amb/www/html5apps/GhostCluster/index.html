@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<script type="text/javascript" src="api.js" ></script>
+		<script type="text/javascript" src="business.js" ></script>
+		<link rel="stylesheet" href="jquery.mobile-1.2.0-beta.1.min.css" />
+		<script src="jquery-1.8.1.min.js"></script>
+		<script src="jquery.mobile-1.2.0-beta.1.min.js"></script>
+
+    </head>
+    <body>
+	<div data-role="page">
+	<!-- <div data-role="header"><h1>GhostCluster</h1></div> -->
+	<div data-role="content">
+
+	<div id="mainbox" class="hbox" >
+		<div class="needleParent" >
+			<div id="rpmNeedle" class="needle"></div>
+			<div id="engineCoolantNeedle" class="needle"></div>
+			<div id="oilTempNeedle" class="needle"></div>
+			<div class="centerCircle">
+				<div id="velocityTable" >
+					<div class="row centerText">
+						<div id="velocity" class="rightAlignText" >0</div>
+						<div id="velocityUnits" class="leftAlignText" >MPH</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="vbox">
+			<div class="hbox">
+                        <div id="gaugeRow">
+                        <div class="gauge" >
+                        <img src="assets/dial-IAT-bg.png" >
+                        <div id="iatNeedle" class="needle"></div>
+                        </img>
+                        </div>
+                        <div class="gauge" >
+                        <img id="wheel" src="assets/wheel.png" />
+                        </div>
+                        </div>
+
+				<div id="gaugeRow">
+					<div class="gauge">
+						<img src="assets/dial-load-bg.svg"  >
+							<div id="loadNeedle" class="needle" ></div>
+						</img>
+					</div>
+					<div class="gauge">
+						<img src="assets/dial-throttle-bg.svg"  >
+							<div id="throttleNeedle" class="needle" ></div>
+						</img>
+					</div>
+				</div>
+			</div>
+
+			<div data-role="popup" id="machineGunTurretPopup" data-transition="flip">
+				<img id="machinegun" src="assets/machinegun.png" />
+			</div>
+
+			<div id="infoarea">
+				<div class="row underborder" >
+					<div class="rightAlignText middleText">MPG</div>
+					<div id="mpg" class="leftAlignText middleText">0</div>
+				</div>
+				<div class="row underborder" >
+					<div class="rightAlignText middleText">AVG MPG</div>
+					<div id="avgmpg" class="leftAlignText middleText">0</div>
+				</div>
+				<div class="row underborder" >
+					<div class="rightAlignText middleText">Gear</div>
+					<div id="gear" class="leftAlignText middleText">0</div>
+				</div>
+				<div class="row" >
+					<div class="rightAlignText middleText">AVG SPEED</div>
+					<div id="avgspeed" class="leftAlignText middleText">0</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	</div>
+	</div>
+    </body>
+</html>
+

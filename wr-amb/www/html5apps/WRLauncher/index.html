@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<script src="/usr/share/tizen-web-ui-fw/latest/js/jquery.js"></script>
+	<script src="configure.js"></script>
+	<script src="/usr/share/tizen-web-ui-fw/latest/js/tizen-web-ui-fw-libs.js"></script>
+	<script src="/usr/share/tizen-web-ui-fw/latest/js/tizen-web-ui-fw.js"
+		data-framework-theme="tizen-black"
+		data-framework-viewport-scale=false>
+	</script>
+	<script src="main.js"></script>
+	<!-- <script src="js/tzineClock.js"></script> -->
+
+	<title>Tizen UI</title>
+
+	<!-- for compatibility test -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<link rel="apple-touch-icon" href="icon-tizen.png" />
+
+	<script language="JavaScript" type="text/javascript" src="contentflow.js"></script>
+	<script tyle="text/javascript">
+		var cf = new ContentFlow('contentFlow', {
+			/*
+			fixItemSize: true,
+			endOpacity: 0.5,
+			scaleFactor: 1.4
+			*/
+			circularFlow: true,
+			visibleItems: -1,
+			relativeItemPosition: "top center",
+			endOpacity: 0.7,
+			scaleFactor: 1.4,
+			BgArray: [{src: "icons/twitter_1.png", color: "#00ffff"},
+					{src: "icons/settings.png", color: "#00ff00"},
+					{src: "icons/navi.png", color: "#000000"},
+					{src: "icons/hvac.png", color: "#ffff00"},
+					{src: "icons/angrybird.png", color: "#ff00ff"}],
+			calcSize: function (item) {
+				var rP = item.relativePosition;
+				var h = 1/(Math.abs(rP)+1);
+				var w = h;
+				return {width: w, height: h};
+			},
+			calcCoordinates: function (item) {
+				var rP = item.relativePosition;
+				var rPN = item.relativePositionNormed;
+				var vI = rPN != 0 ? rP/rPN : 0 ;
+
+				var f = 1 - 1/Math.exp( Math.abs(rP)*0.75);
+				var x =  item.side * vI/(vI+1)* f;
+				var y = 1;
+
+				var f = Math.sin(Math.PI * (rP*(1+1/(rP*rP+1))) / (vI+1));
+				var x = vI/(vI+1)* f; 
+				var y = 1 - Math.abs(rP)*1.5/(vI+1); 
+
+				return {x: x, y: y}; 
+			}
+			/*
+			init: function () {
+				this.addStylesheet();
+			},
+
+			ContentFlowConf: {
+				reflectionColor: "#ffffff" // none, transparent, overlay or hex RGB CSS style #RRGGBB
+			}
+			*/
+		});
+
+		function setWindowHeight() {
+			//console.log($(document).height());
+			//console.log($(window).height());
+			document.getElementById("contentFlow").style.height = $(window).height() + "px";
+			$(".ui-loader").remove();
+			console.log(document.getElementById("flow"));
+			document.getElementById("flow").scrollIntoView();
+
+			/*
+			$('#midground').css({backgroundPosition: '0px 0px'});
+			$('#foreground').css({backgroundPosition: '0px 0px'});
+
+			$('#midground').animate({
+				backgroundPosition:"(-10000px -2000px)"
+			}, 240000, 'linear');
+
+			$('#foreground').animate({
+				backgroundPosition:"(-10000px -2000px)"
+			}, 120000, 'linear');
+			*/
+			window.onkeydown = function keydown() {
+				console.log(arguments);
+				cf._keyStroke(arguments[0]);
+			}
+
+		}
+	</script>
+	<link rel="stylesheet" href="launcher.css" />
+	<!-- <link rel="stylesheet" href="css/tzineClock.css" /> -->
+</head>
+
+<body onload="setWindowHeight()">
+	<!-- <div id="midground"></div>
+	<div id="foreground"></div>
+	<div id="fancyClock"></div> -->
+	<div class="ContentFlow" id="contentFlow">
+	<div id="text"><p><strong>WINDRIVER</strong></p></div>
+	<div class="flow" id='flow'>
+		<img class="item" id="angrybird" src="icons/angrybird.png" title="Angry Bird" bgcolor="#ff4040"/>
+		<img class="item" id="WRhvac" src="icons/hvac.png" title="HVAC" bgcolor="#f0ffff"/>
+		<img class="item" id="WRnavi" src="icons/navi.png" title="Navigation" bgcolor="#ffff66"/>
+		<img class="item" id="setting" src="icons/settings.png" title="Settings" bgcolor="#cd661d"/>
+		<img class="item" id="WRtwitter" src="icons/twitter_1.png" title="Twitter" bgcolor="#00ccff"/>
+		<img class="item" id="gallery" src="icons/gallery.png" title="Gallery" bgcolor="#f5deb3"/>
+	</div>
+	<div class="globalCaption"></div>
+	</div>
+</body>
+</html>

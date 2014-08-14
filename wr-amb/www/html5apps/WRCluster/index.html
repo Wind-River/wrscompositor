@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HVAC</title>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script src="/usr/share/tizen-web-ui-fw/latest/js/jquery.js"></script>
+
+<script type="text/javascript" src="gsimulator.js"></script>
+<script type="text/javascript" src="gsocket.js"></script>
+
+</head>
+<body bgcolor="#000000" onload="clusterInit();">
+
+<style>
+.centercluster {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100px;
+    height: 200px;
+    border: 5px solid #303030;
+    padding: 30px;
+    margin: 15px;
+}
+.tachometer {
+    display: inline-block;
+    vertical-align: middle;
+    width: 320px;
+    height: 320px;
+    //border: 3px solid #303030;
+}
+
+.rotate{
+    -webkit-transition-duration: 1.0s;
+    
+    -webkit-transition-property: -webkit-transform;
+    transition-property: transform;
+    
+    overflow:hidden;
+
+}       
+
+h1 {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+h3 {
+    color: #ffffff;
+    margin-top: px;
+    margin-bottom: 10px;
+}
+h4 {
+    color: #ff0000;
+    margin: 5px;
+}
+
+.speed {
+    color: #ffffff;
+    font-size: 45pt;
+    font-weight: bolder;
+	margin-top: 30px;
+	margin-bottom: 0px;
+}
+.speedunit {
+    color: #ffffff;
+    font-size: 20pt;
+    font-weight: bolder;
+	margin-top: 0px;
+	margin-bottom: 20px;
+}
+.hvac {
+    color: #ffffff;
+    font-size: small;
+    font-weight: bolder;
+}
+</style>
+<script language="javascript">
+var lastRPM = 0;
+var lastSpeed = 0;
+var setupDone = false;
+function setRPM(degree, duration) {
+	if(lastRPM != degree) {
+		lastRPM = degree;
+	} else
+		return;
+    var obj = document.getElementById('rpmPIN');
+    obj.style.webkitTransitionDuration = duration;
+    obj.style.webkitTransform = 'rotate('+(degree*20)+'deg)';
+}
+function setSpeed(degree, duration) {
+	if(setupDone) {
+		if(lastSpeed != degree) {
+			if(lastSpeed<10 && degree>=10)
+				setRPM(6, '0.2s');
+			else if(lastSpeed<30 && degree>=30)
+				setRPM(5, '0.2s');
+			else if(lastSpeed<60 && degree>=60)
+				setRPM(4, '0.2s');
+			else if(lastSpeed<80 && degree>=80)
+				setRPM(3, '0.2s');
+			else {
+				if(lastRPM == 6 && degree > 20)
+					setRPM(2, '0.2s');
+				else if(lastRPM == 5 && degree > 40)
+					setRPM(2, '0.2s');
+				else if(lastRPM == 4 && degree > 70)
+					setRPM(2, '0.2s');
+				else if(lastRPM == 3 && degree > 90)
+					setRPM(2, '0.2s');
+				else if(lastRPM == 2 && degree < 10)
+					setRPM(1, '0.2s');
+				else
+					setRPM(2, '0.2s');
+			}
+			lastSpeed = degree;
+		} else
+			return;
+	}
+    var obj = document.getElementById('speedPIN');
+    obj.style.webkitTransitionDuration = duration;
+    obj.style.webkitTransform = 'rotate('+(degree-10)+'deg)';
+}
+var flashingTimer = null;
+var flashingCount = 0;
+function flashing(type) {
+    var obj = document.getElementById('sign');
+    if((flashingCount % 2) == 0) {
+        if(type=='Left')
+            obj.src = 'left.png';
+        else if(type=='Right')
+            obj.src = 'right.png';
+    } else
+        obj.src = 'sign.png';
+    flashingCount += 1;
+    flashingTimer = setTimeout("flashing('"+type+"')", 400);
+}
+
+function setDirectionSignal(type) {
+    if(flashingTimer != null) {
+        clearTimeout(flashingTimer);
+        flashingTimer = null;
+    }
+    if(type == '') {
+        var obj = document.getElementById('sign');
+        obj.src = 'sign.png';
+        return;
+    }
+    flashingCount = 0;
+    flashing(type);
+}
+
+var simulator;
+function setupCompleted() {
+	setupDone = true;
+}
+function setup() {
+    setRPM(0, '1.0s');
+    setSpeed(0, '1.0s');
+
+    simulator = new GSimulator();
+    simulator.initialize();
+
+    setTimeout("setupCompleted()", 1000);
+}
+
+function clusterInit() {
+    setRPM(8, '0.5s');
+    setSpeed(260, '0.5s');
+    setTimeout("setup()", 1000);
+}
+
+</script>
+
+<div align="center">
+<div id="rpm" class="tachometer" style="background-image: url(rpmbg.png)">
+<img id="rpmPIN" src="pin.png" class="rotate">
+</div>
+
+<div id="center" class="centercluster">
+<img id="sign" src="sign.png">
+<div class="speed">
+	<span id="speednumber">0</span>
+</div>
+<div class="speedunit">Km/h</div>
+<div class="hvac">
+        A/C <span id="acmode">Manual</span> <span id="actemp">24°C</span></div>
+</div>
+
+<div id="speed" class="tachometer" style="background-image: url(speedbg.png)">
+<img id="speedPIN" src="pin.png" class="rotate">
+</div>
+
+</div>
+
+<div>
+<center>
+<h1>Digital Cluster Demo</h1>
+<h3>(Tizen™ IVI Automotive Message Broker based)</h3>
+<h4>Wind River Systems, Inc</h4>
+</center>
+</div>
+
+</body>
+</html>

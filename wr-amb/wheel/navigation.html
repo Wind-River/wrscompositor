@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>GENIVI Navigation Simulator</title>
+		<link href="navigation.css" rel="stylesheet">
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+		<script type="text/javascript" src="gsimulator.js"></script>
+		<script type="text/javascript" src="gsocket.js"></script>
+		<script>
+			var simulator;
+
+			function init() {
+				simulator = new GSimulator();
+				simulator.initialize();
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div>
+			<b>Start: </b>
+			<select id="start">
+				<option value="chicago, il">Chicago</option>
+				<option value="st louis, mo">St Louis</option>
+				<option value="joplin, mo">Joplin, MO</option>
+				<option value="oklahoma city, ok">Oklahoma City</option>
+				<option value="amarillo, tx">Amarillo</option>
+				<option value="gallup, nm">Gallup, NM</option>
+				<option value="flagstaff, az">Flagstaff, AZ</option>
+				<option value="winona, az">Winona</option>
+				<option value="kingman, az">Kingman</option>
+				<option value="barstow, ca">Barstow</option>
+				<option value="san bernardino, ca">San Bernardino</option>
+				<option value="los angeles, ca">Los Angeles</option>
+			</select>
+			<b>End: </b>
+			<select id="end" onchange="simulator.calcRoute();">
+				<option value="chicago, il">Chicago</option>
+				<option value="st louis, mo">St Louis</option>
+				<option value="joplin, mo">Joplin, MO</option>
+				<option value="oklahoma city, ok">Oklahoma City</option>
+				<option value="amarillo, tx">Amarillo</option>
+				<option value="gallup, nm">Gallup, NM</option>
+				<option value="flagstaff, az">Flagstaff, AZ</option>
+				<option value="winona, az">Winona</option>
+				<option value="kingman, az">Kingman</option>
+				<option value="barstow, ca">Barstow</option>
+				<option value="san bernardino, ca">San Bernardino</option>
+				<option value="los angeles, ca">Los Angeles</option>
+			</select>
+		</div>
+		<div id="map-canvas" style="top:30px;"></div>
+	</body>
+</html>
+

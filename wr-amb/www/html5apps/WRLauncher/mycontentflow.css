@@ -1,0 +1,102 @@
+body{
+	margin: 0;
+	padding: 0
+}
+
+.ContentFlow {
+	/*
+	padding-top: 250px;
+	height: 1280px;
+	padding-top: 20%;
+	padding-top: 10%;
+	*/
+	height: center;
+	width: 100%;
+	background: -webkit-linear-gradient(top, #000000 0%, #202020 37%, #ffff66 80%);
+	background: -moz-linear-gradient(top, #000000 0%, #202020 37%, #ffff66 80%);
+	background: linear-gradient(top, #000000 0%, #202020 37%, #ffff66 80%);
+	/*background: black; */
+	/* background-image: url("icons/launcher_background.png");
+	background-repeat:no-repeat; */
+}
+	.ContentFlow .flow {
+		/*border: 1px solid green;*/
+		/*
+		margin-top: 30%; 
+		margin-left: 100px; */
+		top: 25%;
+		z-index: 5;
+	}
+
+	.ContentFlow .flow .item {
+		/*border: 1px solid red;*/
+	}
+		.ContentFlow .flow .item canvas.content {
+			/* padding-top: 50%; */
+			height: 90%;
+			width: 90%;
+			/*border: 1px solid yellow;*/
+		}
+		.ContentFlow .flow .item img.content {
+			/*borderpx solid yellow;*/
+			width: 100%;
+		}
+		.ContentFlow .flow .item img.reflection,
+		.ContentFlow .flow .item canvas.reflection {
+			width: 100%;
+		}
+
+	/* ----- styling of items ----- */
+	.ContentFlow .flow .item.active {
+		cursor: pointer;
+	}
+		.ContentFlow .flow .item .caption {
+			font-size: 100%;
+			font-weight: bold;
+			text-align: center;
+			color: white;
+			max-height: 30%;
+			bottom: 10%;
+			width: 100%;
+		}
+		* html .ContentFlow .flow .item .caption {
+			background-image: none;
+		}
+			.ContentFlow .flow .item .caption a,
+			.ContentFlow .flow .item .caption a:link,
+			.ContentFlow .flow .item .caption a:visited,
+			.ContentFlow .flow .item .caption a:active,
+			.ContentFlow .flow .item .caption a:hover {
+				text-decoration: none;
+				color: white;
+				font-style: italic;
+				font-size: 0.8em;
+			}
+		.ContentFlow .flow .item .caption a:hover {
+			text-decoration: underline;
+		}
+		.ContentFlow .flow .item.active .caption {
+			/*display: block;*/ /* uncomment to show caption inside item */
+		}
+
+/* ----- global caption ----- */
+.ContentFlow .globalCaption {
+	text-align: center;
+	font-weight: 700;
+	color: rgb(255, 255, 255);
+	position: relative;
+	z-index: 5;
+	margin: 2em auto;
+	top: 15%;
+	font-size: 300%;
+	height: 10%;
+
+	text-shadow: rgb(187, 187, 187) 0px 1px 0px,
+	rgb(181, 181, 181) 0px 2px 0px,
+	rgb(172, 172, 172) 0px 3px 0px,
+	rgb(160, 160, 160) 0px 4px 0px,
+	rgb(145, 145, 145) 0px 5px 0px,
+	rgb(127, 127, 127) 0px 6px 0px,
+	rgba(0, 0, 0, 0.199219) 0px 7px 1px,
+	rgba(0, 0, 0, 0.296875) 0px 8px 6px;
+}

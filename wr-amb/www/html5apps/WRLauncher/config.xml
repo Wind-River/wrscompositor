@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://www.windriver.com/WRLauncher" version="1.0.0" viewmodes="maximized">
+    <tizen:application id="WRLauncher" required_version="1.0"/>
+    <content src="index.html"/>
+    <icon src="icon.png"/>
+    <name>WRLauncher</name>
+    <tizen:privilege name="http://tizen.org/privilege/tizen"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.read"/>
+    <tizen:setting screen-orientation="portrait" context-menu="enable" background-support="enable" encryption="disable" install-location="auto"/>
+	 
+</widget>

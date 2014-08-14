@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Twitter</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script src="/usr/share/tizen-web-ui-fw/latest/js/jquery.js"></script>
+</head>
+<body>
+<script>
+var tweetIDS = {};
+var timeoutForRefreshTwitter = 3000; // 3 sec interval
+var hashTag = "#linux";
+var sinceID = 0;
+var reloadTimer = null;
+
+function whendidhetweet(datetime) {
+    var d = new Date(datetime);
+    var cur = new Date();
+    var timeago = parseInt((cur.getTime() - d.getTime())/1000);
+    if (timeago < 60) return 'less than a minute ago';
+    else if(timeago < 120) return 'about a minute ago';
+    else if(timeago < (45*60)) return (parseInt(timeago / 60)).toString() + ' minutes ago';
+    else if(timeago < (90*60)) return 'about an hour ago';
+    else if(timeago < (24*60*60)) return 'about ' + (parseInt(timeago / 3600)).toString() + ' hours ago';
+    else if(timeago < (48*60*60)) return '1 day ago';
+    else if(timeago < (86400*10)) return (parseInt(timeago / 86400)).toString() + ' days ago';
+    else d.toLocaleString();
+}
+function text2tweet(text, entities) {
+    var tweet = decodeURIComponent(text);
+    var urls = entities.urls;
+    for(var i in urls)
+        //tweet = tweet.replace(urls[i].url, '<a href="'+urls[i].expanded_url+'" target="_blank">'+urls[i].display_url+'</a>');
+        tweet = tweet.replace(urls[i].url, '<a href="#" target="_blank">'+urls[i].display_url+'</a>');
+    var hashtags = entities.hashtags;
+    for(var i in hashtags)
+        //tweet = tweet.replace('#'+hashtags[i].text, '<a href="#" target="_blank">#'+hashtags[i].text+'</a>');
+        tweet = tweet.replace('#'+hashtags[i].text, '<a href="https://twitter.com/search?q=%23'+hashtags[i].text+'&src=hash" target="_blank">#'+hashtags[i].text+'</a>');
+    var mentions = entities.user_mentions;
+    for(var i in mentions)
+        //tweet = tweet.replace('@'+mentions[i].screen_name, '<a href="https://twitter.com/'+mentions[i].screen_name+'" target="_blank">@'+mentions[i].screen_name+'</a>');
+        tweet = tweet.replace('@'+mentions[i].screen_name, '<a href="#" target="_blank">@'+mentions[i].screen_name+'</a>');
+    return tweet;
+}
+
+function loadLiveTweet() {
+    $.getJSON("http://search.twitter.com/search.json?callback=?",
+      {
+        q: hashTag,
+        include_entities: "true",
+        result_type: "recent",
+        since_id: sinceID,
+        /* rpp: 100*/
+      },
+      function(data) {
+        var results = data.results;
+        $.each(tweetIDS, function(id, row) {
+            for(var i in results)
+                if(results[i].id == id) {
+                    $('#tweetTime'+id).text(whendidhetweet(results[i].created_at));
+                    return;
+                }
+            delete tweetIDS[id];
+            row.remove();
+        });
+        //var i = 0;
+        $.each(results.reverse(), function(i,item){
+            if(tweetIDS[item.id])
+                return;
+            /*
+            if(i++ == 0) {
+                var audioplayer = document.getElementById('tts');
+                //audioplayer.src = "http://translate.google.com/translate_tts?ie=UTF-8&q=%EC%9C%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%9C%88%EB%93%9C%EB%A6%AC%EB%B2%84&tl=ko&total=1&idx=0&textlen=3"
+                console.log(audioplayer.src);
+                audioplayer.play();
+            }
+            */
+            var row = $('<tr/>', {class: "tweet-row", id: 'tweet'+item.id});
+            row.css('opacity', 0.0);
+            tweetIDS[item.id] = row;
+            //var hrefUser = '<a href="http://twitter.com/'+item.from_user+'" target="_blank">';
+            var hrefUser = '<a href="#" target="_blank">';
+            $('<td/>', {class: "tweet-td"}).html(hrefUser+'<img class="tweet-avatar" src="'+item.profile_image_url+'" width="128" height="128"/></a>').appendTo(row);
+            var when = whendidhetweet(item.created_at);
+            var tweet = text2tweet(item.text, item.entities);
+            $('<td/>, {class: "tweet-td"}').html('<span class="tweet-screenname">'+hrefUser+item.from_user_name+'</a></span> <span class="tweet-user">@'+item.from_user+'</span> <span class="tweet-time" id="tweetTime'+item.id+'">'+when+'</span><br/><span class="tweet-msg">'+tweet+'</span>').appendTo(row);
+            $('#tweet-table').prepend(row);
+            row.animate({opacity: 1.0}, 2000);
+        });
+        reloadTimer = window.setTimeout(loadLiveTweet, timeoutForRefreshTwitter);
+      });
+}
+function initLiveTweet() {
+
+    $(document).keydown(function (event) {
+        if (event.keyCode) {
+            var  keycode = event.which;
+            if (keycode == 38) {
+                if ((window.scrollY-window.innerHeight) < 0)
+                    window.scrollTo(0, 0);
+                else
+                    window.scrollTo(0, window.scrollY-window.innerHeight);
+            } else if (keycode == 40) {
+                window.scrollTo(0, window.scrollY+window.innerHeight);
+            }
+	}
+});
+    $('<table/>', {id: 'tweet-table', width: '100%', }).appendTo(".content");
+    loadLiveTweet();
+}
+document.body.onload = initLiveTweet;
+
+
+</script>
+
+<style>
+.tweet-msg a {
+    text-decoration: none;
+    font-size: 20pt;
+    color: #0084B4;
+}
+.tweet-msg a:hover {
+    text-decoration: underline;
+}
+.tweet-screenname a {
+    text-decoration: none;
+    //font-size: large;
+    font-size: 30pt;
+    color: #000000;
+}
+.tweet-screenname a:hover {
+    text-decoration: underline;
+    color: #0084B4;
+}
+.tweet-user {
+    color: #808080;
+    font-size: 20pt;
+}
+.tweet-time {
+    float: right;
+    color: #808080;
+    padding-right: 10px;
+    font-size: 20pt;
+}
+.tweet-avatar {
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -khtml-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+.tweet-row {
+    border: 1px solid #dddddd;
+    font-size: 20pt;
+}
+.tweet-td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.tweet-row:hover {
+    background-color: #eeeeee;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+</style>
+<div class="content"></div>
+<audio id="tts" src="http://translate.google.com/translate_tts?ie=UTF-8&q=%EC%9C%88%EB%93%9C%EB%A6%AC%EB%B2%84&tl=ko&total=1&idx=0&textlen=3" type="audio/mpeg">
+</body>
+</html>
