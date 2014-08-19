@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import "compositor.js" as CompositorLogic
-import com.windriver.duduregi 1.0
 
 Item {
     id: root
@@ -11,20 +10,7 @@ Item {
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
-    onHasFullscreenWindowChanged: {
-        console.log("has fullscreen window: " + hasFullscreenWindow);
-    }
-
-    DBusClient {
-        id: dbusClient
-
-        onMessageReceived: {
-            console.log('received dbus message : '+message);
-        }
-        onSpeedChanged: {
-            console.log('received dbus speed : '+speed);
-        }
-    }
+    onHasFullscreenWindowChanged: console.log("has fullscreen window: " + hasFullscreenWindow);
 
     StatusBar {
         id: statusBar
@@ -80,6 +66,7 @@ Item {
         }
     }
     */
+
 
     /*
     MouseArea {

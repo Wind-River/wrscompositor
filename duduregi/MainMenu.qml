@@ -41,9 +41,7 @@ Item {
             name: "Navigation";
             icon: "icons/navi.png"
             type: "quick-html5app"
-	    //path: 'file:///opt/windriver/wr-amb/www/html5apps/WRNavigation/index.html';
-	    //path: 'file:///home/sryu/projects/lg_demo/hello/www/index.html';
-	    path: './apps/navigation/index.html';
+	    path: 'file:///opt/windriver/wr-amb/www/html5apps/WRNavigation/index.html';
         }
 	ListElement {
             name: "HVAC";
