@@ -42,7 +42,7 @@ def main():
     #monitor_joystick(reactor)
 
     # VehicleNetworkAdapter
-    initGeniviVNA(reactor)
+    #initGeniviVNA(reactor)
 
     reactor.run()
 

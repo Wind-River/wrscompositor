@@ -11,8 +11,9 @@ Rectangle {
     signal closeWindow
 
     Image {
-        id: tizen
-        source: "images/tizen-on-dark-small.png"
+        id: logo
+        //source: "images/tizen-on-dark-small.png"
+        source: "icons/genivi-notext.png"
         anchors.left: parent.left
         anchors.leftMargin: width/10
         anchors.verticalCenter: parent.verticalCenter
@@ -30,9 +31,9 @@ Rectangle {
 
     }
     Image {
-        id: logo
+        id: logo_title
         source: "images/wr.png"
-        anchors.left: tizen.right
+        anchors.left: logo.right
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
         height: statusBar.height * 0.4
