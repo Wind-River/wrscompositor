@@ -59,6 +59,7 @@ Item {
 			smooth: true
 			font.bold: true
 			style: Text.Outline
+			visible: vna_dbusClient.speedometer
 		}
 
         MainMenu {
