@@ -45,8 +45,8 @@ WR-AMB (WindRiver Automotive Message Broker)
 	$ cd wr-amb
 	$ ./wr-amb
 
-Genivi Vehicle Data Simulator
------------------------------
+Genivi VehicleDataSimulator (VDS)
+----------------------------------
 
 Build
 
@@ -56,10 +56,26 @@ Build
 	$ qmake-qt4
 	$ make
 
-Run with WR-AMB
+Run on PC
 
 ::
 
 	$ cp ../../bin/network.cfg
-	Edit VNA_IP as WR-AMB's IP in the network.cfg
+	Edit VNA_IP as Target Device's IP in the network.cfg
+	$ ./VehicleDataSimulator
+
+Genivi VehicleNetworkAdapter (VNA)
+----------------------------------
+
+Build
+
+::
+
+	$ make
+
+Run on Target
+
+::
+
+	$ cp ../../bin/network.cfg
 	$ ./VehicleDataSimulator
