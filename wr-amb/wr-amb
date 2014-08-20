@@ -12,52 +12,7 @@ from twisted.internet.abstract import FileDescriptor
 import os, sys
 import time
 from subprocess import Popen, PIPE, STDOUT
-
-
-from txdbus import client, objects
-from txdbus.interface import DBusInterface, Method, Signal
-class VehicleEventBroker (objects.DBusObject):
-    iface = DBusInterface( 'com.windriver.VehicleEventBroker',
-                           Signal('vehicleSpeedChanged', 'u')
-                         )
-
-    dbusInterfaces = [iface]
-
-    def __init__(self, objectPath):
-        objects.DBusObject.__init__(self, objectPath)
-        self.speed = 0
-        self.direction = 1
-
-
-    def sendTick(self):
-        self.emitSignal('vehicleSpeedChanged', self.speed)
-        self.speed += 1 * self.direction
-        if self.speed >= 200:
-            self.direction = -1
-        elif self.speed <= 0:
-            self.direction = 1
-
-        reactor.callLater(0.1, self.sendTick)
-
-def onErr(err):
-    print 'Failed: ', err.getErrorMessage()
-    #reactor.stop()
-
-def onConnected(conn):
-    s = VehicleEventBroker('/VehicleEventBroker')
-
-    conn.exportObject( s )
-
-    dn = conn.requestBusName('org.windriver.automotive')
-
-    def onReady(_):
-        print 'Emitting periodic "tick" signals. Bus name: org.example, Object Path /Signaller'
-        s.sendTick()
-
-    dn.addCallback( onReady )
-
-    return dn
-
+from GeniviVNA import initGeniviVNA
 
 
 
@@ -81,14 +36,13 @@ def main():
     resource = WebSocketsResource(WSFactory())
     reactor.listenTCP(9090, server.Site(resource))
 
+
     #reactor.callLater(5, setCluster)
 
     #monitor_joystick(reactor)
 
-    # dbus server for vehicle api
-    dconnect = client.connect(reactor)
-    dconnect.addCallback(onConnected)
-    dconnect.addErrback(onErr)
+    # VehicleNetworkAdapter
+    initGeniviVNA(reactor)
 
     reactor.run()
 
