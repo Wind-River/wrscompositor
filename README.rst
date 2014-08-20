@@ -67,6 +67,7 @@ Run on PC
 Supported Vehicle Info
 
 * Vehicle Information -> World Manufacturer ID
+* Running Status 1 -> Speedometer
 
 Genivi VehicleNetworkAdapter (VNA)
 ----------------------------------
