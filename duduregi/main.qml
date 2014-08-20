@@ -16,10 +16,13 @@ Item {
     }
 
     VNADBusClient {
-        id: dbusClient
+        id: vna_dbusClient
 
         onVehicleInfoChanged: {
-            console.log('vehicleInfoChanged : '+vehicleInfoWMI);
+			if(false) {
+				console.log('vehicleInfoChanged : '+vehicleInfoWMI);
+				console.log('vehicleInfoChanged : '+speedometer);
+			}
 			statusBar.setWMI(vehicleInfoWMI)
         }
     }
@@ -44,6 +47,19 @@ Item {
             id: currentApp
             anchors.fill: parent
         }
+
+		Text {
+			id: speed
+			anchors.right: parent.right
+			anchors.rightMargin: background.width / 20
+			anchors.bottom: parent.bottom
+			text: vna_dbusClient.speedometer+" Km"
+			font.pointSize: background.height/4
+			color: "white"
+			smooth: true
+			font.bold: true
+			style: Text.Outline
+		}
 
         MainMenu {
             id: mainmenu 
