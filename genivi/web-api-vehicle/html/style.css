@@ -1,0 +1,105 @@
+/**
+ * Copyright (C) 2013, LG Electronics
+ *
+ * This file is part of GENIVI Project Web Platform.
+ *
+ * Contributions are licensed to the GENIVI Alliance under one or more
+ * Contribution License Agreements.
+ *
+ * @copyright
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @author Joonhyung Kim <joonhg.kim@lge.com>
+ *
+ * @file style.css 
+ * For further information, see http://www.genivi.org/
+ */
+
+body {
+	width: 1000px;
+	font-family: Verdana, Geneva, Arial, sans-serif;
+	font-size: 14px;
+	padding: 0px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.title {
+	background-color: black;
+	color: white;
+}
+
+.label {
+	background-color: gray;
+	color: white;
+}
+
+.type { width: 100px; }
+
+.attribute { width: 260px; }
+
+.value { width: 120px; }
+
+table {
+	width: 100%;
+	border: thin solid gray;
+	border-collapse: collapse;
+}
+
+td, th {
+	border: thin solid gray;
+	padding: 5px;
+	text-align: center;
+}
+
+select {
+	width: 100%;
+	margin: 0px;
+}
+
+#header {
+	width: 100%;
+}
+
+#header h1 {
+	font-size: 24px;
+	text-align: center;
+}
+
+#display {
+	width: 480px;
+	margin: 0px 0px 10px 0px;
+	float: left;
+}
+
+#control {
+	width: 480px;
+	margin: 0px 0px 10px 500px;
+}
+
+#footer {
+	width: 1000px;
+	font-size: 14px;
+	text-align: center;
+	clear: left;
+}
+
+@media screen and (max-width: 1000px) {
+	body {
+		width: 500px;
+	}
+	
+	#display {
+		float: none;
+	}
+	
+	#control {
+		margin: 10px 0px 0px 0px;
+	}
+	
+	#footer {
+		width: 500px;
+	}
+}
