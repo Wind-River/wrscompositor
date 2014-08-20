@@ -27,8 +27,8 @@ Run on Desktop environment
 	$ DISPLAY=:1 ./duduregi
 
 
-duduregi Wayland (Optional)
----------------------------
+duduregi Wayland (Experimental)
+-------------------------------
 
 ::
 
