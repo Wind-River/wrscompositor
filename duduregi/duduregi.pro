@@ -10,7 +10,7 @@ QT += dbus
 #DEFINES += QT_COMPOSITOR_QUICK
 #LIBS += -L ../lib
 
-HEADERS += Process.h dbus_client.h
-SOURCES += main.cpp Process.cpp dbus_client.cpp
+HEADERS += Process.h vna_dbusclient.h
+SOURCES += main.cpp Process.cpp vna_dbusclient.cpp
 
 OTHER_FILES = ContrastEffect.qml  main.qml  WindowChrome.qml  WindowContainer.qml alameda.jpg closebutton.png compositor.js

@@ -64,6 +64,10 @@ Run on PC
 	Edit VNA_IP as Target Device's IP in the network.cfg
 	$ ./VehicleDataSimulator
 
+Supported Vehicle Info
+
+* Vehicle Information -> World Manufacturer ID
+
 Genivi VehicleNetworkAdapter (VNA)
 ----------------------------------
 

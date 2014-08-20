@@ -15,14 +15,12 @@ Item {
         console.log("has fullscreen window: " + hasFullscreenWindow);
     }
 
-    DBusClient {
+    VNADBusClient {
         id: dbusClient
 
-        onMessageReceived: {
-            console.log('received dbus message : '+message);
-        }
-        onSpeedChanged: {
-            console.log('received dbus speed : '+speed);
+        onVehicleInfoChanged: {
+            console.log('vehicleInfoChanged : '+vehicleInfoWMI);
+			statusBar.setWMI(vehicleInfoWMI)
         }
     }
 

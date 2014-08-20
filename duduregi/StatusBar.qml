@@ -7,6 +7,7 @@ Rectangle {
     width: parent.width
     height: parent.height/12
     z: 50000
+	property string wmi: ""
 
     signal closeWindow
 
@@ -38,7 +39,20 @@ Rectangle {
         width: (height*sourceSize.width)/sourceSize.height
         height: statusBar.height * 0.4
         smooth: true
+		visible: statusBar.wmi == ""
     }
+    Text {
+        id: wmi_title
+        anchors.left: logo.right
+        anchors.verticalCenter: parent.verticalCenter
+		text: statusBar.wmi
+		visible: statusBar.wmi != ""
+        font.pointSize: statusBar.height/2
+        color: "white"
+        smooth: true
+		font.bold: true
+    }
+
     Image {
         id: bluetooth
         source: "images/bt.png"
@@ -105,6 +119,10 @@ Rectangle {
 
     function showCloseButton(flag) {
         closeButton.width = flag?closeButton.height:0;
+    }
+
+    function setWMI(wmi) {
+		statusBar.wmi = wmi
     }
 
 }

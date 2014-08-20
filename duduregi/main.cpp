@@ -24,7 +24,7 @@
 #endif
 
 #include "Process.h"
-#include "dbus_client.h"
+#include "vna_dbusclient.h"
 
 class QmlCompositor : public QQuickView
 #ifdef QT_COMPOSITOR_QUICK_LIB
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     QRect screenGeometry = screen->availableGeometry();
 
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
-    qmlRegisterType<DBusClient>("com.windriver.duduregi", 1, 0, "DBusClient");
+    qmlRegisterType<VNADBusClient>("com.windriver.duduregi", 1, 0, "VNADBusClient");
 
     QWebEngine::initialize();
 
