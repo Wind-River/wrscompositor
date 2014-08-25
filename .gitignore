@@ -1,0 +1,10 @@
+*.swp
+*.o
+ui_*
+moc_*
+*.cfg
+Makefile.duduregi
+duduregi/duduregi
+genivi/web-api-vehicle/src/VehicleDataSimulator/Makefile
+genivi/web-api-vehicle/src/VehicleDataSimulator/VehicleDataSimulator
+genivi/web-api-vehicle/src/VehicleNetworkAdapter/VehicleNetworkAdapter
