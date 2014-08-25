@@ -4,29 +4,42 @@
 #include "qwaylandsurfaceitem.h"
 #endif
 
+#if QT_VERSION >= 0x050000
 #include <QGuiApplication>
+#include <QSurfaceFormat>
+#include <QQmlContext>
+#include <QQuickItem>
+#include <QQuickView>
+
+#ifdef QT_WEBENGINEWIDGETS_LIB
+#include <QtWebEngineWidgets>
+#else
+#include <QtWebKitWidgets>
+
+#define DeclarativeView QQuickView
+#endif
+
+#else // Qt 4.x
+#include <QApplication>
+#include <QDeclarativeView>
+#include <qdeclarative.h>
+#include <QDesktopWidget>
+
+#define DeclarativeView QDeclarativeView
+#endif
 #include <QScreen>
 #include <QTimer>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QScreen>
-#include <QSurfaceFormat>
 #include <QMainWindow>
 
-#include <QQmlContext>
 
-#include <QQuickItem>
-#include <QQuickView>
-#ifdef QT_WEBENGINEWIDGETS_LIB
-#include <QtWebEngineWidgets>
-#else
-#include <QtWebKitWidgets>
-#endif
 
 #include "Process.h"
 #include "vna_dbusclient.h"
 
-class QmlCompositor : public QQuickView
+class QmlCompositor : public DeclarativeView
 #ifdef QT_COMPOSITOR_QUICK_LIB
                       , public QWaylandCompositor
 #endif
@@ -43,8 +56,10 @@ public:
 #endif
     {
         setSource(QUrl("main.qml"));
-        setResizeMode(QQuickView::SizeRootObjectToView);
+        setResizeMode(DeclarativeView::SizeRootObjectToView);
+#if QT_VERSION >= 0x050000
         setColor(Qt::black);
+#endif
         winId();
 #ifdef QT_COMPOSITOR_QUICK_LIB
         setClientFullScreenHint(true);
@@ -127,7 +142,7 @@ private slots:
 protected:
     void resizeEvent(QResizeEvent *event)
     {
-        QQuickView::resizeEvent(event);
+        DeclarativeView::resizeEvent(event);
         QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
     }
 
@@ -145,33 +160,45 @@ private:
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+#if QT_VERSION >= 0x050000
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
+#else
+    QDesktopWidget d;
+    QRect screenGeometry = d.screenGeometry();
+#endif
 
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
     qmlRegisterType<VNADBusClient>("com.windriver.duduregi", 1, 0, "VNADBusClient");
 
+#ifdef QT_WEBENGINEWIDGETS_LIB
     QWebEngine::initialize();
+#endif
 
 #ifdef DIGITALCLUSTER
-    QQuickView kv;
+    DeclarativeView kv;
     kv.setSource(QUrl("cluster.qml"));
-    kv.setResizeMode(QQuickView::SizeRootObjectToView);
+    kv.setResizeMode(DeclarativeView::SizeRootObjectToView);
     kv.setScreen(QGuiApplication::screens().at(1));
     kv.setGeometry(screenGeometry);
     kv.show();
 #endif
 
     QmlCompositor compositor;
+#if QT_VERSION >= 0x050000
     compositor.setTitle(QLatin1String("QML Compositor"));
-    compositor.setGeometry(screenGeometry);
     compositor.setScreen(QGuiApplication::screens().at(0));
-
     compositor.rootContext()->setContextProperty("compositor", &compositor);
+#endif
+    compositor.setGeometry(screenGeometry);
 
+
+#if QT_VERSION >= 0x050000
     QObject::connect(&compositor, SIGNAL(windowAdded(QVariant)), compositor.rootObject(), SLOT(windowAdded(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowDestroyed(QVariant)), compositor.rootObject(), SLOT(windowDestroyed(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowResized(QVariant)), compositor.rootObject(), SLOT(windowResized(QVariant)));
+#endif
     compositor.show();
 
     return app.exec();

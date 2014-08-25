@@ -1,5 +1,6 @@
-QT += quick qml
-QT += quick-private
+#QT += quick qml
+#QT += quick-private
+QT += declarative
 #QT += webkitwidgets network
 QT += webenginewidgets network
 QT += dbus

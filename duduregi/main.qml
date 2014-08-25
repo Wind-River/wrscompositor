@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 1.0
 import "compositor.js" as CompositorLogic
 import com.windriver.duduregi 1.0
 

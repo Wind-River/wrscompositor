@@ -1,5 +1,6 @@
-import QtQuick 2.0
-import QtWebEngine 0.9
+import QtQuick 1.0
+//import QtWebEngine 0.9
+import QtWebKit 1.0
 
 Item {
     id: coverFlow
@@ -154,23 +155,23 @@ Item {
 		    anchors.centerIn: parent
 		    source: icon
 		    smooth: true
-                    scale: itemHeight/height
-                    RotationAnimation on rotation {
-                        loops: Animation.Infinite
-                        from: 360
-                        to: 0
-                        duration: 10000
-                        running: iconRotate && myPathView.currentIndex == index
-                    }
-                    MouseArea {
-                        id: mouseArea
-                        enabled: side==Flipable.Front
-                        anchors.fill: parent
-                        onClicked: {
-                            console.log('icon clicked '+name);
-                            itemClicked()
-                        }
-                    }
+            scale: itemHeight/height
+            RotationAnimation on rotation {
+                loops: Animation.Infinite
+                from: 360
+                to: 0
+                duration: 10000
+                running: iconRotate == true && myPathView.currentIndex == index
+            }
+            MouseArea {
+                id: mouseArea
+                enabled: side==Flipable.Front
+                anchors.fill: parent
+                onClicked: {
+                    console.log('icon clicked '+name);
+                    itemClicked()
+                }
+            }
 		}
                 Image {
                     id: quitButton
@@ -226,7 +227,8 @@ Item {
                     height: parent.height
                     visible: background == null
                 }
-                WebEngineView  {
+                //WebEngineView  {
+                WebView  {
                     id: webview
                     url: "about:blank"
                     visible: type == "quick-html5app"
