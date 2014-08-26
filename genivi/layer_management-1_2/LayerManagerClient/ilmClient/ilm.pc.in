@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: ilm
+Description: ilm Client
+Version: @ILM_VERSION@
+Requires: dbus-1
+Libs: -L${libdir} -lilmClient
+Cflags: -I${includedir}/ilm
