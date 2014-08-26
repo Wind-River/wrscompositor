@@ -1,0 +1,10 @@
+export LM_PLUGIN_PATH=/usr/lib/layermanager
+LayerManagerService -w800 -h480 &
+LayerManagerControl create layer 1 800 480
+LayerManagerControl set layer 1 visibility 1
+LayerManagerControl set screen 0 render order 1
+LayerManagerControl create surface 1000 0x400005 800 480 2
+LayerManagerControl set layer 1 render order 1000
+LayerManagerControl set surface 1000 visibility 1
+LayerManagerControl set surface 1000 source region 0 0 800 480
+LayerManagerControl set surface 1000 destination region 0 0 800 480
