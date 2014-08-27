@@ -244,6 +244,22 @@ D/ConsoleMessage( 1401): file:///root/WRNavigation/gsocket.js:32:onmessage: {"ty
 
     # end Alternative AMB ==================================================
 
+
+    # start iPod protocol ===============================================
+    def handleMakeConnectionForIpod(self, transport):
+        print 'ipod connect', transport
+        Protocol.makeConnection(self, transport)
+
+    def handleConnectionLostForIpod(self, reason=connectionDone):
+        print 'ipod lost connection'
+        Protocol.connectionLost(self, reason)
+
+    def handleDataReceivedForIpod(self, data):
+        print 'ipod received', data
+        self.transport.write(data)
+    # end iPod protocol =================================================
+
+
 class WSFactory(Factory):
     protocol = DSGWProtocol
 
