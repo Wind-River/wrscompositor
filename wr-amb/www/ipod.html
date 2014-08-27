@@ -1,0 +1,81 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<title>websocket test</title>
+<script language="javascript" src="uuid.js"></script>
+<script language="javascript" type="text/javascript">
+    var output;
+    var ws;
+
+	function closeGW() {
+		ws.close();
+	}
+	function connectGW() {
+		log('wsUrl: '+wsUrl);
+    	var wsUrl = "ws://"+window.location.hostname+":9090/";
+        ws = new WebSocket(wsUrl, 'ipod');
+        ws.onopen = function(evt) { onOpen(evt) };
+        ws.onclose = function(evt) { onClose(evt) };
+        ws.onmessage = function(evt) { onMessage(evt) };
+        ws.onerror = function(evt) { onError(evt) };
+	}
+
+    function init() {
+        output = document.getElementById("debugout");
+		connectGW();
+    }
+
+    function onOpen(evt) {
+        log("WebSocket CONNECTED");
+    }
+
+    function onClose(evt) {
+        log("WebSocket DISCONNECTED");
+        //window.setTimeout(function() { window.location = window.location; }, 5000);
+    }
+
+    function onMessage(evt) {
+		var obj = JSON.parse(evt.data);
+		log(evt.data);
+    }
+
+    function onError(evt) {
+        log('<span style="color: red;">ERROR:</span> ' + evt.data);
+    }
+
+    function doSend(message) {
+        log("SENT Command: " + message);
+        ws.send(message);
+    }
+
+    function log(message) {
+        var pre = document.createElement("div");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        output.appendChild(pre);
+        output.scrollTop = output.scrollHeight;
+    }
+
+    window.addEventListener("load", init, false);
+	function getTime() {
+		var dt = new Date();
+		return dt.getTime()+dt.getMilliseconds()/1000;
+	}
+
+	function command(func) {
+		var obj = {"function": func}
+		ws.send(JSON.stringify(obj));
+	}
+</script>
+</head>
+<body>
+<button onclick="connectGW();">connect socket</button>
+<button onclick="closeGW();">disconnect socket</button>
+<button onclick="command('play');">play()</button>
+<button onclick="command('pause');">pause()</button>
+<button onclick="command('stop');">stop()</button>
+<button onclick="command('next');">next()</button>
+<button onclick="command('prev');">prev()</button>
+<div id="debugout"></div>
+</body>
+</html>

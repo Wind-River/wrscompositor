@@ -7,6 +7,7 @@ import os
 import sys
 import time
 from twisted.web import websockets
+from iPodClient import run_ipodclient
 import json
 import uuid
 
@@ -19,6 +20,16 @@ websockets._encoders['steering-wheel'] = lambda(x): x
 websockets._decoders['steering-wheel'] = lambda(x): x
 websockets._encoders['AMB'] = lambda(x): x
 websockets._decoders['AMB'] = lambda(x): x
+websockets._encoders['ipod'] = lambda(x): x
+websockets._decoders['ipod'] = lambda(x): x
+
+
+
+ipod_subscribers = []
+def sendIPodEvent(data):
+    for transport in ipod_subscribers:
+        transport.write(json.dumps(data))
+
 
 steering_subscribers = []
 def sendSteeringWheelButtonEvent(button, pressed):
@@ -249,14 +260,32 @@ D/ConsoleMessage( 1401): file:///root/WRNavigation/gsocket.js:32:onmessage: {"ty
     def handleMakeConnectionForIpod(self, transport):
         print 'ipod connect', transport
         Protocol.makeConnection(self, transport)
+        ret = {'connection': True}
+        self.controller = run_ipodclient(sendIPodEvent)
+        if not self.controller:
+            ret = {'connection': False,
+                    'error': 'could not connect to ipod-daemon-2'}
+        self.transport.write(json.dumps(ret))
+        ipod_subscribers.append(transport)
+
 
     def handleConnectionLostForIpod(self, reason=connectionDone):
         print 'ipod lost connection'
+        if self.transport in ipod_subscribers:
+            del ipod_subscribers[ipod_subscribers.index(self.transport)]
         Protocol.connectionLost(self, reason)
 
     def handleDataReceivedForIpod(self, data):
         print 'ipod received', data
-        self.transport.write(data)
+        #self.transport.write(data)
+        try:
+            call = json.loads(data)
+        except:
+            return
+        func = call.get('function', '')
+        args = call.get('args', '')
+        self.controller.command(func, args)
+
     # end iPod protocol =================================================
 
 

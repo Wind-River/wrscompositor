@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from wrs_ipod_2 import *
+import sys
 
-c = wrs_ipod_connect(None)
 cmds = []
 def deferred_call(scenario, func, *args):
     cmds.insert(0, {'func': func, 'args': args, 'tid': None, 'scenario': scenario})
@@ -53,6 +53,11 @@ def reply_cb(c, tid, retval, error, ud):
         next_call = cmds[-1]
         next_call['tid'] = apply(next_call['func'], next_call['args'])
 
+
+c = wrs_ipod_connect(None)
+if not c:
+    print 'could not connect to ipod-daemon-2'
+    sys.exit(0)
 
 wrs_ipod_set_event_pycb(c, event_cb, None);
 wrs_ipod_set_reply_pycb(c, reply_cb, None);
