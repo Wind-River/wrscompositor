@@ -43,6 +43,9 @@ def event_cb(c, _ev, ud):
     elif WRSIPOD_EVENT_TRACK_CHANGED == ev:
         print 'track changed', wrs_ipod_current_track_index(c)
         broadcast({'event': 'track changed', 'data': wrs_ipod_current_track_index(c)})
+        deferred_call('get trackinfo', wrs_ipod_current_track_info, c)
+    elif WRSIPOD_EVENT_TRACKINFO_RETRIEVED == ev:
+        print 'track info retrieved'
     elif WRSIPOD_EVENT_SHUFFLE_CHANGED == ev:
         print 'changed shuffle status', wrs_ipod_current_shuffle_state(c)
         broadcast({'event': 'shuffle changed', 'data': wrs_ipod_current_shuffle_state(c)})
@@ -58,10 +61,35 @@ def event_cb(c, _ev, ud):
 
 def reply_cb(c, tid, retval, error, ud):
     print 'reply_cb', c, tid, retval, error, ud
+    broadcast = ud
     called = cmds.pop()
     assert called['tid'] == tid
-    if called['scenario']:
-        print called['scenario']
+    scenario = called['scenario']
+    if scenario:
+        if 'get trackinfo' == scenario:
+            print 'title', wrs_ipod_current_track_title(c)
+            print 'artist', wrs_ipod_current_track_artist(c)
+            print 'album', wrs_ipod_current_track_album(c)
+            print 'chapter', wrs_ipod_current_track_chapter(c)
+            broadcast({'event': 'track info', 'data':
+                        {'title': wrs_ipod_current_track_title(c),
+                        #'uid': wrs_ipod_current_track_uid(c),
+                        'artist': wrs_ipod_current_track_artist(c),
+                        'album': wrs_ipod_current_track_album(c),
+                        'chapter': wrs_ipod_current_track_chapter(c),
+                        'playstate': wrs_ipod_current_track_state(c),
+                        'has_artwork':wrs_ipod_current_track_has_artwork(c),
+                        'has_chapters':wrs_ipod_current_track_has_chapters(c),
+                        'shuffle_state':wrs_ipod_current_shuffle_state(c),
+                        'repeat_state':wrs_ipod_current_repeat_state(c),
+                        'number_of_tracks':wrs_ipod_current_number_of_tracks(c),
+                        'track_length':wrs_ipod_current_track_length(c),
+                        'track_position':wrs_ipod_current_track_position(c),
+                        'track_timestamp':wrs_ipod_current_track_timestamp(c),
+                        'track_timestamp':wrs_ipod_current_track_timestamp(c),
+                        'track_index': wrs_ipod_current_track_index(c), }})
+        else:
+            print scenario
 
     if cmds:
         next_call = cmds[-1]
@@ -98,6 +126,8 @@ class IPodController:
             deferred_call(None, wrs_ipod_next_track, self.c)
         elif func == 'prev':
             deferred_call(None, wrs_ipod_prev_track, self.c)
+        elif func == 'get_trackinfo':
+            deferred_call('get trackinfo', wrs_ipod_current_track_info, self.c)
         
 
 def run_ipodclient(broadcastCallback):
