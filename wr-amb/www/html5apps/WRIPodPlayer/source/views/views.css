@@ -104,4 +104,26 @@
 	width:47.5%;
 }
 
+.song-info-align-center {
+	display: block;
+	vertical-align: middle;
+	margin-top: 2em;
+	margin-bottom: 2em;
+	min-height: 15em;
+}
 
+.song-info-center {
+	display: inline-block;
+	min-height: 10em;
+	margin-left: 2em;
+	margin-right: 2em;
+	margin-top: 5em;
+	vertical-align: middle;
+}
+
+.artwork-image {
+	min-width: 15em;
+	min-height: 15em;
+	margin-left: 2em;
+	margin-right: 2em;
+}

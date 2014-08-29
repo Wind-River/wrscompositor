@@ -1,4 +1,6 @@
 var websocket = null;
+var playstate = 0;
+var haha = null;
 
 
 enyo.kind({
@@ -26,15 +28,15 @@ enyo.kind({
 								arrangerKind: "CardArranger", onTransitionFinish: "contentTransitionCompleted", 
 								components: [
 									{kind: "FittableRows", name: "controller", classes: "wide", fit: true, components: [
-										//{kind: "enyo.Image", src: "http://enyojs.com/img/enyo-logo.png", alt: "enyo logo"},
-										{kind: "enyo.Scroller", fit: true, components: [
-											{name: "main", classes: "nice-padding", allowHtml: true}
+										{kind: "FittableColumns", noStretch: true, fit: true, classes: "song-info-align-center", components: [
+											{kind: "enyo.Image", name: "artwork", classes: "artwork-image" },
+											{kind: "FittableRows", classes: "song-info-center", components: [
+												{name: "songTitle", content: "", style: "text-align: left; margin-bottom: 10px"},
+												{name: "songAlbum", content: "", style: "text-align: left; margin-bottom: 10px"},
+												{name: "songArtist", content: "", style: "text-align: left"},
+											]},
 										]},
-										{kind: "onyx.ProgressBar", progress: 25, showStripes: false},
-										{kind: "FittableRows", classes: "enyo-center", components: [
-											{content: "~song title~", style: "text-align: center"},
-											{content: "~artist and album name~", style: "text-align: center"},
-										]},
+										{kind: "onyx.ProgressBar", name: "timeTrack", progress: 0, showStripes: false},
 										{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", classes: "enyo-center", components: [
 											{kind: "onyx.Button", content: "<<", ontap: "prevOnTap"},
 											{kind: "onyx.Button", name: "playButton", content: "play", ontap: "playOnTap"},
@@ -52,43 +54,48 @@ enyo.kind({
 
 	create: 	function() {
 		this.inherited(arguments);
+		haha = this;
 
 		var wsUrl = "ws://"+window.location.hostname+":9090/";
-
 		websocket = new WebSocket(wsUrl, 'ipod');
+
 		websocket.onopen = function(evt) { console.log('onopen'); };
 		websocket.onclose = function(evt) { console.log('onclose'); };
-		websocket.onmessage = function(evt) {
-			console.log('onmessage');
-			console.log(evt.data);
-		};
+		websocket.onmessage =  enyo.bind(this, handleMessage);
 		websocket.onerror = function(evt) { console.log('onopen'); };
-
 	},
 
 	prevOnTap: function(inSender, inEvent) {
-		this.$.main.addContent("prevOntap.<br/>");
-		this.$.progressBar.animateProgressTo(25);
+		this.command("prev");
 	},
 
 	playOnTap: function(inSender, inEvent) {
-		var text = this.$.playButton.getContent();
-		this.$.main.addContent(text + "Ontap.<br/>");
-		if (text.localeCompare("play") == 0) {
+		if (playstate == 4) { // playing
 			this.$.playButton.setContent("pause");
-		} else {
+			this.command("pause");
+		} else if (playstate == 0 || playstate == 5) { // stopped or paused
+			this.$.playButton.setContent("play");
+			this.command("play");
+		}
+	},
+
+	updatePlayPauseButton: function() {
+		if (playstate == 4) { // playing
+			this.$.playButton.setContent("pause");
+		} else if (playstate == 5) { // paused
 			this.$.playButton.setContent("play");
 		}
 	},
 
+	updateArtwork: function(src) {
+		this.$.artwork.setSrc(src);
+	},
+
 	nextOnTap: function(inSender, inEvent) {
-		this.$.main.addContent("nextOntap.<br/>");
-		this.$.progressBar.animateProgressTo(50);
+		this.command("next");
 	},
 
 	listOnTab: function(inSender, inEvent) {
-		this.$.main.addContent("listOntap.<br/>");
-
 		var text = this.$.listButton.getContent();
 		if (text.localeCompare("List") == 0) {
 			this.$.listButton.setContent("Close");
@@ -124,6 +131,17 @@ enyo.kind({
 		this.$.songList.destroy();
 		this.hidingSongList = false;
 	},
+
+
+	command: function(func) {
+		var args = new Array;
+		for(var i=1; i<arguments.length; i++)
+			args.push(arguments[i]);
+		var obj = {"function": func, "args": args};
+		console.log(obj);
+		websocket.send(JSON.stringify(obj));
+	},
+
 });
 
 enyo.kind({
@@ -141,3 +159,38 @@ enyo.kind({
 		*/
 	],
 });
+
+function handleMessage(event) {
+	console.log('handle message');
+	console.log('event :' + event.data);
+	var obj = JSON.parse(event.data);
+	console.log(obj);
+	var evt = obj.event;
+	var data = obj.data;
+	var conn = obj.connection;
+
+	if (conn != null && conn) {
+		this.command('get_trackinfo');
+	} else if (evt == "track info") {
+		playstate = data.playstate;
+		this.updatePlayPauseButton();
+		if (playstate == 0) {
+			this.updateArtwork("assets/default_artwork.jpg");
+		}
+
+		this.$.timeTrack.max = data.track_length;
+		this.$.songTitle.setContent("title : " + data.title);
+		this.$.songAlbum.setContent("album : " + data.album);
+		this.$.songArtist.setContent("artist : " + data.artist);
+		this.command('get_artwork', obj.data.track_index);
+	} else if (evt == "current artwork") {
+		this.updateArtwork('data:image/png;base64,' + data.image);
+	} else if (evt == "track position changed") {
+		this.$.timeTrack.animateProgressTo(data);
+	} else if (evt == "track changed") {
+		this.$.timeTrack.animateProgressTo(0);
+	} else if (evt == "playstate changed") {
+		playstate = data;
+		this.updatePlayPauseButton();
+	}
+}
