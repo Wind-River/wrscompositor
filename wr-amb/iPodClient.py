@@ -6,6 +6,9 @@ from twisted.python.filepath import FilePath
 import sys
 import time
 import base64
+import struct
+import png
+from StringIO import StringIO
 from ipod.wrs_ipod_2 import *
 
 connection = None
@@ -16,6 +19,34 @@ def deferred_call(scenario, func, *args):
     if len(cmds) == 1:
         callinfo = cmds[-1]
         callinfo['tid'] = apply(callinfo['func'], callinfo['args'])
+
+def rgb565topng(bin, w, h, rowstride):
+    RGB565_MASK_RED       = 0xF800
+    RGB565_MASK_GREEN     = 0x07E0
+    RGB565_MASK_BLUE      = 0x001F
+
+    pixels = []
+    offset = 0
+    for j in range(h):
+            row = bin[offset:offset+rowstride]
+            rows = []
+            for i in range(w):
+                    pixel = struct.unpack('H', row[i*2:(i+1)*2])[0]
+                    r = ((pixel & RGB565_MASK_RED) >> 11) << 3
+                    g = ((pixel & RGB565_MASK_GREEN) >> 5) << 2
+                    b = ((pixel & RGB565_MASK_BLUE)) << 3
+                    rows += [r, g, b]
+            pixels.append(rows)
+            offset += rowstride
+
+    #pixels = [(0,255,0)*128]*128
+    f = StringIO()
+    w = png.from_array(pixels, mode='RGB')
+    w.save(f)
+
+    # binary PNG data
+    return f.getvalue()
+
 
 def event_cb(c, _ev, ud):
     ev = wrs_ipod_event_type(_ev)
@@ -90,21 +121,15 @@ def reply_cb(c, tid, retval, error, ud):
                         'track_timestamp':wrs_ipod_current_track_timestamp(c),
                         'track_index': wrs_ipod_current_track_index(c), }})
         elif 'get artwork' == scenario:
-            print '[41m artwork [0m'
-            print wrs_ipod_current_track_artwork_length(c)
-            open('haha.bin', 'wb').write(wrs_ipod_current_track_artwork_pydata(c))
-            print len(wrs_ipod_current_track_artwork_pydata(c)) == wrs_ipod_current_track_artwork_length(c)
-            print wrs_ipod_current_track_artwork_width(c)
-            print wrs_ipod_current_track_artwork_height(c)
-            print wrs_ipod_current_track_artwork_rowstride(c)
-            broadcast({'event': 'current artwork', 'data':
-                        {'image': base64.encodestring(
-                            wrs_ipod_current_track_artwork_pydata(c))
-                            .replace('\n',''),
-                        'width': wrs_ipod_current_track_artwork_width(c),
-                        'height': wrs_ipod_current_track_artwork_height(c),
-                        'rowstride':wrs_ipod_current_track_artwork_rowstride(c)}
-                        })
+            bin = wrs_ipod_current_track_artwork_pydata(c)
+            if bin:
+                w = wrs_ipod_current_track_artwork_width(c)
+                h = wrs_ipod_current_track_artwork_height(c)
+                rowstride = wrs_ipod_current_track_artwork_rowstride(c)
+                png = rgb565topng(bin, w, h, rowstride)
+                broadcast({'event': 'current artwork', 'data':
+                            {'image': base64.encodestring(png).replace('\n',''),
+                            'width': w, 'height': h, 'rowstride': rowstride}})
         else:
             print scenario
 

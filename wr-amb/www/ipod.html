@@ -40,6 +40,9 @@
 		if(obj.event == 'track info') {
 			console.log('index: '+obj.data.track_index);
 			command('get_artwork', obj.data.track_index);
+		} else if(obj.event == 'current artwork') {
+        	var artwork = document.getElementById("artwork");
+			artwork.src = 'data:image/png;base64,'+obj.data.image;
 		}
 		log(evt.data);
     }
@@ -86,6 +89,8 @@
 <button onclick="command('next');">next()</button>
 <button onclick="command('prev');">prev()</button>
 <button onclick="command('get_trackinfo');">get_trackinfo()</button>
+<br>
+<img id="artwork">
 <div id="debugout"></div>
 </body>
 </html>
