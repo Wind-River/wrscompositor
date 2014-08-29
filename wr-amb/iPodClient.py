@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from twisted.internet import reactor
+from twisted.internet import reactor, defer
 from twisted.internet.abstract import FileDescriptor
 from twisted.python.filepath import FilePath
 import sys
@@ -181,7 +181,10 @@ class IPodController:
 
 IMB = None
 class IPodMessageBroker (objects.DBusObject):
-    iface = DBusInterface( 'com.windriver.automotive.IPodEvent',
+    iface = DBusInterface( 'com.windriver.iAP1',
+                           Method('play', arguments='', returns=''),
+                           Method('pause', arguments='', returns=''),
+
                            Signal('track_position_changed', 'u'),
                            Signal('track_changed', 'u'),
                            Signal('track_info', 'iiuuuuussss'),
@@ -222,6 +225,18 @@ class IPodMessageBroker (objects.DBusObject):
     def __init__(self, objectPath):
         objects.DBusObject.__init__(self, objectPath)
 
+    def dbus_play(self):
+        global connection
+        print 'play', connection
+        if connection:
+            deferred_call(None, wrs_ipod_play, connection)
+
+    def dbus_pause(self):
+        global connection
+        print 'pause', connection
+        if connection:
+            deferred_call(None, wrs_ipod_pause, connection)
+
     def sendEvent(self, obj):
         event = obj['event']
         data = obj.get('data', None)
@@ -246,19 +261,16 @@ class IPodMessageBroker (objects.DBusObject):
             signal = event.replace(' ', '_')
             self.emitSignal(signal, data)
 
-def onErr(err):
-    print 'Failed: ', err.getErrorMessage()
-    #reactor.stop()
-
-def onConnected(conn):
-    s = IPodMessageBroker('/iPod')
-    conn.exportObject( s )
-    dn = conn.requestBusName('org.windriver.automotive')
-    def onReady(_):
-        global IMB
-        IMB = s
-    dn.addCallback( onReady )
-    return dn
+@defer.inlineCallbacks
+def dbusMain():
+    global IMB
+    try:
+        conn = yield client.connect(reactor)
+        IMB = IPodMessageBroker('/iPod')
+        conn.exportObject( IMB )
+        yield conn.requestBusName('com.windriver.automotive')
+    except error.DBusException, e:
+        print 'Failed to export object: ', e
 
 def run_ipodclient(broadcastCallback):
     global connection
@@ -269,9 +281,7 @@ def run_ipodclient(broadcastCallback):
         print 'Could not connect to ipod-daemon-2'
         return None
 
-    dconnect = client.connect(reactor)
-    dconnect.addCallback(onConnected)
-    dconnect.addErrback(onErr)
+    reactor.callLater(0, dbusMain)
 
     def dbus_broadcast(data):
         global IMB

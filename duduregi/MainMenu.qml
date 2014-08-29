@@ -36,56 +36,56 @@ Item {
     
 
     ListModel {
-	id: appModel
-	ListElement {
-            name: "Navigation";
-            icon: "icons/navi.png"
-            type: "quick-html5app"
-	    //path: 'file:///opt/windriver/wr-amb/www/html5apps/WRNavigation/index.html';
-	    //path: 'file:///home/sryu/projects/lg_demo/hello/www/index.html';
-	    path: './apps/navigation/index.html';
-        }
-	ListElement {
-            name: "HVAC";
-            icon: "icons/hvac.png"
-            type: "quick-html5app"
-	    path: 'file:///opt/windriver/wr-amb/www/html5apps/WRHVAC/index.html';
-        }
-	ListElement {
-            name: "Water-Depth View";
-            icon: "icons/waterdepth-icon-small.png"
-            type: "quick-html5app"
-	    path: 'file:///opt/windriver/wr-amb/www/html5apps/WRWaterDepth/index.html';
-        }
-	ListElement {
-            name: "Settings";
-            icon: "icons/settings.png"
-            type: "quick-html5app"
-	    //path: 'file:///opt/usr/apps/GV3ySIINq7/res/wgt/index.html';
-	    path: 'file:///opt/usr/apps/ODBQpKvkS1/res/wgt/index.html';
-            
-        }
-	ListElement {
-            name: "Smart Device Link HMI Sample";
-            icon: "icons/genivi.png";
-            type: "quick-html5app"
-	    path: 'file:///usr/share/smartdevicelink/HMI/index.html';
-        }
-	ListElement {
-            name: "Tizen IVI 3.0 Apps";
-            icon: "icons/tizen-on-dark.png";
-            type: "launcher"
-            launcherType: "tizen"
-            iconRotate: true
-            background: "images/tizen-background.png"
-        }
-	ListElement {
-            name: "Wayland Samples";
-            icon: "icons/wayland.png";
-            type: "launcher"
-            launcherType: "wayland"
-            background: "images/xdg-background.png"
-        }
+		id: appModel
+		ListElement {
+			name: "Navigation";
+			icon: "icons/navi.png"
+			type: "quick-html5app"
+			//path: 'file:///opt/windriver/wr-amb/www/html5apps/WRNavigation/index.html';
+			//path: 'file:///home/sryu/projects/lg_demo/hello/www/index.html';
+			path: 'file:///opt/windriver/share/html5apps/WRNavigation/index.html';
+		}
+		ListElement {
+			name: "HVAC";
+			icon: "icons/hvac.png"
+			type: "quick-html5app"
+			path: 'file:///opt/windriver/share/html5apps/WRHVAC/index.html';
+		}
+		ListElement {
+			name: "Water-Depth View";
+			icon: "icons/waterdepth-icon-small.png"
+			type: "quick-html5app"
+			path: 'file:///opt/windriver/share/html5apps/WRWaterDepth/index.html';
+		}
+		ListElement {
+			name: "Settings";
+			icon: "icons/settings.png"
+			type: "quick-html5app"
+			//path: 'file:///opt/usr/apps/GV3ySIINq7/res/wgt/index.html';
+			//path: 'file:///opt/usr/apps/ODBQpKvkS1/res/wgt/index.html';
+			path: 'file:///opt/windriver/share/html5apps/WRIPodPlayer/index.html';
+		}
+		ListElement {
+			name: "Smart Device Link HMI Sample";
+			icon: "icons/genivi.png";
+			type: "quick-html5app"
+			path: 'file:///usr/share/smartdevicelink/HMI/index.html';
+		}
+		ListElement {
+			name: "Tizen IVI 3.0 Apps";
+			icon: "icons/tizen-on-dark.png";
+			type: "launcher"
+			launcherType: "tizen"
+			iconRotate: true
+			background: "images/tizen-background.png"
+		}
+		ListElement {
+			name: "Wayland Samples";
+			icon: "icons/wayland.png";
+			type: "launcher"
+			launcherType: "wayland"
+			background: "images/xdg-background.png"
+		}
 	/*ListElement { name: "CSS3 Demo"; icon: "icons/angrybird.png" }*/
     }
 

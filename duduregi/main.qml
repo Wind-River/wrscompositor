@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import "compositor.js" as CompositorLogic
+import "sprintf.js" as SPrintf
 import com.windriver.automotive 1.0
 
 Item {
@@ -73,13 +74,29 @@ Item {
 			height: parent.height/3
 			color: "transparent"
 			Rectangle {
+				id: iPodWidgetBG
 				anchors.top: parent.top
 				anchors.left: parent.left
 				width: parent.width
 				height: parent.height
-				color: "black"
+				color: iPodMouseArea.pressed?"blue":"black"
 				opacity: 0.5
 				radius: 20
+
+				MouseArea {
+					id: iPodMouseArea
+					anchors.top: parent.top
+					anchors.left: parent.left
+					width: parent.width
+					height: parent.height
+					onClicked: {
+						if(wr_dbusClient.playState == 4)
+							wr_dbusClient.pause()
+						else if(wr_dbusClient.playState == 5)
+							wr_dbusClient.play()
+					}
+				}
+
 			}
 
     		Image {
@@ -141,6 +158,31 @@ Item {
 				anchors.rightMargin: parent.height / 20
 				text: wr_dbusClient.title
 				font.pointSize: parent.height / 10
+				color: "white"
+				smooth: true
+				font.bold: true
+				style: Text.Outline
+			}
+			Text {
+				id: iPodStatus
+				anchors.bottom: parent.bottom
+				anchors.bottomMargin: parent.height / 20
+				anchors.left: iPodArtist.left
+				text: (wr_dbusClient.playState == 4)?"Playing...":((wr_dbusClient.playState == 5)?"Paused":"")
+				font.pointSize: parent.height / 6
+				color: "white"
+				smooth: true
+				font.bold: true
+				style: Text.Outline
+			}
+			Text {
+				id: iPodTrackPosition
+				anchors.bottom: parent.bottom
+				anchors.bottomMargin: parent.height / 20
+				anchors.right: parent.right
+				anchors.rightMargin: parent.height / 10
+				text: SPrintf.sprintf('%02d', parseInt(wr_dbusClient.trackPosition/1000/60))+':'+SPrintf.sprintf('%02d', parseInt((wr_dbusClient.trackPosition/1000)%60))
+				font.pointSize: parent.height / 6
 				color: "white"
 				smooth: true
 				font.bold: true

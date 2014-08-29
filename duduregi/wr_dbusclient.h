@@ -18,10 +18,16 @@ class WRDBusClient: public QObject
     Q_PROPERTY(QString chapter READ chapter NOTIFY trackInfoChanged)
     Q_PROPERTY(QString artist READ artist NOTIFY trackInfoChanged)
     Q_PROPERTY(QString album READ album NOTIFY trackInfoChanged)
+
     Q_PROPERTY(QString artwork READ artwork NOTIFY artworkChanged)
+    Q_PROPERTY(unsigned int trackPosition READ trackPosition NOTIFY trackPositionChanged)
 
 public:
     WRDBusClient();
+
+    Q_INVOKABLE void play();
+    Q_INVOKABLE void pause();
+
     int repeatState() { return mRepeatState; };
     int shuffleState() { return mShuffleState; };
     unsigned int numberOfTracks() { return mNumberOfTracks; };
@@ -35,14 +41,17 @@ public:
     const QString album() { return mAlbum; };
 
     const QString artwork() { return mArtwork; };
+    unsigned int trackPosition() { return mTrackPosition; };
 
 signals:
     void trackInfoChanged();
+    void trackPositionChanged();
     void artworkChanged();
 
 public slots:
     void slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &);
     void slotPlayStateChanged(uint);
+    void slotTrackPositionChanged(uint);
     void slotArtworkChanged(uint, uint, const QString &);
 
 private:
@@ -57,7 +66,9 @@ private:
     QString mChapter;
     QString mArtist;
     QString mAlbum;
+
     QString mArtwork;
+    unsigned int mTrackPosition;
 };
 
 #endif

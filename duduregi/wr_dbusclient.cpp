@@ -20,14 +20,29 @@ WRDBusClient::WRDBusClient() {
     mChapter = "";
     mArtist = "";
     mAlbum = "";
+    mArtwork = "";
+    mTrackPosition = 0;
 
     //QDBusConnection::sessionBus().registerService("com.windriver.duduregi");
     //QDBusConnection::sessionBus().registerObject("/", this);
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.automotive.IPodEvent", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.automotive.IPodEvent", "playstate_changed", this, SLOT(slotPlayStateChanged(uint)));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.automotive.IPodEvent", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint, const QString &)));
+    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
+    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "playstate_changed", this, SLOT(slotPlayStateChanged(uint)));
+    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "track_position_changed", this, SLOT(slotTrackPositionChanged(uint)));
+    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint, const QString &)));
 }
 
+void WRDBusClient::play() {
+    QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "play"));
+}
+
+void WRDBusClient::pause() {
+    QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "pause"));
+}
+
+void WRDBusClient::slotTrackPositionChanged(uint position) {
+    mTrackPosition = position;
+    emit trackPositionChanged();
+}
 void WRDBusClient::slotPlayStateChanged(uint playState) {
     mPlayState = playState;
     emit trackInfoChanged();
