@@ -172,6 +172,8 @@ class IPodController:
             deferred_call('get trackinfo', wrs_ipod_current_track_info, self.c)
         elif func == 'get_artwork':
             deferred_call('get artwork', wrs_ipod_current_track_artwork, self.c, args[0])
+        elif func == 'seek':
+            deferred_call(None, wrs_ipod_set_position, self.c, args[0])
 
 
 def run_ipodclient(broadcastCallback):
