@@ -1,8 +1,5 @@
-/**
-	For simple applications, you might define all of your views in this file.  
-	For more complex applications, you might choose to separate these kind definitions 
-	into multiple files under this folder.
-*/
+var websocket = null;
+
 
 enyo.kind({
 	name: "myapp.MainView",
@@ -55,6 +52,17 @@ enyo.kind({
 
 	create: 	function() {
 		this.inherited(arguments);
+
+		var wsUrl = "ws://"+window.location.hostname+":9090/";
+
+		websocket = new WebSocket(wsUrl, 'ipod');
+		websocket.onopen = function(evt) { console.log('onopen'); };
+		websocket.onclose = function(evt) { console.log('onclose'); };
+		websocket.onmessage = function(evt) {
+			console.log('onmessage');
+			console.log(evt.data);
+		};
+		websocket.onerror = function(evt) { console.log('onopen'); };
 
 	},
 
