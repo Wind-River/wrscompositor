@@ -1,6 +1,6 @@
 all: duduregi
 
-duduregi: Makefile.duduregi Process.cpp  clusterview.cpp  main.cpp
+duduregi: Makefile.duduregi Process.cpp  clusterview.cpp  main.cpp vna_dbusclient.cpp wr_dbusclient.cpp
 	make -f Makefile.duduregi
 
 Makefile.duduregi: duduregi.pro

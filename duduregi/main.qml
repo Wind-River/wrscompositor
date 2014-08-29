@@ -1,6 +1,6 @@
 import QtQuick 1.0
 import "compositor.js" as CompositorLogic
-import com.windriver.duduregi 1.0
+import com.windriver.automotive 1.0
 
 Item {
     id: root
@@ -27,6 +27,20 @@ Item {
         }
     }
 
+    WRDBusClient {
+        id: wr_dbusClient
+
+        onTrackInfoChanged: {
+			console.log('title : '+title);
+			console.log('playState : '+playState);
+			if(playState == 0) // stop
+				iPodArtwork.source = 'images/artwork.jpg';
+        }
+		onArtworkChanged: {
+			iPodArtwork.source = 'data:image/png;base64,'+wr_dbusClient.artwork;
+		}
+    }
+
     StatusBar {
         id: statusBar
     }
@@ -47,6 +61,93 @@ Item {
             id: currentApp
             anchors.fill: parent
         }
+
+		Rectangle {
+			id: ipodWidget
+			clip: true
+			anchors.left: parent.left
+			anchors.leftMargin: background.width / 20
+			anchors.top: parent.top
+			anchors.topMargin: background.height / 20
+			width: parent.width/2
+			height: parent.height/3
+			color: "transparent"
+			Rectangle {
+				anchors.top: parent.top
+				anchors.left: parent.left
+				width: parent.width
+				height: parent.height
+				color: "black"
+				opacity: 0.5
+				radius: 20
+			}
+
+    		Image {
+				id: iPodArtwork
+				source: 'images/artwork.jpg'
+				anchors.top: parent.top
+				anchors.left: top.left
+				anchors.leftMargin: parent.height / 20
+				width: parent.height
+				height: parent.height
+			}
+			Text {
+				id: iPodMedia
+				anchors.top: parent.top
+				anchors.topMargin: parent.height / 20
+				anchors.left: iPodArtwork.right
+				anchors.leftMargin: parent.height / 20
+				text: "iPod"
+				font.pointSize: parent.height / 10
+				color: "white"
+				smooth: true
+				font.bold: true
+				style: Text.Outline
+			}
+			Text {
+				id: iPodArtist
+				elide: Text.ElideRight
+				anchors.top: iPodMedia.bottom
+				anchors.left: iPodMedia.left
+				anchors.right: parent.right
+				anchors.rightMargin: parent.height / 20
+				text: wr_dbusClient.artist
+				font.pointSize: parent.height / 10
+				color: "white"
+				smooth: true
+				font.bold: true
+				style: Text.Outline
+			}
+			Text {
+				id: iPodAlbum
+				elide: Text.ElideRight
+				anchors.top: iPodArtist.bottom
+				anchors.left: iPodArtist.left
+				anchors.right: parent.right
+				anchors.rightMargin: parent.height / 20
+				text: wr_dbusClient.album
+				font.pointSize: parent.height / 10
+				color: "white"
+				smooth: true
+				font.bold: true
+				style: Text.Outline
+			}
+			Text {
+				id: iPodTitle
+				elide: Text.ElideRight
+				anchors.top: iPodAlbum.bottom
+				anchors.left: iPodArtist.left
+				anchors.right: parent.right
+				anchors.rightMargin: parent.height / 20
+				text: wr_dbusClient.title
+				font.pointSize: parent.height / 10
+				color: "white"
+				smooth: true
+				font.bold: true
+				style: Text.Outline
+			}
+			visible: wr_dbusClient.playState > 0 && wr_dbusClient.title != ""
+		}
 
 		Text {
 			id: speed

@@ -11,6 +11,10 @@ import png
 from StringIO import StringIO
 from ipod.wrs_ipod_2 import *
 
+from txdbus import client, objects
+from txdbus.interface import DBusInterface, Method, Signal, Property
+from txdbus.objects import dbusMethod, DBusProperty
+
 connection = None
 
 cmds = []
@@ -83,7 +87,7 @@ def event_cb(c, _ev, ud):
         broadcast({'event': 'shuffle changed', 'data': wrs_ipod_current_shuffle_state(c)})
     elif WRSIPOD_EVENT_REPEAT_CHANGED == ev:
         print 'changed repeat status', wrs_ipod_current_repeat_state(c)
-        broadcast({'event': 'shuffle changed', 'data': wrs_ipod_current_repeat_state(c)})
+        broadcast({'event': 'repeat changed', 'data': wrs_ipod_current_repeat_state(c)})
     elif WRSIPOD_EVENT_TRACK_POSITION_CHANGED == ev:
         print 'track_position_changed', wrs_ipod_current_track_position(c)
         broadcast({'event': 'track position changed', 'data': wrs_ipod_current_track_position(c)})
@@ -175,6 +179,86 @@ class IPodController:
         elif func == 'seek':
             deferred_call(None, wrs_ipod_set_position, self.c, args[0])
 
+IMB = None
+class IPodMessageBroker (objects.DBusObject):
+    iface = DBusInterface( 'com.windriver.automotive.IPodEvent',
+                           Signal('track_position_changed', 'u'),
+                           Signal('track_changed', 'u'),
+                           Signal('track_info', 'iiuuuuussss'),
+                           Signal('playstate_changed', 'u'),
+                           Signal('shuffle_changed', 'i'),
+                           Signal('repeat_changed', 'i'),
+                           Signal('artwork_info', 'uus'),
+
+                           Property('repeat_state', 'i', writeable=False),
+                           Property('shuffle_state', 'i', writeable=False),
+                           Property('number_of_tracks', 'u', writeable=False),
+                           Property('track_timestamp', 'u', writeable=False),
+                           Property('track_length', 'u', writeable=False),
+                           Property('playstate', 'u', writeable=False),
+                           Property('has_artwork', 'u', writeable=False),
+                           Property('title', 's', writeable=False, emitsOnChange=True),
+                           Property('chapter', 's', writeable=False),
+                           Property('artist', 's', writeable=False),
+                           Property('album', 's', writeable=False),
+
+                           Property('artwork', 'ay', writeable=False),
+                         )
+
+    dbusInterfaces = [iface]
+    chapter = DBusProperty('chapter'),
+    repeat_state = DBusProperty('repeat_state'),
+    shuffle_state = DBusProperty('shuffle_state'),
+    number_of_tracks = DBusProperty('number_of_tracks'),
+    track_timestamp = DBusProperty('track_timestamp'),
+    track_length = DBusProperty('track_length'),
+    playstate = DBusProperty('playstate'),
+    has_artwork = DBusProperty('has_artwork'),
+    title = DBusProperty('title'),
+    artist = DBusProperty('artist'),
+    album = DBusProperty('album'),
+    artwork = DBusProperty('artwork'),
+
+    def __init__(self, objectPath):
+        objects.DBusObject.__init__(self, objectPath)
+
+    def sendEvent(self, obj):
+        event = obj['event']
+        data = obj.get('data', None)
+        if event == 'track info':
+            self.chapter = data['chapter']
+            self.repeat_state = data['repeat_state']
+            self.shuffle_state = data['shuffle_state']
+            self.number_of_tracks = data['number_of_tracks']
+            self.track_timestamp = data['track_timestamp']
+            self.track_length = data['track_length']
+            self.playstate = data['playstate']
+            self.has_artwork = data['has_artwork']
+            self.title = data['title']
+            self.artist = data['artist']
+            self.album = data['album']
+
+            self.emitSignal('track_info', data['repeat_state'], data['shuffle_state'], data['number_of_tracks'], data['track_timestamp'], data['track_length'], data['playstate'], data['has_artwork'], data['title'] and data['title'] or "", data['chapter'] and data['chapter'] or "", data['artist'] and data['artist'] or "", data['album'] and data['album'] or "")
+        elif event == 'current artwork':
+            #self.artwork = base64.decodestring(data['image'])
+            self.emitSignal('artwork_info', data['width'], data['height'], data['image'])
+        else:
+            signal = event.replace(' ', '_')
+            self.emitSignal(signal, data)
+
+def onErr(err):
+    print 'Failed: ', err.getErrorMessage()
+    #reactor.stop()
+
+def onConnected(conn):
+    s = IPodMessageBroker('/iPod')
+    conn.exportObject( s )
+    dn = conn.requestBusName('org.windriver.automotive')
+    def onReady(_):
+        global IMB
+        IMB = s
+    dn.addCallback( onReady )
+    return dn
 
 def run_ipodclient(broadcastCallback):
     global connection
@@ -185,8 +269,18 @@ def run_ipodclient(broadcastCallback):
         print 'Could not connect to ipod-daemon-2'
         return None
 
-    wrs_ipod_set_event_pycb(c, event_cb, broadcastCallback);
-    wrs_ipod_set_reply_pycb(c, reply_cb, broadcastCallback);
+    dconnect = client.connect(reactor)
+    dconnect.addCallback(onConnected)
+    dconnect.addErrback(onErr)
+
+    def dbus_broadcast(data):
+        global IMB
+        broadcastCallback(data)
+        if IMB:
+            IMB.sendEvent(data)
+
+    wrs_ipod_set_event_pycb(c, event_cb, dbus_broadcast);
+    wrs_ipod_set_reply_pycb(c, reply_cb, dbus_broadcast);
     if wrs_ipod_device_count(c) > 0:
         wrs_ipod_open_session_sync(c, 0)
         deferred_call(None, wrs_ipod_play, c)
