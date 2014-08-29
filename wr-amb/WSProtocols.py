@@ -283,7 +283,7 @@ D/ConsoleMessage( 1401): file:///root/WRNavigation/gsocket.js:32:onmessage: {"ty
         except:
             return
         func = call.get('function', '')
-        args = call.get('args', '')
+        args = call.get('args', ())
         self.controller.command(func, args)
 
     # end iPod protocol =================================================

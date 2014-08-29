@@ -2930,12 +2930,13 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_f_p_struct__WRSIPodConnection_int_p_void__void swig_types[12]
 #define SWIGTYPE_p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void swig_types[13]
 #define SWIGTYPE_p_int swig_types[14]
-#define SWIGTYPE_p_uint16_t swig_types[15]
-#define SWIGTYPE_p_uint32_t swig_types[16]
-#define SWIGTYPE_p_uint8_t swig_types[17]
-#define SWIGTYPE_p_void swig_types[18]
-static swig_type_info *swig_types[20];
-static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
+#define SWIGTYPE_p_short swig_types[15]
+#define SWIGTYPE_p_unsigned_char swig_types[16]
+#define SWIGTYPE_p_unsigned_int swig_types[17]
+#define SWIGTYPE_p_unsigned_short swig_types[18]
+#define SWIGTYPE_p_void swig_types[19]
+static swig_type_info *swig_types[21];
+static swig_module_info swig_module = {swig_types, 20, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3254,6 +3255,28 @@ SWIGINTERNINLINE PyObject *
 SWIG_FromCharPtr(const char *cptr)
 { 
   return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
+}
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyInt_FromLong((long)(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_int  (unsigned int value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_short  (unsigned short value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
 }
 
 
@@ -5713,8 +5736,8 @@ SWIGINTERN PyObject *_wrap_wrs_ipod_current_track_artwork_length(PyObject *SWIGU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "wrs_ipod_current_track_artwork_length" "', argument " "1"" of type '" "WRSIPodConnection *""'"); 
   }
   arg1 = (WRSIPodConnection *)(argp1);
-  result = wrs_ipod_current_track_artwork_length(arg1);
-  resultobj = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  result = (uint32_t)wrs_ipod_current_track_artwork_length(arg1);
+  resultobj = SWIG_From_unsigned_SS_int((unsigned int)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5736,7 +5759,7 @@ SWIGINTERN PyObject *_wrap_wrs_ipod_current_track_artwork_data(PyObject *SWIGUNU
   }
   arg1 = (WRSIPodConnection *)(argp1);
   result = (uint8_t *)wrs_ipod_current_track_artwork_data(arg1);
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint8_t, 0 |  0 );
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_unsigned_char, 0 |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -5757,8 +5780,8 @@ SWIGINTERN PyObject *_wrap_wrs_ipod_current_track_artwork_width(PyObject *SWIGUN
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "wrs_ipod_current_track_artwork_width" "', argument " "1"" of type '" "WRSIPodConnection *""'"); 
   }
   arg1 = (WRSIPodConnection *)(argp1);
-  result = wrs_ipod_current_track_artwork_width(arg1);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t)wrs_ipod_current_track_artwork_width(arg1);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5779,8 +5802,8 @@ SWIGINTERN PyObject *_wrap_wrs_ipod_current_track_artwork_height(PyObject *SWIGU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "wrs_ipod_current_track_artwork_height" "', argument " "1"" of type '" "WRSIPodConnection *""'"); 
   }
   arg1 = (WRSIPodConnection *)(argp1);
-  result = wrs_ipod_current_track_artwork_height(arg1);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t)wrs_ipod_current_track_artwork_height(arg1);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -5801,8 +5824,8 @@ SWIGINTERN PyObject *_wrap_wrs_ipod_current_track_artwork_rowstride(PyObject *SW
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "wrs_ipod_current_track_artwork_rowstride" "', argument " "1"" of type '" "WRSIPodConnection *""'"); 
   }
   arg1 = (WRSIPodConnection *)(argp1);
-  result = wrs_ipod_current_track_artwork_rowstride(arg1);
-  resultobj = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
+  result = (uint16_t)wrs_ipod_current_track_artwork_rowstride(arg1);
+  resultobj = SWIG_From_unsigned_SS_short((unsigned short)(result));
   return resultobj;
 fail:
   return NULL;
@@ -7970,6 +7993,22 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_wrs_ipod_current_track_artwork_pydata(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  PyObject *arg1 = (PyObject *) 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:wrs_ipod_current_track_artwork_pydata",&obj0)) SWIG_fail;
+  arg1 = obj0;
+  result = (PyObject *)wrs_ipod_current_track_artwork_pydata(arg1);
+  resultobj = result;
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"wrs_ipod_connect", _wrap_wrs_ipod_connect, METH_VARARGS, NULL},
@@ -8144,6 +8183,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"wrs_ipod_get_artwork_data_sync", _wrap_wrs_ipod_get_artwork_data_sync, METH_VARARGS, NULL},
 	 { (char *)"wrs_ipod_set_event_pycb", _wrap_wrs_ipod_set_event_pycb, METH_VARARGS, NULL},
 	 { (char *)"wrs_ipod_set_reply_pycb", _wrap_wrs_ipod_set_reply_pycb, METH_VARARGS, NULL},
+	 { (char *)"wrs_ipod_current_track_artwork_pydata", _wrap_wrs_ipod_current_track_artwork_pydata, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -8164,10 +8204,11 @@ static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_f_p_struct__WRSIPodConnection_int_int_p_q_const__char_p_void__void = {"_p_f_p_struct__WRSIPodConnection_int_int_p_q_const__char_p_void__void", "wrs_ipod_reply_cb|void (*)(struct _WRSIPodConnection *,int,int,char const *,void *)", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_f_p_struct__WRSIPodConnection_int_p_void__void = {"_p_f_p_struct__WRSIPodConnection_int_p_void__void", "wrs_ipod_ping_cb|void (*)(struct _WRSIPodConnection *,int,void *)", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void = {"_p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void", "wrs_ipod_event_cb|void (*)(struct _WRSIPodConnection *,union _WRSIPodEvent const *,void *)", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_int = {"_p_int", "int *|ipod_transaction_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint16_t = {"_p_uint16_t", "uint16_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "uint32_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_uint8_t = {"_p_uint8_t", "uint8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_int = {"_p_int", "int *|int32_t *|ipod_transaction_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_short = {"_p_short", "short *|int16_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_char = {"_p_unsigned_char", "unsigned char *|uint8_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "uint32_t *|unsigned int *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|uint16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
@@ -8186,9 +8227,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_f_p_struct__WRSIPodConnection_int_p_void__void,
   &_swigt__p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void,
   &_swigt__p_int,
-  &_swigt__p_uint16_t,
-  &_swigt__p_uint32_t,
-  &_swigt__p_uint8_t,
+  &_swigt__p_short,
+  &_swigt__p_unsigned_char,
+  &_swigt__p_unsigned_int,
+  &_swigt__p_unsigned_short,
   &_swigt__p_void,
 };
 
@@ -8207,9 +8249,10 @@ static swig_cast_info _swigc__p_f_p_struct__WRSIPodConnection_int_int_p_q_const_
 static swig_cast_info _swigc__p_f_p_struct__WRSIPodConnection_int_p_void__void[] = {  {&_swigt__p_f_p_struct__WRSIPodConnection_int_p_void__void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void[] = {  {&_swigt__p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint16_t[] = {  {&_swigt__p_uint16_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_uint8_t[] = {  {&_swigt__p_uint8_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_short[] = {  {&_swigt__p_short, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_char[] = {  {&_swigt__p_unsigned_char, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
@@ -8228,9 +8271,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_f_p_struct__WRSIPodConnection_int_p_void__void,
   _swigc__p_f_p_struct__WRSIPodConnection_p_q_const__union__WRSIPodEvent_p_void__void,
   _swigc__p_int,
-  _swigc__p_uint16_t,
-  _swigc__p_uint32_t,
-  _swigc__p_uint8_t,
+  _swigc__p_short,
+  _swigc__p_unsigned_char,
+  _swigc__p_unsigned_int,
+  _swigc__p_unsigned_short,
   _swigc__p_void,
 };
 

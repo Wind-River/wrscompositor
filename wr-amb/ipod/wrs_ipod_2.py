@@ -827,6 +827,10 @@ wrs_ipod_set_event_pycb = _wrs_ipod_2.wrs_ipod_set_event_pycb
 def wrs_ipod_set_reply_pycb(*args):
   return _wrs_ipod_2.wrs_ipod_set_reply_pycb(*args)
 wrs_ipod_set_reply_pycb = _wrs_ipod_2.wrs_ipod_set_reply_pycb
+
+def wrs_ipod_current_track_artwork_pydata(*args):
+  return _wrs_ipod_2.wrs_ipod_current_track_artwork_pydata(*args)
+wrs_ipod_current_track_artwork_pydata = _wrs_ipod_2.wrs_ipod_current_track_artwork_pydata
 # This file is compatible with both classic and new-style classes.
 
 

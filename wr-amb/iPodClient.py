@@ -5,6 +5,7 @@ from twisted.internet.abstract import FileDescriptor
 from twisted.python.filepath import FilePath
 import sys
 import time
+import base64
 from ipod.wrs_ipod_2 import *
 
 connection = None
@@ -88,6 +89,22 @@ def reply_cb(c, tid, retval, error, ud):
                         'track_timestamp':wrs_ipod_current_track_timestamp(c),
                         'track_timestamp':wrs_ipod_current_track_timestamp(c),
                         'track_index': wrs_ipod_current_track_index(c), }})
+        elif 'get artwork' == scenario:
+            print '[41m artwork [0m'
+            print wrs_ipod_current_track_artwork_length(c)
+            open('haha.bin', 'wb').write(wrs_ipod_current_track_artwork_pydata(c))
+            print len(wrs_ipod_current_track_artwork_pydata(c)) == wrs_ipod_current_track_artwork_length(c)
+            print wrs_ipod_current_track_artwork_width(c)
+            print wrs_ipod_current_track_artwork_height(c)
+            print wrs_ipod_current_track_artwork_rowstride(c)
+            broadcast({'event': 'current artwork', 'data':
+                        {'image': base64.encodestring(
+                            wrs_ipod_current_track_artwork_pydata(c))
+                            .replace('\n',''),
+                        'width': wrs_ipod_current_track_artwork_width(c),
+                        'height': wrs_ipod_current_track_artwork_height(c),
+                        'rowstride':wrs_ipod_current_track_artwork_rowstride(c)}
+                        })
         else:
             print scenario
 
@@ -128,7 +145,9 @@ class IPodController:
             deferred_call(None, wrs_ipod_prev_track, self.c)
         elif func == 'get_trackinfo':
             deferred_call('get trackinfo', wrs_ipod_current_track_info, self.c)
-        
+        elif func == 'get_artwork':
+            deferred_call('get artwork', wrs_ipod_current_track_artwork, self.c, args[0])
+
 
 def run_ipodclient(broadcastCallback):
     global connection

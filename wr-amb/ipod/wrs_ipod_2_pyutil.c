@@ -123,3 +123,24 @@ fail:
     return ;
 }
 
+PyObject* wrs_ipod_current_track_artwork_pydata(PyObject* _c) {
+    WRSIPodConnection *c = (WRSIPodConnection *) 0 ;
+    void *argp1 = 0 ;
+    int res1 = 0 ;
+
+    res1 = SWIG_ConvertPtr(_c, &argp1, SWIGTYPE_p__WRSIPodConnection, 0 |  0 );
+    if (!SWIG_IsOK(res1)) {
+        SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "cwin_set_reply_callback" "', argument " "1"" of type '" "CWinDisplay *""'"); 
+    }
+    c = (WRSIPodConnection *)(argp1);
+    if(wrs_ipod_current_track_artwork_length(c)<=0) {
+        goto fail;
+    }
+    PyObject *ret;
+    ret = PyBuffer_FromReadWriteMemory( wrs_ipod_current_track_artwork_data(c),
+            wrs_ipod_current_track_artwork_length(c)) ;
+    return ret;
+fail:
+    Py_INCREF(Py_None);
+    return Py_None;
+}
