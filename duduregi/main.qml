@@ -188,7 +188,8 @@ Item {
 				font.bold: true
 				style: Text.Outline
 			}
-			visible: wr_dbusClient.playState > 0 && wr_dbusClient.title != ""
+			//visible: wr_dbusClient.connected > 0 && wr_dbusClient.title != ""
+			visible: wr_dbusClient.connected == 1
 		}
 
 		Text {

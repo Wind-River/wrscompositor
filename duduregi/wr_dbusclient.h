@@ -7,6 +7,7 @@
 class WRDBusClient: public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int connected READ connected NOTIFY connectionChanged)
     Q_PROPERTY(int repeatState READ repeatState NOTIFY trackInfoChanged)
     Q_PROPERTY(int shuffleState READ shuffleState NOTIFY trackInfoChanged)
     Q_PROPERTY(unsigned int numberOfTracks READ numberOfTracks NOTIFY trackInfoChanged)
@@ -28,6 +29,7 @@ public:
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
 
+    int connected() { return mConnected; };
     int repeatState() { return mRepeatState; };
     int shuffleState() { return mShuffleState; };
     unsigned int numberOfTracks() { return mNumberOfTracks; };
@@ -44,6 +46,7 @@ public:
     unsigned int trackPosition() { return mTrackPosition; };
 
 signals:
+    void connectionChanged();
     void trackInfoChanged();
     void trackPositionChanged();
     void artworkChanged();
@@ -52,9 +55,14 @@ public slots:
     void slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &);
     void slotPlayStateChanged(uint);
     void slotTrackPositionChanged(uint);
-    void slotArtworkChanged(uint, uint, const QString &);
+    //void slotArtworkChanged(uint, uint, const QString &);
+    void slotArtworkChanged(uint, uint);
+    void slotConnected();
+    void slotDisconnected();
 
 private:
+    int mConnected;
+
     int mRepeatState;
     int mShuffleState;
     unsigned int mNumberOfTracks;

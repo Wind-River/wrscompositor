@@ -184,6 +184,7 @@ class IPodMessageBroker (objects.DBusObject):
     iface = DBusInterface( 'com.windriver.iAP1',
                            Method('play', arguments='', returns=''),
                            Method('pause', arguments='', returns=''),
+                           Method('current_artwork', arguments='', returns='s'),
 
                            Signal('track_position_changed', 'u'),
                            Signal('track_changed', 'u'),
@@ -191,7 +192,11 @@ class IPodMessageBroker (objects.DBusObject):
                            Signal('playstate_changed', 'u'),
                            Signal('shuffle_changed', 'i'),
                            Signal('repeat_changed', 'i'),
-                           Signal('artwork_info', 'uus'),
+                           #Signal('artwork_info', 'uus'),
+                           Signal('artwork_info', 'uu'),
+                           Signal('ipod_ready', ''),
+                           Signal('ipod_disconnected', ''),
+                           Signal('ipod_connected', ''),
 
                            Property('repeat_state', 'i', writeable=False),
                            Property('shuffle_state', 'i', writeable=False),
@@ -205,7 +210,7 @@ class IPodMessageBroker (objects.DBusObject):
                            Property('artist', 's', writeable=False),
                            Property('album', 's', writeable=False),
 
-                           Property('artwork', 'ay', writeable=False),
+                           #Property('artwork', 'ay', writeable=False),
                          )
 
     dbusInterfaces = [iface]
@@ -220,7 +225,7 @@ class IPodMessageBroker (objects.DBusObject):
     title = DBusProperty('title'),
     artist = DBusProperty('artist'),
     album = DBusProperty('album'),
-    artwork = DBusProperty('artwork'),
+    #artwork = DBusProperty('artwork'),
 
     def __init__(self, objectPath):
         objects.DBusObject.__init__(self, objectPath)
@@ -236,6 +241,19 @@ class IPodMessageBroker (objects.DBusObject):
         print 'pause', connection
         if connection:
             deferred_call(None, wrs_ipod_pause, connection)
+
+    def dbus_current_artwork(self):
+        global connection
+        c = connection
+        bin = wrs_ipod_current_track_artwork_pydata(c)
+        if bin:
+            w = wrs_ipod_current_track_artwork_width(c)
+            h = wrs_ipod_current_track_artwork_height(c)
+            rowstride = wrs_ipod_current_track_artwork_rowstride(c)
+            png = rgb565topng(bin, w, h, rowstride)
+            return base64.encodestring(png).replace('\n','')
+        else:
+            return ''
 
     def sendEvent(self, obj):
         event = obj['event']
@@ -256,7 +274,8 @@ class IPodMessageBroker (objects.DBusObject):
             self.emitSignal('track_info', data['repeat_state'], data['shuffle_state'], data['number_of_tracks'], data['track_timestamp'], data['track_length'], data['playstate'], data['has_artwork'], data['title'] and data['title'] or "", data['chapter'] and data['chapter'] or "", data['artist'] and data['artist'] or "", data['album'] and data['album'] or "")
         elif event == 'current artwork':
             #self.artwork = base64.decodestring(data['image'])
-            self.emitSignal('artwork_info', data['width'], data['height'], data['image'])
+            #self.emitSignal('artwork_info', data['width'], data['height'], data['image'])
+            self.emitSignal('artwork_info', data['width'], data['height'])
         else:
             signal = event.replace(' ', '_')
             self.emitSignal(signal, data)
