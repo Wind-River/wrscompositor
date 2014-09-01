@@ -214,6 +214,13 @@ Item {
                     console.log('close clicked');
                     hide();
                 })
+                statusBar.logoClicked.connect(function() {
+                    console.log('logo clicked');
+					if(mainmenu.visible)
+						mainmenu.hide();
+					else
+						mainmenu.show()
+                })
             }
             onMenuActivated: {
                 statusBar.showCloseButton(flag);

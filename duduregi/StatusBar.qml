@@ -10,6 +10,7 @@ Rectangle {
 	property string wmi: ""
 
     signal closeWindow
+    signal logoClicked
 
     Image {
         id: logo
@@ -19,7 +20,7 @@ Rectangle {
         anchors.leftMargin: width/10
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height
+        height: statusBar.height*(logoButtonArea.pressed?1.1:1.0)
         smooth: true
         /*
         RotationAnimation on rotation {
@@ -29,6 +30,13 @@ Rectangle {
             duration: 10000
         }
         */
+        MouseArea {
+			id: logoButtonArea
+            anchors.fill: parent
+            onClicked: {
+                logoClicked(); 
+            }
+        }
 
     }
     Image {
