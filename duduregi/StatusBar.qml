@@ -20,7 +20,8 @@ Rectangle {
         anchors.leftMargin: width/10
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height*(logoButtonArea.pressed?1.1:1.0)
+        height: statusBar.height
+		opacity: (logoButtonArea.pressed?0.8:1.0)
         smooth: true
         /*
         RotationAnimation on rotation {
