@@ -41,6 +41,7 @@ Item {
 			name: "Navigation";
 			icon: "icons/navi.png"
 			type: "quick-html5app"
+			iconRotate: false
 			//path: 'file:///opt/windriver/wr-amb/www/html5apps/WRNavigation/index.html';
 			//path: 'file:///home/sryu/projects/lg_demo/hello/www/index.html';
 			path: 'file:///opt/windriver/share/html5apps/WRNavigation/index.html';
@@ -49,6 +50,7 @@ Item {
 			name: "HVAC";
 			icon: "icons/hvac.png"
 			type: "quick-html5app"
+			iconRotate: false
 			path: 'file:///opt/windriver/share/html5apps/WRHVAC/index.html';
 		}
 		ListElement {
@@ -57,13 +59,13 @@ Item {
 			type: "quick-html5app"
 			path: 'file:///opt/windriver/share/html5apps/WRWaterDepth/index.html';
 		}
+		/*
 		ListElement {
 			name: "Settings";
 			icon: "icons/settings.png"
 			type: "quick-html5app"
 			//path: 'file:///opt/usr/apps/GV3ySIINq7/res/wgt/index.html';
-			//path: 'file:///opt/usr/apps/ODBQpKvkS1/res/wgt/index.html';
-			path: 'file:///opt/windriver/share/html5apps/WRIPodPlayer/index.html';
+			path: 'file:///opt/usr/apps/ODBQpKvkS1/res/wgt/index.html';
 		}
 		ListElement {
 			name: "Smart Device Link HMI Sample";
@@ -86,7 +88,16 @@ Item {
 			launcherType: "wayland"
 			background: "images/xdg-background.png"
 		}
+		*/
 	/*ListElement { name: "CSS3 Demo"; icon: "icons/angrybird.png" }*/
+
+		ListElement {
+			name: "iPod";
+			icon: "icons/ipod-shuffle-4g.png"
+			type: "quick-html5app"
+			iconRotate: false
+			path: 'file:///opt/windriver/share/html5apps/WRIPodPlayer/index.html';
+		}
     }
 
 
