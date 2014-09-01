@@ -13,7 +13,8 @@
 ### END INIT INFO
 
 NAME=ipod-daemon-2
-DAEMON=/usr/bin/$NAME
+#DAEMON=/usr/bin/$NAME
+DAEMON=/opt/windriver/bin/$NAME
 PATH=/sbin:/bin:/usr/bin
 PIDFILE=/var/run/ipod-daemon.pid
 
@@ -28,35 +29,34 @@ cp_reset() {
 }
 
 ipod_daemon_start() {
-        echo "Starting $NAME"
-        cp_reset
-	start-stop-daemon --start --background --make-pidfile --pidfile $PIDFILE -exec "$DAEMON"
+	echo "Starting $NAME"
+	cp_reset
+	start-stop-daemon --start --background --make-pidfile --pidfile $PIDFILE --exec "$DAEMON"
 }
 
 ipod_daemon_stop() {
-        echo "Stopping $NAME"
+	echo "Stopping $NAME"
 	start-stop-daemon --stop --background --pidfile $PIDFILE --exec "$DAEMON"
 	rm -f $PIDFILE
 }
 
 
 case "$1" in
-        start|stop)
-                ipod_daemon_${1}
-                ;;
-        restart)
-                echo "Restarting $DAEMON"
-                ipod_daemon_stop
-                sleep 1
-                ipod_daemon_start
-                ;;
-        status)
-                ;;
-        *)
-                echo "Usage: /etc/init.d/ipod-daemon {start|stop|restart|status}"
-                exit 1
-                ;;
-
+	start|stop)
+			ipod_daemon_${1}
+			;;
+	restart)
+			echo "Restarting $DAEMON"
+			ipod_daemon_stop
+			sleep 1
+			ipod_daemon_start
+			;;
+	status)
+			;;
+	*)
+			echo "Usage: /etc/init.d/ipod-daemon {start|stop|restart|status}"
+			exit 1
+			;;
 esac
 
 exit 0
