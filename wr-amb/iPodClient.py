@@ -185,6 +185,7 @@ class IPodMessageBroker (objects.DBusObject):
                            Method('play', arguments='', returns=''),
                            Method('pause', arguments='', returns=''),
                            Method('current_artwork', arguments='', returns='s'),
+                           Method('get_trackinfo', arguments='', returns=''),
 
                            Signal('track_position_changed', 'u'),
                            Signal('track_changed', 'u'),
@@ -254,6 +255,12 @@ class IPodMessageBroker (objects.DBusObject):
             return base64.encodestring(png).replace('\n','')
         else:
             return ''
+
+    def dbus_get_trackinfo(self):
+        global connection
+        print 'get_trackinfo', connection
+        if connection:
+            deferred_call('get trackinfo', wrs_ipod_current_track_info, connection)
 
     def sendEvent(self, obj):
         event = obj['event']

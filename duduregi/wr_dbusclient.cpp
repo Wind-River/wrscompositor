@@ -92,6 +92,7 @@ void WRDBusClient::slotTrackInfoChanged(int repeatState, int shuffleState, uint 
 
 void WRDBusClient::slotConnected() {
     mConnected = 1;
+    QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "get_trackinfo"));
     emit connectionChanged();
 }
 
