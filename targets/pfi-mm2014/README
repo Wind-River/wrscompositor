@@ -1,0 +1,3 @@
+systemctl enable X.service
+systemctl enable pulseaudio.service
+systemctl enable ipod-daemon-2.service

@@ -173,6 +173,29 @@ def reply_cb(c, tid, retval, error, ud):
                 broadcast({'event': 'current artwork', 'data':
                             {'image': base64.encodestring(png).replace('\n',''),
                             'width': w, 'height': h, 'rowstride': rowstride}})
+
+        # start scenario for list album category
+        elif 'set category album' == scenario:
+            num = wrs_ipod_record_count(c)
+            if num > 0:
+                deferred_call('fetch album list', wrs_ipod_get_records, c, 0, num)
+            else:
+                broadcast({'event': 'album loaded', 'data': []})
+        elif 'fetch album list' == scenario:
+            num = wrs_ipod_record_count(c)
+            list = []
+            for x in range(num):
+                list.append(wrs_ipod_record(c, x))
+            broadcast({'event': 'album loaded', 'data': list})
+        # end scenario for list album category
+        '''
+        elif 'set select db' == scenario:
+            num = wrs_ipod_record_count(c)
+            if num > 0:
+                deferred_call('fetch album list', wrs_ipod_get_records, c, 0, num)
+            else:
+                broadcast({'event': 'album loaded', 'data': []})
+        '''
         else:
             print scenario
 
@@ -217,6 +240,10 @@ class IPodController:
             deferred_call('get artwork', wrs_ipod_current_track_artwork, self.c, args[0])
         elif func == 'seek':
             deferred_call(None, wrs_ipod_set_position, self.c, args[0])
+        elif func == 'get_list':
+            deferred_call('set category album', wrs_ipod_set_category, self.c, args[0])
+        elif func == 'select_db':
+            deferred_call('set select db', wrs_ipod_select_db, self.c, args[0], args[1])
 
 IMB = None
 class IPodMessageBroker (objects.DBusObject):
