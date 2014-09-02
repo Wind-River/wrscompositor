@@ -14,8 +14,43 @@ from ipod.wrs_ipod_2 import *
 from txdbus import client, objects
 from txdbus.interface import DBusInterface, Method, Signal, Property
 from txdbus.objects import dbusMethod, DBusProperty
+from subprocess import Popen, PIPE, STDOUT
 
 connection = None
+
+parec = None
+pacat = None
+
+def sound_on():
+    global parec, pacat
+    p=Popen(('pacmd', 'list-sources'), stdin=PIPE, stdout=PIPE)
+    name = ''
+    for x in p.stdout.read().split('\n'):
+        l = x.strip()
+        if l.startswith('name:'):
+            name = l.split(':', 1)[1].strip()[1:-1]
+            break
+    if name != '':
+        parec=Popen(('parec', '-d', name), stdout=PIPE, stdin=PIPE)
+        pacat=Popen(('pacat', '--volume=30000'), stdout=PIPE, stdin=parec.stdout)
+
+def sound_off():
+    global parec, pacat
+    if parec:
+        try:
+            parec.terminate()
+        except OSError:
+            pass
+        parec.wait()
+        parec = None
+
+    if pacat:
+        try:
+            pacat.terminate()
+        except OSError:
+            pass
+        pacat.wait()
+        pacat = None
 
 cmds = []
 def deferred_call(scenario, func, *args):
@@ -51,7 +86,6 @@ def rgb565topng(bin, w, h, rowstride):
     # binary PNG data
     return f.getvalue()
 
-
 def event_cb(c, _ev, ud):
     ev = wrs_ipod_event_type(_ev)
     broadcast = ud
@@ -76,6 +110,11 @@ def event_cb(c, _ev, ud):
     elif WRSIPOD_EVENT_PLAYSTATE_CHANGED == ev:
         print 'play state changed'
         broadcast({'event': 'playstate changed', 'data': wrs_ipod_current_track_state(c)})
+        if WRSIPOD_PLAY_STATE_PLAYING == wrs_ipod_current_track_state(c):
+            sound_on()
+        else:
+            sound_off()
+
     elif WRSIPOD_EVENT_TRACK_CHANGED == ev:
         print 'track changed', wrs_ipod_current_track_index(c)
         broadcast({'event': 'track changed', 'data': wrs_ipod_current_track_index(c)})
