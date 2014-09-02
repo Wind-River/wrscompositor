@@ -1,0 +1,13 @@
+[Unit]
+Description=WindRiver Automotive Message Broker
+Requires=dbus.service
+After=dbus.service
+After=ipod-daemon-2.service
+
+[Service]
+Type=Simple
+Environment=LD_LIBRARY_PATH=/opt/windriver/lib
+ExecStart=/opt/windriver/wr-amb/wr-amb
+
+[Install]
+WantedBy=multi-user.target
