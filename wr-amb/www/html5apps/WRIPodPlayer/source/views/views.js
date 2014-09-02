@@ -1,5 +1,6 @@
 var websocket = null;
 var playstate = 0;
+var artworkImage = null;
 var haha = null;
 
 
@@ -16,39 +17,34 @@ enyo.kind({
             classes: "panels enyo-fit",
 
             components: [
-                {kind: "enyo.Panels", name: "headerPanels", classes: "enyo-fit",
+                {kind: "enyo.Panels", name: "contentPanels", classes: "enyo-fit",
+                    arrangerKind: "CardArranger", onTransitionFinish: "contentTransitionCompleted",
                     components: [
-                        {kind: "FittableRows", name: "headerRows", classes: "enyo-fit", components: [
-                            /*
-                            {kind: "onyx.Toolbar", name: "headerToolbar", layoutKind: "FittableColumnsLayout", components: [
-                                {content: "iPOD Player"},
-                                {fit: true},
-                                {kind: "onyx.Button", name: "listButton", content: "List", ontap: "listOnTab"},
-                            ]},
-                            */
-                            {kind: "enyo.Panels", name: "contentPanels", classes: "content-panel", fit: true,
-                                arrangerKind: "CardArranger", onTransitionFinish: "contentTransitionCompleted",
-                                components: [
-                                    {kind: "FittableRows", name: "controller", classes: "wide", fit: true, components: [
-                                        {kind: "FittableColumns", noStretch: true, fit: true, classes: "song-info-align-center", components: [
-                                            {kind: "enyo.Image", name: "artwork", classes: "artwork-image" },
-                                            {kind: "FittableRows", classes: "song-info-center", components: [
-                                                {name: "songTitle", content: "", style: "text-align: left; margin-bottom: 10px"},
-                                                {name: "songAlbum", content: "", style: "text-align: left; margin-bottom: 10px"},
-                                                {name: "songArtist", content: "", style: "text-align: left"},
-                                            ]},
-                                        ]},
-                                        {kind: "onyx.ProgressBar", name: "timeTrack", progress: 0, showStripes: false},
-                                        {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", classes: "enyo-center", components: [
-                                            {kind: "onyx.Button", content: "<<", ontap: "prevOnTap"},
-                                            {kind: "onyx.Button", name: "playButton", content: "play", ontap: "playOnTap"},
-                                            {kind: "onyx.Button", content: ">>", ontap: "nextOnTap"},
-                                            {kind: "onyx.Button", name: "listButton", content: "List", classes: "list-button", ontap: "listOnTab"},
-                                        ]},
+                        {kind: "FittableRows", name: "controller", classes: "wide", fit: true, components: [
+                            {kind: "FittableColumns", noStretch: true, fit: true, classes: "song-info-align-center", components: [
+                                {kind: "enyo.Image", name: "artwork", classes: "artwork-image" },
+                                {kind: "FittableRows", classes: "song-info-center", components: [
+                                    {name: "songTitle", content: "", style: "text-align: left; margin-bottom: 10px"},
+                                    {name: "songAlbum", content: "", style: "text-align: left; margin-bottom: 10px"},
+                                    {name: "songArtist", content: "", style: "text-align: left; margin-bottom: 10px"},
+                                    {kind: "FittableColumns", components: [
+                                        {name: "songCurrentTime", style: "text-align: left"},
+                                        {content: "/", classes: "song-timeinfo" },
+                                        {name: "songTotalTime", style: "text-align: right"},
                                     ]},
-                                ]
-                            },
-                        ]}
+                                ]},
+                            ]},
+                            {kind: "onyx.ProgressBar", name: "timeTrack", progress: 0, showStripes: false},
+                            {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch:true, classes: "control-toolbar", components: [
+                                {kind: "FittableColumns", noStretch: true, components: [
+                                    {kind: "onyx.IconButton", src: "assets/prev.png", ontap: "prevOnTap"},
+                                    {kind: "onyx.IconButton", src: "assets/pause.png", name: "playButton", ontap: "playOnTap"},
+                                    {kind: "onyx.IconButton", src: "assets/next.png", ontap: "nextOnTap"},
+                                ]},
+                                {fit: true},
+                                {kind: "onyx.IconButton", name: "listButton", src: "assets/list.png", classes: "list-button", ontap: "listOnTab"},
+                            ]},
+                        ]},
                     ]
                 },
             ]
@@ -74,19 +70,19 @@ enyo.kind({
 
     playOnTap: function(inSender, inEvent) {
         if (playstate == 4) { // playing
-            this.$.playButton.setContent("pause");
+            this.$.playButton.setSrc("assets/pause.png");
             this.command("pause");
         } else if (playstate == 0 || playstate == 5) { // stopped or paused
-            this.$.playButton.setContent("play");
+            this.$.playButton.setSrc("assets/play.png");
             this.command("play");
         }
     },
 
     updatePlayPauseButton: function() {
         if (playstate == 4) { // playing
-            this.$.playButton.setContent("pause");
+            this.$.playButton.setSrc("assets/pause.png");
         } else if (playstate == 5) { // paused
-            this.$.playButton.setContent("play");
+            this.$.playButton.setSrc("assets/play.png");
         }
     },
 
@@ -103,27 +99,24 @@ enyo.kind({
         newComponent.render();
         this.$.contentPanels.render();
         this.$.contentPanels.setIndex(1);
+    },
 
-        /*
-        var text = this.$.listButton.getContent();
-        if (text.localeCompare("List") == 0) {
-            this.$.listButton.setContent("Close");
-            this.$.headerRows.resize();
-
-            var newComponent = this.$.contentPanels.createComponent({name: "songList", kind: "songListView"}, {owner: this});
-            newComponent.render();
-            this.$.contentPanels.render();
-            this.$.contentPanels.setIndex(1);
-        } else {
-            this.$.listButton.setContent("List");
-            this.hideSongList();
+    updateTrackTimeInfo: function(current, total) {
+        var currentTime = Math.floor(current / 1000);
+        currentTime = Math.floor(currentTime / 60) + ":" + (currentTime % 60);
+        this.$.songCurrentTime.setContent(currentTime);
+        if (total != null) {
+            var totalTime = Math.floor(total / 1000);
+            totalTime = Math.floor(totalTime / 60) + ":" + (totalTime % 60);
+            this.$.songTotalTime.setContent(totalTime);
         }
-        */
     },
 
     hideSongList: function(inSender, inEvent) {
         this.hidingSongList = true;
         this.$.contentPanels.setIndex(0);
+        //this.updateArtwork('data:image/png;base64,' + artworkImage);
+        //console.log("artwork : " + artworkImage);
     },
 
     resized: function() {
@@ -167,9 +160,9 @@ enyo.kind({
         ]}
         */
         {fit: true},
-        {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", classes: "enyo-center", components: [
+        {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch: true, components: [
             {fit: true},
-            {kind: "onyx.Button", name: "CloseButton", content: "Close", ontap: "doHideSongList"},
+            {kind: "onyx.IconButton", name: "CloseButton", src: "assets/close.png", ontap: "doHideSongList"},
         ]},
 
     ],
@@ -177,7 +170,7 @@ enyo.kind({
 
 function handleMessage(event) {
     console.log('handle message');
-    console.log('event :' + event.data);
+    //console.log('event :' + event.data);
     var obj = JSON.parse(event.data);
     console.log(obj);
     var evt = obj.event;
@@ -193,15 +186,20 @@ function handleMessage(event) {
             this.updateArtwork("assets/default_artwork.jpg");
         }
 
-        this.$.timeTrack.max = data.track_length;
+        var trackLength = data.track_length;
+        this.updateTrackTimeInfo(data.track_position, trackLength);
+
+        this.$.timeTrack.max = trackLength;
         this.$.songTitle.setContent("title : " + data.title);
         this.$.songAlbum.setContent("album : " + data.album);
         this.$.songArtist.setContent("artist : " + data.artist);
         this.command('get_artwork', obj.data.track_index);
     } else if (evt == "current artwork") {
-        this.updateArtwork('data:image/png;base64,' + data.image);
+        artworkImage = data.image;
+        this.updateArtwork('data:image/png;base64,' + artworkImage);
     } else if (evt == "track position changed") {
         this.$.timeTrack.animateProgressTo(data);
+        this.updateTrackTimeInfo(data);
     } else if (evt == "track changed") {
         this.$.timeTrack.animateProgressTo(0);
     } else if (evt == "playstate changed") {
