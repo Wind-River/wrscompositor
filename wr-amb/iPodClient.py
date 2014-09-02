@@ -8,10 +8,11 @@ import time
 import base64
 import struct
 import png
+import os
 from StringIO import StringIO
 from ipod.wrs_ipod_2 import *
 
-from txdbus import client, objects
+from txdbus import client, objects, error
 from txdbus.interface import DBusInterface, Method, Signal, Property
 from txdbus.objects import dbusMethod, DBusProperty
 from subprocess import Popen, PIPE, STDOUT
@@ -187,15 +188,15 @@ def reply_cb(c, tid, retval, error, ud):
             for x in range(num):
                 list.append(wrs_ipod_record(c, x))
             broadcast({'event': 'album loaded', 'data': list})
-        # end scenario for list album category
-        '''
+            # end scenario for list album category
+            '''
         elif 'set select db' == scenario:
             num = wrs_ipod_record_count(c)
             if num > 0:
                 deferred_call('fetch album list', wrs_ipod_get_records, c, 0, num)
             else:
                 broadcast({'event': 'album loaded', 'data': []})
-        '''
+            '''
         else:
             print scenario
 
@@ -357,7 +358,7 @@ class IPodMessageBroker (objects.DBusObject):
 def dbusMain():
     global IMB
     try:
-        conn = yield client.connect(reactor)
+        conn = yield client.connect(reactor, os.getuid()==0 and 'system' or 'session')
         IMB = IPodMessageBroker('/iPod')
         conn.exportObject( IMB )
         yield conn.requestBusName('com.windriver.automotive')
