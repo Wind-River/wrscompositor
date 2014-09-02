@@ -135,6 +135,7 @@ def event_cb(c, _ev, ud):
     else:
         print 'event no ', ev
 
+select_db_args = []
 def reply_cb(c, tid, retval, error, ud):
     print 'reply_cb', c, tid, retval, error, ud
     broadcast = ud
@@ -188,15 +189,17 @@ def reply_cb(c, tid, retval, error, ud):
             for x in range(num):
                 list.append(wrs_ipod_record(c, x))
             broadcast({'event': 'album loaded', 'data': list})
-            # end scenario for list album category
-            '''
-        elif 'set select db' == scenario:
+        # end scenario for list album category
+        elif 'set select category' == scenario:
             num = wrs_ipod_record_count(c)
+            print 'set select category : count = ', num
             if num > 0:
-                deferred_call('fetch album list', wrs_ipod_get_records, c, 0, num)
-            else:
-                broadcast({'event': 'album loaded', 'data': []})
-            '''
+                print select_db_args
+                deferred_call('set select db', wrs_ipod_select_db, c, select_db_args[0], WRSIPOD_CATEGORY_TRACK)
+
+        elif 'set select db' == scenario:
+            print select_db_args
+            deferred_call(None, wrs_ipod_select_db, c, select_db_args[1], WRSIPOD_CATEGORY_TRACK)
         else:
             print scenario
 
@@ -244,7 +247,9 @@ class IPodController:
         elif func == 'get_list':
             deferred_call('set category album', wrs_ipod_set_category, self.c, args[0])
         elif func == 'select_db':
-            deferred_call('set select db', wrs_ipod_select_db, self.c, args[0], args[1])
+            global select_db_args
+            select_db_args = args[1:]
+            deferred_call('set select category', wrs_ipod_set_category, self.c, args[0])
 
 IMB = None
 class IPodMessageBroker (objects.DBusObject):
