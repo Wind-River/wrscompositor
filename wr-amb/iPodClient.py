@@ -257,11 +257,12 @@ class IPodMessageBroker (objects.DBusObject):
                            Method('play', arguments='', returns=''),
                            Method('pause', arguments='', returns=''),
                            Method('current_artwork', arguments='', returns='s'),
+                           Method('get_artwork', arguments='i', returns=''),
                            Method('get_trackinfo', arguments='', returns=''),
 
                            Signal('track_position_changed', 'u'),
-                           Signal('track_changed', 'u'),
-                           Signal('track_info', 'iiuuuuussss'),
+                           Signal('track_changed', 'i'),
+                           Signal('track_info', 'iiuiuuussss'),
                            Signal('playstate_changed', 'u'),
                            Signal('shuffle_changed', 'i'),
                            Signal('repeat_changed', 'i'),
@@ -333,6 +334,11 @@ class IPodMessageBroker (objects.DBusObject):
         print 'get_trackinfo', connection
         if connection:
             deferred_call('get trackinfo', wrs_ipod_current_track_info, connection)
+    def dbus_get_artwork(self, index):
+        global connection
+        print 'get_artwork', connection
+        if connection:
+            deferred_call('get artwork', wrs_ipod_current_track_artwork, connection, index)
 
     def sendEvent(self, obj):
         event = obj['event']
@@ -350,7 +356,7 @@ class IPodMessageBroker (objects.DBusObject):
             self.artist = data['artist']
             self.album = data['album']
 
-            self.emitSignal('track_info', data['repeat_state'], data['shuffle_state'], data['number_of_tracks'], data['track_timestamp'], data['track_length'], data['playstate'], data['has_artwork'], data['title'] and data['title'] or "", data['chapter'] and data['chapter'] or "", data['artist'] and data['artist'] or "", data['album'] and data['album'] or "")
+            self.emitSignal('track_info', data['repeat_state'], data['shuffle_state'], data['number_of_tracks'], data['track_index'], data['track_length'], data['playstate'], data['has_artwork'], data['title'] and data['title'] or "", data['chapter'] and data['chapter'] or "", data['artist'] and data['artist'] or "", data['album'] and data['album'] or "")
         elif event == 'current artwork':
             #self.artwork = base64.decodestring(data['image'])
             #self.emitSignal('artwork_info', data['width'], data['height'], data['image'])

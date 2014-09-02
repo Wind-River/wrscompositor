@@ -292,5 +292,7 @@ D/ConsoleMessage( 1401): file:///root/WRNavigation/gsocket.js:32:onmessage: {"ty
 class WSFactory(Factory):
     protocol = DSGWProtocol
 
+def monitor_ipod():
+    run_ipodclient(sendIPodEvent)
 
 # vim: sw=4 ts=8 sts=4 et bs=2 fdm=marker fileencoding=utf8

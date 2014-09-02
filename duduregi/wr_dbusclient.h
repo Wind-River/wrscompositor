@@ -12,7 +12,7 @@ class WRDBusClient: public QObject
     Q_PROPERTY(int repeatState READ repeatState NOTIFY trackInfoChanged)
     Q_PROPERTY(int shuffleState READ shuffleState NOTIFY trackInfoChanged)
     Q_PROPERTY(unsigned int numberOfTracks READ numberOfTracks NOTIFY trackInfoChanged)
-    Q_PROPERTY(unsigned int trackTimestamp READ trackTimeStamp NOTIFY trackInfoChanged)
+    Q_PROPERTY(unsigned int trackIndex READ trackIndex NOTIFY trackInfoChanged)
     Q_PROPERTY(unsigned int trackLength READ trackLength NOTIFY trackInfoChanged)
     Q_PROPERTY(unsigned int playState READ playState NOTIFY trackInfoChanged)
     Q_PROPERTY(unsigned int hasArtwork READ hasArtwork NOTIFY trackInfoChanged)
@@ -34,7 +34,7 @@ public:
     int repeatState() { return mRepeatState; };
     int shuffleState() { return mShuffleState; };
     unsigned int numberOfTracks() { return mNumberOfTracks; };
-    unsigned int trackTimeStamp() { return mTrackTimeStamp; };
+    int trackIndex() { return mTrackIndex; };
     unsigned int trackLength() { return mTrackLength; };
     unsigned int playState() { return mPlayState; };
     unsigned int hasArtwork() { return mHasArtwork; };
@@ -53,13 +53,14 @@ signals:
     void artworkChanged();
 
 public slots:
-    void slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &);
+    void slotTrackInfoChanged(int, int, uint, int, uint, uint, uint, const QString &, const QString &, const QString &, const QString &);
     void slotPlayStateChanged(uint);
     void slotTrackPositionChanged(uint);
     //void slotArtworkChanged(uint, uint, const QString &);
     void slotArtworkChanged(uint, uint);
     void slotConnected();
     void slotDisconnected();
+    void slotTrackChanged(int);
 
 private:
     int mConnected;
@@ -67,7 +68,7 @@ private:
     int mRepeatState;
     int mShuffleState;
     unsigned int mNumberOfTracks;
-    unsigned int mTrackTimeStamp;
+    unsigned int mTrackIndex;
     unsigned int mTrackLength;
     unsigned int mPlayState;
     unsigned int mHasArtwork;

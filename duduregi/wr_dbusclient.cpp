@@ -13,7 +13,7 @@ WRDBusClient::WRDBusClient() {
     mRepeatState = 0;
     mShuffleState = 0;
     mNumberOfTracks = 0;
-    mTrackTimeStamp = 0;
+    mTrackIndex = 0;
     mTrackLength = 0;
     mPlayState = 0;
     mHasArtwork = 0;
@@ -26,13 +26,14 @@ WRDBusClient::WRDBusClient() {
 
     //QDBusConnection::systemBus().registerService("com.windriver.duduregi");
     //QDBusConnection::systemBus().registerObject("/", this);
-    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, int, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "playstate_changed", this, SLOT(slotPlayStateChanged(uint)));
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_position_changed", this, SLOT(slotTrackPositionChanged(uint)));
     //QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint, const QString &)));
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint)));
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "ipod_connected", this, SLOT(slotConnected()));
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "ipod_disconnected", this, SLOT(slotDisconnected()));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_changed", this, SLOT(slotTrackChanged(int)));
 }
 
 void WRDBusClient::play() {
@@ -73,13 +74,13 @@ void WRDBusClient::slotArtworkChanged(uint w, uint h) {
         qDebug() << "artwork invalid";
 }
 
-void WRDBusClient::slotTrackInfoChanged(int repeatState, int shuffleState, uint numberOfTracks, uint trackTimeStamp, uint trackLength, uint playState, uint hasArtwork, const QString &title, const QString &chapter, const QString &artist, const QString &album) {
+void WRDBusClient::slotTrackInfoChanged(int repeatState, int shuffleState, uint numberOfTracks, int trackIndex, uint trackLength, uint playState, uint hasArtwork, const QString &title, const QString &chapter, const QString &artist, const QString &album) {
     if(mConnected != 1)
         slotConnected();
     mRepeatState =    repeatState;
     mShuffleState =   shuffleState;
     mNumberOfTracks = numberOfTracks;
-    mTrackTimeStamp = trackTimeStamp;
+    mTrackIndex =     trackIndex;
     mTrackLength =    trackLength;
     mPlayState =      playState;
     mHasArtwork =     hasArtwork;
@@ -88,6 +89,9 @@ void WRDBusClient::slotTrackInfoChanged(int repeatState, int shuffleState, uint 
     mArtist =         artist;
     mAlbum =          album;
     emit trackInfoChanged();
+    QDBusMessage message = QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "get_artwork");
+    message << trackIndex;
+    QDBusConnection::systemBus().call(message);
 }
 
 void WRDBusClient::slotConnected() {
@@ -99,4 +103,10 @@ void WRDBusClient::slotConnected() {
 void WRDBusClient::slotDisconnected() {
     mConnected = 0;
     emit connectionChanged();
+}
+
+void WRDBusClient::slotTrackChanged(int index) {
+    qDebug() << "track changed" << index;
+    if(index >= 0)
+        QDBusConnection::systemBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "get_trackinfo"));
 }
