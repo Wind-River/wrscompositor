@@ -127,6 +127,16 @@
     margin-left: 2em;
 }
 
+.control-toolbar {
+    padding-left: 15em;
+
+}
+
 .list-button {
     margin-left: 10em;
+}
+
+.song-timeinfo {
+    padding-left: 10px;
+    padding-right: 10px;
 }
