@@ -3,6 +3,7 @@
 #define WR_DBUSCLIENT_H
 
 #include <QtCore/QObject>
+#include <QtDBus/QtDBus>
 
 class WRDBusClient: public QObject
 {

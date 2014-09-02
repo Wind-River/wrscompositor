@@ -5,7 +5,7 @@
 
 
 WRDBusClient::WRDBusClient() {
-    if (!QDBusConnection::sessionBus().isConnected()) {
+    if (!QDBusConnection::systemBus().isConnected()) {
         qDebug() << "Could not connect to the D-Bus session.\n";
         return;
     }
@@ -24,23 +24,23 @@ WRDBusClient::WRDBusClient() {
     mArtwork = "";
     mTrackPosition = 0;
 
-    //QDBusConnection::sessionBus().registerService("com.windriver.duduregi");
-    //QDBusConnection::sessionBus().registerObject("/", this);
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "playstate_changed", this, SLOT(slotPlayStateChanged(uint)));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "track_position_changed", this, SLOT(slotTrackPositionChanged(uint)));
-    //QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint, const QString &)));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint)));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "ipod_connected", this, SLOT(slotConnected()));
-    QDBusConnection::sessionBus().connect(QString(), QString(), "com.windriver.iAP1", "ipod_disconnected", this, SLOT(slotDisconnected()));
+    //QDBusConnection::systemBus().registerService("com.windriver.duduregi");
+    //QDBusConnection::systemBus().registerObject("/", this);
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, uint, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "playstate_changed", this, SLOT(slotPlayStateChanged(uint)));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_position_changed", this, SLOT(slotTrackPositionChanged(uint)));
+    //QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint, const QString &)));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "artwork_info", this, SLOT(slotArtworkChanged(uint, uint)));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "ipod_connected", this, SLOT(slotConnected()));
+    QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "ipod_disconnected", this, SLOT(slotDisconnected()));
 }
 
 void WRDBusClient::play() {
-    QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "play"));
+    QDBusConnection::systemBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "play"));
 }
 
 void WRDBusClient::pause() {
-    QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "pause"));
+    QDBusConnection::systemBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "pause"));
 }
 
 void WRDBusClient::slotTrackPositionChanged(uint position) {
@@ -63,7 +63,7 @@ void WRDBusClient::slotArtworkChanged(uint w, uint h) {
 
     qDebug() << "artwork info" << w << h;
 
-    QDBusReply<QString> reply = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "current_artwork"));
+    QDBusReply<QString> reply = QDBusConnection::systemBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "current_artwork"));
     if(reply.isValid()) {
         qDebug() << "artwork valid";
         mArtwork = reply.value();
@@ -92,7 +92,7 @@ void WRDBusClient::slotTrackInfoChanged(int repeatState, int shuffleState, uint 
 
 void WRDBusClient::slotConnected() {
     mConnected = 1;
-    QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "get_trackinfo"));
+    QDBusConnection::systemBus().call(QDBusMessage::createMethodCall ("com.windriver.automotive", "/iPod", "com.windriver.iAP1", "get_trackinfo"));
     emit connectionChanged();
 }
 
