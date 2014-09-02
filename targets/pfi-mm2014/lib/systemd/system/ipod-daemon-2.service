@@ -9,4 +9,4 @@ ExecStartPre=/opt/windriver/bin/cp-reset
 ExecStart=/opt/windriver/bin/ipod-daemon-2 -tmm2014 /dev/i2c-1
 
 [Install]
-WantedBy=multi-user.target.wants
+WantedBy=multi-user.target
