@@ -2,6 +2,7 @@ import QtQuick 1.0
 
 Item {
     id: mainMenu
+    signal menuShowRequested;
     signal menuActivated(bool flag)
     property variant root: null
     Rectangle {
@@ -33,7 +34,6 @@ Item {
         }
     }
     */
-    
 
     ListModel {
 		id: appModel
@@ -104,14 +104,20 @@ Item {
     CoverFlow {
         id: coverFlow
         root: mainMenu.root
-	listModel: appModel
+		listModel: appModel
 
-	width: parent.width
-	anchors.fill: parent
+		width: parent.width
+		anchors.fill: parent
 
 
-	itemWidth: ((height / 1.8)|0)
-	itemHeight: itemWidth
+		itemWidth: ((height / 1.8)|0)
+		itemHeight: itemWidth
+
+		Component.onCompleted: {
+			mainMenu.menuShowRequested.connect(function() {
+    			menuShowRequested()
+			})
+		}
     }
 
     /*

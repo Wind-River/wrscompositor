@@ -215,11 +215,14 @@ Item {
                     hide();
                 })
                 statusBar.logoClicked.connect(function() {
-                    console.log('logo clicked');
-					if(mainmenu.visible)
-						mainmenu.hide();
+					if(!mainmenu.visible)
+            			mainmenu.show()
 					else
-						mainmenu.show()
+						menuShowRequested()
+                })
+                statusBar.closeWindow.connect(function() {
+                    console.log('close clicked');
+                    hide();
                 })
             }
             onMenuActivated: {
@@ -366,6 +369,7 @@ Item {
     Keys.onPressed: {
         console.log('key on main: '+event.key);
         if (event.key == Qt.Key_F1) {
+			console.log('[41mF1 - 3 !!!![0m\n');
             mainmenu.show()
         } else if (event.key == Qt.Key_Backspace) {
             console.log('backspace');

@@ -12,6 +12,9 @@ Item {
     property ListModel listModel
 
     signal indexChanged(int index)
+    signal menuShowRequested;
+    signal menuShow(int index);
+
     function show() {
         myPathView.focus = true;
     }
@@ -86,6 +89,15 @@ Item {
                 } else {
                 }
             }
+			Component.onCompleted: {
+				coverFlow.menuShow.connect(function(i) {
+					if(index == i) {
+						webview.focus = false;
+						itemClicked();
+						myFlipable.focus = true;
+					}
+				})
+			}
 
             Keys.onPressed: {
                 console.log('key on flipable: '+event.key);
@@ -304,5 +316,8 @@ Item {
 	myPathView.currentIndexChanged.connect(function(){
 	    indexChanged(myPathView.currentIndex);
 	})
+		coverFlow.menuShowRequested.connect(function() {
+			menuShow(myPathView.currentIndex);
+		})
     }
 }
