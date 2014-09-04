@@ -140,3 +140,19 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.song-listview {
+    background: url(../../assets/bg.png);
+}
+
+.song-list-item {
+    border: 1px solid silver;
+    background-color: #333333;
+    padding: 12px;
+    color: white;
+}
+
+.footer-toolbar {
+    height: 66px;
+    overflow: visible;
+}

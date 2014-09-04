@@ -1,8 +1,27 @@
 var websocket = null;
 var playstate = 0;
-var artworkImage = null;
-var haha = null;
+var updateList = null;
+var ipodData = [];
 
+var WRSIPodCategory = Object.freeze({
+    TOP : 0,
+    PLAYLIST : 1,
+    ARTIST : 2,
+    ALBUM : 3,
+    GENRE : 4,
+    TRACK : 5,
+    COMPOSER : 6,
+    AUDIOBOOK : 7,
+    PODCAST : 8,
+    NESTED_PLAYLIST : 9,
+    GENIUS_MIXES : 10,
+    ITUNES_U : 11,
+});
+
+// XXX for test
+var artworkImage = null;
+var main = null;
+var playlist = null;
 
 enyo.kind({
     name: "myapp.MainView",
@@ -53,28 +72,29 @@ enyo.kind({
 
     create: function() {
         this.inherited(arguments);
-        haha = this;
+        // XXX
+        main = this;
 
         var wsUrl = "ws://"+window.location.hostname+":9090/";
         websocket = new WebSocket(wsUrl, 'ipod');
 
         websocket.onopen = function(evt) { console.log('onopen'); };
         websocket.onclose = function(evt) { console.log('onclose'); };
-        websocket.onmessage =  enyo.bind(this, handleMessage);
+        websocket.onmessage = enyo.bind(this, handleMessage);
         websocket.onerror = function(evt) { console.log('onopen'); };
     },
 
     prevOnTap: function(inSender, inEvent) {
-        this.command("prev");
+        command("prev");
     },
 
     playOnTap: function(inSender, inEvent) {
         if (playstate == 4) { // playing
             this.$.playButton.setSrc("assets/pause.png");
-            this.command("pause");
+            command("pause");
         } else if (playstate == 0 || playstate == 5) { // stopped or paused
             this.$.playButton.setSrc("assets/play.png");
-            this.command("play");
+            command("play");
         }
     },
 
@@ -90,24 +110,36 @@ enyo.kind({
         this.$.artwork.setSrc(src);
     },
 
+    updateAlbumList: function(data) {
+        ipodData = data;
+        console.log("updateAlubmList : updateList = " + updateList);
+        if (updateList != null) {
+            updateList();
+            updateList = null;
+        }
+    },
+
     nextOnTap: function(inSender, inEvent) {
-        this.command("next");
+        command("next");
     },
 
     listOnTab: function(inSender, inEvent) {
+        var albumNum = 3;
+        command("get_list", albumNum);
         var newComponent = this.$.contentPanels.createComponent({name: "songList", kind: "songListView"}, {owner: this});
         newComponent.render();
         this.$.contentPanels.render();
+        this.$.contentPanels.resize();
         this.$.contentPanels.setIndex(1);
     },
 
     updateTrackTimeInfo: function(current, total) {
         var currentTime = Math.floor(current / 1000);
-        currentTime = Math.floor(currentTime / 60) + ":" + (currentTime % 60);
+        currentTime = sprintf("%2d:%02d", Math.floor(currentTime / 60), (currentTime % 60));
         this.$.songCurrentTime.setContent(currentTime);
         if (total != null) {
             var totalTime = Math.floor(total / 1000);
-            totalTime = Math.floor(totalTime / 60) + ":" + (totalTime % 60);
+            totalTime = sprintf("%2d:%02d", Math.floor(totalTime / 60), (totalTime % 60));
             this.$.songTotalTime.setContent(totalTime);
         }
     },
@@ -133,39 +165,76 @@ enyo.kind({
         this.$.songList.destroy();
         this.hidingSongList = false;
     },
-
-
-    command: function(func) {
-        var args = new Array;
-        for(var i=1; i<arguments.length; i++)
-            args.push(arguments[i]);
-        var obj = {"function": func, "args": args};
-        console.log(obj);
-        websocket.send(JSON.stringify(obj));
-    },
-
 });
 
 enyo.kind({
     name: "songListView",
     kind: "FittableRows",
+    classes: "enyo-fit enyo-unselectable",
+    data: [],
     events: {
         onHideSongList: ""
     },
     components: [
-        {content: "list..."},
-        /*
-        {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", fit: true, components: [
-            {kind: "onyx.Button", content: "Close", ontap: "doHideSongList"}
-        ]}
-        */
-        {fit: true},
-        {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch: true, components: [
+        {kind: "List",
+            name: "list",
+            touch: true,
+            fit: true,
+            classes: "song-listview", onSetupItem: "setupItem", components: [
+                {name: "item", ontap: "itemTap", classes: "song-list-item enyo-border-box", components: [
+                    {name: "index", style: "float: right;"},
+                    {name: "name"},
+                ]},
+            ],
+        },
+        {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch: true, classes: "footer-toolbar", components: [
             {fit: true},
             {kind: "onyx.IconButton", name: "CloseButton", src: "assets/close.png", ontap: "doHideSongList"},
         ]},
-
     ],
+
+    rendered: enyo.inherit(function(sup) {
+        return function() {
+            sup.apply(this, arguments);
+        };
+    }),
+
+    create: function() {
+        this.inherited(arguments);
+        updateList = enyo.bind(this, refreshList);
+        // XXX
+        playlist = this;
+    },
+
+    getIpodList: function() {
+        var listCount = ipodData.length;
+        this.data = [];
+
+        for (var i = 0; i < listCount; i++) {
+            this.data.push({index: i, name: ipodData[i]});
+        }
+        console.log("getIpodList: data = " + this.data);
+    },
+
+    setupItem: function(inSender, inEvent) {
+        var i = inEvent.index;
+        var dataItem = this.data[i];
+        if (!dataItem) {
+            return;
+        }
+
+         this.$.item.addRemoveClass("song-list-item-selected", inSender.isSelected(inEvent.index));
+
+        console.log("seupItem: dataItem = " + dataItem.index);
+        //this.$.index.setContent(dataItem.index);
+        this.$.name.setContent(dataItem.name);
+    },
+
+    itemTap: function(inSender, inEvent) {
+        console.log("tab item : " + this.data[inEvent.index].name);
+        command("select_db", WRSIPodCategory.ALBUM, inEvent.index, 0); // category, album index, track index
+        this.doHideSongList();
+    }
 });
 
 function handleMessage(event) {
@@ -178,7 +247,7 @@ function handleMessage(event) {
     var conn = obj.connection;
 
     if (conn != null && conn) {
-        this.command('get_trackinfo');
+        command('get_trackinfo');
     } else if (evt == "track info") {
         playstate = data.playstate;
         this.updatePlayPauseButton();
@@ -193,7 +262,7 @@ function handleMessage(event) {
         this.$.songTitle.setContent("title : " + data.title);
         this.$.songAlbum.setContent("album : " + data.album);
         this.$.songArtist.setContent("artist : " + data.artist);
-        this.command('get_artwork', obj.data.track_index);
+        command('get_artwork', obj.data.track_index);
     } else if (evt == "current artwork") {
         artworkImage = data.image;
         this.updateArtwork('data:image/png;base64,' + artworkImage);
@@ -205,5 +274,23 @@ function handleMessage(event) {
     } else if (evt == "playstate changed") {
         playstate = data;
         this.updatePlayPauseButton();
+    } else if (evt == "album loaded") {
+        this.updateAlbumList(data);
     }
+}
+
+function command(func) {
+    var args = new Array;
+    for(var i=1; i<arguments.length; i++)
+        args.push(arguments[i]);
+    var obj = {"function": func, "args": args};
+    console.log(obj);
+    websocket.send(JSON.stringify(obj));
+}
+
+
+function refreshList() {
+    this.getIpodList();
+    this.$.list.setCount(this.data.length);
+    this.$.list.reset();
 }
