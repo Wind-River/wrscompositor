@@ -12,11 +12,19 @@ int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
     QUrl url;
+    /*
     if (argc > 1)
         url = QUrl::fromUserInput(argv[1]);
     else
-        url = QUrl("file:///opt/windriver/share/html5apps/WRIPodPlayer/index.html");
+    */
+    url = QUrl("file:///opt/windriver/share/html5apps/WRIPodPlayer/index.html");
+
     MainWindow *browser = new MainWindow(url);
-    browser->showFullScreen();
+    if(argc==2 && !strcmp(argv[1], "--fullscreen"))
+        browser->showFullScreen();
+    else {
+        browser->resize(800,400);
+        browser->show();
+    }
     return app.exec();
 }
