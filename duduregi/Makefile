@@ -4,8 +4,8 @@ duduregi: Makefile.duduregi Process.cpp  clusterview.cpp  main.cpp vna_dbusclien
 	make -f Makefile.duduregi
 
 Makefile.duduregi: duduregi.pro
-	qmake-qt4 -o $@ $<
-	qmake-qt5 -o $@ $<
+	qmake -o $@ $<
+	#qmake-qt4 -o $@ $<
 
 clean:
 	make -f Makefile.duduregi clean

@@ -1,4 +1,4 @@
-import QtQuick 1.0
+import QtQuick 2.0
 import "compositor.js" as CompositorLogic
 import "sprintf.js" as SPrintf
 import com.windriver.automotive 1.0

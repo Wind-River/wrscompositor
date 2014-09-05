@@ -75,7 +75,8 @@ enyo.kind({
         // XXX
         main = this;
 
-        var wsUrl = "ws://"+window.location.hostname+":9090/";
+        //var wsUrl = "ws://"+window.location.hostname+":9090/";
+        var wsUrl = "ws://127.0.0.1:9090/";
         websocket = new WebSocket(wsUrl, 'ipod');
 
         websocket.onopen = function(evt) { console.log('onopen'); };
@@ -135,11 +136,11 @@ enyo.kind({
 
     updateTrackTimeInfo: function(current, total) {
         var currentTime = Math.floor(current / 1000);
-        currentTime = sprintf("%2d:%02d", Math.floor(currentTime / 60), (currentTime % 60));
+        currentTime = sprintf("%02d:%02d", Math.floor(currentTime / 60), (currentTime % 60));
         this.$.songCurrentTime.setContent(currentTime);
         if (total != null) {
             var totalTime = Math.floor(total / 1000);
-            totalTime = sprintf("%2d:%02d", Math.floor(totalTime / 60), (totalTime % 60));
+            totalTime = sprintf("%02d:%02d", Math.floor(totalTime / 60), (totalTime % 60));
             this.$.songTotalTime.setContent(totalTime);
         }
     },

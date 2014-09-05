@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 2.0
 //import QtWebEngine 0.9
-import QtWebKit 1.0
+import QtWebKit 3.0
 
 Item {
     id: coverFlow

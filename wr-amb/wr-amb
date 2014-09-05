@@ -9,7 +9,7 @@ if [ -f wr_amb.py ]; then
 fi
 
 if [ -f /opt/windriver/lib/libwrs-ipod-2.so ]; then
-	LD_LIBRARY_PATH=/opt/windriver/lib/libwrs-ipod-2.so
+	LD_LIBRARY_PATH=/opt/windriver/lib
 fi
 
 exec python $PROGRAM
