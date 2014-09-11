@@ -1,12 +1,11 @@
 QT += quick qml
-QT += quick-private
+#QT += quick-private
 #QT += declarative
-#QT += webkitwidgets network
-QT += webenginewidgets network
+QT += webkitwidgets network
+#QT += webenginewidgets network
 QT += dbus
 
 
-QMAKE_CXXFLAGS += -DQT_VERSION=0x050301
 #QMAKE_CXXFLAGS += -DWLCOMPOSITOR
 #QT += compositor
 #DEFINES += QT_COMPOSITOR_QUICK

@@ -23,6 +23,7 @@
     box-shadow: -4px 0px 4px rgba(0,0,0,0.3);
     -moz-box-shadow: -4px 0px 4px rgba(0,0,0,0.3);
     -webkit-box-shadow: -4px 0px 4px rgba(0,0,0,0.3);
+	background-color: #000000;
 }
 
 .content-panel {
@@ -113,11 +114,10 @@
 }
 
 .song-info-center {
+	color: #ffffff;
     display: inline-block;
-    min-height: 10em;
     margin-left: 1em;
     margin-right: 1em;
-    margin-top: 2em;
     vertical-align: middle;
 }
 

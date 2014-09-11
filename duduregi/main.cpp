@@ -4,7 +4,6 @@
 #include "qwaylandsurfaceitem.h"
 #endif
 
-#if QT_VERSION >= 0x050000
 #include <QGuiApplication>
 #include <QSurfaceFormat>
 #include <QQmlContext>
@@ -19,14 +18,6 @@
 #define DeclarativeView QQuickView
 #endif
 
-#else // Qt 4.x
-#include <QApplication>
-#include <QDeclarativeView>
-#include <qdeclarative.h>
-#include <QDesktopWidget>
-
-#define DeclarativeView QDeclarativeView
-#endif
 #include <QScreen>
 #include <QTimer>
 #include <QPainter>
@@ -58,9 +49,7 @@ public:
     {
         setSource(QUrl("main.qml"));
         setResizeMode(DeclarativeView::SizeRootObjectToView);
-#if QT_VERSION >= 0x050000
         setColor(Qt::black);
-#endif
         winId();
 #ifdef QT_COMPOSITOR_QUICK_LIB
         setClientFullScreenHint(true);
@@ -162,10 +151,9 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-#if QT_VERSION >= 0x050000
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
-#else
+#if 0
     QDesktopWidget d;
     QRect screenGeometry = d.screenGeometry();
 #endif
@@ -188,7 +176,7 @@ int main(int argc, char *argv[])
 #endif
 
     QmlCompositor compositor;
-#if QT_VERSION >= 0x050000
+#ifdef QT_COMPOSITOR_QUICK_LIB
     compositor.setTitle(QLatin1String("QML Compositor"));
     compositor.setScreen(QGuiApplication::screens().at(0));
     compositor.rootContext()->setContextProperty("compositor", &compositor);
@@ -196,7 +184,7 @@ int main(int argc, char *argv[])
     compositor.setGeometry(screenGeometry);
 
 
-#if QT_VERSION >= 0x050000
+#ifdef QT_COMPOSITOR_QUICK_LIB
     QObject::connect(&compositor, SIGNAL(windowAdded(QVariant)), compositor.rootObject(), SLOT(windowAdded(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowDestroyed(QVariant)), compositor.rootObject(), SLOT(windowDestroyed(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowResized(QVariant)), compositor.rootObject(), SLOT(windowResized(QVariant)));

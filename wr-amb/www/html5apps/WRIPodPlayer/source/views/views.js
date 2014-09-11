@@ -35,38 +35,58 @@ enyo.kind({
             name: "mainPanels",
             classes: "panels enyo-fit",
 
-            components: [
-                {kind: "enyo.Panels", name: "contentPanels", classes: "enyo-fit",
-                    arrangerKind: "CardArranger", onTransitionFinish: "contentTransitionCompleted",
-                    components: [
-                        {kind: "FittableRows", name: "controller", classes: "wide", fit: true, components: [
-                            {kind: "FittableColumns", noStretch: true, fit: true, classes: "song-info-align-center", components: [
-                                {kind: "enyo.Image", name: "artwork", classes: "artwork-image" },
-                                {kind: "FittableRows", classes: "song-info-center", components: [
-                                    {name: "songTitle", content: "", style: "text-align: left; margin-bottom: 10px"},
-                                    {name: "songAlbum", content: "", style: "text-align: left; margin-bottom: 10px"},
-                                    {name: "songArtist", content: "", style: "text-align: left; margin-bottom: 10px"},
-                                    {kind: "FittableColumns", components: [
-                                        {name: "songCurrentTime", style: "text-align: left"},
-                                        {content: "/", classes: "song-timeinfo" },
-                                        {name: "songTotalTime", style: "text-align: right"},
-                                    ]},
-                                ]},
-                            ]},
-                            {kind: "onyx.ProgressBar", name: "timeTrack", progress: 0, showStripes: false},
-                            {kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch:true, classes: "control-toolbar", components: [
-                                {kind: "FittableColumns", noStretch: true, components: [
-                                    {kind: "onyx.IconButton", src: "assets/prev.png", ontap: "prevOnTap"},
-                                    {kind: "onyx.IconButton", src: "assets/pause.png", name: "playButton", ontap: "playOnTap"},
-                                    {kind: "onyx.IconButton", src: "assets/next.png", ontap: "nextOnTap"},
-                                ]},
-                                {fit: true},
-                                {kind: "onyx.IconButton", name: "listButton", src: "assets/list.png", classes: "list-button", ontap: "listOnTab"},
-                            ]},
-                        ]},
-                    ]
-                },
-            ]
+			components: [
+                {kind: "enyo.Panels", name: "contentPanels", classes: "enyo-fit", arrangerKind: "CardArranger", onTransitionFinish: "contentTransitionCompleted", components: [
+					{kind: "FittableRows", fit: true, components: [
+						{tag: "p"},
+						{kind: "FittableColumns", fit: true, components: [
+							{kind: "FittableColumns", fit: true, components: [
+								{kind: "FittableColumns", noStretch: true, fit: true, classes: "song-info-align-center", components: [
+									{kind: "enyo.Image", name: "artwork", classes: "artwork-image", src: "assets/default_artwork.jpg", style: "width: 240px; height: 240px; border: 1px solid #797979"},
+									{kind: "FittableColumns", components: [
+										{kind: "FittableRows", classes: "song-info-center", components: [
+											{content: "Title", style: "text-align: left; margin-bottom: 10px"},
+											{content: "Album", style: "text-align: left; margin-bottom: 10px"},
+											{content: "Artist", style: "text-align: left; margin-bottom: 10px"},
+											{fit: true},
+										]},
+										{kind: "FittableRows", components: [
+											{name: "songTitle", content: "", style: "text-align: left; margin-bottom: 10px; color: #ffffff"},
+											{name: "songAlbum", content: "", style: "text-align: left; margin-bottom: 10px; color: #ffffff"},
+											{name: "songArtist", content: "", style: "text-align: left; margin-bottom: 10px; color: #ffffff"},
+											{fit: true},
+										]},
+									]},
+								]},
+							]},
+						]},
+						{kind: "FittableColumns", name: "playinfoLayout", class: "enyo-fit", style: "margin-bottom: 10px", components: [
+							{fit: true},
+							{content: "Powered by", style: "color: #ffffff; font-size: 14px; vertical-align: bottom"},
+							{kind: "enyo.Image", src: "assets/enyo.png", style: "width: 64px; height: 24px; vertical-align: middle; margin-left: 5px"},
+							{content: "and", style: "color: #ffffff; font-size: 14px; margin-left: 5px; vertical-align: bottom"},
+							{kind: "enyo.Image", src: "assets/wr.png", style: "width: 120px; height: 12px; vertical-align: middle; margin-left: 5px"},
+						]},
+						{kind: "FittableColumns", name: "playinfoLayout", class: "enyo-fit", components: [
+							{name: "songCurrentTime", style: "color: #ffffff; margin-left: 10px"},
+							{kind: "FittableRows", class: "enyo-fit", fit: true, components: [
+								{kind: "onyx.ProgressBar", name: "timeTrack", progress: 0, showStripes: false},
+							]},
+							{name: "songTotalTime", style: "color: #ffffff; margin-right: 10px"},
+						]},
+
+						{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch:true, classes: "control-toolbar", components: [
+							{kind: "FittableColumns", noStretch: true, components: [
+								{kind: "onyx.IconButton", src: "assets/prev.png", ontap: "prevOnTap"},
+								{kind: "onyx.IconButton", src: "assets/pause.png", name: "playButton", ontap: "playOnTap"},
+								{kind: "onyx.IconButton", src: "assets/next.png", ontap: "nextOnTap"},
+							]},
+							{fit: true},
+							{kind: "onyx.IconButton", name: "listButton", src: "assets/list.png", classes: "list-button", ontap: "listOnTab"},
+						]},
+					]}
+				]}
+			]
         },
     ],
 
@@ -80,8 +100,10 @@ enyo.kind({
         	wsUrl = "ws://"+window.location.hostname+":9090/";
 
         websocket = new WebSocket(wsUrl, 'ipod');
+		this.reflow();
 
-        websocket.onopen = function(evt) { console.log('onopen'); };
+        websocket.onopen = enyo.bind(this, function(evt) {
+		});
         websocket.onclose = function(evt) { console.log('onclose'); };
         websocket.onmessage = enyo.bind(this, handleMessage);
         websocket.onerror = function(evt) { console.log('onopen'); };
@@ -262,9 +284,10 @@ function handleMessage(event) {
         this.updateTrackTimeInfo(data.track_position, trackLength);
 
         this.$.timeTrack.max = trackLength;
-        this.$.songTitle.setContent("title : " + data.title);
-        this.$.songAlbum.setContent("album : " + data.album);
-        this.$.songArtist.setContent("artist : " + data.artist);
+        this.$.playinfoLayout.reflow();
+        this.$.songTitle.setContent(": " + data.title);
+        this.$.songAlbum.setContent(": " + data.album);
+        this.$.songArtist.setContent(": " + data.artist);
         command('get_artwork', obj.data.track_index);
     } else if (evt == "current artwork") {
         artworkImage = data.image;
