@@ -1,6 +1,6 @@
 #! /bin/sh -e
 ### BEGIN INIT INFO
-# Provides:          WindRiver ipod-daemon-2
+# Provides:          WindRiver Automotive Message Broker
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Should-Start:      avahi udev NetworkManager
@@ -12,25 +12,14 @@
 #                    the ipod daemon.
 ### END INIT INFO
 
-NAME="WindRiver ipod-daemon-2"
+NAME="WindRiver Automotive Message Broker"
 #DAEMON=/usr/bin/$NAME
-DAEMON=/opt/windriver/bin/ipod-daemon-2
+DAEMON=/opt/windriver/wr-amb/wr-amb
 PATH=/sbin:/bin:/usr/bin
-PIDFILE=/var/run/ipod-daemon.pid
-
-cp_reset() {
-        echo 171 > /sys/class/gpio/export
-        echo "out" > /sys/class/gpio/gpio171/direction
-        echo "0" > /sys/class/gpio/gpio171/value
-        msleep 250
-        echo "1" > /sys/class/gpio/gpio171/value
-        msleep 250
-        echo 171 > /sys/class/gpio/unexport
-}
+PIDFILE=/var/run/wr-amb.pid
 
 ipod_daemon_start() {
 	echo "Starting $NAME"
-	cp_reset
 	start-stop-daemon --start --background --make-pidfile --pidfile $PIDFILE --exec "$DAEMON"
 }
 
@@ -54,7 +43,7 @@ case "$1" in
 	status)
 			;;
 	*)
-			echo "Usage: /etc/init.d/ipod-daemon {start|stop|restart|status}"
+			echo "Usage: /etc/init.d/wr-amb {start|stop|restart|status}"
 			exit 1
 			;;
 esac
