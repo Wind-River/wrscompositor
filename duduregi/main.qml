@@ -198,7 +198,7 @@ Item {
 			anchors.rightMargin: background.width / 20
 			anchors.bottom: parent.bottom
 			text: vna_dbusClient.speedometer+" Km"
-			font.pointSize: background.height/4
+			font.pointSize: background.height/5
 			color: "white"
 			smooth: true
 			font.bold: true
