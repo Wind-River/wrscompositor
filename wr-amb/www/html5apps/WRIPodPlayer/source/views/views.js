@@ -68,11 +68,11 @@ enyo.kind({
 							{kind: "enyo.Image", src: "assets/wr.png", style: "width: 120px; height: 12px; vertical-align: middle; margin-left: 5px"},
 						]},
 						{kind: "FittableColumns", name: "playinfoLayout", class: "enyo-fit", components: [
-							{name: "songCurrentTime", style: "color: #ffffff; margin-left: 10px"},
+							{name: "songCurrentTime", style: "color: #ffffff; margin-left: 10px", content: "00:00"},
 							{kind: "FittableRows", class: "enyo-fit", fit: true, components: [
 								{kind: "onyx.ProgressBar", name: "timeTrack", progress: 0, showStripes: false},
 							]},
-							{name: "songTotalTime", style: "color: #ffffff; margin-right: 10px"},
+							{name: "songTotalTime", style: "color: #ffffff; margin-right: 10px", content: "00:00"},
 						]},
 
 						{kind: "onyx.Toolbar", layoutKind: "FittableColumnsLayout", noStretch:true, classes: "control-toolbar", components: [
@@ -160,11 +160,17 @@ enyo.kind({
 
     updateTrackTimeInfo: function(current, total) {
         var currentTime = Math.floor(current / 1000);
-        currentTime = sprintf("%02d:%02d", Math.floor(currentTime / 60), (currentTime % 60));
+		if(currentTime < 0)
+			currentTime = '00:00'
+		else
+			currentTime = sprintf("%02d:%02d", Math.floor(currentTime / 60), (currentTime % 60));
         this.$.songCurrentTime.setContent(currentTime);
         if (total != null) {
             var totalTime = Math.floor(total / 1000);
-            totalTime = sprintf("%02d:%02d", Math.floor(totalTime / 60), (totalTime % 60));
+			if(totalTime < 0)
+				totalTime = '00:00'
+			else
+				totalTime = sprintf("%02d:%02d", Math.floor(totalTime / 60), (totalTime % 60));
             this.$.songTotalTime.setContent(totalTime);
         }
     },
@@ -285,9 +291,15 @@ function handleMessage(event) {
 
         this.$.timeTrack.max = trackLength;
         this.$.playinfoLayout.reflow();
-        this.$.songTitle.setContent(": " + data.title);
-        this.$.songAlbum.setContent(": " + data.album);
-        this.$.songArtist.setContent(": " + data.artist);
+		if(!data.title)
+			data.title = '-'
+		if(!data.album)
+			data.album = '-'
+		if(!data.artist)
+			data.artist = '-'
+		this.$.songTitle.setContent(": " + data.title);
+		this.$.songAlbum.setContent(": " + data.album);
+		this.$.songArtist.setContent(": " + data.artist);
         command('get_artwork', obj.data.track_index);
     } else if (evt == "current artwork") {
         artworkImage = data.image;
@@ -302,7 +314,19 @@ function handleMessage(event) {
         this.updatePlayPauseButton();
     } else if (evt == "album loaded") {
         this.updateAlbumList(data);
-    }
+    } else if (evt == "ipod ready") {
+        command('get_trackinfo');
+    } else if (evt == "ipod disconnected") {
+        this.updateArtwork("assets/default_artwork.jpg");
+		this.$.songTitle.setContent(": -");
+		this.$.songAlbum.setContent(": -");
+		this.$.songArtist.setContent(": -");
+		this.$.songTotalTime.setContent("00:00");
+        this.$.songCurrentTime.setContent("00:00");
+        this.$.timeTrack.animateProgressTo(0);
+    } else {
+		console.log(evt)
+	}
 }
 
 function command(func) {
