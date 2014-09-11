@@ -30,8 +30,7 @@ def setCluster():
 
 
 def main():
-    #root = static.File(os.path.abspath(os.path.dirname(sys.argv[0])+'/www'))
-    root = static.File('/opt/windriver/wr-amb/www')
+    root = static.File(os.path.realpath(os.path.dirname(__file__))+'/www')
     root.processors = { '.cgi': twcgi.CGIScript, }
     reactor.listenTCP(7070, server.Site(root))
 
