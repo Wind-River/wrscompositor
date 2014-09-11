@@ -75,8 +75,10 @@ enyo.kind({
         // XXX
         main = this;
 
-        //var wsUrl = "ws://"+window.location.hostname+":9090/";
         var wsUrl = "ws://127.0.0.1:9090/";
+		if(window.location.hostname != '')
+        	wsUrl = "ws://"+window.location.hostname+":9090/";
+
         websocket = new WebSocket(wsUrl, 'ipod');
 
         websocket.onopen = function(evt) { console.log('onopen'); };
