@@ -35,7 +35,7 @@ body {
 	z-index: 1;
 }
 #maxline {
-	margin-top: -200px;
+	margin-top: -100px; /* -200px for 1080p */
 	padding: 0px;
 	background-color: #ff0000;
 	width: 100%;
@@ -46,7 +46,7 @@ body {
 }
 
 #water {
-	margin-top: -200px;
+	margin-top: -280px; /* -200px for 1080p */
 	padding: 0px;
 	background-color: #0000ff;
 	width: 100%;
@@ -56,7 +56,7 @@ body {
 	/*-webkit-transform: rotate(-5deg);*/
 }
 #ground {
-	margin-top: -430px;
+	margin-top: -440px; /* -430px for 1080p */
 	padding: 0px;
 	background-color: #333333;
 	width: 100%;
