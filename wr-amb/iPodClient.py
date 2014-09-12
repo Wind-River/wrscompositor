@@ -24,13 +24,18 @@ pacat = None
 
 def sound_on():
     global parec, pacat
+    if parec and pacat:
+        print 'sound is already playing'
+        return
     p=Popen(('pacmd', 'list-sources'), stdin=PIPE, stdout=PIPE)
     name = ''
     for x in p.stdout.read().split('\n'):
         l = x.strip()
-        if l.startswith('name:'):
+        if l.startswith('name:') and l.find('Apple')>0:
             name = l.split(':', 1)[1].strip()[1:-1]
             break
+    print 'sound_on'
+    print 'name: '+name
     if name != '':
         parec=Popen(('parec', '-d', name), stdout=PIPE, stdin=PIPE)
         pacat=Popen(('pacat', '--volume=30000'), stdout=PIPE, stdin=parec.stdout)
@@ -54,6 +59,13 @@ def sound_off():
         pacat = None
 
 cmds = []
+def clear_call():
+    global cmds
+    print 'pending calls'
+    print cmds
+    cmds = []
+    print 'call cleared'
+
 def deferred_call(scenario, func, *args):
     cmds.insert(0, {'func': func, 'args': args, 'tid': None, 'scenario': scenario})
     if len(cmds) == 1:
@@ -108,12 +120,14 @@ def event_cb(c, _ev, ud):
     elif WRSIPOD_EVENT_DISCONNECTED == ev:
         print 'disconnected'
         broadcast({'event': 'ipod disconnected'})
+        sound_off()
+        clear_call()
     elif WRSIPOD_EVENT_PLAYSTATE_CHANGED == ev:
         print 'play state changed'
         broadcast({'event': 'playstate changed', 'data': wrs_ipod_current_track_state(c)})
         if WRSIPOD_PLAY_STATE_PLAYING == wrs_ipod_current_track_state(c):
             sound_on()
-        else:
+        elif WRSIPOD_PLAY_STATE_STOPPED == wrs_ipod_current_track_state(c):
             sound_off()
 
     elif WRSIPOD_EVENT_TRACK_CHANGED == ev:
