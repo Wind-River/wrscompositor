@@ -60,7 +60,7 @@ enyo.kind({
 								]},
 							]},
 						]},
-						{kind: "FittableColumns", name: "playinfoLayout", class: "enyo-fit", style: "margin-bottom: 10px", components: [
+						{kind: "FittableColumns", name: "logoLayout", classes: "poweredby", style: "margin-bottom: 10px", components: [
 							{fit: true},
 							{content: "Powered by", style: "color: #ffffff; font-size: 14px; vertical-align: bottom"},
 							{kind: "enyo.Image", src: "assets/enyo.png", style: "width: 64px; height: 24px; vertical-align: middle; margin-left: 5px"},
