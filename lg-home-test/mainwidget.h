@@ -5,34 +5,27 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#ifndef HTMLWIDGET_H
-#define HTMLWIDGET_H
+#ifndef MW_H
+#define MW_H
 
 #include <QtWidgets>
+#include "htmlwidget.h"
+#include "qmlwidget.h"
 
-class QWebView;
-class QPushButton;
-
-class HTMLWidget : public QWidget
+class MainWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    HTMLWidget(const QUrl& url, QWidget *parent);
+    MainWidget();
 
 protected:
     virtual void resizeEvent(QResizeEvent * event);
 
 protected slots:
 
-    void backClicked();
-    void setProgress(int p);
-    void finishLoading(bool);
-
-
 private:
-    QWebView *view;
-    QPushButton *button;
-    int progress;
+    HTMLWidget *html;
+    QMLWidget *qml;
 };
 #endif

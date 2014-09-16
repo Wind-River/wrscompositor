@@ -4,7 +4,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-QQuickView *MenuHandler::mainQmlView = NULL;
+//QQuickView *MenuHandler::mainQmlView = NULL;
+QWidget *MenuHandler::mainQmlView = NULL;
 QWidget *MenuHandler::htmlView = NULL;
 
 MenuHandler::MenuHandler(QObject *parent) :

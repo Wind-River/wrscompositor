@@ -13,8 +13,8 @@
 #include "htmlwidget.h"
 #include "menuhandler.h"
 
-HTMLWidget::HTMLWidget(const QUrl& url)
-    : QWidget(NULL)
+HTMLWidget::HTMLWidget(const QUrl& url, QWidget *parent)
+    : QWidget(parent)
 {
     progress = 0;
 

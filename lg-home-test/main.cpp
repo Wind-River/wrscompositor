@@ -6,23 +6,10 @@
  * Wind River license agreement.
  */
 #include <QtWidgets>
-#include "htmlwidget.h"
+#include "mainwidget.h"
 #include "menuhandler.h"
 #include <QQuickView>
-#include <QQmlContext>
 #include <QQuickItem>
-
-class Home : public QQuickView
-{
-    Q_OBJECT
-
-public:
-    Home() {
-        setSource(QUrl("home.qml"));
-        setResizeMode(QQuickView::SizeRootObjectToView);
-        setColor(Qt::black);
-    }
-};
 
 int main(int argc, char * argv[])
 {
@@ -33,20 +20,10 @@ int main(int argc, char * argv[])
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
 
-    Home home;
-    home.setGeometry(screenGeometry);
-    home.show();
+    MainWidget mw;
+    mw.setGeometry(screenGeometry);
+    mw.show();
 
-    QUrl url;
-    url = QUrl("file:///opt/windriver/share/html5apps/WRIPodPlayer/index.html");
-    HTMLWidget html(url);
-    html.setGeometry(screenGeometry);
-    html.hide();
-
-    MenuHandler::mainQmlView = &home;
-    MenuHandler::htmlView = &html;
 
     return app.exec();
 }
-
-#include "main.moc"
