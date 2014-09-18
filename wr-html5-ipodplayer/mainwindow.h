@@ -8,6 +8,7 @@
 #include <QtWidgets>
 
 class QWebView;
+class QPushButton;
 
 class MainWindow : public QMainWindow
 {
@@ -20,9 +21,14 @@ protected slots:
 
     void setProgress(int p);
     void finishLoading(bool);
+    void backClicked();
+
+protected:
+    virtual void resizeEvent(QResizeEvent * event);
 
 
 private:
     QWebView *view;
     int progress;
+    QPushButton *button;
 };

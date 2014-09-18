@@ -22,6 +22,9 @@ MainWindow::MainWindow(const QUrl& url)
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
     setCentralWidget(view);
     setWindowTitle(tr("WindRiver HTML5 iPod Player Sample"));
+
+    button = new QPushButton(tr("Back"), this);
+    connect(button, SIGNAL(clicked()), SLOT(backClicked()));
 }
 
 void MainWindow::setProgress(int p)
@@ -31,4 +34,19 @@ void MainWindow::setProgress(int p)
 void MainWindow::finishLoading(bool)
 {
     progress = 100;
+}
+
+void MainWindow::backClicked()
+{
+    const char *cmd = "/opt/LGDemo/ipod_stop.sh";
+    QProcess::execute(cmd);
+    QCoreApplication::instance()->quit();
+}
+void MainWindow::resizeEvent(QResizeEvent * event) {
+    view->resize(event->size());
+
+    // to place the button on right position
+    int buttonMargin = 50;
+    button->move(event->size().width() - button->size().width() - buttonMargin,
+                buttonMargin);
 }
