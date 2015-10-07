@@ -1,4 +1,5 @@
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#include "duduregiconfig.h"
+#if DUDUREGI_WAYLAND_COMPOSITOR
 #include "qwaylandcompositor.h"
 #include "qwaylandsurface.h"
 #include "qwaylandsurfaceitem.h"
@@ -10,13 +11,13 @@
 #include <QQuickItem>
 #include <QQuickView>
 
-#ifdef QT_WEBENGINEWIDGETS_LIB
+#if DUDUREGI_WEBENGINE
 #include <QtWebEngineWidgets>
 #else
 #include <QtWebKitWidgets>
 
-#define DeclarativeView QQuickView
 #endif
+#define DeclarativeView QQuickView
 
 #include <QScreen>
 #include <QTimer>
@@ -32,18 +33,18 @@
 #include "wr_dbusclient.h"
 
 class QmlCompositor : public DeclarativeView
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
                       , public QWaylandCompositor
 #endif
 {
     Q_OBJECT
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
     Q_PROPERTY(QWaylandSurface* fullscreenSurface READ fullscreenSurface WRITE setFullscreenSurface NOTIFY fullscreenSurfaceChanged)
 #endif
 
 public:
     QmlCompositor()
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
         : QWaylandCompositor(this, 0, static_cast<ExtensionFlag>(DefaultExtensions | SubSurfaceExtension)), m_fullscreenSurface(0)
 #endif
     {
@@ -51,13 +52,13 @@ public:
         setResizeMode(DeclarativeView::SizeRootObjectToView);
         setColor(Qt::black);
         winId();
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
         setClientFullScreenHint(true);
 	connect(this, SIGNAL(frameSwapped()), this, SLOT(frameSwappedSlot()));
 #endif
     }
 
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
     QWaylandSurface *fullscreenSurface() const
     {
         return m_fullscreenSurface;
@@ -80,7 +81,7 @@ public slots:
         qvariant_cast<QObject *>(window)->deleteLater();
     }
 
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
     void destroyClientForWindow(QVariant window) {
         QWaylandSurface *surface = qobject_cast<QWaylandSurfaceItem *>(qvariant_cast<QObject *>(window))->surface();
         destroyClientForSurface(surface);
@@ -162,8 +163,8 @@ int main(int argc, char *argv[])
     qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
 
-#ifdef QT_WEBENGINEWIDGETS_LIB
-    QWebEngine::initialize();
+#if DUDUREGI_WEBENGINE
+    QtWebEngine::initialize();
 #endif
 
 #ifdef DIGITALCLUSTER
@@ -176,7 +177,7 @@ int main(int argc, char *argv[])
 #endif
 
     QmlCompositor compositor;
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
     compositor.setTitle(QLatin1String("QML Compositor"));
     compositor.setScreen(QGuiApplication::screens().at(0));
     compositor.rootContext()->setContextProperty("compositor", &compositor);
@@ -184,7 +185,7 @@ int main(int argc, char *argv[])
     compositor.setGeometry(screenGeometry);
 
 
-#ifdef QT_COMPOSITOR_QUICK_LIB
+#if DUDUREGI_WAYLAND_COMPOSITOR
     QObject::connect(&compositor, SIGNAL(windowAdded(QVariant)), compositor.rootObject(), SLOT(windowAdded(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowDestroyed(QVariant)), compositor.rootObject(), SLOT(windowDestroyed(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowResized(QVariant)), compositor.rootObject(), SLOT(windowResized(QVariant)));
