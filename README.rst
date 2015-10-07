@@ -15,7 +15,7 @@ Build
 ::
 
 	$ cd duduregi
-	$ ./configure
+	$ ./configure --with-wlcompositor --with-webengine
 	$ make
 
 

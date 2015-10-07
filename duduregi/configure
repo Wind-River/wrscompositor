@@ -5,9 +5,10 @@ echo "Usage: configure [options]"
 echo "Options: [defaults in brackets after descriptions]"
 echo
 echo "Standard options:"
-echo "  --help               print this message"
-echo "  --with-cluster       build with digital cluster feature (on 2nd display)"
-echo "  --with-wlcompositor  build with digital cluster feature"
+echo "  --help                print this message"
+echo "  --with-digitalcluster build with digital cluster feature (on 2nd display)"
+echo "  --without-maindisplay build without main display"
+echo "  --with-wlcompositor   build with digital cluster feature"
 }
 
 if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
@@ -15,17 +16,26 @@ then
     show_help
 fi
 
-DUALDISPLAY=n
-WLCOMPOSITOR=n
+SUPPORT_MAINDISPLAY=1
+SUPPORT_DCLUSTER=0
+SUPPORT_WLCOMPOSITOR=0
+SUPPORT_WEBENGINE=0
+SUPPORT_DBUS=1
 
 for opt do
     optval="${opt#*=}"
     case "$opt" in
-    --with-cluster)
-		DUALDISPLAY=y
+    --without-maindisplay)
+		SUPPORT_MAINDISPLAY=0
+	;;
+    --with-digitalcluster)
+		SUPPORT_DCLUSTER=1
 	;;
     --with-wlcompositor)
-		WLCOMPOSITOR=y
+		SUPPORT_WLCOMPOSITOR=1
+	;;
+    --with-webengine)
+		SUPPORT_WEBENGINE=1
 	;;
     --help)
 	show_help
@@ -34,5 +44,53 @@ for opt do
 done
 
 echo "Build configuration"
-echo "  DUALDISPLAY=$DUALDISPLAY"
-echo "  WLCOMPOSITOR=$WLCOMPOSITOR"
+echo "  SUPPORT_MAINDISPLAY=$SUPPORT_MAINDISPLAY"
+echo "  SUPPORT_DIGITALCLUSTER=$SUPPORT_DCLUSTER"
+echo "  SUPPORT_WLCOMPOSITOR=$SUPPORT_WLCOMPOSITOR"
+echo "  SUPPORT_WEBENGINE=$SUPPORT_WEBENGINE"
+echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
+echo
+
+printf "Generating duduregi.pro ..."
+echo "QT += quick qml network" > duduregi.pro
+
+if [ "$SUPPORT_WEBENGINE" = "1" ]; then
+echo "QT += webenginewidgets" >> duduregi.pro
+else
+echo "QT += webkitwidgets" >> duduregi.pro
+fi
+
+if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
+echo "DEFINES += QT_COMPOSITOR_QUICK" >> duduregi.pro
+echo "QT += compositor" >> duduregi.pro
+fi
+
+if [ "$SUPPORT_DBUS" = "1" ]; then
+echo "QT += dbus" >> duduregi.pro
+fi
+
+cat duduregi.pro.in >> duduregi.pro
+
+
+echo $'\r'"Generating duduregi.pro ....................................... Done"
+
+
+printf "Generating duduregiconfig.h ..."
+cat duduregiconfig.h.in | sed \
+-e "s/DUDUREGI_MAINDISPLAY 0/DUDUREGI_MAINDISPLAY $SUPPORT_MAINDISPLAY/" \
+-e "s/DUDUREGI_DIGITALCLUSTER 0/DUDUREGI_DIGITALCLUSTER $SUPPORT_DCLUSTER/" \
+-e "s/DUDUREGI_WAYLAND_COMPOSITOR 0/DUDUREGI_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
+-e "s/DUDUREGI_WEBENGINE 0/DUDUREGI_WEBENGINE $SUPPORT_WEBENGINE/" \
+-e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \
+> duduregiconfig.h
+echo $'\r'"Generating duduregiconfig.h ................................... Done"
+echo
+
+if [ -f /opt/windriver/bin/qmake ]; then
+	echo "Found QT Build for Wind River: /opt/windriver"
+	echo "/opt/windriver/bin/qmake will be used for build"
+	/opt/windriver/bin/qmake
+	echo "Makefile generated"
+else
+	qmake
+fi
