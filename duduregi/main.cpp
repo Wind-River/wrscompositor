@@ -57,11 +57,17 @@ public:
         winId();
 #if DUDUREGI_WAYLAND_COMPOSITOR
         addDefaultShell();
-        createOutput(this, "WindRiver Systems, Inc", "Duduregi");
+        createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
         setClientFullScreenHint(true);
         connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
 #endif
+    }
+    ~QmlCompositor() {
+        QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+        //settings.setValue("size", size());
+        //settings.setValue("windowState", windowState());
+        settings.setValue("position", position());
     }
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
@@ -171,6 +177,8 @@ int main(int argc, char *argv[])
 #endif
     if(app.arguments().contains("--720")) {
         compositor.setGeometry(50, 50, 1280, 720);
+        QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+        compositor.setPosition(settings.value("position").toPoint());
     } else
         compositor.setGeometry(screenGeometry);
     compositor.show();
