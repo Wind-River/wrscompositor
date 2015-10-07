@@ -19,7 +19,7 @@ fi
 SUPPORT_MAINDISPLAY=1
 SUPPORT_DCLUSTER=0
 SUPPORT_WLCOMPOSITOR=0
-SUPPORT_WEBENGINE=0
+SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
 
 for opt do
@@ -34,8 +34,8 @@ for opt do
     --with-wlcompositor)
 		SUPPORT_WLCOMPOSITOR=1
 	;;
-    --with-webengine)
-		SUPPORT_WEBENGINE=1
+    --without-webengine)
+		SUPPORT_WEBENGINE=0
 	;;
     --help)
 	show_help

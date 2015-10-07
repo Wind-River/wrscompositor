@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import "compositor.js" as CompositorLogic
 import "sprintf.js" as SPrintf
 import com.windriver.automotive 1.0
@@ -277,15 +277,20 @@ Item {
     function windowAdded(window) {
         console.log('window added '+window);
         console.log(currentApp.width+' '+ currentApp.height);
-        compositor.configure(window.surface, currentApp.width, currentApp.height);
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowContainer = windowContainerComponent.createObject(root);
+        windowContainer.child = compositor.item(window);
+        windowContainer.child.parent = windowContainer;
+        windowContainer.child.touchEventsEnabled = true;
 
-        window.parent = windowContainer;
-        windowContainer.child = window;
-        windowContainer.width = window.width;
-        windowContainer.height = window.height;
-        windowContainer.parent = currentApp
+        windowContainer.targetWidth = window.size.width;
+        windowContainer.targetHeight = window.size.height;
+
+
+        CompositorLogic.addWindow(windowContainer);
+
+        windowContainer.opacity = 1;
+
         if(root.currentWindow != null)
             root.currentWindow.visible = false
         root.currentWindow = windowContainer
@@ -299,72 +304,22 @@ Item {
         }
     }
 
-    function windowDestroyed(window) {
+    function removeWindow(window) {
         console.log('window destroyed '+window);
-        if (window && window.parent) {
-            //root.currentWindow.runDestroyAnimation();
-            window.parent.child = null
-            window.parent.destroy();
-        }
+        window.destroy();
+        CompositorLogic.removeWindow(window);
     }
 
     function windowResized(window) {
         console.log('window resized '+window);
-    }
-    /*
-    function windowAdded(window) {
-        console.log('window added '+window);
-        var windowContainerComponent = Qt.createComponent("WindowContainer.qml");
-        var windowContainer = windowContainerComponent.createObject(root);
-
-        window.parent = windowContainer;
-
-        windowContainer.targetWidth = window.width;
-        windowContainer.targetHeight = window.height;
-        windowContainer.child = window;
-
-        var windowChromeComponent = Qt.createComponent("WindowChrome.qml");
-        var windowChrome = windowChromeComponent.createObject(window);
-
-        CompositorLogic.addWindow(windowContainer);
-
-        windowContainer.opacity = 1
-        windowContainer.animationsEnabled = true;
-        windowContainer.chrome = windowChrome;
-    }
-
-    function windowResized(window) {
-        console.log('window resized '+window);
-        var windowContainer = window.parent;
-        windowContainer.width = window.width;
-        windowContainer.height = window.height;
+        window.width = window.surface.size.width;
+        window.height = window.surface.size.height;
 
         CompositorLogic.relayout();
     }
 
-    function windowDestroyed(window) {
-        console.log('window destroyed '+window);
-        return;
-        var windowContainer = window.parent;
-        if (windowContainer.runDestroyAnimation)
-            windowContainer.runDestroyAnimation();
-    }
-
-    function removeWindow(window) {
-        console.log('window remove '+window);
-        var windowContainer = window.parent;
-        CompositorLogic.removeWindow(windowContainer);
-        windowContainer.chrome.destroy();
-        windowContainer.destroy();
-        compositor.destroyWindow(window);
-    }
-
-
     onHeightChanged: CompositorLogic.relayout();
     onWidthChanged: CompositorLogic.relayout();
-    Component.onCompleted: {
-    }
-    */
 
     Keys.onPressed: {
         console.log('key on main: '+event.key);

@@ -1,14 +1,35 @@
-import QtQuick 2.0
+import QtQuick 2.1
 import QtQuick.Window 2.0
 
 Item {
     id: container
     property variant child: null
 
+    x: targetX
+    y: targetY
+    width: targetWidth
+    height: targetHeight
+    scale: targetScale
+
+    property variant chrome: null
+    property real targetX
+    property real targetY
+    property real targetWidth
+    property real targetHeight
+    property real targetScale
+    property int index
+
     ContrastEffect {
         id: effect
         source: child
-        anchors.fill: child
+        anchors.fill: parent
+        opacity: 1.0
+        z: 1
+
+        Behavior on blend {
+            enabled: true;
+            NumberAnimation { easing.type: Easing.Linear; duration: 200; }
+        }
     }
 
     transform: [
@@ -23,5 +44,12 @@ Item {
     }
     function runDestroyAnimation() {
         destroyAnimation.start();
+    }
+
+    Connections {
+	target: container.child ? container.child : null
+	onSurfaceDestroyed: {
+	    container.parent.removeWindow(container);
+	}
     }
 }
