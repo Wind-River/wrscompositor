@@ -1,8 +1,10 @@
 #include "duduregiconfig.h"
 #if DUDUREGI_WAYLAND_COMPOSITOR
-#include "qwaylandcompositor.h"
-#include "qwaylandsurface.h"
-#include "qwaylandsurfaceitem.h"
+#include <QtCompositor/qwaylandsurfaceitem.h>
+#include <QtCompositor/qwaylandoutput.h>
+#include <QtCompositor/qwaylandquickcompositor.h>
+#include <QtCompositor/qwaylandquicksurface.h>
+#include <QtCompositor/qwaylandquickoutput.h>
 #endif
 
 #include <QGuiApplication>
@@ -17,7 +19,6 @@
 #include <QtWebKitWidgets>
 
 #endif
-#define DeclarativeView QQuickView
 
 #include <QScreen>
 #include <QTimer>
@@ -32,47 +33,53 @@
 #include "vna_dbusclient.h"
 #include "wr_dbusclient.h"
 
-class QmlCompositor : public DeclarativeView
+class QmlCompositor : public QQuickView
 #if DUDUREGI_WAYLAND_COMPOSITOR
-                      , public QWaylandCompositor
+                      , public QWaylandQuickCompositor
 #endif
 {
     Q_OBJECT
 #if DUDUREGI_WAYLAND_COMPOSITOR
-    Q_PROPERTY(QWaylandSurface* fullscreenSurface READ fullscreenSurface WRITE setFullscreenSurface NOTIFY fullscreenSurfaceChanged)
+    Q_PROPERTY(QWaylandQuickSurface* fullscreenSurface READ fullscreenSurface WRITE setFullscreenSurface NOTIFY fullscreenSurfaceChanged)
+
 #endif
 
 public:
     QmlCompositor()
 #if DUDUREGI_WAYLAND_COMPOSITOR
-        : QWaylandCompositor(this, 0, static_cast<ExtensionFlag>(DefaultExtensions | SubSurfaceExtension)), m_fullscreenSurface(0)
+        : QWaylandQuickCompositor(0, DefaultExtensions | SubSurfaceExtension)
+                  , m_fullscreenSurface(0)
 #endif
     {
         setSource(QUrl("main.qml"));
-        setResizeMode(DeclarativeView::SizeRootObjectToView);
+        setResizeMode(QQuickView::SizeRootObjectToView);
         setColor(Qt::black);
         winId();
 #if DUDUREGI_WAYLAND_COMPOSITOR
+        addDefaultShell();
+        createOutput(this, "WindRiver Systems, Inc", "Duduregi");
         setClientFullScreenHint(true);
-	connect(this, SIGNAL(frameSwapped()), this, SLOT(frameSwappedSlot()));
+        connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
+
 #endif
     }
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
-    QWaylandSurface *fullscreenSurface() const
+    QWaylandQuickSurface *fullscreenSurface() const
     {
         return m_fullscreenSurface;
     }
-    Q_INVOKABLE bool configure(QWaylandSurface *surface, int width, int height)
+
+    Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf)
     {
-        surface->requestSize(QSize(width, height));
-        return true;
+        return static_cast<QWaylandSurfaceItem *>(surf->views().first());
     }
+
 #endif
 
+#if DUDUREGI_WAYLAND_COMPOSITOR
 signals:
     void windowAdded(QVariant window);
-    void windowDestroyed(QVariant window);
     void windowResized(QVariant window);
     void fullscreenSurfaceChanged();
 
@@ -81,13 +88,7 @@ public slots:
         qvariant_cast<QObject *>(window)->deleteLater();
     }
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
-    void destroyClientForWindow(QVariant window) {
-        QWaylandSurface *surface = qobject_cast<QWaylandSurfaceItem *>(qvariant_cast<QObject *>(window))->surface();
-        destroyClientForSurface(surface);
-    }
-
-    void setFullscreenSurface(QWaylandSurface *surface) {
+    void setFullscreenSurface(QWaylandQuickSurface *surface) {
         if (surface == m_fullscreenSurface)
             return;
         m_fullscreenSurface = surface;
@@ -96,55 +97,43 @@ public slots:
 
 private slots:
     void surfaceMapped() {
-        QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
-        //Ignore surface if it's not a window surface
-        if (!surface->hasShellSurface())
-            return;
-
-        QWaylandSurfaceItem *item = surface->surfaceItem();
-        //Create a WaylandSurfaceItem if we have not yet
-        if (!item)
-            item = new QWaylandSurfaceItem(surface, rootObject());
-
-        item->setTouchEventsEnabled(true);
-        //item->takeFocus();
-        emit windowAdded(QVariant::fromValue(static_cast<QQuickItem *>(item)));
+        QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
+        emit windowAdded(QVariant::fromValue(surface));
     }
     void surfaceUnmapped() {
-        QWaylandSurface *surface = qobject_cast<QWaylandSurface *>(sender());
+        QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
         if (surface == m_fullscreenSurface)
             m_fullscreenSurface = 0;
-        QQuickItem *item = surface->surfaceItem();
-        emit windowDestroyed(QVariant::fromValue(item));
     }
 
-    void surfaceDestroyed(QObject *object) {
-        QWaylandSurface *surface = static_cast<QWaylandSurface *>(object);
+    void surfaceDestroyed() {
+        QWaylandQuickSurface *surface = static_cast<QWaylandQuickSurface *>(sender());
         if (surface == m_fullscreenSurface)
             m_fullscreenSurface = 0;
-        QQuickItem *item = surface->surfaceItem();
-        emit windowDestroyed(QVariant::fromValue(item));
     }
 
-    void frameSwappedSlot() {
-        frameFinished(m_fullscreenSurface);
+    void sendCallbacks() {
+        if (m_fullscreenSurface)
+            sendFrameCallbacks(QList<QWaylandSurface *>() << m_fullscreenSurface);
+        else
+            sendFrameCallbacks(surfaces());
     }
 
 protected:
     void resizeEvent(QResizeEvent *event)
     {
-        DeclarativeView::resizeEvent(event);
+        QQuickView::resizeEvent(event);
         QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
     }
 
     void surfaceCreated(QWaylandSurface *surface) {
-        connect(surface, SIGNAL(destroyed(QObject *)), this, SLOT(surfaceDestroyed(QObject *)));
+        connect(surface, SIGNAL(surfaceDestroyed()), this, SLOT(surfaceDestroyed()));
         connect(surface, SIGNAL(mapped()), this, SLOT(surfaceMapped()));
         connect(surface,SIGNAL(unmapped()), this,SLOT(surfaceUnmapped()));
     }
 
 private:
-    QWaylandSurface *m_fullscreenSurface;
+    QWaylandQuickSurface *m_fullscreenSurface;
 #endif
 };
 
@@ -168,9 +157,9 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef DIGITALCLUSTER
-    DeclarativeView kv;
+    QQuickView kv;
     kv.setSource(QUrl("cluster.qml"));
-    kv.setResizeMode(DeclarativeView::SizeRootObjectToView);
+    kv.setResizeMode(QQuickView::SizeRootObjectToView);
     kv.setScreen(QGuiApplication::screens().at(1));
     kv.setGeometry(screenGeometry);
     kv.show();
@@ -179,18 +168,17 @@ int main(int argc, char *argv[])
     QmlCompositor compositor;
 #if DUDUREGI_WAYLAND_COMPOSITOR
     compositor.setTitle(QLatin1String("QML Compositor"));
-    compositor.setScreen(QGuiApplication::screens().at(0));
-    compositor.rootContext()->setContextProperty("compositor", &compositor);
-#endif
     compositor.setGeometry(screenGeometry);
+#endif
+    compositor.show();
+
+    compositor.rootContext()->setContextProperty("compositor", &compositor);
 
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
     QObject::connect(&compositor, SIGNAL(windowAdded(QVariant)), compositor.rootObject(), SLOT(windowAdded(QVariant)));
-    QObject::connect(&compositor, SIGNAL(windowDestroyed(QVariant)), compositor.rootObject(), SLOT(windowDestroyed(QVariant)));
     QObject::connect(&compositor, SIGNAL(windowResized(QVariant)), compositor.rootObject(), SLOT(windowResized(QVariant)));
 #endif
-    compositor.show();
 
     return app.exec();
 }
