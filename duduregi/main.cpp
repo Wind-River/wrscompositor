@@ -168,8 +168,11 @@ int main(int argc, char *argv[])
     QmlCompositor compositor;
 #if DUDUREGI_WAYLAND_COMPOSITOR
     compositor.setTitle(QLatin1String("QML Compositor"));
-    compositor.setGeometry(screenGeometry);
 #endif
+    if(app.arguments().contains("--720")) {
+        compositor.setGeometry(50, 50, 1280, 720);
+    } else
+        compositor.setGeometry(screenGeometry);
     compositor.show();
 
     compositor.rootContext()->setContextProperty("compositor", &compositor);
