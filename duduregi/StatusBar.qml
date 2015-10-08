@@ -13,7 +13,7 @@ Item {
 
 	Rectangle {
 		id: statusbarBackground
-    	color: "#000000"
+    	color: "#2e2e2e"
         anchors.fill: parent
 	}
 
@@ -44,7 +44,7 @@ Item {
         //source: "images/wr.png"
         //height: statusBar.height * 0.4
         //anchors.left: logo.right
-        source: "images/wr-black.png"
+        source: "images/wr-red.png"
         height: statusBar.height * 0.7
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
@@ -66,7 +66,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 		text: statusBar.wmi
 		visible: statusBar.wmi != ""
-        font.pointSize: statusBar.height/2
+        font.pointSize: statusBar.height*0.4
         color: "white"
         smooth: true
 		font.bold: true
@@ -88,7 +88,7 @@ Item {
         anchors.rightMargin: width/20
         anchors.verticalCenter: parent.verticalCenter
         text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
-        font.pointSize: statusBar.height/2
+        font.pointSize: statusBar.height*0.4
         color: "white"
         smooth: true
     }
