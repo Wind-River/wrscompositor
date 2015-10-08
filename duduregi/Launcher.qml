@@ -4,7 +4,8 @@ import com.windriver.duduregi 1.0
 Item {
     id: launcher
     property variant root: null
-    property string modelType: "tizen"
+    //property string modelType: "tizen"
+    property string modelType: "genivi"
     anchors.fill: parent
     // 
     ListModel {

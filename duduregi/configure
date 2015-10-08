@@ -5,10 +5,11 @@ echo "Usage: configure [options]"
 echo "Options: [defaults in brackets after descriptions]"
 echo
 echo "Standard options:"
-echo "  --help                print this message"
-echo "  --with-digitalcluster build with digital cluster feature (on 2nd display)"
-echo "  --without-maindisplay build without main display"
-echo "  --with-wlcompositor   build with digital cluster feature"
+echo "  --help                 print this message"
+echo "  --with-digitalcluster  build with digital cluster feature (on 2nd display)"
+echo "  --without-maindisplay  build without main display"
+echo "  --without-wlcompositor build without digital cluster feature"
+echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
 }
 
 if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
@@ -18,7 +19,7 @@ fi
 
 SUPPORT_MAINDISPLAY=1
 SUPPORT_DCLUSTER=0
-SUPPORT_WLCOMPOSITOR=0
+SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
 
@@ -31,8 +32,8 @@ for opt do
     --with-digitalcluster)
 		SUPPORT_DCLUSTER=1
 	;;
-    --with-wlcompositor)
-		SUPPORT_WLCOMPOSITOR=1
+    --without-wlcompositor)
+		SUPPORT_WLCOMPOSITOR=0
 	;;
     --without-webengine)
 		SUPPORT_WEBENGINE=0
@@ -87,7 +88,7 @@ echo $'\r'"Generating duduregiconfig.h ................................... Done"
 echo
 
 if [ -f /opt/windriver/bin/qmake ]; then
-	echo "Found QT Build for Wind River: /opt/windriver"
+	echo "Found Qt Build for Wind River: /opt/windriver"
 	echo "/opt/windriver/bin/qmake will be used for build"
 	/opt/windriver/bin/qmake
 	echo "Makefile generated"

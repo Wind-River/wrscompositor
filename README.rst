@@ -6,6 +6,18 @@ WR's Genivi based IVI system demo
 * add genivi features
 * add HTML5 app f/w
 
+Qt Installation for duduregi & demo stuff
+------------------------------------------
+
+::
+
+	$ cd qt-every....5.5.0     # Qt
+	$ ./configure -prefix /opt/windriver ...
+	$ make -j8 && make install
+	$ cd qtwayland             # QtWayland
+	$ /opt/windriver/bin/qmake CONFIG+=wayland-compositor
+	$ make -j8 && make install
+
 
 duduregi X11
 ------------
@@ -33,7 +45,7 @@ duduregi Wayland (Experimental)
 ::
 
 	$ cd duduregi
-	$ ./configure --with-wlcompositor
+	$ ./configure --with-wlcompositor --with-webengine
 	$ make
 
 
@@ -44,6 +56,15 @@ WR-AMB (WindRiver Automotive Message Broker)
 
 	$ cd wr-amb
 	$ ./wr-amb
+
+HTML5 Applications
+------------------
+
+::
+
+	$ cd wr-amb/www
+	$ ln -sf $(pwd)/html5apps /opt/windriver/share/html5apps
+	$ ln -sf $(pwd)/tizen-web-ui-fw /opt/windriver/share/tizen-web-ui-fw
 
 Genivi VehicleDataSimulator (VDS)
 ----------------------------------
