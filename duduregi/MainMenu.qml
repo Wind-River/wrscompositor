@@ -38,6 +38,14 @@ Item {
     ListModel {
 		id: appModel
 		ListElement {
+			name: "GENIVI Demo Platform";
+			icon: "icons/genivi.png";
+			type: "launcher"
+			launcherType: "genivi"
+			iconRotate: false
+			background: "images/xdg-background.png"
+		}
+		ListElement {
 			name: "Navigation";
 			icon: "icons/navi.png"
 			type: "quick-html5app"

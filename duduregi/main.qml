@@ -287,9 +287,17 @@ Item {
         windowContainer.targetHeight = window.size.height;
 
 
+        var windowChromeComponent = Qt.createComponent("WindowChrome.qml");
+        if (windowChromeComponent.status != Component.Ready) {
+            console.warn("Error loading WindowChrome.qml: " + windowChromeComponent.errorString());
+            return;
+        }
+        var windowChrome = windowChromeComponent.createObject(windowContainer.child);
         CompositorLogic.addWindow(windowContainer);
 
-        windowContainer.opacity = 1;
+        windowContainer.opacity = 1
+        windowContainer.animationsEnabled = true;
+        windowContainer.chrome = windowChrome;
 
         if(root.currentWindow != null)
             root.currentWindow.visible = false

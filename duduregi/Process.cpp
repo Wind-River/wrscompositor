@@ -1,3 +1,4 @@
+#include "duduregiconfig.h"
 #include "Process.h"
 #include <QVariant>
 #include <QMetaType>
@@ -19,6 +20,11 @@ bool Process::execute(const QString &cmd)
     if(mProcess)
         delete mProcess;
     mProcess = new QProcess();
+#if DUDUREGI_WAYLAND_COMPOSITOR
+    QStringList env = QProcess::systemEnvironment();
+    env << "QT_QPA_PLATFORM=wayland";
+    mProcess->setEnvironment(env);
+#endif
     mProcess->setWorkingDirectory(getenv("HOME"));
     connect(mProcess, SIGNAL(started()), this, SLOT(slotStarted()));
     connect(mProcess, SIGNAL(finished(int)), this, SLOT(slotCompleted(int)));

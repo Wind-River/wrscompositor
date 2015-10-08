@@ -5,9 +5,31 @@ Item {
     id: launcher
     property variant root: null
     //property string modelType: "tizen"
+    //property string modelType: "waland"
     property string modelType: "genivi"
     anchors.fill: parent
     // 
+    ListModel {
+        id: geniviApps
+        ListElement {
+            label: "AM Monitor"
+            description: "Audio Manager Monitor"
+            exec: "/home/jpark/demo/am-monitor-wayland.sh"
+            type: "capp"
+            multiple: false
+            taskmanage: true
+	    iconPath: "icons/genivi.png"
+        }
+        ListElement {
+            label: "Assistant"
+            description: "Qt Assistnat"
+            exec: "/opt/windriver/bin/assistant"
+            type: "capp"
+            multiple: false
+            taskmanage: true
+	    iconPath: "icons/genivi.png"
+        }
+    }
     ListModel {
         id: tizenApps
         ListElement {
@@ -136,7 +158,7 @@ Item {
     }
     GridView {
         id: grid
-        model: modelType=="tizen"?tizenApps:waylandApps
+        model: modelType=="genivi"?geniviApps:waylandApps
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width*0.8
