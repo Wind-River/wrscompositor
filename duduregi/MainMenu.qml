@@ -43,7 +43,7 @@ Item {
 			type: "launcher"
 			launcherType: "genivi"
 			iconRotate: false
-			background: "images/xdg-background.png"
+			background: "images/genivi-background.jpg"
 		}
 		ListElement {
 			name: "Navigation";

@@ -18,16 +18,52 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/genivi.png"
+	    iconPath: "icons/gdp-icon-ammonitor.png"
         }
         ListElement {
-            label: "Assistant"
-            description: "Qt Assistnat"
+            label: "Application"
+            description: "Application"
             exec: "/opt/windriver/bin/assistant"
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/genivi.png"
+	    iconPath: "icons/gdp-icon-app.png"
+        }
+        ListElement {
+            label: "Fuel Stop Advisor"
+            description: "Fuel Stop Advisor"
+            exec: "/opt/windriver/bin/assistant"
+            type: "capp"
+            multiple: false
+            taskmanage: true
+	    iconPath: "icons/gdp-icon-fuel.png"
+        }
+        ListElement {
+            label: "Web Browsing"
+            description: "Web Browsing"
+            exec: "/opt/windriver/bin/assistant"
+            type: "capp"
+            multiple: false
+            taskmanage: true
+	    iconPath: "icons/gdp-icon-browser.png"
+        }
+        ListElement {
+            label: "Navigation"
+            description: "Navigation"
+            exec: "/opt/windriver/bin/assistant"
+            type: "capp"
+            multiple: false
+            taskmanage: true
+	    iconPath: "icons/gdp-icon-nav.png"
+        }
+        ListElement {
+            label: "Media Player"
+            description: "Media Player"
+            exec: "/opt/windriver/bin/assistant"
+            type: "capp"
+            multiple: false
+            taskmanage: true
+	    iconPath: "icons/gdp-icon-mediaplayer.png"
         }
     }
     ListModel {
@@ -242,7 +278,7 @@ Item {
                 id: myText
                 anchors.top: parent.bottom
                 text: label
-                font.pointSize: ((parent.height / 4)|0)
+                font.pointSize: ((parent.height / 8)|0)
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "black"
                 style: Text.Outline
