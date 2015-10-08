@@ -108,24 +108,14 @@ Item {
         smooth: true
     }
     */
-    Rectangle {
+    Image {
         id: closeButton
+        source: "icons/menu-close.png"
         anchors.right: parent.right
-        color: "#404040"
-        Text {
-            anchors.fill: parent
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            text: "X"
-            color: "white"
-            font.pointSize: parent.height
-            font.bold: !buttonArea.pressed
-            visible: parent.width>0
-        }
+        anchors.rightMargin: width/8
         width: height
-        height: parent.height
+        height: parent.height * 3 / 4
+		y: (parent.height - height)/2
         MouseArea {
             id: buttonArea
             anchors.fill: parent
@@ -134,6 +124,8 @@ Item {
                 closeButton.width = 0;
             }
         }
+		opacity: (buttonArea.pressed?0.8:1.0)
+        smooth: true
     }
 
     function showCloseButton(flag) {
