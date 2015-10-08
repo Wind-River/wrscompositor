@@ -175,8 +175,11 @@ int main(int argc, char *argv[])
 #if DUDUREGI_WAYLAND_COMPOSITOR
     compositor.setTitle(QLatin1String("QML Compositor"));
 #endif
-    if(app.arguments().contains("--720")) {
-        compositor.setGeometry(50, 50, 1280, 720);
+    if(app.arguments().contains("--720")||app.arguments().contains("--1080")) {
+        if(app.arguments().contains("--720"))
+            compositor.setGeometry(50, 50, 1280, 720);
+        else
+            compositor.setGeometry(50, 50, 1920, 1080);
         QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
         compositor.setPosition(settings.value("position").toPoint());
     } else

@@ -49,11 +49,9 @@ void Process::slotStarted()
 {
     emit pidChanged(mProcess->pid());
 }
-void Process::slotCompleted(int exitStatus)
+void Process::slotCompleted(int)
 {
-    if(exitStatus==0) {
-        emit pidChanged(0);
-    }
+    emit pidChanged(0);
 }
 void Process::slotStandardOutput()
 {
