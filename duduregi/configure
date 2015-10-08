@@ -90,8 +90,7 @@ echo
 if [ -f /opt/windriver/bin/qmake ]; then
 	echo "Found Qt Build for Wind River: /opt/windriver"
 	echo "/opt/windriver/bin/qmake will be used for build"
-	/opt/windriver/bin/qmake
-	echo "Makefile generated"
+	/opt/windriver/bin/qmake && echo "Makefile generated"
 else
-	qmake
+	qmake && echo "Makefile generated"
 fi
