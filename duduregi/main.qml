@@ -58,6 +58,13 @@ Item {
         source: "alameda.jpg"
         smooth: true
 
+		function removeWindow(window) {
+			console.log('window destroyed '+window);
+			window.destroy();
+			CompositorLogic.removeWindow(window);
+		}
+
+
         Item {
             id: currentApp
             anchors.fill: parent
@@ -208,6 +215,7 @@ Item {
 
         MainMenu {
             id: mainmenu 
+			z: 100
             root: root
             Component.onCompleted: {
                 statusBar.closeWindow.connect(function() {
@@ -278,26 +286,20 @@ Item {
         console.log('window added '+window);
         console.log(currentApp.width+' '+ currentApp.height);
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowContainer = windowContainerComponent.createObject(root);
+        var windowContainer = windowContainerComponent.createObject(background);
+        windowContainer.z = 50
         windowContainer.child = compositor.item(window);
         windowContainer.child.parent = windowContainer;
         windowContainer.child.touchEventsEnabled = true;
 
+        windowContainer.targetX = 0;
+        windowContainer.targetY = 0;
         windowContainer.targetWidth = window.size.width;
-        windowContainer.targetHeight = window.size.height;
+        windowContainer.targetHeight = window.size.height - statusBar.height;
 
-
-        var windowChromeComponent = Qt.createComponent("WindowChrome.qml");
-        if (windowChromeComponent.status != Component.Ready) {
-            console.warn("Error loading WindowChrome.qml: " + windowChromeComponent.errorString());
-            return;
-        }
-        var windowChrome = windowChromeComponent.createObject(windowContainer.child);
         CompositorLogic.addWindow(windowContainer);
 
         windowContainer.opacity = 1
-        windowContainer.animationsEnabled = true;
-        windowContainer.chrome = windowChrome;
 
         if(root.currentWindow != null)
             root.currentWindow.visible = false
@@ -312,22 +314,11 @@ Item {
         }
     }
 
-    function removeWindow(window) {
-        console.log('window destroyed '+window);
-        window.destroy();
-        CompositorLogic.removeWindow(window);
-    }
-
     function windowResized(window) {
         console.log('window resized '+window);
         window.width = window.surface.size.width;
         window.height = window.surface.size.height;
-
-        CompositorLogic.relayout();
     }
-
-    onHeightChanged: CompositorLogic.relayout();
-    onWidthChanged: CompositorLogic.relayout();
 
     Keys.onPressed: {
         console.log('key on main: '+event.key);

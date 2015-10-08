@@ -38,7 +38,7 @@ Item {
     ListModel {
 		id: appModel
 		ListElement {
-			name: "GENIVI Demo Platform";
+			name: "GDP Apps";
 			icon: "icons/genivi.png";
 			type: "launcher"
 			launcherType: "genivi"

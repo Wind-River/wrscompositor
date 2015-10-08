@@ -44,10 +44,10 @@ function relayout() {
         var cx = (ix + 0.5) * w;
         var cy = (iy + 0.5) * h;
 
-        windowList[i].targetScale = 0.98 * Math.min(w / windowList[i].width, h / windowList[i].height);
+        //windowList[i].targetScale = 0.98 * Math.min(w / windowList[i].width, h / windowList[i].height);
 
-        windowList[i].targetX = (cx - windowList[i].width / 2);
-        windowList[i].targetY = (cy - windowList[i].height / 2);
+        //windowList[i].targetX = (cx - windowList[i].width / 2);
+        //windowList[i].targetY = (cy - windowList[i].height / 2);
     }
 }
 
@@ -111,5 +111,5 @@ function removeWindow(window)
     }
 
     windowList.splice(indexes[index], 1);
-    relayout();
+    //relayout();
 }
