@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import "compositor.js" as CompositorLogic
+import "config.js" as Conf
 import "sprintf.js" as SPrintf
 import com.windriver.automotive 1.0
 
@@ -44,6 +45,9 @@ Item {
 
     StatusBar {
         id: statusBar
+		onHeightChanged: {
+			Conf.statusBarHeight = statusBar.height
+		}
     }
     Image {
         id: background
@@ -331,4 +335,10 @@ Item {
                 mainmenu.hide();
         }
     }
+	onWidthChanged: {
+		Conf.displayWidth = width;
+	}
+	onHeightChanged: {
+		Conf.displayHeight = height;
+	}
 }

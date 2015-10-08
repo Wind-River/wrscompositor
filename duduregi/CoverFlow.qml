@@ -1,6 +1,7 @@
 import QtQuick 2.1
 //import QtWebEngine 0.9
 import QtWebKit 3.0
+import "config.js" as Conf
 
 Item {
     id: coverFlow
@@ -244,7 +245,9 @@ Item {
                     id: webview
                     url: "about:blank"
                     visible: type == "quick-html5app"
-                    anchors.fill: parent
+					width: coverFlow.width
+					height: coverFlow.height
+                    //anchors.fill: parent
                     Keys.onPressed: {
                         console.log('key on webview '+event.key);
                         if (event.key == Qt.Key_Backspace || event.key == Qt.Key_F1) {
