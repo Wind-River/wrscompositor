@@ -16,6 +16,8 @@ Process::Process(QObject *parent) :
 }
 bool Process::execute(const QString &cmd)
 {
+    mCmd = cmd;
+    emit cmdChanged(mCmd);
     qDebug() << "Process execute: " << cmd;
     if(mProcess)
         delete mProcess;
@@ -33,6 +35,9 @@ bool Process::execute(const QString &cmd)
     QStringList args;
     mProcess->start(cmd, args);
     return true;
+}
+QString Process::getCmd() const {
+    return mCmd;
 }
 int Process::getPID() {
     if(mProcess)

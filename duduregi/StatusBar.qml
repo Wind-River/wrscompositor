@@ -125,6 +125,7 @@ Item {
             }
         }
 		opacity: (buttonArea.pressed?0.8:1.0)
+		scale: (buttonArea.pressed?0.9:1.0)
         smooth: true
     }
 

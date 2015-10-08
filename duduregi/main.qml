@@ -301,6 +301,18 @@ Item {
         windowContainer.targetWidth = window.size.width;
         windowContainer.targetHeight = window.size.height - statusBar.height;
 
+        if(root.waitProcess && root.waitProcess.pid == window.client.processId)
+		{
+			// XXX hard code for AM Monitor
+			if(root.waitProcess.cmd.indexOf("onitor")>0) // AM Monitor
+			{
+        		windowContainer.targetY = - statusBar.height;
+        		windowContainer.targetHeight = window.size.height;
+			}
+            root.waitProcess.setWindow(windowContainer);
+            root.waitProcess = null;
+        }
+
         CompositorLogic.addWindow(windowContainer);
 
         windowContainer.opacity = 1
@@ -312,10 +324,6 @@ Item {
         if(mainmenu.visible)
             mainmenu.hide();
 
-        if(root.waitProcess) {
-            root.waitProcess.setWindow(windowContainer);
-            root.waitProcess = null;
-        }
     }
 
     function windowResized(window) {
