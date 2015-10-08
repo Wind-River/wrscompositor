@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 
     QmlCompositor compositor;
 #if DUDUREGI_WAYLAND_COMPOSITOR
-    compositor.setTitle(QLatin1String("QML Compositor"));
+    compositor.setTitle(QLatin1String("Wind River Duduregi Wayland Compositor"));
 #endif
     if(app.arguments().contains("--720")||app.arguments().contains("--1080")) {
         if(app.arguments().contains("--720"))

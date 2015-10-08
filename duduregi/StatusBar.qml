@@ -1,8 +1,7 @@
 import QtQuick 2.1
 
-Rectangle {
+Item {
     id: statusBar
-    color: "#121212"
     anchors.top: parent.top
     width: parent.width
     height: parent.height/12
@@ -12,6 +11,13 @@ Rectangle {
     signal closeWindow
     signal logoClicked
 
+	Rectangle {
+		id: statusbarBackground
+    	color: "#000000"
+        anchors.fill: parent
+	}
+
+	/*
     Image {
         id: logo
         //source: "images/tizen-on-dark-small.png"
@@ -23,14 +29,6 @@ Rectangle {
         height: statusBar.height
 		opacity: (logoButtonArea.pressed?0.8:1.0)
         smooth: true
-        /*
-        RotationAnimation on rotation {
-            loops: Animation.Infinite
-            from: 360
-            to: 0
-            duration: 10000
-        }
-        */
         MouseArea {
 			id: logoButtonArea
             anchors.fill: parent
@@ -38,21 +36,33 @@ Rectangle {
                 logoClicked(); 
             }
         }
-
     }
+	*/
+
     Image {
         id: logo_title
-        source: "images/wr.png"
-        anchors.left: logo.right
+        //source: "images/wr.png"
+        //height: statusBar.height * 0.4
+        //anchors.left: logo.right
+        source: "images/wr-black.png"
+        height: statusBar.height * 0.7
+        anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.4
         smooth: true
-		visible: statusBar.wmi == ""
+		//visible: statusBar.wmi == ""
+		opacity: (logoButtonArea.pressed?0.8:1.0)
+        MouseArea {
+			id: logoButtonArea
+            anchors.fill: parent
+            onClicked: {
+                logoClicked(); 
+            }
+        }
     }
     Text {
         id: wmi_title
-        anchors.left: logo.right
+        anchors.left: logo_title.right
         anchors.verticalCenter: parent.verticalCenter
 		text: statusBar.wmi
 		visible: statusBar.wmi != ""
