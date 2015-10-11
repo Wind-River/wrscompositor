@@ -205,7 +205,7 @@
             <arg name="layer" type="object" interface="ivi_controller_layer" allow-null="true"/>
         </event>
 
-        <request name="send_stats">
+        <request name="dosend_stats"> <!-- FIXME added 'do' to avoid conflict by qwayland-scanner -->
             <description summary="request statistics for surface in ivi compositor">
                 These stats contain information required for monitoring, debugging, logging
                 and tracing.
