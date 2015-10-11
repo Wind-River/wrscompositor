@@ -64,6 +64,13 @@ fi
 if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
 echo "DEFINES += QT_COMPOSITOR_QUICK" >> duduregi.pro
 echo "QT += compositor" >> duduregi.pro
+
+echo "QT += compositor-private" >> duduregi.pro
+echo "CONFIG +=wayland-scanner" >> duduregi.pro
+echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> duduregi.pro
+echo "CONFIG += link_pkgconfig" >> duduregi.pro
+echo "PKGCONFIG += wayland-server" >> duduregi.pro
+
 fi
 
 if [ "$SUPPORT_DBUS" = "1" ]; then
