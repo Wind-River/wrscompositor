@@ -100,7 +100,8 @@
 	<div id="flashcontent" style="float:left; display:none"></div>
 	<div id="map3d"></div>
 	<div id="desc" style="position: absolute; left: 0px; top: 0px; z-index: 100">
-<button onclick="Main.goto(41.405159, 2.174373,261.0);">Reset Vehicle Location to "la Sagrada Família"</button>
+<button onclick="Main.goto(37.779625, -122.263508 ,320.0 /* 41.405159, 2.174373,261.0 */);">Reset Vehicle Location to "la Sagrada Família"</button>
+
 	</div>
 <!--
 	<canvas id="debug_canvas" width="480" height="320"></canvas>
@@ -166,7 +167,7 @@
 				} else if(button == 3) { // brake
 					wheelInputData['brake'] = obj['pressed'] && 1 || 0;
 				} else if(button == 11) { // reset the place
-					Main.goto(41.405159, 2.174373,261.0);
+					Main.goto(/*41.405159, 2.174373,261.0*/37.779625, -122.263508 ,320.0 );
 				}
 			}
 			//console.log(wheelInputData['wheel']);
