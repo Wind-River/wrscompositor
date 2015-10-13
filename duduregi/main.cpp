@@ -19,6 +19,10 @@
 #include <QQuickView>
 #endif
 
+#if DUDUREGI_WAYLAND_COMPOSITOR
+#include "GeniviWaylandIVIExtension.h"
+#endif
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -33,6 +37,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
     qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
+#if DUDUREGI_WAYLAND_COMPOSITOR
+    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVIScene");
+    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVIScreen");
+    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVILayer");
+    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVISurface");
+#endif
 
 #if DUDUREGI_WEBENGINE
     QtWebEngine::initialize();

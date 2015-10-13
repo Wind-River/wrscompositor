@@ -70,6 +70,8 @@ echo "CONFIG +=wayland-scanner" >> duduregi.pro
 echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> duduregi.pro
 echo "CONFIG += link_pkgconfig" >> duduregi.pro
 echo "PKGCONFIG += wayland-server" >> duduregi.pro
+echo "HEADERS += GeniviWaylandIVIExtension.h" >> duduregi.pro
+echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> duduregi.pro
 
 fi
 
