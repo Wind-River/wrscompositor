@@ -7,7 +7,6 @@ DuduregiCompositor::DuduregiCompositor()
         //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_screen(QWaylandCompositor::handle()->wl_display(), 1)
-        , QtWaylandServer::ivi_controller(QWaylandCompositor::handle()->wl_display(), 1)
               , m_fullscreenSurface(0)
 
 #endif
@@ -25,6 +24,8 @@ DuduregiCompositor::DuduregiCompositor()
     createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
+
+    QtWaylandServer::ivi_controller::init(QWaylandCompositor::handle()->wl_display(), 1);
 
     mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(this, width(), height(), this);
     rootContext()->setContextProperty("geniviExt", mGeniviExt);
@@ -246,24 +247,35 @@ void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_contr
     qDebug() << __func__;
     for(int i=0; i<mGeniviExt->screenCount(); i++) {
         GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
-        qDebug() << "Screen" << screen->id();
 
-        //struct ::wl_resource *handle = resource->handle;
-        /*
         QtWayland::Output *output = screen->waylandOutput()->handle();
-        qDebug() << "Screen clients: " << output->resourceMap().keys().count();
-        qDebug() << "find " <<output->resourceMap().contains(resource->client());
-        */
+        // find wl_output for client
+        if(!output->resourceMap().contains(resource->client()))
+            return;
+        // get wl_resource of wl_output for client
+        QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
 
+        // init screen interface for client
+        QtWaylandServer::ivi_controller_screen::init(resource->handle->client, 0, 1);
 
-        //QtWaylandServer::ivi_controller_screen *_screen = new QtWaylandServer::ivi_controller_screen(handle->client, handle->object.id, 1);
+        // send screen
+        qDebug() << "send screen id" << wl_resource_get_id(output_resource->handle);
+        QtWaylandServer::ivi_controller::send_screen(resource->handle, wl_resource_get_id(output_resource->handle), QtWaylandServer::ivi_controller_screen::resource()->handle);
 
+        for(int j=0; j<screen->layerCount(); j++) {
+            GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
+            qDebug() << "send layer id" << layer->id();
 
-        //QtWayland::Output *output = screen->waylandOutput()->handle();
-        //output->resource()->output_object;
+            // send layer
+            QtWaylandServer::ivi_controller::send_layer(resource->handle, layer->id());
+            for(int k=0; k<layer->surfaceCount(); k++) {
+                GeniviWaylandIVIExtension::IVISurface *surface = layer->surface(j);
+                qDebug() << "send surface id" << surface->id();
 
-
-        //QtWaylandServer::ivi_controller::send_screen(resource->handle, screen->id(), _screen->resource()->handle);
+                // send layer
+                QtWaylandServer::ivi_controller::send_layer(resource->handle, surface->id());
+            }
+        }
     }
 };
 void DuduregiCompositor::ivi_controller_destroy_resource(QtWaylandServer::ivi_controller::Resource *resource) {
@@ -277,9 +289,18 @@ void DuduregiCompositor::ivi_controller_commit_changes(QtWaylandServer::ivi_cont
 void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id) {
     (void)resource;
     qDebug() << __func__ << id_layer << width << height << id;
+    QtWaylandServer::ivi_controller_layer::init(resource->handle->client, id, 1);
+    for(int i=0; i<mGeniviExt->mainScreen()->layerCount(); i++) {
+        GeniviWaylandIVIExtension::IVILayer *layer = mGeniviExt->mainScreen()->layer(i);
+        if(layer->id() == (int)id) {
+            ivi_controller_layer::send_opacity(resource->handle, layer->opacity());
+            break;
+        }
+    }
 };
 void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id) {
     (void)resource;
     qDebug() << __func__ << id_surface << id;
+    QtWaylandServer::ivi_controller_surface::init(resource->handle->client, id, 1);
 };
 #endif
