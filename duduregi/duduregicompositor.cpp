@@ -4,9 +4,9 @@
 DuduregiCompositor::DuduregiCompositor()
 #if DUDUREGI_WAYLAND_COMPOSITOR
         : QWaylandQuickCompositor(0, DefaultExtensions | SubSurfaceExtension)
-        , QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
-        , QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
-        , QtWaylandServer::ivi_controller_screen(QWaylandCompositor::handle()->wl_display(), 1)
+        //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
+        //, QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
+        //, QtWaylandServer::ivi_controller_screen(QWaylandCompositor::handle()->wl_display(), 1)
         , QtWaylandServer::ivi_controller(QWaylandCompositor::handle()->wl_display(), 1)
               , m_fullscreenSurface(0)
 
@@ -26,7 +26,7 @@ DuduregiCompositor::DuduregiCompositor()
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
-    mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(width(), height(), this);
+    mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(this, width(), height(), this);
     rootContext()->setContextProperty("geniviExt", mGeniviExt);
 #endif
 
@@ -243,8 +243,28 @@ void DuduregiCompositor::ivi_controller_screen_set_render_order(QtWaylandServer:
 
 
 void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource) {
-    (void)resource;
     qDebug() << __func__;
+    for(int i=0; i<mGeniviExt->screenCount(); i++) {
+        GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
+        qDebug() << "Screen" << screen->id();
+
+        //struct ::wl_resource *handle = resource->handle;
+        /*
+        QtWayland::Output *output = screen->waylandOutput()->handle();
+        qDebug() << "Screen clients: " << output->resourceMap().keys().count();
+        qDebug() << "find " <<output->resourceMap().contains(resource->client());
+        */
+
+
+        //QtWaylandServer::ivi_controller_screen *_screen = new QtWaylandServer::ivi_controller_screen(handle->client, handle->object.id, 1);
+
+
+        //QtWayland::Output *output = screen->waylandOutput()->handle();
+        //output->resource()->output_object;
+
+
+        //QtWaylandServer::ivi_controller::send_screen(resource->handle, screen->id(), _screen->resource()->handle);
+    }
 };
 void DuduregiCompositor::ivi_controller_destroy_resource(QtWaylandServer::ivi_controller::Resource *resource) {
     (void)resource;

@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include <QtCompositor/QWaylandOutput>
+#include <QtCompositor/QWaylandCompositor>
 #include <QDebug>
 #include <QString>
 #include <QObject>
@@ -19,8 +21,10 @@
 
 
 namespace GeniviWaylandIVIExtension {
-    class IVIScreen;
     class IVIScene;
+    class IVIScreen;
+    class IVILayer;
+
     class IVIRectangle : public QObject
     {
         Q_OBJECT
@@ -61,8 +65,10 @@ namespace GeniviWaylandIVIExtension {
     Q_OBJECT
 
     public:
-        IVISurface(int id, int w, int h, QObject* parent=0);
-        IVISurface(int id, int x, int y, int w, int h, QObject* parent=0);
+        IVISurface(int id, int w, int h, IVILayer* parent=0);
+        IVISurface(int id, int x, int y, int w, int h, IVILayer* parent=0);
+    private:
+        IVILayer *mLayer;
     };
 
     class IVILayer : public IVIRectangle
@@ -71,8 +77,8 @@ namespace GeniviWaylandIVIExtension {
     Q_PROPERTY(QQmlListProperty<IVISurface> layers READ surfaces)
 
     public:
-        IVILayer(int id, int w, int h, QObject* parent=0);
-        IVILayer(int id, int x, int y, int w, int h, QObject* parent=0);
+        IVILayer(int id, int w, int h, IVIScreen* parent=0);
+        IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
         QQmlListProperty<IVISurface> surfaces() {
             return QQmlListProperty<IVISurface>(this, mSurfaces);
@@ -90,9 +96,12 @@ namespace GeniviWaylandIVIExtension {
     Q_PROPERTY(QQmlListProperty<IVILayer> layers READ layers)
 
     public:
-        IVIScreen(int id, int w, int h, QObject* parent=0);
+        IVIScreen(int id, int w, int h, IVIScene* parent=0);
         Q_INVOKABLE void addLayer(int id);
         Q_INVOKABLE void addLayer(int id, int width, int height);
+
+        QWaylandOutput * waylandOutput() { return mWaylandOutput; };
+        void setWaylandOutput(QWaylandOutput *output) { mWaylandOutput = output; };
 
         QQmlListProperty<IVILayer> layers() {
             return QQmlListProperty<IVILayer>(this, mLayers);
@@ -101,18 +110,29 @@ namespace GeniviWaylandIVIExtension {
         IVILayer *layer(int i) const { return mLayers.at(i); }
     private:
         QList<IVILayer*> mLayers;
-        IVIScreen  *mScene;
+        IVIScene  *mScene;
+        QWaylandOutput *mWaylandOutput;
     };
 
     class IVIScene : public IVIRectangle
     {
     Q_OBJECT
+    Q_PROPERTY(QQmlListProperty<IVIScreen> screens READ screens)
+    Q_PROPERTY(IVIScreen* mainScreen READ mainScreen)
 
     public:
-        IVIScene(int w, int h, QObject *p=0);
+        IVIScene(QWaylandCompositor *compositor, int w, int h, QObject *p=0);
+        IVIScreen* mainScreen() { return mMainScreen; };
+
+        QQmlListProperty<IVIScreen> screens() {
+            return QQmlListProperty<IVIScreen>(this, mScreens);
+        }
+        int screenCount() const { return mScreens.count(); }
+        IVIScreen *screen(int i) const { return mScreens.at(i); }
     private:
         QList<IVIScreen*> mScreens;
         IVIScreen *mMainScreen;
+        QWaylandCompositor *mCompositor;
     };
 }
 
