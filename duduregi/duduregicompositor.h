@@ -7,6 +7,8 @@
 #include <QtCompositor/qwaylandquickoutput.h>
 #include <QtCompositor/private/qwlcompositor_p.h>
 #include "qwayland-server-ivi-controller.h"
+
+#include "GeniviWaylandIVIExtension.h"
 #endif
 
 #include <QSurfaceFormat>
@@ -62,6 +64,7 @@ protected:
 
 private:
     QWaylandQuickSurface *m_fullscreenSurface;
+    GeniviWaylandIVIExtension::IVIScene *mGeniviExt;
 #endif
 
 

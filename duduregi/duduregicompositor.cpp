@@ -17,14 +17,18 @@ DuduregiCompositor::DuduregiCompositor()
     setResizeMode(QQuickView::SizeRootObjectToView);
     setColor(Qt::black);
     winId();
+
+    rootContext()->setContextProperty("compositor", this);
+
 #if DUDUREGI_WAYLAND_COMPOSITOR
     addDefaultShell();
     createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
+    mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(width(), height(), this);
+    rootContext()->setContextProperty("geniviExt", mGeniviExt);
 #endif
-    rootContext()->setContextProperty("compositor", this);
 
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
