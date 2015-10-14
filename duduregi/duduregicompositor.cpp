@@ -303,7 +303,7 @@ void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_contro
         GeniviWaylandIVIExtension::IVILayer *layer = mGeniviExt->mainScreen()->layer(i);
         if(layer->id() == (int)id_layer) {
             qDebug() << "send layer" << id_layer;
-            ivi_controller_layer::send_opacity(resource_ctrllayer, layer->opacity());
+            ivi_controller_layer::send_opacity(resource_ctrllayer, wl_fixed_from_double(layer->opacity()));
             ivi_controller_layer::send_source_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
             ivi_controller_layer::send_destination_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
             ivi_controller_layer::send_orientation(resource_ctrllayer, layer->orientation());

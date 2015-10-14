@@ -19,10 +19,15 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
     }
     Q_ASSERT(mMainScreen);
     // default layer
-    mMainScreen->addLayer(1000);
-    mMainScreen->addLayer(2000);
-    mMainScreen->addLayer(3000);
-    mMainScreen->addLayer(4000);
+    mMainScreen->addLayer(1000); // for application
+    mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
+    mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
+    mMainScreen->addLayer(2000); // for main menu
+    mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
+    mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
+    mMainScreen->addLayer(3000); // for status bar
+    mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
+    mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
 }
 
 IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) :
