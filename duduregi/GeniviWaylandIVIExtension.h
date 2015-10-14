@@ -75,7 +75,9 @@ namespace GeniviWaylandIVIExtension {
     {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<IVISurface> layers READ surfaces)
-    Q_PROPERTY(float opacity READ opacity WRITE setOpacity NOTIFY propertyChanged)
+    Q_PROPERTY(int32_t opacity READ opacity WRITE setOpacity NOTIFY propertyChanged)
+    Q_PROPERTY(int32_t orientation READ orientation WRITE setOrientation NOTIFY propertyChanged)
+    Q_PROPERTY(int32_t visibility READ visibility WRITE setVisibility NOTIFY propertyChanged)
 
     public:
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
@@ -87,15 +89,22 @@ namespace GeniviWaylandIVIExtension {
         int surfaceCount() const { return mSurfaces.count(); }
         IVISurface *surface(int i) const { return mSurfaces.at(i); }
 
-        float opacity() const { return mOpacity; }
-        void setOpacity(float o) { mOpacity = o; emit propertyChanged(); };
+        int32_t opacity() const { return mOpacity; }
+        void setOpacity(int32_t o) { mOpacity = o; emit propertyChanged(); };
+        int32_t orientation() const { return mOrientation; }
+        void setOrientation(int32_t o) { mOrientation = o; emit propertyChanged(); };
+        int32_t visibility() const { return mVisibility; }
+        void setVisibility(int32_t o) { mVisibility = o; emit propertyChanged(); };
 
+        IVIScreen* screen() {return mScreen;};
     signals:
         void propertyChanged();
     private:
         QList<IVISurface*> mSurfaces;
         IVIScreen  *mScreen;
-        float mOpacity;
+        int32_t mOpacity;
+        int32_t mOrientation;
+        int32_t mVisibility;
     };
 
     class IVIScreen : public IVIRectangle

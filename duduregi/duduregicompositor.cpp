@@ -7,7 +7,7 @@ DuduregiCompositor::DuduregiCompositor()
         //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_screen(QWaylandCompositor::handle()->wl_display(), 1)
-              , m_fullscreenSurface(0)
+              , m_fullscreenSurface(0), mGeniviExt(0)
 
 #endif
 {
@@ -26,9 +26,6 @@ DuduregiCompositor::DuduregiCompositor()
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
     QtWaylandServer::ivi_controller::init(QWaylandCompositor::handle()->wl_display(), 1);
-
-    mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(this, width(), height(), this);
-    rootContext()->setContextProperty("geniviExt", mGeniviExt);
 #endif
 
 
@@ -96,6 +93,11 @@ void DuduregiCompositor::resizeEvent(QResizeEvent *event)
 {
     QQuickView::resizeEvent(event);
     QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
+
+    if(!mGeniviExt) {
+        mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(this, width(), height(), this);
+        rootContext()->setContextProperty("geniviExt", mGeniviExt);
+    }
 }
 
 void DuduregiCompositor::surfaceCreated(QWaylandSurface *surface) {
@@ -257,11 +259,15 @@ void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_contr
 
         // init screen interface for client
         QtWaylandServer::ivi_controller_screen::init(resource->handle->client, 0, 1);
-
-        // send screen
-        qDebug() << "send screen id" << wl_resource_get_id(output_resource->handle);
+        // send screen(client, r-id of output for screen, screen) 
         QtWaylandServer::ivi_controller::send_screen(resource->handle, wl_resource_get_id(output_resource->handle), QtWaylandServer::ivi_controller_screen::resource()->handle);
 
+    }
+
+
+    // XXX should reverse ???
+    for(int i=0; i<mGeniviExt->screenCount(); i++) {
+        GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
         for(int j=0; j<screen->layerCount(); j++) {
             GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
             qDebug() << "send layer id" << layer->id();
@@ -273,7 +279,7 @@ void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_contr
                 qDebug() << "send surface id" << surface->id();
 
                 // send layer
-                QtWaylandServer::ivi_controller::send_layer(resource->handle, surface->id());
+                QtWaylandServer::ivi_controller::send_surface(resource->handle, surface->id());
             }
         }
     }
@@ -290,10 +296,27 @@ void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_contro
     (void)resource;
     qDebug() << __func__ << id_layer << width << height << id;
     QtWaylandServer::ivi_controller_layer::init(resource->handle->client, id, 1);
+    struct wl_resource *resource_ctrllayer = QtWaylandServer::ivi_controller_layer::resource()->handle;
+    qDebug() << __func__ << "find layer";
     for(int i=0; i<mGeniviExt->mainScreen()->layerCount(); i++) {
         GeniviWaylandIVIExtension::IVILayer *layer = mGeniviExt->mainScreen()->layer(i);
-        if(layer->id() == (int)id) {
-            ivi_controller_layer::send_opacity(resource->handle, layer->opacity());
+        if(layer->id() == (int)id_layer) {
+            qDebug() << "send layer" << id_layer;
+            ivi_controller_layer::send_opacity(resource_ctrllayer, layer->opacity());
+            ivi_controller_layer::send_source_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
+            ivi_controller_layer::send_destination_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
+            ivi_controller_layer::send_orientation(resource_ctrllayer, layer->orientation());
+            ivi_controller_layer::send_visibility(resource_ctrllayer, layer->visibility());
+            // XXX REMOVE layer from specific screen why ??
+            // send_layer_event of ivi-controller-impl.c
+            QtWaylandServer::ivi_controller_layer::send_screen(resource_ctrllayer, NULL);
+
+            QtWayland::Output *output = layer->screen()->waylandOutput()->handle();
+            // get wl_resource of wl_output for client
+            QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
+
+            // send screen
+            QtWaylandServer::ivi_controller_layer::send_screen(resource_ctrllayer, output_resource->handle);
             break;
         }
     }
