@@ -94,7 +94,8 @@ void DuduregiCompositor::resizeEvent(QResizeEvent *event)
     QQuickView::resizeEvent(event);
     QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
 
-    if(!mGeniviExt) {
+    if(!mGeniviExt && width() > 0 && height() > 0) {
+        // this should be after 'wl_output' created, So this is right place
         mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(this, width(), height(), this);
         rootContext()->setContextProperty("geniviExt", mGeniviExt);
     }
