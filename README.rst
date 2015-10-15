@@ -66,6 +66,21 @@ HTML5 Applications
 	$ ln -sf $(pwd)/html5apps /opt/windriver/share/html5apps
 	$ ln -sf $(pwd)/tizen-web-ui-fw /opt/windriver/share/tizen-web-ui-fw
 
+
+Native Qt App examples
+----------------------
+
+::
+
+	$ cd qt5-examples
+	$ cd eyes
+	$ /opt/windriver/bin/qmake && make
+	$ cp eyes /opt/windriver/bin
+	$ cd ../qt5-examples
+	$ cd mocknavi
+	$ /opt/windriver/bin/qmake && make
+	$ cp mocknavi /opt/windriver/bin
+
 Genivi VehicleDataSimulator (VDS)
 ----------------------------------
 

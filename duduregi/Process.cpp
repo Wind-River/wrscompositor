@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
+#include <QFileInfo>
 #include <stdlib.h>
 
 //Q_DECLARE_METATYPE(QList<QObject*>)
@@ -33,7 +34,21 @@ bool Process::execute(const QString &cmd)
     connect(mProcess, SIGNAL(readyReadStandardError()), this, SLOT(slotStandardError()));
     connect(mProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(slotStandardOutput()));
     QStringList args;
-    mProcess->start(cmd, args);
+    QStringList paths;
+    paths << "/opt/windriver/bin";
+    paths << "/usr/local/bin";
+    paths << "/usr/bin";
+    if(!cmd.startsWith("/")) {
+        Q_FOREACH (const QString &dirpath, paths) {
+            if(QFileInfo::exists(dirpath+"/"+cmd.split(" ")[0])) {
+                qDebug() << dirpath+"/"+cmd;
+                mProcess->start(dirpath+"/"+cmd, args);
+                break;
+            }
+        }
+        return false;
+    } else
+        mProcess->start(cmd, args);
     return true;
 }
 QString Process::getCmd() const {

@@ -50,7 +50,7 @@ Item {
         ListElement {
             label: "Navigation"
             description: "Navigation"
-            exec: "/opt/windriver/bin/assistant"
+            exec: "mocknavi"
             type: "capp"
             multiple: false
             taskmanage: true
@@ -59,7 +59,7 @@ Item {
         ListElement {
             label: "Media Player"
             description: "Media Player"
-            exec: "/opt/windriver/bin/assistant"
+            exec: "eyes"
             type: "capp"
             multiple: false
             taskmanage: true
