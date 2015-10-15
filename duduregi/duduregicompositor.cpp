@@ -123,7 +123,7 @@ GeniviWaylandIVIExtension::IVISurface* DuduregiCompositor::findSurfaceByResource
         for(int j=0; j<screen->layerCount(); j++) {
             GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
             for(int k=0; k<layer->surfaceCount(); k++) {
-                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(j);
+                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(k);
                 if(_surface->waylandResource() == rsc) {
                     surface = _surface;
                     break;
@@ -348,7 +348,7 @@ void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_contr
             // send layer
             QtWaylandServer::ivi_controller::send_layer(resource->handle, layer->id());
             for(int k=0; k<layer->surfaceCount(); k++) {
-                GeniviWaylandIVIExtension::IVISurface *surface = layer->surface(j);
+                GeniviWaylandIVIExtension::IVISurface *surface = layer->surface(k);
                 qDebug() << "send surface id" << surface->id();
 
                 // send layer
@@ -405,7 +405,7 @@ void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_cont
         for(int j=0; j<screen->layerCount(); j++) {
             GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
             for(int k=0; k<layer->surfaceCount(); k++) {
-                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(j);
+                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(k);
                 if(_surface->id() == (int)id_surface) {
                     surface = _surface;
                     parentLayer = layer;
