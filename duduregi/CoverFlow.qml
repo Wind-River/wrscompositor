@@ -32,57 +32,57 @@ Item {
     */
 
     Component {
-	id: appDelegate
+        id: appDelegate
 
-	Flipable {
-	    id: myFlipable
+        Flipable {
+            id: myFlipable
 
-	    property bool flipped: false
+            property bool flipped: false
 
-	    width: itemWidth; height: itemHeight
-	    z: PathView.z
-	    scale: PathView.iconScale
+            width: itemWidth; height: itemHeight
+            z: PathView.z
+            scale: PathView.iconScale
             opacity: PathView.opacity
 
-	    function itemClicked()
-	    {
-		console.log('icon clicked path='+path);
-		console.log('icon clicked type='+type);
-		if(PathView.isCurrentItem) {
-                   if(type == "quick-html5app" && !myFlipable.flipped) {
-                       myFlipable.width = myPathView.width
-                       myFlipable.height = myPathView.height
-                   }
-		   myFlipable.flipped = !myFlipable.flipped
-		   myPathView.interactive = !myFlipable.flipped
-                   /*
+            function itemClicked()
+            {
+                console.log('icon clicked path='+path);
+                console.log('icon clicked type='+type);
+                if(PathView.isCurrentItem) {
+                    if(type == "quick-html5app" && !myFlipable.flipped) {
+                        myFlipable.width = myPathView.width
+                        myFlipable.height = myPathView.height
+                    }
+                    myFlipable.flipped = !myFlipable.flipped
+                    myPathView.interactive = !myFlipable.flipped
+                    /*
                    if(type == "quick-html5app" && myFlipable.flipped) {
                         var view = Qt.createQmlObject('import QtQuick 2.0; import QtWebKit 3.0; WebView { anchors.fill: parent;}', back);
                         view.url = path;
                    }
                    */
-                   if(type == "quick-html5app" && myFlipable.flipped) {
+                    if(type == "quick-html5app" && myFlipable.flipped) {
                         webview.focus = true
-			console.log('icon clicked webview.url='+webview.url);
+                        console.log('icon clicked webview.url='+webview.url);
                         if(webview.url == "about:blank") {
-			    console.log('icon clicked webview.url='+webview.url);
+                            console.log('icon clicked webview.url='+webview.url);
                             webview.url = path
                         }
-                            /*
+                        /*
                         else {
                             var view = front.children[front.children.length-1]
                             view.parent = back;
                         }
                             */
-                   } 
-                   else if(type == "launcher" && myFlipable.flipped) {
+                    }
+                    else if(type == "launcher" && myFlipable.flipped) {
                         subLauncher.focus = true
-                   }
-		}
-		else if(myPathView.interactive) {
-		    myPathView.currentIndex = index
-		}
-	    }
+                    }
+                }
+                else if(myPathView.interactive) {
+                    myPathView.currentIndex = index
+                }
+            }
             onSideChanged: {
                 if(side==Flipable.Front) {
                     myFlipable.width = itemWidth
@@ -90,15 +90,15 @@ Item {
                 } else {
                 }
             }
-			Component.onCompleted: {
-				coverFlow.menuShow.connect(function(i) {
-					if(index == i) {
-						webview.focus = false;
-						itemClicked();
-						myFlipable.focus = true;
-					}
-				})
-			}
+            Component.onCompleted: {
+                coverFlow.menuShow.connect(function(i) {
+                    if(index == i) {
+                        webview.focus = false;
+                        itemClicked();
+                        myFlipable.focus = true;
+                    }
+                })
+            }
 
             Keys.onPressed: {
                 console.log('key on flipable: '+event.key);
@@ -120,72 +120,72 @@ Item {
                 event.accepted = true;
             }
 
-	    transform: Rotation {
-		 id: rotation
-		 origin.x: myFlipable.width/2
-		 origin.y: myFlipable.height/2
-		 axis.x: 0; axis.y: 1; axis.z: 0
-		 angle: PathView.angle
-	     }
+            transform: Rotation {
+                id: rotation
+                origin.x: myFlipable.width/2
+                origin.y: myFlipable.height/2
+                axis.x: 0; axis.y: 1; axis.z: 0
+                angle: PathView.angle
+            }
 
-	    states: [
+            states: [
                 State {
-                     name: "back"
-                     PropertyChanges { target: rotation; angle: 180 }
-                     PropertyChanges {target: myFlipable; width: myPathView.width; height: myPathView.height }
-                     when: myFlipable.flipped
-                 },
-                 State{
-                     name: "front"
-                     PropertyChanges { target: rotation; angle: 0 }
-                     PropertyChanges {target: myFlipable; width: itemWidth; height: itemHeight }
-                     /*
+                    name: "back"
+                    PropertyChanges { target: rotation; angle: 180 }
+                    PropertyChanges {target: myFlipable; width: myPathView.width; height: myPathView.height }
+                    when: myFlipable.flipped
+                },
+                State{
+                    name: "front"
+                    PropertyChanges { target: rotation; angle: 0 }
+                    PropertyChanges {target: myFlipable; width: itemWidth; height: itemHeight }
+                    /*
                      PropertyChanges {target: myFlipable; width: myPathView.width; height: myPathView.height }
                      */
-                     when: !myFlipable.flipped
+                    when: !myFlipable.flipped
                 }
             ]
 
-	    transitions: Transition {
-		 ParallelAnimation {
-		    NumberAnimation { target: rotation; property: "angle"; duration: 500 }
-		    NumberAnimation {target: myFlipable; properties: "height,width"; duration: 500}
-		 }
-	    }
-
-	    front: Item {
-                id: frontItem
-		smooth: true
-		width: itemWidth; height: itemHeight
-		anchors.horizontalCenter: parent.horizontalCenter
-		anchors.verticalCenter: parent.verticalCenter
-		//color: "black"
-		//border.color: "white"
-		//border.width: 3
-
-		Image {
-		    id: myIcon
-		    anchors.centerIn: parent
-		    source: icon
-		    smooth: true
-            scale: itemHeight/height
-            RotationAnimation on rotation {
-                loops: Animation.Infinite
-                from: 360
-                to: 0
-                duration: 10000
-                running: iconRotate == true && myPathView.currentIndex == index
-            }
-            MouseArea {
-                id: mouseArea
-                enabled: side==Flipable.Front
-                anchors.fill: parent
-                onClicked: {
-                    console.log('icon clicked '+name);
-                    itemClicked()
+            transitions: Transition {
+                ParallelAnimation {
+                    NumberAnimation { target: rotation; property: "angle"; duration: 500 }
+                    NumberAnimation {target: myFlipable; properties: "height,width"; duration: 500}
                 }
             }
-		}
+
+            front: Item {
+                id: frontItem
+                smooth: true
+                width: itemWidth; height: itemHeight
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                //color: "black"
+                //border.color: "white"
+                //border.width: 3
+
+                Image {
+                    id: myIcon
+                    anchors.centerIn: parent
+                    source: icon
+                    smooth: true
+                    scale: itemHeight/height
+                    RotationAnimation on rotation {
+                        loops: Animation.Infinite
+                        from: 360
+                        to: 0
+                        duration: 10000
+                        running: iconRotate == true && myPathView.currentIndex == index
+                    }
+                    MouseArea {
+                        id: mouseArea
+                        enabled: side==Flipable.Front
+                        anchors.fill: parent
+                        onClicked: {
+                            console.log('icon clicked '+name);
+                            itemClicked()
+                        }
+                    }
+                }
                 Image {
                     id: quitButton
                     visible: webview.url != "about:blank" && myPathView.currentIndex == index
@@ -220,14 +220,14 @@ Item {
                     smooth: true
                     anchors.bottomMargin: ((parent.height / 14)|0)
                 }
-	    }
-	    back: Rectangle {
+            }
+            back: Rectangle {
                 id: backItem
-		anchors.fill: parent
+                anchors.fill: parent
                 color: "black"
 
                 Image {
-		    anchors.fill: parent
+                    anchors.fill: parent
                     visible: background != null
                     source: background
                     fillMode: Image.PreserveAspectCrop
@@ -245,8 +245,8 @@ Item {
                     id: webview
                     url: "about:blank"
                     visible: type == "quick-html5app"
-					width: coverFlow.width
-					height: coverFlow.height
+                    width: coverFlow.width
+                    height: coverFlow.height
                     //anchors.fill: parent
                     Keys.onPressed: {
                         console.log('key on webview '+event.key);
@@ -254,7 +254,7 @@ Item {
                             webview.focus = false;
                             itemClicked();
                             myFlipable.focus = true;
-                        } 
+                        }
                     }
                     onUrlChanged: {
                         if(url == "about:blank" && webview.focus) {
@@ -271,15 +271,15 @@ Item {
                     modelType: launcherType
                     //focus: visible
                 }
-	    }
-	}
+            }
+        }
     }
 
     PathView {
-	id: myPathView
+        id: myPathView
 
-	Keys.onRightPressed: { goRight(); event.accepted = true; }
-	Keys.onLeftPressed: { goLeft(); event.accepted = true; }
+        Keys.onRightPressed: { goRight(); event.accepted = true; }
+        Keys.onLeftPressed: { goLeft(); event.accepted = true; }
         function goRight() {
             if (!moving && interactive) incrementCurrentIndex()
         }
@@ -287,40 +287,40 @@ Item {
             if (!moving && interactive) decrementCurrentIndex()
         }
 
-	anchors.fill: parent
-	preferredHighlightBegin: 0.5
-	preferredHighlightEnd: 0.5
-	focus: true
-	interactive: true
-	model: listModel
-	delegate: appDelegate
-	path: Path {
-	    startX: 0
-	    startY: coverFlow.height / 2
-	    PathAttribute { name: "z"; value: 0 }
-	    PathAttribute { name: "angle"; value: 60 }
-	    PathAttribute { name: "iconScale"; value: 0.4 }
-	    PathAttribute { name: "opacity"; value: 0.1 }
-	    PathLine { x: coverFlow.width / 2; y: coverFlow.height / 2;  }
-	    PathAttribute { name: "z"; value: 100 }
-	    PathAttribute { name: "angle"; value: 0 }
-	    PathAttribute { name: "iconScale"; value: 1.0 }
-	    PathAttribute { name: "opacity"; value: 1.0 }
-	    PathLine { x: coverFlow.width; y: coverFlow.height / 2; }
-	    PathAttribute { name: "z"; value: 0 }
-	    PathAttribute { name: "angle"; value: -60 }
-	    PathAttribute { name: "iconScale"; value: 0.4 }
-	    PathAttribute { name: "opacity"; value: 0.1 }
-	}
+        anchors.fill: parent
+        preferredHighlightBegin: 0.5
+        preferredHighlightEnd: 0.5
+        focus: true
+        interactive: true
+        model: listModel
+        delegate: appDelegate
+        path: Path {
+            startX: 0
+            startY: coverFlow.height / 2
+            PathAttribute { name: "z"; value: 0 }
+            PathAttribute { name: "angle"; value: 60 }
+            PathAttribute { name: "iconScale"; value: 0.4 }
+            PathAttribute { name: "opacity"; value: 0.1 }
+            PathLine { x: coverFlow.width / 2; y: coverFlow.height / 2;  }
+            PathAttribute { name: "z"; value: 100 }
+            PathAttribute { name: "angle"; value: 0 }
+            PathAttribute { name: "iconScale"; value: 1.0 }
+            PathAttribute { name: "opacity"; value: 1.0 }
+            PathLine { x: coverFlow.width; y: coverFlow.height / 2; }
+            PathAttribute { name: "z"; value: 0 }
+            PathAttribute { name: "angle"; value: -60 }
+            PathAttribute { name: "iconScale"; value: 0.4 }
+            PathAttribute { name: "opacity"; value: 0.1 }
+        }
     }
 
     Component.onCompleted: {
         indexChanged(myPathView.currentIndex);
-	myPathView.currentIndexChanged.connect(function(){
-	    indexChanged(myPathView.currentIndex);
-	})
-		coverFlow.menuShowRequested.connect(function() {
-			menuShow(myPathView.currentIndex);
-		})
+        myPathView.currentIndexChanged.connect(function(){
+            indexChanged(myPathView.currentIndex);
+        })
+        coverFlow.menuShowRequested.connect(function() {
+            menuShow(myPathView.currentIndex);
+        })
     }
 }

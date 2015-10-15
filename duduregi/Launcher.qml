@@ -8,7 +8,7 @@ Item {
     //property string modelType: "waland"
     property string modelType: "genivi"
     anchors.fill: parent
-    // 
+    //
     ListModel {
         id: geniviApps
         ListElement {
@@ -18,7 +18,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/gdp-icon-ammonitor.png"
+            iconPath: "icons/gdp-icon-ammonitor.png"
         }
         ListElement {
             label: "Application"
@@ -27,7 +27,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/gdp-icon-app.png"
+            iconPath: "icons/gdp-icon-app.png"
         }
         ListElement {
             label: "Fuel Stop Advisor"
@@ -36,7 +36,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/gdp-icon-fuel.png"
+            iconPath: "icons/gdp-icon-fuel.png"
         }
         ListElement {
             label: "Web Browsing"
@@ -45,7 +45,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/gdp-icon-browser.png"
+            iconPath: "icons/gdp-icon-browser.png"
         }
         ListElement {
             label: "Navigation"
@@ -54,7 +54,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/gdp-icon-nav.png"
+            iconPath: "icons/gdp-icon-nav.png"
         }
         ListElement {
             label: "Media Player"
@@ -63,7 +63,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/gdp-icon-mediaplayer.png"
+            iconPath: "icons/gdp-icon-mediaplayer.png"
         }
     }
     ListModel {
@@ -76,7 +76,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "/usr/share/icons/default/small/org.tizen.dialer.png"
+            iconPath: "/usr/share/icons/default/small/org.tizen.dialer.png"
         }
         ListElement {
             appid: "MiniBrowser"
@@ -137,7 +137,7 @@ Item {
     weston-cliptest      weston-info          weston-smoke
     weston-dnd           weston-launch        weston-terminal
     weston-eventdemo     weston-resizor       weston-transformed
-    weston-flower        weston-simple-egl   
+    weston-flower        weston-simple-egl
     */
     ListModel {
         id: waylandApps
@@ -147,7 +147,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/wayland.png"
+            iconPath: "icons/wayland.png"
         }
         ListElement {
             label: "flower"
@@ -155,7 +155,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/wayland.png"
+            iconPath: "icons/wayland.png"
         }
         ListElement {
             label: "smoke"
@@ -163,7 +163,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/wayland.png"
+            iconPath: "icons/wayland.png"
         }
         /*
         ListElement {
@@ -172,7 +172,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/wayland.png"
+        iconPath: "icons/wayland.png"
         }
         */
         ListElement {
@@ -181,7 +181,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/wayland.png"
+            iconPath: "icons/wayland.png"
         }
         ListElement {
             label: "clickdot"
@@ -189,7 +189,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
-	    iconPath: "icons/wayland.png"
+            iconPath: "icons/wayland.png"
         }
     }
     GridView {
@@ -242,7 +242,7 @@ Item {
             Image {
                 id: appIcon
                 source: type=="wgt"?"/opt/usr/apps/"+exec+"/res/wgt/"+label+".png":iconPath
-		anchors.centerIn: parent
+                anchors.centerIn: parent
                 scale: (pressed||iconMouseArea.pressed)?(parent.height/height):(parent.height/height)*0.9
                 MouseArea {
                     id: iconMouseArea

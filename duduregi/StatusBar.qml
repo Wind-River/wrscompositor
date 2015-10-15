@@ -6,18 +6,18 @@ Item {
     width: parent.width
     height: parent.height/12
     z: 50000
-	property string wmi: ""
+    property string wmi: ""
 
     signal closeWindow
     signal logoClicked
 
-	Rectangle {
-		id: statusbarBackground
-    	color: "#2e2e2e"
+    Rectangle {
+        id: statusbarBackground
+        color: "#2e2e2e"
         anchors.fill: parent
-	}
+    }
 
-	/*
+    /*
     Image {
         id: logo
         //source: "images/tizen-on-dark-small.png"
@@ -27,17 +27,17 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
         height: statusBar.height
-		opacity: (logoButtonArea.pressed?0.8:1.0)
+        opacity: (logoButtonArea.pressed?0.8:1.0)
         smooth: true
         MouseArea {
-			id: logoButtonArea
+            id: logoButtonArea
             anchors.fill: parent
             onClicked: {
-                logoClicked(); 
+                logoClicked();
             }
         }
     }
-	*/
+    */
 
     Image {
         id: logo_title
@@ -50,13 +50,13 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
         smooth: true
-		//visible: statusBar.wmi == ""
-		opacity: (logoButtonArea.pressed?0.8:1.0)
+        //visible: statusBar.wmi == ""
+        opacity: (logoButtonArea.pressed?0.8:1.0)
         MouseArea {
-			id: logoButtonArea
+            id: logoButtonArea
             anchors.fill: parent
             onClicked: {
-                logoClicked(); 
+                logoClicked();
             }
         }
     }
@@ -64,12 +64,12 @@ Item {
         id: wmi_title
         anchors.left: logo_title.right
         anchors.verticalCenter: parent.verticalCenter
-		text: statusBar.wmi
-		visible: statusBar.wmi != ""
+        text: statusBar.wmi
+        visible: statusBar.wmi != ""
         font.pointSize: statusBar.height*0.4
         color: "white"
         smooth: true
-		font.bold: true
+        font.bold: true
     }
 
     Image {
@@ -96,12 +96,12 @@ Item {
     Timer {
         interval: 1000; running: true; repeat: true
         onTriggered: dateTime.text = Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
-    } 
+    }
 
     /*
     Image {
         id: closeButton
-	source: "images/close.png"
+    source: "images/close.png"
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
         height: statusBar.height * 0.75
@@ -115,17 +115,17 @@ Item {
         anchors.rightMargin: width/8
         width: height
         height: parent.height * 3 / 4
-		y: (parent.height - height)/2
+        y: (parent.height - height)/2
         MouseArea {
             id: buttonArea
             anchors.fill: parent
             onClicked: {
-                closeWindow(); 
+                closeWindow();
                 closeButton.width = 0;
             }
         }
-		opacity: (buttonArea.pressed?0.8:1.0)
-		scale: (buttonArea.pressed?0.9:1.0)
+        opacity: (buttonArea.pressed?0.8:1.0)
+        scale: (buttonArea.pressed?0.9:1.0)
         smooth: true
     }
 
@@ -134,7 +134,7 @@ Item {
     }
 
     function setWMI(wmi) {
-		statusBar.wmi = wmi
+        statusBar.wmi = wmi
     }
 
 }

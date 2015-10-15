@@ -22,11 +22,11 @@ Item {
         id: vna_dbusClient
 
         onVehicleInfoChanged: {
-			if(false) {
-				console.log('vehicleInfoChanged : '+vehicleInfoWMI);
-				console.log('vehicleInfoChanged : '+speedometer);
-			}
-			statusBar.setWMI(vehicleInfoWMI)
+            if(false) {
+                console.log('vehicleInfoChanged : '+vehicleInfoWMI);
+                console.log('vehicleInfoChanged : '+speedometer);
+            }
+            statusBar.setWMI(vehicleInfoWMI)
         }
     }
 
@@ -34,21 +34,21 @@ Item {
         id: wr_dbusClient
 
         onTrackInfoChanged: {
-			console.log('title : '+title);
-			console.log('playState : '+playState);
-			if(playState == 0) // stop
-				iPodArtwork.source = 'images/artwork.jpg';
+            console.log('title : '+title);
+            console.log('playState : '+playState);
+            if(playState == 0) // stop
+                iPodArtwork.source = 'images/artwork.jpg';
         }
-		onArtworkChanged: {
-			iPodArtwork.source = 'data:image/png;base64,'+wr_dbusClient.artwork;
-		}
+        onArtworkChanged: {
+            iPodArtwork.source = 'data:image/png;base64,'+wr_dbusClient.artwork;
+        }
     }
 
     StatusBar {
         id: statusBar
-		onHeightChanged: {
-			Conf.statusBarHeight = statusBar.height
-		}
+        onHeightChanged: {
+            Conf.statusBarHeight = statusBar.height
+        }
     }
     Image {
         id: background
@@ -63,11 +63,11 @@ Item {
         source: "alameda.jpg"
         smooth: true
 
-		function removeWindow(window) {
-			console.log('window destroyed '+window);
-			window.destroy();
-			CompositorLogic.removeWindow(window);
-		}
+        function removeWindow(window) {
+            console.log('window destroyed '+window);
+            window.destroy();
+            CompositorLogic.removeWindow(window);
+        }
 
 
         Item {
@@ -75,152 +75,152 @@ Item {
             anchors.fill: parent
         }
 
-		Rectangle {
-			id: ipodWidget
-			clip: true
-			anchors.left: parent.left
-			anchors.leftMargin: background.width / 20
-			anchors.top: parent.top
-			anchors.topMargin: background.height / 20
-			width: parent.width/2
-			height: parent.height/3
-			color: "transparent"
-			Rectangle {
-				id: iPodWidgetBG
-				anchors.top: parent.top
-				anchors.left: parent.left
-				width: parent.width
-				height: parent.height
-				color: iPodMouseArea.pressed?"blue":"black"
-				opacity: 0.5
-				radius: 20
+        Rectangle {
+            id: ipodWidget
+            clip: true
+            anchors.left: parent.left
+            anchors.leftMargin: background.width / 20
+            anchors.top: parent.top
+            anchors.topMargin: background.height / 20
+            width: parent.width/2
+            height: parent.height/3
+            color: "transparent"
+            Rectangle {
+                id: iPodWidgetBG
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: parent.width
+                height: parent.height
+                color: iPodMouseArea.pressed?"blue":"black"
+                opacity: 0.5
+                radius: 20
 
-				MouseArea {
-					id: iPodMouseArea
-					anchors.top: parent.top
-					anchors.left: parent.left
-					width: parent.width
-					height: parent.height
-					onClicked: {
-						if(wr_dbusClient.playState == 4)
-							wr_dbusClient.pause()
-						else if(wr_dbusClient.playState == 5)
-							wr_dbusClient.play()
-					}
-				}
+                MouseArea {
+                    id: iPodMouseArea
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    width: parent.width
+                    height: parent.height
+                    onClicked: {
+                        if(wr_dbusClient.playState == 4)
+                            wr_dbusClient.pause()
+                        else if(wr_dbusClient.playState == 5)
+                            wr_dbusClient.play()
+                    }
+                }
 
-			}
+            }
 
-    		Image {
-				id: iPodArtwork
-				source: 'images/artwork.jpg'
-				anchors.top: parent.top
-				anchors.left: top.left
-				anchors.leftMargin: parent.height / 20
-				width: parent.height
-				height: parent.height
-			}
-			Text {
-				id: iPodMedia
-				anchors.top: parent.top
-				anchors.topMargin: parent.height / 20
-				anchors.left: iPodArtwork.right
-				anchors.leftMargin: parent.height / 20
-				text: "iPod"
-				font.pointSize: parent.height / 10
-				color: "white"
-				smooth: true
-				font.bold: true
-				style: Text.Outline
-			}
-			Text {
-				id: iPodArtist
-				elide: Text.ElideRight
-				anchors.top: iPodMedia.bottom
-				anchors.left: iPodMedia.left
-				anchors.right: parent.right
-				anchors.rightMargin: parent.height / 20
-				text: wr_dbusClient.artist
-				font.pointSize: parent.height / 10
-				color: "white"
-				smooth: true
-				font.bold: true
-				style: Text.Outline
-			}
-			Text {
-				id: iPodAlbum
-				elide: Text.ElideRight
-				anchors.top: iPodArtist.bottom
-				anchors.left: iPodArtist.left
-				anchors.right: parent.right
-				anchors.rightMargin: parent.height / 20
-				text: wr_dbusClient.album
-				font.pointSize: parent.height / 10
-				color: "white"
-				smooth: true
-				font.bold: true
-				style: Text.Outline
-			}
-			Text {
-				id: iPodTitle
-				elide: Text.ElideRight
-				anchors.top: iPodAlbum.bottom
-				anchors.left: iPodArtist.left
-				anchors.right: parent.right
-				anchors.rightMargin: parent.height / 20
-				text: wr_dbusClient.title
-				font.pointSize: parent.height / 10
-				color: "white"
-				smooth: true
-				font.bold: true
-				style: Text.Outline
-			}
-			Text {
-				id: iPodStatus
-				anchors.bottom: parent.bottom
-				anchors.bottomMargin: parent.height / 20
-				anchors.left: iPodArtist.left
-				text: (wr_dbusClient.playState == 4)?"Playing...":((wr_dbusClient.playState == 5)?"Paused":"")
-				font.pointSize: parent.height / 6
-				color: "white"
-				smooth: true
-				font.bold: true
-				style: Text.Outline
-			}
-			Text {
-				id: iPodTrackPosition
-				anchors.bottom: parent.bottom
-				anchors.bottomMargin: parent.height / 20
-				anchors.right: parent.right
-				anchors.rightMargin: parent.height / 10
-				text: SPrintf.sprintf('%02d', parseInt(wr_dbusClient.trackPosition/1000/60))+':'+SPrintf.sprintf('%02d', parseInt((wr_dbusClient.trackPosition/1000)%60))
-				font.pointSize: parent.height / 6
-				color: "white"
-				smooth: true
-				font.bold: true
-				style: Text.Outline
-			}
-			//visible: wr_dbusClient.connected > 0 && wr_dbusClient.title != ""
-			visible: wr_dbusClient.connected == 1
-		}
+            Image {
+                id: iPodArtwork
+                source: 'images/artwork.jpg'
+                anchors.top: parent.top
+                anchors.left: top.left
+                anchors.leftMargin: parent.height / 20
+                width: parent.height
+                height: parent.height
+            }
+            Text {
+                id: iPodMedia
+                anchors.top: parent.top
+                anchors.topMargin: parent.height / 20
+                anchors.left: iPodArtwork.right
+                anchors.leftMargin: parent.height / 20
+                text: "iPod"
+                font.pointSize: parent.height / 10
+                color: "white"
+                smooth: true
+                font.bold: true
+                style: Text.Outline
+            }
+            Text {
+                id: iPodArtist
+                elide: Text.ElideRight
+                anchors.top: iPodMedia.bottom
+                anchors.left: iPodMedia.left
+                anchors.right: parent.right
+                anchors.rightMargin: parent.height / 20
+                text: wr_dbusClient.artist
+                font.pointSize: parent.height / 10
+                color: "white"
+                smooth: true
+                font.bold: true
+                style: Text.Outline
+            }
+            Text {
+                id: iPodAlbum
+                elide: Text.ElideRight
+                anchors.top: iPodArtist.bottom
+                anchors.left: iPodArtist.left
+                anchors.right: parent.right
+                anchors.rightMargin: parent.height / 20
+                text: wr_dbusClient.album
+                font.pointSize: parent.height / 10
+                color: "white"
+                smooth: true
+                font.bold: true
+                style: Text.Outline
+            }
+            Text {
+                id: iPodTitle
+                elide: Text.ElideRight
+                anchors.top: iPodAlbum.bottom
+                anchors.left: iPodArtist.left
+                anchors.right: parent.right
+                anchors.rightMargin: parent.height / 20
+                text: wr_dbusClient.title
+                font.pointSize: parent.height / 10
+                color: "white"
+                smooth: true
+                font.bold: true
+                style: Text.Outline
+            }
+            Text {
+                id: iPodStatus
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: parent.height / 20
+                anchors.left: iPodArtist.left
+                text: (wr_dbusClient.playState == 4)?"Playing...":((wr_dbusClient.playState == 5)?"Paused":"")
+                font.pointSize: parent.height / 6
+                color: "white"
+                smooth: true
+                font.bold: true
+                style: Text.Outline
+            }
+            Text {
+                id: iPodTrackPosition
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: parent.height / 20
+                anchors.right: parent.right
+                anchors.rightMargin: parent.height / 10
+                text: SPrintf.sprintf('%02d', parseInt(wr_dbusClient.trackPosition/1000/60))+':'+SPrintf.sprintf('%02d', parseInt((wr_dbusClient.trackPosition/1000)%60))
+                font.pointSize: parent.height / 6
+                color: "white"
+                smooth: true
+                font.bold: true
+                style: Text.Outline
+            }
+            //visible: wr_dbusClient.connected > 0 && wr_dbusClient.title != ""
+            visible: wr_dbusClient.connected == 1
+        }
 
-		Text {
-			id: speed
-			anchors.right: parent.right
-			anchors.rightMargin: background.width / 20
-			anchors.bottom: parent.bottom
-			text: vna_dbusClient.speedometer+" Km"
-			font.pointSize: background.height/5
-			color: "white"
-			smooth: true
-			font.bold: true
-			style: Text.Outline
-			visible: vna_dbusClient.speedometer
-		}
+        Text {
+            id: speed
+            anchors.right: parent.right
+            anchors.rightMargin: background.width / 20
+            anchors.bottom: parent.bottom
+            text: vna_dbusClient.speedometer+" Km"
+            font.pointSize: background.height/5
+            color: "white"
+            smooth: true
+            font.bold: true
+            style: Text.Outline
+            visible: vna_dbusClient.speedometer
+        }
 
         MainMenu {
-            id: mainmenu 
-			z: 100
+            id: mainmenu
+            z: 100
             root: root
             Component.onCompleted: {
                 statusBar.closeWindow.connect(function() {
@@ -228,10 +228,10 @@ Item {
                     hide();
                 })
                 statusBar.logoClicked.connect(function() {
-					if(!mainmenu.visible)
-            			mainmenu.show()
-					else
-						menuShowRequested()
+                    if(!mainmenu.visible)
+                        mainmenu.show()
+                    else
+                        menuShowRequested()
                 })
                 statusBar.closeWindow.connect(function() {
                     console.log('close clicked');
@@ -290,10 +290,10 @@ Item {
     function windowAdded(window) {
         console.log('window added '+window);
         console.log('window added '+window.title);
-		console.log(geniviExt.mainScreen);
-		console.log(geniviExt.mainScreen.layerCount());
-		console.log(geniviExt.mainScreen.layer(0));
-		console.log(geniviExt.mainScreen.layer(0).visibility);
+        console.log(geniviExt.mainScreen);
+        console.log(geniviExt.mainScreen.layerCount());
+        console.log(geniviExt.mainScreen.layer(0));
+        console.log(geniviExt.mainScreen.layer(0).visibility);
         console.log(currentApp.width+' '+ currentApp.height);
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowContainer = windowContainerComponent.createObject(background);
@@ -308,13 +308,13 @@ Item {
         windowContainer.targetHeight = window.size.height - statusBar.height;
 
         if(root.waitProcess && root.waitProcess.pid == window.client.processId)
-		{
-			// XXX hard code for AM Monitor
-			if(root.waitProcess.cmd.indexOf("onitor")>0) // AM Monitor
-			{
-        		windowContainer.targetY = - statusBar.height;
-        		windowContainer.targetHeight = window.size.height;
-			}
+        {
+            // XXX hard code for AM Monitor
+            if(root.waitProcess.cmd.indexOf("onitor")>0) // AM Monitor
+            {
+                windowContainer.targetY = - statusBar.height;
+                windowContainer.targetHeight = window.size.height;
+            }
             root.waitProcess.setWindow(windowContainer);
             root.waitProcess = null;
         }
@@ -341,7 +341,7 @@ Item {
     Keys.onPressed: {
         console.log('key on main: '+event.key);
         if (event.key == Qt.Key_F1) {
-			console.log('[41mF1 - 3 !!!![0m\n');
+            console.log('[41mF1 - 3 !!!![0m\n');
             mainmenu.show()
         } else if (event.key == Qt.Key_Backspace) {
             console.log('backspace');
@@ -349,10 +349,10 @@ Item {
                 mainmenu.hide();
         }
     }
-	onWidthChanged: {
-		Conf.displayWidth = width;
-	}
-	onHeightChanged: {
-		Conf.displayHeight = height;
-	}
+    onWidthChanged: {
+        Conf.displayWidth = width;
+    }
+    onHeightChanged: {
+        Conf.displayHeight = height;
+    }
 }

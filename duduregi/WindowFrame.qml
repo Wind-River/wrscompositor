@@ -18,9 +18,9 @@ Item {
     property int index
 
     Connections {
-		target: container.child ? container.child : null
-		onSurfaceDestroyed: {
-			container.parent.removeWindow(container);
-		}
+        target: container.child ? container.child : null
+        onSurfaceDestroyed: {
+            container.parent.removeWindow(container);
+        }
     }
 }
