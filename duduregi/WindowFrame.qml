@@ -10,6 +10,7 @@ Item {
     width: targetWidth
     height: targetHeight
 
+    property variant ivi_surface: null
     property variant chrome: null
     property real targetX
     property real targetY

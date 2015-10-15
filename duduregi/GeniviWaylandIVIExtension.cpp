@@ -51,6 +51,15 @@ void IVIScreen::addLayer(int id, int width, int height) {
     mLayers << new IVILayer(id, width, height, this);
 }
 
+IVILayer* IVIScreen::layerById(int id) {
+    Q_FOREACH(IVILayer* layer, mLayers) {
+        if(layer->id() == id) {
+            return layer;
+        }
+    }
+    return NULL;
+}
+
 IVILayer::IVILayer(QObject* parent) :
     IVIRectangle(-1, 0, 0, 0, 0, parent), mScreen(0), mOpacity(0), mOrientation(0), mVisibility(0)
 {
@@ -64,6 +73,14 @@ IVILayer::IVILayer(int id, int w, int h, IVIScreen* parent) :
 IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
     IVIRectangle(id, x, y, w, h, parent), mScreen(parent), mOpacity(0), mOrientation(0), mVisibility(0)
 {
+}
+
+IVISurface* IVILayer::addSurface(int x, int y, int width, int height) {
+    IVISurface* surface = new IVISurface(-1, width, height, this);
+    surface->setX(x);
+    surface->setY(y);
+    mSurfaces << surface;
+    return surface;
 }
 
 IVISurface::IVISurface(QObject *parent) :

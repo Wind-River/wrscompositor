@@ -297,12 +297,16 @@ Item {
         console.log(geniviExt.mainScreen.layer(0));
         console.log(geniviExt.mainScreen.layer(0).visibility);
         console.log(currentApp.width+' '+ currentApp.height);
+
+        var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowContainer = windowContainerComponent.createObject(background);
         windowContainer.z = 50
         windowContainer.child = compositor.item(window);
         windowContainer.child.parent = windowContainer;
         windowContainer.child.touchEventsEnabled = true;
+        windowContainer.ivi_surface = layer.addSurface(0, 0, window.size.width, window.size.height);
+        windowContainer.ivi_surface.id = window.client.processId;
 
         windowContainer.targetX = 0;
         windowContainer.targetY = 0;

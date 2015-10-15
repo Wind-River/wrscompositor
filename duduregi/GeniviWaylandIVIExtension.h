@@ -85,6 +85,8 @@ namespace GeniviWaylandIVIExtension {
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
+        Q_INVOKABLE IVISurface* addSurface(int x, int y, int width, int height);
+
         QQmlListProperty<IVISurface> surfaces() {
             return QQmlListProperty<IVISurface>(this, mSurfaces);
         }
@@ -128,6 +130,7 @@ namespace GeniviWaylandIVIExtension {
         }
         Q_INVOKABLE int layerCount() const { return mLayers.count(); }
         Q_INVOKABLE IVILayer *layer(int i) const { return mLayers.at(i); }
+        Q_INVOKABLE IVILayer *layerById(int id);
 
     private:
         QList<IVILayer*> mLayers;
