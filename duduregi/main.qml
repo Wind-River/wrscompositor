@@ -3,6 +3,7 @@ import "compositor.js" as CompositorLogic
 import "config.js" as Conf
 import "sprintf.js" as SPrintf
 import com.windriver.automotive 1.0
+import com.windriver.genivi 1.0
 
 Item {
     id: root
@@ -288,6 +289,11 @@ Item {
 
     function windowAdded(window) {
         console.log('window added '+window);
+        console.log('window added '+window.title);
+		console.log(geniviExt.mainScreen);
+		console.log(geniviExt.mainScreen.layerCount());
+		console.log(geniviExt.mainScreen.layer(0));
+		console.log(geniviExt.mainScreen.layer(0).visibility);
         console.log(currentApp.width+' '+ currentApp.height);
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowContainer = windowContainerComponent.createObject(background);

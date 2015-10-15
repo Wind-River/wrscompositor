@@ -6,6 +6,11 @@ Q_DECLARE_METATYPE(IVIScreen*)
 Q_DECLARE_METATYPE(IVILayer*)
 Q_DECLARE_METATYPE(IVISurface*)
 
+IVIScene::IVIScene(QObject* parent) :
+    IVIRectangle(-1, 0, 0, parent), mMainScreen(0), mCompositor(0)
+{
+}
+
 IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent) :
     IVIRectangle(0, w, h, parent), mMainScreen(0), mCompositor(compositor)
 {
@@ -30,8 +35,11 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
     mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
 }
 
-IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) :
-    IVIRectangle(id, w, h, parent), mScene(parent)
+IVIScreen::IVIScreen(QObject* parent) : IVIRectangle(-1, 0, 0, parent), mScene(0)
+{
+}
+
+IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) : IVIRectangle(id, w, h, parent), mScene(parent)
 {
 }
 
@@ -43,6 +51,11 @@ void IVIScreen::addLayer(int id, int width, int height) {
     mLayers << new IVILayer(id, width, height, this);
 }
 
+IVILayer::IVILayer(QObject* parent) :
+    IVIRectangle(-1, 0, 0, 0, 0, parent), mScreen(0), mOpacity(0), mOrientation(0), mVisibility(0)
+{
+}
+
 IVILayer::IVILayer(int id, int w, int h, IVIScreen* parent) :
     IVIRectangle(id, 0, 0, w, h, parent), mScreen(parent), mOpacity(0), mOrientation(0), mVisibility(0)
 {
@@ -50,6 +63,11 @@ IVILayer::IVILayer(int id, int w, int h, IVIScreen* parent) :
 
 IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
     IVIRectangle(id, x, y, w, h, parent), mScreen(parent), mOpacity(0), mOrientation(0), mVisibility(0)
+{
+}
+
+IVISurface::IVISurface(QObject *parent) :
+    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL)
 {
 }
 

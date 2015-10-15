@@ -65,6 +65,7 @@ namespace GeniviWaylandIVIExtension {
     Q_OBJECT
 
     public:
+        IVISurface(QObject *parent=0);
         IVISurface(int id, int w, int h, IVILayer* parent=0);
         IVISurface(int id, int x, int y, int w, int h, IVILayer* parent=0);
     private:
@@ -76,25 +77,26 @@ namespace GeniviWaylandIVIExtension {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<IVISurface> layers READ surfaces)
     Q_PROPERTY(double opacity READ opacity WRITE setOpacity NOTIFY propertyChanged)
-    Q_PROPERTY(int32_t orientation READ orientation WRITE setOrientation NOTIFY propertyChanged)
-    Q_PROPERTY(int32_t visibility READ visibility WRITE setVisibility NOTIFY propertyChanged)
+    Q_PROPERTY(int orientation READ orientation WRITE setOrientation NOTIFY propertyChanged)
+    Q_PROPERTY(int visibility READ visibility WRITE setVisibility NOTIFY propertyChanged)
 
     public:
+        IVILayer(QObject* parent=0);
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
         QQmlListProperty<IVISurface> surfaces() {
             return QQmlListProperty<IVISurface>(this, mSurfaces);
         }
-        int surfaceCount() const { return mSurfaces.count(); }
-        IVISurface *surface(int i) const { return mSurfaces.at(i); }
+        Q_INVOKABLE int surfaceCount() const { return mSurfaces.count(); }
+        Q_INVOKABLE IVISurface *surface(int i) const { return mSurfaces.at(i); }
 
         double opacity() const { return mOpacity; }
         void setOpacity(double o) { mOpacity = o; emit propertyChanged(); };
-        int32_t orientation() const { return mOrientation; }
-        void setOrientation(int32_t o) { mOrientation = o; emit propertyChanged(); };
-        int32_t visibility() const { return mVisibility; }
-        void setVisibility(int32_t o) { mVisibility = o; emit propertyChanged(); };
+        int orientation() const { return mOrientation; }
+        void setOrientation(int o) { mOrientation = o; emit propertyChanged(); };
+        int visibility() const { return mVisibility; }
+        void setVisibility(int o) { mVisibility = o; emit propertyChanged(); };
 
         IVIScreen* screen() {return mScreen;};
     signals:
@@ -103,8 +105,8 @@ namespace GeniviWaylandIVIExtension {
         QList<IVISurface*> mSurfaces;
         IVIScreen  *mScreen;
         double mOpacity;
-        int32_t mOrientation;
-        int32_t mVisibility;
+        int mOrientation;
+        int mVisibility;
     };
 
     class IVIScreen : public IVIRectangle
@@ -113,6 +115,7 @@ namespace GeniviWaylandIVIExtension {
     Q_PROPERTY(QQmlListProperty<IVILayer> layers READ layers)
 
     public:
+        IVIScreen(QObject* parent=0);
         IVIScreen(int id, int w, int h, IVIScene* parent=0);
         Q_INVOKABLE void addLayer(int id);
         Q_INVOKABLE void addLayer(int id, int width, int height);
@@ -123,8 +126,8 @@ namespace GeniviWaylandIVIExtension {
         QQmlListProperty<IVILayer> layers() {
             return QQmlListProperty<IVILayer>(this, mLayers);
         }
-        int layerCount() const { return mLayers.count(); }
-        IVILayer *layer(int i) const { return mLayers.at(i); }
+        Q_INVOKABLE int layerCount() const { return mLayers.count(); }
+        Q_INVOKABLE IVILayer *layer(int i) const { return mLayers.at(i); }
 
     private:
         QList<IVILayer*> mLayers;
@@ -139,19 +142,21 @@ namespace GeniviWaylandIVIExtension {
     Q_PROPERTY(IVIScreen* mainScreen READ mainScreen)
 
     public:
+        IVIScene(QObject *p=0);
         IVIScene(QWaylandCompositor *compositor, int w, int h, QObject *p=0);
         IVIScreen* mainScreen() { return mMainScreen; };
 
         QQmlListProperty<IVIScreen> screens() {
             return QQmlListProperty<IVIScreen>(this, mScreens);
         }
-        int screenCount() const { return mScreens.count(); }
-        IVIScreen *screen(int i) const { return mScreens.at(i); }
+        Q_INVOKABLE int screenCount() const { return mScreens.count(); }
+        Q_INVOKABLE IVIScreen *screen(int i) const { return mScreens.at(i); }
     private:
         QList<IVIScreen*> mScreens;
         IVIScreen *mMainScreen;
         QWaylandCompositor *mCompositor;
     };
+
 }
 
 #endif // AUDIOMANAGERDBUSINTERFACE_H

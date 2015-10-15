@@ -38,10 +38,15 @@ int main(int argc, char *argv[])
     qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
 #if DUDUREGI_WAYLAND_COMPOSITOR
-    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVIScene");
-    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVIScreen");
-    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVILayer");
-    qmlRegisterType<WRDBusClient>("com.windriver.genivi", 1, 0, "IVISurface");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVILayer>("com.windriver.genivi", 1, 0, "IVILayer");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVISurface>("com.windriver.genivi", 1, 0, "IVISurface");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVILayer* >("IVILayer*");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVISurface* >("IVISurface*");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScreen* >("IVIScreen*");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
+
 #endif
 
 #if DUDUREGI_WEBENGINE
