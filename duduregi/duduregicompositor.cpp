@@ -302,6 +302,7 @@ void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_contro
     for(int i=0; i<mGeniviExt->mainScreen()->layerCount(); i++) {
         GeniviWaylandIVIExtension::IVILayer *layer = mGeniviExt->mainScreen()->layer(i);
         if(layer->id() == (int)id_layer) {
+            layer->setWaylandResource(resource_ctrllayer);
             qDebug() << "send layer" << id_layer;
             ivi_controller_layer::send_opacity(resource_ctrllayer, wl_fixed_from_double(layer->opacity()));
             ivi_controller_layer::send_source_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
@@ -316,7 +317,7 @@ void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_contro
             // get wl_resource of wl_output for client
             QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
 
-            // send screen
+            // send parent screen
             QtWaylandServer::ivi_controller_layer::send_screen(resource_ctrllayer, output_resource->handle);
             break;
         }
@@ -325,6 +326,37 @@ void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_contro
 void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id) {
     (void)resource;
     qDebug() << __func__ << id_surface << id;
+    GeniviWaylandIVIExtension::IVISurface *surface = NULL;
+    GeniviWaylandIVIExtension::IVILayer *parentLayer = NULL;
+    for(int i=0; i<mGeniviExt->screenCount(); i++) {
+        GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
+        for(int j=0; j<screen->layerCount(); j++) {
+            GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
+            for(int k=0; k<layer->surfaceCount(); k++) {
+                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(j);
+                if(_surface->id() == (int)id_surface) {
+                    surface = _surface;
+                    parentLayer = layer;
+                    qDebug() << "found surface " << id << surface;
+                    break;
+                }
+            }
+        }
+    }
     QtWaylandServer::ivi_controller_surface::init(resource->handle->client, id, 1);
+    struct wl_resource *resource_ctrlsurface = QtWaylandServer::ivi_controller_surface::resource()->handle;
+
+    ivi_controller_surface::send_opacity(resource_ctrlsurface, wl_fixed_from_double(surface->opacity()));
+    ivi_controller_surface::send_source_rectangle(resource_ctrlsurface, surface->x(), surface->y(), surface->width(), surface->height());
+    ivi_controller_surface::send_destination_rectangle(resource_ctrlsurface, surface->x(), surface->y(), surface->width(), surface->height());
+    ivi_controller_surface::send_orientation(resource_ctrlsurface, surface->orientation());
+    ivi_controller_surface::send_visibility(resource_ctrlsurface, surface->visibility());
+    // XXX REMOVE surface from specific screen why ??
+    QtWaylandServer::ivi_controller_surface::send_layer(resource_ctrlsurface, NULL);
+    // send parent layer
+    QtWaylandServer::ivi_controller_surface::send_layer(resource_ctrlsurface, parentLayer->waylandResource());
+
+    ivi_controller_surface::send_configuration(resource_ctrlsurface, surface->width(), surface->height());
+
 };
 #endif

@@ -63,13 +63,28 @@ namespace GeniviWaylandIVIExtension {
     class IVISurface : public IVIRectangle
     {
     Q_OBJECT
+    Q_PROPERTY(double opacity READ opacity WRITE setOpacity NOTIFY propertyChanged)
+    Q_PROPERTY(int orientation READ orientation WRITE setOrientation NOTIFY propertyChanged)
+    Q_PROPERTY(int visibility READ visibility WRITE setVisibility NOTIFY propertyChanged)
 
     public:
         IVISurface(QObject *parent=0);
         IVISurface(int id, int w, int h, IVILayer* parent=0);
         IVISurface(int id, int x, int y, int w, int h, IVILayer* parent=0);
+
+        double opacity() const { return mOpacity; }
+        void setOpacity(double o) { mOpacity = o; emit propertyChanged(); };
+        int orientation() const { return mOrientation; }
+        void setOrientation(int o) { mOrientation = o; emit propertyChanged(); };
+        int visibility() const { return mVisibility; }
+        void setVisibility(int o) { mVisibility = o; emit propertyChanged(); };
+    signals:
+        void propertyChanged();
     private:
         IVILayer *mLayer;
+        double mOpacity;
+        int mOrientation;
+        int mVisibility;
     };
 
     class IVILayer : public IVIRectangle
@@ -101,6 +116,9 @@ namespace GeniviWaylandIVIExtension {
         void setVisibility(int o) { mVisibility = o; emit propertyChanged(); };
 
         IVIScreen* screen() {return mScreen;};
+        void setWaylandResource(struct wl_resource *r) { mWaylandResource = r; }
+        struct wl_resource* waylandResource() { return mWaylandResource; }
+
     signals:
         void propertyChanged();
     private:
@@ -109,6 +127,7 @@ namespace GeniviWaylandIVIExtension {
         double mOpacity;
         int mOrientation;
         int mVisibility;
+        struct wl_resource *mWaylandResource;
     };
 
     class IVIScreen : public IVIRectangle

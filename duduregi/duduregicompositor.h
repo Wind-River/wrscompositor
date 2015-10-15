@@ -118,5 +118,6 @@ protected:
     void ivi_controller_commit_changes(QtWaylandServer::ivi_controller::Resource *resource);
     void ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id);
     void ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id);
+
 #endif
 };
