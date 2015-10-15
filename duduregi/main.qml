@@ -291,7 +291,7 @@ Item {
         console.log('window added '+window);
         console.log('window added title:'+window.title);
         console.log('window added className:'+window.className);
-        console.log('window added pid:'+window.client.processId);
+        console.log('window added pid: '+window.client.processId);
         console.log(geniviExt.mainScreen);
         console.log(geniviExt.mainScreen.layerCount());
         console.log(geniviExt.mainScreen.layer(0));
@@ -305,7 +305,7 @@ Item {
         windowContainer.child = compositor.item(window);
         windowContainer.child.parent = windowContainer;
         windowContainer.child.touchEventsEnabled = true;
-        windowContainer.ivi_surface = layer.addSurface(0, 0, window.size.width, window.size.height);
+        windowContainer.ivi_surface = layer.addSurface(0, 0, window.size.width, window.size.height, windowContainer);
         windowContainer.ivi_surface.id = window.client.processId;
 
         windowContainer.targetX = 0;

@@ -78,6 +78,12 @@ namespace GeniviWaylandIVIExtension {
         void setOrientation(int o) { mOrientation = o; emit propertyChanged(); };
         int visibility() const { return mVisibility; }
         void setVisibility(int o) { mVisibility = o; emit propertyChanged(); };
+
+        QObject *qmlWindowFrame() { return mQmlWindowFrame; };
+        void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; };
+
+        struct wl_resource* waylandResource() { return mWaylandResource; }
+        void setWaylandResource(struct wl_resource *r) { mWaylandResource = r; }
     signals:
         void propertyChanged();
     private:
@@ -85,6 +91,8 @@ namespace GeniviWaylandIVIExtension {
         double mOpacity;
         int mOrientation;
         int mVisibility;
+        struct wl_resource *mWaylandResource;
+        QObject *mQmlWindowFrame;
     };
 
     class IVILayer : public IVIRectangle
@@ -100,7 +108,7 @@ namespace GeniviWaylandIVIExtension {
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
-        Q_INVOKABLE IVISurface* addSurface(int x, int y, int width, int height);
+        Q_INVOKABLE IVISurface* addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame);
 
         QQmlListProperty<IVISurface> surfaces() {
             return QQmlListProperty<IVISurface>(this, mSurfaces);

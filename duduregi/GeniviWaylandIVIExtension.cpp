@@ -75,10 +75,12 @@ IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
 {
 }
 
-IVISurface* IVILayer::addSurface(int x, int y, int width, int height) {
+IVISurface* IVILayer::addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
     IVISurface* surface = new IVISurface(-1, width, height, this);
     surface->setX(x);
     surface->setY(y);
+    qDebug() << "setsetQmlWindowFrame" << qmlWindowFrame;
+    surface->setQmlWindowFrame(qmlWindowFrame);
     mSurfaces << surface;
     return surface;
 }

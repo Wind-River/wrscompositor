@@ -116,13 +116,41 @@ void DuduregiCompositor::ivi_controller_surface_destroy_resource(QtWaylandServer
     (void)resource;
     qDebug() << __func__;
 };
+GeniviWaylandIVIExtension::IVISurface* DuduregiCompositor::findSurfaceByResource(struct ::wl_resource *rsc) {
+    GeniviWaylandIVIExtension::IVISurface *surface = NULL;
+    for(int i=0; i<mGeniviExt->screenCount(); i++) {
+        GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
+        for(int j=0; j<screen->layerCount(); j++) {
+            GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
+            for(int k=0; k<layer->surfaceCount(); k++) {
+                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(j);
+                if(_surface->waylandResource() == rsc) {
+                    surface = _surface;
+                    break;
+                }
+            }
+        }
+    }
+    return surface;
+}
+
 void DuduregiCompositor::ivi_controller_surface_set_visibility(QtWaylandServer::ivi_controller_surface::Resource *resource, uint32_t visibility) {
     (void)resource;
     qDebug() << __func__ << visibility;
+    GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
+    if(!surface)
+        return;
+    qDebug() << "surface id " << surface->id() << visibility;
+    surface->qmlWindowFrame()->setProperty("visible", visibility);
 };
 void DuduregiCompositor::ivi_controller_surface_set_opacity(QtWaylandServer::ivi_controller_surface::Resource *resource, wl_fixed_t opacity) {
     (void)resource;
     qDebug() << __func__ << opacity;
+    GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
+    if(!surface)
+        return;
+    qDebug() << "surface id " << surface->id() << opacity;
+    surface->qmlWindowFrame()->setProperty("opacity", wl_fixed_to_double(opacity));
 };
 void DuduregiCompositor::ivi_controller_surface_set_source_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void)resource;
@@ -131,10 +159,25 @@ void DuduregiCompositor::ivi_controller_surface_set_source_rectangle(QtWaylandSe
 void DuduregiCompositor::ivi_controller_surface_set_destination_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << x << y << width << height;
+    GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
+    if(!surface)
+        return;
+    qDebug() << "surface id " << surface->id() << x << y << width << height;
+    surface->qmlWindowFrame()->setProperty("x", x);
+    surface->qmlWindowFrame()->setProperty("y", y);
+    double originalWidth = surface->qmlWindowFrame()->property("targetWidth").toDouble();
+    double originalHeight = surface->qmlWindowFrame()->property("targetHeight").toDouble();
+    surface->qmlWindowFrame()->setProperty("width", width/originalWidth);
+    surface->qmlWindowFrame()->setProperty("height", height/originalHeight);
 };
 void DuduregiCompositor::ivi_controller_surface_set_configuration(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << width << height;
+    GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
+    if(!surface)
+        return;
+    surface->qmlWindowFrame()->setProperty("width", width);
+    surface->qmlWindowFrame()->setProperty("height", height);
 };
 void DuduregiCompositor::ivi_controller_surface_set_orientation(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t orientation) {
     (void)resource;
@@ -345,6 +388,7 @@ void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_cont
     }
     QtWaylandServer::ivi_controller_surface::init(resource->handle->client, id, 1);
     struct wl_resource *resource_ctrlsurface = QtWaylandServer::ivi_controller_surface::resource()->handle;
+    surface->setWaylandResource(resource_ctrlsurface);
 
     ivi_controller_surface::send_opacity(resource_ctrlsurface, wl_fixed_from_double(surface->opacity()));
     ivi_controller_surface::send_source_rectangle(resource_ctrlsurface, surface->x(), surface->y(), surface->width(), surface->height());
