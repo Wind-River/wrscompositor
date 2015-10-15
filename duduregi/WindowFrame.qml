@@ -7,8 +7,6 @@ Item {
 
     x: targetX
     y: targetY
-    width: targetWidth
-    height: targetHeight
 
     property variant ivi_surface: null
     property variant chrome: null
@@ -17,6 +15,15 @@ Item {
     property real targetWidth
     property real targetHeight
     property int index
+
+    property real scaledWidth: 1.0
+    property real scaledHeight: 1.0
+
+    transformOrigin: Item.Center
+    transform: Scale {
+        xScale: container.scaledWidth
+        yScale: container.scaledHeight
+    }
 
     Connections {
         target: container.child ? container.child : null

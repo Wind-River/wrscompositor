@@ -141,6 +141,7 @@ void DuduregiCompositor::ivi_controller_surface_set_visibility(QtWaylandServer::
     if(!surface)
         return;
     qDebug() << "surface id " << surface->id() << visibility;
+    surface->setVisibility(visibility);
     surface->qmlWindowFrame()->setProperty("visible", visibility);
 };
 void DuduregiCompositor::ivi_controller_surface_set_opacity(QtWaylandServer::ivi_controller_surface::Resource *resource, wl_fixed_t opacity) {
@@ -150,6 +151,7 @@ void DuduregiCompositor::ivi_controller_surface_set_opacity(QtWaylandServer::ivi
     if(!surface)
         return;
     qDebug() << "surface id " << surface->id() << opacity;
+    surface->setOpacity(wl_fixed_to_double(opacity));
     surface->qmlWindowFrame()->setProperty("opacity", wl_fixed_to_double(opacity));
 };
 void DuduregiCompositor::ivi_controller_surface_set_source_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
@@ -167,8 +169,12 @@ void DuduregiCompositor::ivi_controller_surface_set_destination_rectangle(QtWayl
     surface->qmlWindowFrame()->setProperty("y", y);
     double originalWidth = surface->qmlWindowFrame()->property("targetWidth").toDouble();
     double originalHeight = surface->qmlWindowFrame()->property("targetHeight").toDouble();
-    surface->qmlWindowFrame()->setProperty("width", width/originalWidth);
-    surface->qmlWindowFrame()->setProperty("height", height/originalHeight);
+    surface->qmlWindowFrame()->setProperty("scaledWidth", width/originalWidth);
+    surface->qmlWindowFrame()->setProperty("scaledHeight", height/originalHeight);
+    surface->setX(x);
+    surface->setY(y);
+    surface->setWidth(width);
+    surface->setHeight(height);
 };
 void DuduregiCompositor::ivi_controller_surface_set_configuration(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t width, int32_t height) {
     (void)resource;
@@ -178,10 +184,33 @@ void DuduregiCompositor::ivi_controller_surface_set_configuration(QtWaylandServe
         return;
     surface->qmlWindowFrame()->setProperty("width", width);
     surface->qmlWindowFrame()->setProperty("height", height);
+    surface->setWidth(width);
+    surface->setHeight(height);
 };
 void DuduregiCompositor::ivi_controller_surface_set_orientation(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t orientation) {
     (void)resource;
     qDebug() << __func__ << orientation;
+    GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
+    if(!surface)
+        return;
+    switch(orientation) {
+        case 0:
+            surface->qmlWindowFrame()->setProperty("rotation", 0);
+            break;
+        case 1:
+            surface->qmlWindowFrame()->setProperty("rotation", 90);
+            break;
+        case 2:
+            surface->qmlWindowFrame()->setProperty("rotation", 180);
+            break;
+        case 3:
+            surface->qmlWindowFrame()->setProperty("rotation", 270);
+            break;
+        default:
+            break;
+    }
+    if(orientation>=0 && orientation<4)
+        surface->setOrientation(orientation);
 };
 void DuduregiCompositor::ivi_controller_surface_screenshot(QtWaylandServer::ivi_controller_surface::Resource *resource, const QString &filename) {
     (void)resource;
