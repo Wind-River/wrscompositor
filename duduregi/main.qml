@@ -289,7 +289,9 @@ Item {
 
     function windowAdded(window) {
         console.log('window added '+window);
-        console.log('window added '+window.title);
+        console.log('window added title:'+window.title);
+        console.log('window added className:'+window.className);
+        console.log('window added pid:'+window.client.processId);
         console.log(geniviExt.mainScreen);
         console.log(geniviExt.mainScreen.layerCount());
         console.log(geniviExt.mainScreen.layer(0));
