@@ -14,18 +14,6 @@ ProjectionModePrivate::ProjectionModePrivate(QObject *parent) :
 {
     qDebug() << "[41m haha [0m";
 }
-void ProjectionModePrivate::sendMousePressed(int x, int y) {
-    emit touchEvent(x, y, 0);
-};
-void ProjectionModePrivate::sendKeyPressed(int keycode) {
-    emit keyEvent(keycode, true);
-}
-void ProjectionModePrivate::sendMouseReleased(int x, int y) {
-    emit touchEvent(x, y, 0);
-};
-void ProjectionModePrivate::sendKeyReleased(int keycode) {
-    emit keyEvent(keycode, false);
-}
 
 ProjectionMode::ProjectionMode(QObject *parent) :
     QObject(parent)
@@ -35,4 +23,16 @@ ProjectionMode::ProjectionMode(QObject *parent) :
     QDBusConnection connection = QDBusConnection::sessionBus();
     connection.registerObject("/AndroidAuto", mPM);
     connection.registerService("com.windriver.automotive.ProjectionMode1");
+}
+void ProjectionMode::sendMousePressed(int x, int y) {
+    emit mPM->touchEvent(x, y, 0);
+};
+void ProjectionMode::sendKeyPressed(int keycode) {
+    emit mPM->keyEvent(keycode, true);
+}
+void ProjectionMode::sendMouseReleased(int x, int y) {
+    emit mPM->touchEvent(x, y, 0);
+};
+void ProjectionMode::sendKeyReleased(int keycode) {
+    emit mPM->keyEvent(keycode, false);
 }
