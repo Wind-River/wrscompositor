@@ -14,6 +14,7 @@
 #include "Process.h"
 #include "vna_dbusclient.h"
 #include "wr_dbusclient.h"
+#include "projectionmode.h"
 
 #ifdef DIGITALCLUSTER
 #include <QQuickView>
@@ -46,8 +47,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<GeniviWaylandIVIExtension::IVISurface* >("IVISurface*");
     qRegisterMetaType<GeniviWaylandIVIExtension::IVIScreen* >("IVIScreen*");
     qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
-
 #endif
+    qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
 
 #if DUDUREGI_WEBENGINE
     QtWebEngine::initialize();
