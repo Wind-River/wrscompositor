@@ -25,7 +25,6 @@ Item {
 
     ProjectionMode {
         id: projectionModeAndroidAuto
-        property variant mediaPlayer: null
     }
 
 
@@ -79,9 +78,9 @@ Item {
                         } else if (type == "projection") {
                             console.log('play projection video dump: '+path)
                             projectionView.focus = true
-                            projectionModeAndroidAuto.mediaPlayer = mediaPlayer
-                            mediaPlayer.source = path
-                            mediaPlayer.play()
+                            // XXX for dummy video testing
+                            //mediaPlayer.source = path
+                            //mediaPlayer.play()
                         }
                         /*
                         else {
@@ -315,7 +314,10 @@ Item {
                         console.log('key released on projection: '+event.key);
                         projectionModeAndroidAuto.sendKeyReleased(event.key);
                     }
-
+                    Component.onCompleted: {
+                        if(type == 'projection')
+                            projectionModeAndroidAuto.mediaPlayer = mediaPlayer
+                    }
                 }
                 Launcher {
                     id: subLauncher

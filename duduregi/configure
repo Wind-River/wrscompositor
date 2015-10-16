@@ -78,6 +78,7 @@ fi
 if [ "$SUPPORT_DBUS" = "1" ]; then
 echo "QT += dbus" >> duduregi.pro
 fi
+echo "QT += multimedia" >> duduregi.pro
 
 cat duduregi.pro.in >> duduregi.pro
 
