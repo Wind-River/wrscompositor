@@ -14,7 +14,7 @@ public:
     explicit ProjectionModePrivate(QObject *parent = 0);
 
 Q_SIGNALS:
-    void touchEvent(int x, int y, int button);
+    void touchEvent(int x, int y, int pressed);
     void keyEvent(int keycode, int pressed);
     void focusEvent(bool acquired);
 

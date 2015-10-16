@@ -28,7 +28,7 @@ ProjectionMode::ProjectionMode(QObject *parent) :
     listen(QHostAddress("/tmp/duduregi-projection-androidauto-video"));;
 }
 void ProjectionMode::sendMousePressed(int x, int y) {
-    emit mPM->touchEvent(x, y, 0);
+    emit mPM->touchEvent(x, y, 1);
 };
 void ProjectionMode::sendKeyPressed(int keycode) {
     emit mPM->keyEvent(keycode, true);
@@ -42,7 +42,12 @@ void ProjectionMode::sendKeyReleased(int keycode) {
 void ProjectionMode::incomingConnection(qintptr socketDescriptor) {
     ProjectionStream *stream = new ProjectionStream(this);
     stream->setSocketDescriptor(socketDescriptor);
+    qDebug() << "---";
+    qDebug() << findChild<QObject*>("mediaPlayer");
+    qDebug() << "---";
 }
 
-ProjectionStream::ProjectionStream(QObject *parent) {
+ProjectionStream::ProjectionStream(QObject *parent) :
+    QTcpSocket(parent)
+{
 }

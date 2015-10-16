@@ -25,6 +25,7 @@ Item {
 
     ProjectionMode {
         id: projectionModeAndroidAuto
+        property variant mediaPlayer: null
     }
 
 
@@ -78,6 +79,7 @@ Item {
                         } else if (type == "projection") {
                             console.log('play projection video dump: '+path)
                             projectionView.focus = true
+                            projectionModeAndroidAuto.mediaPlayer = mediaPlayer
                             mediaPlayer.source = path
                             mediaPlayer.play()
                         }
