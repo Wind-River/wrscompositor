@@ -50,7 +50,7 @@ Item {
             icon: "icons/android-logo.png";
             type: "projection"
             iconRotate: false
-            path: "androidauto.h264"
+            path: "test/androidauto.h264"
         }
         ListElement {
             name: "Navigation";

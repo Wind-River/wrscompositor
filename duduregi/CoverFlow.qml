@@ -76,9 +76,10 @@ Item {
                             webview.focus = true
                             webview.url = path
                         } else if (type == "projection") {
-                            console.log('play projection dump: '+path)
+                            console.log('play projection video dump: '+path)
                             projectionView.focus = true
                             mediaPlayer.source = path
+                            mediaPlayer.play()
                         }
                         /*
                         else {
@@ -278,6 +279,7 @@ Item {
                 }
                 VideoOutput {
                     id: projectionView
+                    source: mediaPlayer
                     visible: type == "projection"
                     width: coverFlow.width
                     height: coverFlow.height

@@ -12,7 +12,6 @@
 ProjectionModePrivate::ProjectionModePrivate(QObject *parent) :
     QObject(parent)
 {
-    qDebug() << "[41m haha [0m";
 }
 
 ProjectionMode::ProjectionMode(QObject *parent) :
