@@ -18,9 +18,6 @@ Item {
         console.log("has fullscreen window: " + hasFullscreenWindow);
     }
 
-	ProjectionMode {
-		id: projectionModeAndroidAuto
-	}
 
     VNADBusClient {
         id: vna_dbusClient

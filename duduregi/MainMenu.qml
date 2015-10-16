@@ -46,6 +46,13 @@ Item {
             background: "images/genivi-background.jpg"
         }
         ListElement {
+            name: "Android Auto";
+            icon: "icons/android-logo.png";
+            type: "projection"
+            iconRotate: false
+            path: "androidauto.h264"
+        }
+        ListElement {
             name: "Navigation";
             icon: "icons/navi.png"
             type: "quick-html5app"

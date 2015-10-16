@@ -1,6 +1,9 @@
 import QtQuick 2.1
 //import QtWebEngine 0.9
 import QtWebKit 3.0
+import QtMultimedia 5.0
+import com.windriver.automotive 1.0
+
 import "config.js" as Conf
 
 Item {
@@ -19,6 +22,11 @@ Item {
     function show() {
         myPathView.focus = true;
     }
+
+    ProjectionMode {
+        id: projectionModeAndroidAuto
+    }
+
 
     /*
     Keys.onPressed: {
@@ -49,7 +57,7 @@ Item {
                 console.log('icon clicked path='+path);
                 console.log('icon clicked type='+type);
                 if(PathView.isCurrentItem) {
-                    if(type == "quick-html5app" && !myFlipable.flipped) {
+                    if((type == "quick-html5app" || type == "projection") && !myFlipable.flipped) {
                         myFlipable.width = myPathView.width
                         myFlipable.height = myPathView.height
                     }
@@ -61,12 +69,16 @@ Item {
                         view.url = path;
                    }
                    */
-                    if(type == "quick-html5app" && myFlipable.flipped) {
-                        webview.focus = true
+                    if((type == "quick-html5app" || type == "projection") && myFlipable.flipped) {
                         console.log('icon clicked webview.url='+webview.url);
-                        if(webview.url == "about:blank") {
+                        if(type == "quick-html5app" && webview.url == "about:blank") {
                             console.log('icon clicked webview.url='+webview.url);
+                            webview.focus = true
                             webview.url = path
+                        } else if (type == "projection") {
+                            console.log('play projection dump: '+path)
+                            projectionView.focus = true
+                            mediaPlayer.source = path
                         }
                         /*
                         else {
@@ -263,6 +275,43 @@ Item {
                             myFlipable.focus = true;
                         };
                     }
+                }
+                VideoOutput {
+                    id: projectionView
+                    visible: type == "projection"
+                    width: coverFlow.width
+                    height: coverFlow.height
+                    MediaPlayer {
+                        id: mediaPlayer
+                        autoLoad: false
+                        loops: Audio.Infinite
+                        onError: {
+                            if (MediaPlayer.NoError != error) {
+                                console.log("[41m[qmlvideo][0m VideoItem.onError error " + error + " errorString " + errorString)
+                            }
+                        }
+                    }
+                    MouseArea {
+                        id: videoMouseArea
+                        anchors.fill: parent
+                        onPressed: {
+                            console.log('mouse pressed '+mouse.x+' '+mouse.y)
+                            projectionModeAndroidAuto.sendMousePressed(mouse.x, mouse.y);
+                        }
+                        onReleased: {
+                            console.log('mouse released '+mouse.x+' '+mouse.y)
+                            projectionModeAndroidAuto.sendMouseReleased(mouse.x, mouse.y);
+                        }
+                    }
+                    Keys.onPressed: {
+                        console.log('key pressed on projection: '+event.key);
+                        projectionModeAndroidAuto.sendKeyPressed(event.key);
+                    }
+                    Keys.onReleased: {
+                        console.log('key released on projection: '+event.key);
+                        projectionModeAndroidAuto.sendKeyReleased(event.key);
+                    }
+
                 }
                 Launcher {
                     id: subLauncher

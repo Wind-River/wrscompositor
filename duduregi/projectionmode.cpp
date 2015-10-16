@@ -5,24 +5,34 @@
 #include <QTime>
 #include <QDebug>
 #include <QCoreApplication>
-#include <QDBusConnection>
 #include <QDir>
 #include <QFileInfo>
 #include <stdlib.h>
-#include "projectionmode_adaptor.h"
 
 ProjectionModePrivate::ProjectionModePrivate(QObject *parent) :
     QObject(parent)
 {
+    qDebug() << "[41m haha [0m";
+}
+void ProjectionModePrivate::sendMousePressed(int x, int y) {
+    emit touchEvent(x, y, 0);
+};
+void ProjectionModePrivate::sendKeyPressed(int keycode) {
+    emit keyEvent(keycode, true);
+}
+void ProjectionModePrivate::sendMouseReleased(int x, int y) {
+    emit touchEvent(x, y, 0);
+};
+void ProjectionModePrivate::sendKeyReleased(int keycode) {
+    emit keyEvent(keycode, false);
 }
 
 ProjectionMode::ProjectionMode(QObject *parent) :
     QObject(parent)
 {
-    ProjectionModePrivate *pm = new ProjectionModePrivate();
-    new ProjectionModeAdaptor(pm);
-    //QDBusConnection connection = QDBusConnection::systemBus();
+    mPM = new ProjectionModePrivate();
+    new ProjectionModeAdaptor(mPM);
     QDBusConnection connection = QDBusConnection::sessionBus();
-    connection.registerObject("/AndroidAuto", pm);
-    connection.registerService("com.windriver.automotive.ProjectionMode");
+    connection.registerObject("/AndroidAuto", mPM);
+    connection.registerService("com.windriver.automotive.ProjectionMode1");
 }

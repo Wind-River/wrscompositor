@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
     qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
+    qmlRegisterType<ProjectionModePrivate>("com.windriver.automotive", 1, 0, "ProjectionMode");
 #if DUDUREGI_WAYLAND_COMPOSITOR
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
@@ -48,7 +49,6 @@ int main(int argc, char *argv[])
     qRegisterMetaType<GeniviWaylandIVIExtension::IVIScreen* >("IVIScreen*");
     qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
 #endif
-    qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
 
 #if DUDUREGI_WEBENGINE
     QtWebEngine::initialize();
