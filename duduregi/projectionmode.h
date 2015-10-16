@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QProcess>
+#include <QtNetwork>
 #include "projectionmode_adaptor.h"
 
 class ProjectionModePrivate : public QObject
@@ -18,7 +19,15 @@ Q_SIGNALS:
     void focusEvent(bool acquired);
 
 };
-class ProjectionMode : public QObject
+
+class ProjectionStream : public QTcpSocket
+{
+    Q_OBJECT
+public:
+    explicit ProjectionStream(QObject *parent = 0);
+};
+
+class ProjectionMode : public QTcpServer
 {
     Q_OBJECT
 public:
@@ -29,6 +38,10 @@ public:
     Q_INVOKABLE void sendKeyReleased(int keycode);
 private:
     ProjectionModePrivate *mPM;
+
+protected:
+    void incomingConnection(qintptr socketDescriptor) Q_DECL_OVERRIDE;
+
 };
 
 #endif
