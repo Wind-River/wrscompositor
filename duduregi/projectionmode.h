@@ -34,6 +34,7 @@ private:
     QMediaPlayer *mMediaPlayer;
     QBuffer mBuffer;
     bool mInit;
+    qint64 mPrepareBufferLength;
 };
 
 class ProjectionMode : public QTcpServer

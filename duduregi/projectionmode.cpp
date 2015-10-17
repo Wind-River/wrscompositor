@@ -55,13 +55,12 @@ void ProjectionMode::incomingConnection(qintptr socketDescriptor) {
     ProjectionStream *stream = new ProjectionStream(mMediaPlayer, this);
     stream->setSocketDescriptor(socketDescriptor);
     qDebug() << "mediaStatus" << mMediaPlayer->mediaStatus();
-    mMediaPlayer->setMedia(0, stream);
 }
 
 
 
 ProjectionStream::ProjectionStream(QMediaPlayer *player, QObject *parent) :
-    QTcpSocket(parent), mMediaPlayer(player), mInit(false)
+    QTcpSocket(parent), mMediaPlayer(player), mInit(false), mPrepareBufferLength(0)
 {
     mBuffer.open(QBuffer::ReadWrite);
     QObject::connect(this, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
@@ -77,9 +76,14 @@ void ProjectionStream::slotDisconnected() {
 
 void ProjectionStream::slotReadyRead() {
     qint64 r = bytesAvailable();
-    if(QMediaPlayer::PlayingState != mMediaPlayer->state() && r>0) {
-        qDebug() << "r" << r;
+    if(mPrepareBufferLength<2000000)
+        mPrepareBufferLength += r;
+    qDebug() << "r" << r;
+    if(mPrepareBufferLength > 2000000 && QMediaPlayer::PlayingState != mMediaPlayer->state() && r>0) {
         qDebug() << "mediaStatus" << mMediaPlayer->mediaStatus();
+        if(QMediaPlayer::NoMedia == mMediaPlayer->mediaStatus())
+            mMediaPlayer->setMedia(0, this);
+
         if(QMediaPlayer::InvalidMedia != mMediaPlayer->mediaStatus())
             mMediaPlayer->play();
         qDebug() << "mMediaPlayer->play()";
