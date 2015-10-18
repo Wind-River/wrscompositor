@@ -41,8 +41,8 @@ void ProjectionMode::sendKeyReleased(int keycode) {
 }
 
 void ProjectionMode::setMediaPlayer(QObject *obj) {
-    qDebug() << "[42m haha [0m" << obj->property("source");;
     mMediaPlayer = qvariant_cast<QMediaPlayer *>(obj->property("mediaObject"));
+    connect(mMediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(slotMediaStatusChanged(QMediaPlayer::MediaStatus)));
 };
 void ProjectionMode::incomingConnection(qintptr socketDescriptor) {
     /*
@@ -57,6 +57,14 @@ void ProjectionMode::incomingConnection(qintptr socketDescriptor) {
     qDebug() << "mediaStatus" << mMediaPlayer->mediaStatus();
 }
 
+void ProjectionMode::slotMediaStatusChanged(QMediaPlayer::MediaStatus status) {
+    qDebug() << "mediaStatus changed to " << status;
+
+    if(status == QMediaPlayer::LoadedMedia && QMediaPlayer::PlayingState != mMediaPlayer->state()) {
+        mMediaPlayer->play();
+        qDebug() << "play!";
+    }
+}
 
 
 ProjectionStream::ProjectionStream(QMediaPlayer *player, QObject *parent) :
@@ -67,25 +75,36 @@ ProjectionStream::ProjectionStream(QMediaPlayer *player, QObject *parent) :
     QObject::connect(this, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
 }
 
+qint64 ProjectionStream::bytesAvailable() const {
+    //qDebug() << "bytesAvailable ??" << QTcpSocket::bytesAvailable();
+    qint64 r = QTcpSocket::bytesAvailable();
+    if( r == 0 ) {
+        return 1;
+    }
+    return r;
+}
+
+bool ProjectionStream::atEnd() const {
+    qDebug() << "atEnd ??";
+    return false;
+}
 void ProjectionStream::slotDisconnected() {
     qDebug() << "disconnected";
     mMediaPlayer->stop();
     mMediaPlayer->setMedia(0, 0);
+    mPrepareBufferLength = 0;
     qDebug() << "mediaStatus" << mMediaPlayer->mediaStatus();
 }
 
 void ProjectionStream::slotReadyRead() {
     qint64 r = bytesAvailable();
-    if(mPrepareBufferLength<2000000)
+    if(mPrepareBufferLength<100000)
         mPrepareBufferLength += r;
-    qDebug() << "r" << r;
-    if(mPrepareBufferLength > 2000000 && QMediaPlayer::PlayingState != mMediaPlayer->state() && r>0) {
+    //qDebug() << "r" << r;
+    if(mPrepareBufferLength > 100000 && QMediaPlayer::PlayingState != mMediaPlayer->state() && r>0) {
         qDebug() << "mediaStatus" << mMediaPlayer->mediaStatus();
         if(QMediaPlayer::NoMedia == mMediaPlayer->mediaStatus())
-            mMediaPlayer->setMedia(0, this);
+            mMediaPlayer->setMedia(QMediaContent(QUrl("udp://")), this);
 
-        if(QMediaPlayer::InvalidMedia != mMediaPlayer->mediaStatus())
-            mMediaPlayer->play();
-        qDebug() << "mMediaPlayer->play()";
     }
 }

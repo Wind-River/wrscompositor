@@ -27,6 +27,10 @@ class ProjectionStream : public QTcpSocket
 public:
     explicit ProjectionStream(QMediaPlayer *player, QObject *parent = 0);
 
+protected:
+    bool atEnd() const;
+    qint64 bytesAvailable() const;
+
 private slots:
     void slotReadyRead();
     void slotDisconnected();
@@ -54,6 +58,9 @@ private:
 
 protected:
     void incomingConnection(qintptr socketDescriptor) Q_DECL_OVERRIDE;
+
+private slots:
+    void slotMediaStatusChanged(QMediaPlayer::MediaStatus);
 
 };
 

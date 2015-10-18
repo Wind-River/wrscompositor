@@ -14,6 +14,7 @@ Item {
     property int itemHeight: 100
 
     property ListModel listModel
+    property bool androidAutoMode: false
 
     signal indexChanged(int index)
     signal menuShowRequested;
@@ -101,7 +102,11 @@ Item {
                 if(side==Flipable.Front) {
                     myFlipable.width = itemWidth
                     myFlipable.height = itemHeight
+                    coverFlow.androidAutoMode = false;
                 } else {
+                    if(type == "projection") {
+                        coverFlow.androidAutoMode = visible;
+                    }
                 }
             }
             Component.onCompleted: {
@@ -282,8 +287,10 @@ Item {
                     id: projectionView
                     source: mediaPlayer
                     visible: type == "projection"
-                    width: coverFlow.width
-                    height: coverFlow.height
+                    x: backItem.width - coverFlow.root.width
+                    y: backItem.height - coverFlow.root.height
+                    width: coverFlow.root.width
+                    height: coverFlow.root.height
                     MediaPlayer {
                         id: mediaPlayer
                         autoLoad: false
@@ -315,8 +322,9 @@ Item {
                         projectionModeAndroidAuto.sendKeyReleased(event.key);
                     }
                     Component.onCompleted: {
-                        if(type == 'projection')
+                        if(type == 'projection') {
                             projectionModeAndroidAuto.mediaPlayer = mediaPlayer
+                        }
                     }
                 }
                 Launcher {

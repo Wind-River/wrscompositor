@@ -5,6 +5,7 @@ Item {
     signal menuShowRequested;
     signal menuActivated(bool flag)
     property variant root: null
+    property bool androidAutoMode: coverFlow.androidAutoMode
     Rectangle {
         id: background
         anchors.fill: parent

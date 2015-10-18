@@ -47,6 +47,8 @@ Item {
 
     StatusBar {
         id: statusBar
+        visible: !mainmenu.androidAutoMode
+        //z: mainmenu.androidAutoMode?-1:200
         onHeightChanged: {
             Conf.statusBarHeight = statusBar.height
         }
