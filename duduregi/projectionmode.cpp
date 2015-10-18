@@ -9,6 +9,9 @@
 #include <QFileInfo>
 #include <stdlib.h>
 #include <QHostAddress>
+#include <unistd.h>
+#include <sys/types.h>
+
 
 ProjectionModePrivate::ProjectionModePrivate(QObject *parent) :
     QObject(parent)
@@ -22,8 +25,12 @@ ProjectionMode::ProjectionMode(QObject *parent) :
     mPM = new ProjectionModePrivate();
     new ProjectionModeAdaptor(mPM);
     QDBusConnection connection = QDBusConnection::sessionBus();
-    connection.registerObject("/AndroidAuto", mPM);
-    connection.registerService("com.windriver.automotive.ProjectionMode");
+    if(getuid() == 0) {
+        qDebug() << "connection to systemBus";
+        connection = QDBusConnection::systemBus();
+    }
+    qDebug() << "register" << connection.registerObject("/AndroidAuto", mPM);
+    qDebug() << "register" << connection.registerService("com.windriver.automotive.ProjectionMode");
 
     listen(QHostAddress(QHostAddress::LocalHost), 32323);
 }

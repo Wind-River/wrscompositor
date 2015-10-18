@@ -5,7 +5,7 @@
         <signal name="touchEvent">
               <arg name="x" type="i" direction="out"/>
               <arg name="y" type="i" direction="out"/>
-              <arg name="button" type="i" direction="out"/>
+              <arg name="pressed" type="i" direction="out"/>
         </signal>
         <signal name="keyEvent">
               <arg name="keycode" type="i" direction="out"/>
