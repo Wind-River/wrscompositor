@@ -7,6 +7,7 @@ Item {
     height: parent.height/12
     z: 50000
     property string wmi: ""
+    property bool androidAutoEnabled: false
 
     signal closeWindow
     signal logoClicked
@@ -72,6 +73,17 @@ Item {
         font.bold: true
     }
 
+    Image {
+        id: androidAuto
+        source: "icons/android-logo.png"
+        anchors.right: bluetooth.left
+        anchors.rightMargin: width/20
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.75
+        smooth: true
+		visible: statusBar.androidAutoEnabled
+    }
     Image {
         id: bluetooth
         source: "images/bt.png"

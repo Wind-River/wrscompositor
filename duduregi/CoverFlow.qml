@@ -14,7 +14,8 @@ Item {
     property int itemHeight: 100
 
     property ListModel listModel
-    property bool androidAutoMode: false
+    property bool androidAutoProjectionMode: false
+    property bool androidAutoEnabled: false
     property variant androidAutoContainer: null
 
     signal indexChanged(int index)
@@ -103,11 +104,11 @@ Item {
                 if(side==Flipable.Front) {
                     myFlipable.width = itemWidth
                     myFlipable.height = itemHeight
-                    coverFlow.androidAutoMode = false;
+                    coverFlow.androidAutoProjectionMode = false;
                     projectionModeAndroidAuto.sendVideoFocus(false);
                 } else {
                     if(type == "projection") {
-                        coverFlow.androidAutoMode = visible;
+                        coverFlow.androidAutoProjectionMode = visible;
                         projectionModeAndroidAuto.sendVideoFocus(true);
                     }
                 }
@@ -188,7 +189,7 @@ Item {
                 Image {
                     id: myIcon
                     anchors.centerIn: parent
-                    source: icon
+                    source: (coverFlow.androidAutoEnabled&&type=="projection")?"icons/android-logo.png":icon
                     smooth: true
                     scale: itemHeight/height
                     RotationAnimation on rotation {

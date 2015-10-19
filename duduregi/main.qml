@@ -10,6 +10,7 @@ Item {
 
     property variant currentWindow: null
     property variant waitProcess: null
+    property bool androidAutoEnabled: false
 
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
@@ -47,8 +48,9 @@ Item {
 
     StatusBar {
         id: statusBar
-        visible: !mainmenu.androidAutoMode
-        //z: mainmenu.androidAutoMode?-1:200
+		androidAutoEnabled: root.androidAutoEnabled
+        visible: !mainmenu.androidAutoProjectionMode
+        //z: mainmenu.androidAutoProjectionMode?-1:200
         onHeightChanged: {
             Conf.statusBarHeight = statusBar.height
         }
@@ -69,6 +71,8 @@ Item {
         // window destroy callback
         function removeWindow(windowContainer) {
             console.log('window destroyed '+windowContainer);
+            if(windowContainer.androidAutoProjection)
+                root.androidAutoEnabled = false;
 
             var layer = geniviExt.mainScreen.layerById(1000); // application layer
             layer.removeSurface(windowContainer.ivi_surface);
@@ -227,6 +231,7 @@ Item {
 
         MainMenu {
             id: mainmenu
+    		androidAutoEnabled: root.androidAutoEnabled
             z: 100
             root: root
             Component.onCompleted: {
@@ -305,16 +310,15 @@ Item {
         console.log(geniviExt.mainScreen.layer(0).visibility);
         console.log(currentApp.width+' '+ currentApp.height);
 
-        var androidAutoProjectionWindow = false;
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         if(window.title == 'gsteglgles') {
             // XXX window from android on Minnow Max target
-            androidAutoProjectionWindow = true;
+            root.androidAutoEnabled = true;
         }
 
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowContainer;
-        if(androidAutoProjectionWindow) { 
+        if(root.androidAutoEnabled) { 
             console.log('wayland android auto');
             console.log(mainmenu.androidAutoContainer);
             windowContainer = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
@@ -333,7 +337,8 @@ Item {
         windowContainer.targetY = 0;
         windowContainer.targetWidth = window.size.width;
         windowContainer.targetHeight = window.size.height - statusBar.height;
-        if(androidAutoProjectionWindow) {
+        if(root.androidAutoEnabled) {
+            windowContainer.androidAutoProjection = true
             windowContainer.z = -1
             windowContainer.targetX = 0;
             windowContainer.targetY = 0;
@@ -359,7 +364,7 @@ Item {
 
         windowContainer.opacity = 1
 
-        if(!androidAutoProjectionWindow) {
+        if(!root.androidAutoEnabled) {
             if(root.currentWindow != null)
                 root.currentWindow.visible = false
             root.currentWindow = windowContainer

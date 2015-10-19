@@ -8,6 +8,7 @@ Item {
     x: targetX
     y: targetY
 
+    property bool androidAutoProjection: false
     property variant rootBackground: null
     property variant ivi_surface: null
     property variant chrome: null

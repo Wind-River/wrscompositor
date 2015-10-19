@@ -5,7 +5,8 @@ Item {
     signal menuShowRequested;
     signal menuActivated(bool flag)
     property variant root: null
-    property bool androidAutoMode: coverFlow.androidAutoMode
+    property bool androidAutoProjectionMode: coverFlow.androidAutoProjectionMode
+    property bool androidAutoEnabled: falsed
     property alias androidAutoContainer: coverFlow.androidAutoContainer
     Rectangle {
         id: background
@@ -48,8 +49,8 @@ Item {
             background: "images/genivi-background.jpg"
         }
         ListElement {
-            name: "Android Auto";
-            icon: "icons/android-logo.png";
+            name: "Android Auto"
+            icon: "icons/android-logo-grey.png"
             type: "projection"
             iconRotate: false
             path: "data/androidauto.h264"
@@ -120,6 +121,7 @@ Item {
 
     CoverFlow {
         id: coverFlow
+		androidAutoEnabled: mainMenu.androidAutoEnabled
         root: mainMenu.root
         listModel: appModel
 
