@@ -67,10 +67,13 @@ Item {
         smooth: true
 
         // window destroy callback
-        function removeWindow(window) {
-            console.log('window destroyed '+window);
-            window.destroy();
-            CompositorLogic.removeWindow(window);
+        function removeWindow(windowContainer) {
+            console.log('window destroyed '+windowContainer);
+
+            var layer = geniviExt.mainScreen.layerById(1000); // application layer
+            layer.removeSurface(windowContainer.ivi_surface);
+            windowContainer.destroy();
+            CompositorLogic.removeWindow(windowContainer);
         }
 
 
@@ -302,16 +305,19 @@ Item {
         console.log(geniviExt.mainScreen.layer(0).visibility);
         console.log(currentApp.width+' '+ currentApp.height);
 
-        var layer = geniviExt.mainScreen.layerById(1000); // application layer
-        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowContainer;
         var androidAutoProjectionWindow = false;
+        var layer = geniviExt.mainScreen.layerById(1000); // application layer
         if(window.title == 'gsteglgles') {
             // XXX window from android on Minnow Max target
+            androidAutoProjectionWindow = true;
+        }
+
+        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
+        var windowContainer;
+        if(androidAutoProjectionWindow) { 
             console.log('wayland android auto');
             console.log(mainmenu.androidAutoContainer);
             windowContainer = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
-            androidAutoProjectionWindow = true;
         } else
             windowContainer = windowContainerComponent.createObject(background);
 

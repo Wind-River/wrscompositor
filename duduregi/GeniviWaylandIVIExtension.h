@@ -109,6 +109,7 @@ namespace GeniviWaylandIVIExtension {
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
         Q_INVOKABLE IVISurface* addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame);
+        Q_INVOKABLE void removeSurface(IVISurface*);
 
         QQmlListProperty<IVISurface> surfaces() {
             return QQmlListProperty<IVISurface>(this, mSurfaces);

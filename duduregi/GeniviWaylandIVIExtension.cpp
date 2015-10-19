@@ -85,6 +85,10 @@ IVISurface* IVILayer::addSurface(int x, int y, int width, int height, QObject *q
     return surface;
 }
 
+void IVILayer::removeSurface(IVISurface* surface) {
+    mSurfaces.removeAll(surface);
+}
+
 IVISurface::IVISurface(QObject *parent) :
     IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL)
 {
