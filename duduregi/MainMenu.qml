@@ -6,6 +6,7 @@ Item {
     signal menuActivated(bool flag)
     property variant root: null
     property bool androidAutoMode: coverFlow.androidAutoMode
+    property alias androidAutoContainer: coverFlow.androidAutoContainer
     Rectangle {
         id: background
         anchors.fill: parent

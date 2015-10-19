@@ -15,6 +15,7 @@ Item {
 
     property ListModel listModel
     property bool androidAutoMode: false
+    property variant androidAutoContainer: null
 
     signal indexChanged(int index)
     signal menuShowRequested;
@@ -330,6 +331,7 @@ Item {
                     Component.onCompleted: {
                         if(type == 'projection') {
                             projectionModeAndroidAuto.mediaPlayer = mediaPlayer
+							coverFlow.androidAutoContainer = projectionView
                         }
                     }
                 }

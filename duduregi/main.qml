@@ -66,6 +66,7 @@ Item {
         source: "alameda.jpg"
         smooth: true
 
+        // window destroy callback
         function removeWindow(window) {
             console.log('window destroyed '+window);
             window.destroy();
@@ -303,7 +304,18 @@ Item {
 
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowContainer = windowContainerComponent.createObject(background);
+        var windowContainer;
+        var androidAutoProjectionWindow = false;
+        if(window.title == 'gsteglgles') {
+            // XXX window from android on Minnow Max target
+            console.log('wayland android auto');
+            console.log(mainmenu.androidAutoContainer);
+            windowContainer = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
+            androidAutoProjectionWindow = true;
+        } else
+            windowContainer = windowContainerComponent.createObject(background);
+
+        windowContainer.rootBackground = background
         windowContainer.z = 50
         windowContainer.child = compositor.item(window);
         windowContainer.child.parent = windowContainer;
@@ -315,6 +327,15 @@ Item {
         windowContainer.targetY = 0;
         windowContainer.targetWidth = window.size.width;
         windowContainer.targetHeight = window.size.height - statusBar.height;
+        if(androidAutoProjectionWindow) {
+            windowContainer.z = -1
+            windowContainer.targetX = 0;
+            windowContainer.targetY = 0;
+            windowContainer.targetWidth = window.size.width;
+            windowContainer.targetHeight = window.size.height;
+            windowContainer.scaledWidth = Conf.displayWidth/window.size.width;
+            windowContainer.scaledHeight = Conf.displayHeight/window.size.height;
+        }
 
         if(root.waitProcess && root.waitProcess.pid == window.client.processId)
         {
@@ -332,13 +353,14 @@ Item {
 
         windowContainer.opacity = 1
 
-        if(root.currentWindow != null)
-            root.currentWindow.visible = false
-        root.currentWindow = windowContainer
+        if(!androidAutoProjectionWindow) {
+            if(root.currentWindow != null)
+                root.currentWindow.visible = false
+            root.currentWindow = windowContainer
 
-        if(mainmenu.visible)
-            mainmenu.hide();
-
+            if(mainmenu.visible)
+                mainmenu.hide();
+        }
     }
 
     function windowResized(window) {

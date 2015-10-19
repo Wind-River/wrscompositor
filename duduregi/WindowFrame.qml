@@ -8,6 +8,7 @@ Item {
     x: targetX
     y: targetY
 
+    property variant rootBackground: null
     property variant ivi_surface: null
     property variant chrome: null
     property real targetX
@@ -28,7 +29,7 @@ Item {
     Connections {
         target: container.child ? container.child : null
         onSurfaceDestroyed: {
-            container.parent.removeWindow(container);
+            container.rootBackground.removeWindow(container);
         }
     }
 }
