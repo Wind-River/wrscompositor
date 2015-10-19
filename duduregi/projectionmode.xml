@@ -2,6 +2,7 @@
     "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node name="/com/trollech/examples/car">
     <interface name="com.windriver.automotive.ProjectionMode">
+        <method name="returnToNative"/>
         <signal name="touchEvent">
               <arg name="x" type="i" direction="out"/>
               <arg name="y" type="i" direction="out"/>

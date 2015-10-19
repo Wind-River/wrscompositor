@@ -19,6 +19,10 @@ ProjectionModePrivate::ProjectionModePrivate(QObject *parent) :
 
 }
 
+void ProjectionModePrivate::returnToNative() {
+    qDebug() << __func__;
+}
+
 ProjectionMode::ProjectionMode(QObject *parent) :
     QTcpServer(parent), mMediaPlayer(0)
 {
@@ -34,6 +38,9 @@ ProjectionMode::ProjectionMode(QObject *parent) :
 
     listen(QHostAddress(QHostAddress::LocalHost), 32323);
 }
+void ProjectionMode::sendMouseMove(int x, int y) {
+    emit mPM->touchEvent(x, y, 2);
+};
 void ProjectionMode::sendMousePressed(int x, int y) {
     emit mPM->touchEvent(x, y, 1);
 };
@@ -45,6 +52,9 @@ void ProjectionMode::sendMouseReleased(int x, int y) {
 };
 void ProjectionMode::sendKeyReleased(int keycode) {
     emit mPM->keyEvent(keycode, false);
+}
+void ProjectionMode::sendVideoFocus(int acquired) {
+    emit mPM->focusEvent(acquired);
 }
 
 void ProjectionMode::setMediaPlayer(QObject *obj) {
@@ -92,7 +102,6 @@ qint64 ProjectionStream::bytesAvailable() const {
 }
 
 bool ProjectionStream::atEnd() const {
-    qDebug() << "atEnd ??";
     return false;
 }
 void ProjectionStream::slotDisconnected() {

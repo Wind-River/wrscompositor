@@ -103,9 +103,11 @@ Item {
                     myFlipable.width = itemWidth
                     myFlipable.height = itemHeight
                     coverFlow.androidAutoMode = false;
+                    projectionModeAndroidAuto.sendVideoFocus(false);
                 } else {
                     if(type == "projection") {
                         coverFlow.androidAutoMode = visible;
+                        projectionModeAndroidAuto.sendVideoFocus(true);
                     }
                 }
             }
@@ -311,6 +313,10 @@ Item {
                         onReleased: {
                             console.log('mouse released '+mouse.x+' '+mouse.y)
                             projectionModeAndroidAuto.sendMouseReleased(mouse.x, mouse.y);
+                        }
+                        onPositionChanged: {
+                            console.log('mouse pos changed '+mouse.x+' '+mouse.y)
+                            projectionModeAndroidAuto.sendMouseMove(mouse.x, mouse.y);
                         }
                     }
                     Keys.onPressed: {

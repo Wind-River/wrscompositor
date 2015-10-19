@@ -18,7 +18,8 @@ Q_SIGNALS:
     void touchEvent(int x, int y, int pressed);
     void keyEvent(int keycode, int pressed);
     void focusEvent(bool acquired);
-
+public Q_SLOTS:
+    void returnToNative();
 };
 
 class ProjectionStream : public QTcpSocket
@@ -49,8 +50,10 @@ public:
     explicit ProjectionMode(QObject *parent = 0);
     Q_INVOKABLE void sendMousePressed(int x, int y);
     Q_INVOKABLE void sendKeyPressed(int keycode);
+    Q_INVOKABLE void sendMouseMove(int x, int y);
     Q_INVOKABLE void sendMouseReleased(int x, int y);
     Q_INVOKABLE void sendKeyReleased(int keycode);
+    Q_INVOKABLE void sendVideoFocus(int acquired);
     void setMediaPlayer(QObject *obj);
 private:
     ProjectionModePrivate *mPM;
