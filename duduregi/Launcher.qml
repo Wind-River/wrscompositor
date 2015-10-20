@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import com.windriver.duduregi 1.0
+import "config.js" as Conf
 
 Item {
     id: launcher
@@ -278,7 +279,7 @@ Item {
                 id: myText
                 anchors.top: parent.bottom
                 text: label
-                font.pointSize: ((parent.height / 8)|0)
+                font.pointSize: ((parent.height / 8.0)/Conf.densityAdjust|0)
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "black"
                 style: Text.Outline

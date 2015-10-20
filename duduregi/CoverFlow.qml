@@ -246,7 +246,7 @@ Item {
                     anchors.top: parent.bottom
                     anchors.topMargin: ((parent.height / 20)|0)
                     text: name
-                    font.pointSize: ((parent.height / 8)|0)
+                    font.pointSize: ((parent.height / 8.0 / Conf.densityAdjust)|0)
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: "black"
                     style: Text.Outline

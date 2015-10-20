@@ -1,4 +1,5 @@
 import QtQuick 2.1
+import "config.js" as Conf
 
 Item {
     id: statusBar
@@ -67,7 +68,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         text: statusBar.wmi
         visible: statusBar.wmi != ""
-        font.pointSize: statusBar.height*0.4
+        font.pointSize: ((statusBar.height*0.4/Conf.densityAdjust)|0)
         color: "white"
         smooth: true
         font.bold: true
@@ -100,7 +101,7 @@ Item {
         anchors.rightMargin: width/20
         anchors.verticalCenter: parent.verticalCenter
         text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
-        font.pointSize: statusBar.height*0.4
+        font.pointSize: ((statusBar.height*0.4/Conf.densityAdjust)|0)
         color: "white"
         smooth: true
     }
