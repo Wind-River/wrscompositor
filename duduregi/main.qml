@@ -311,17 +311,14 @@ Item {
         console.log(currentApp.width+' '+ currentApp.height);
 
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
-        if(window.title == 'gsteglgles') {
-            // XXX window from android on Minnow Max target
-            root.androidAutoEnabled = true;
-        }
-
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowContainer;
-        if(root.androidAutoEnabled) { 
+        if(window.title == 'gsteglgles') {
+            // XXX window from android on Minnow Max target
             console.log('wayland android auto');
-            console.log(mainmenu.androidAutoContainer);
             windowContainer = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
+            windowContainer.androidAutoProjection = true
+            root.androidAutoEnabled = true;
         } else
             windowContainer = windowContainerComponent.createObject(background);
 
@@ -337,8 +334,7 @@ Item {
         windowContainer.targetY = 0;
         windowContainer.targetWidth = window.size.width;
         windowContainer.targetHeight = window.size.height - statusBar.height;
-        if(root.androidAutoEnabled) {
-            windowContainer.androidAutoProjection = true
+        if(windowContainer.androidAutoProjection) {
             windowContainer.z = -1
             windowContainer.targetX = 0;
             windowContainer.targetY = 0;
@@ -364,7 +360,7 @@ Item {
 
         windowContainer.opacity = 1
 
-        if(!root.androidAutoEnabled) {
+        if(!windowContainer.androidAutoProjection) {
             if(root.currentWindow != null)
                 root.currentWindow.visible = false
             root.currentWindow = windowContainer

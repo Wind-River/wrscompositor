@@ -7,8 +7,8 @@ from twisted.web import server, resource, static, twcgi
 from twisted.web.websockets import WebSocketsResource
 from WSProtocols import WSFactory
 from WSProtocols import sendSteeringWheelButtonEvent, sendSteeringWheelAxisEvent
-from WSProtocols import monitor_ipod
-#from DrivingWheelHandler import monitor_joystick
+#from WSProtocols import monitor_ipod
+from DrivingWheelHandler import monitor_joystick
 from twisted.internet.abstract import FileDescriptor
 import os, sys
 import time
@@ -40,8 +40,8 @@ def main():
 
     #reactor.callLater(5, setCluster)
 
-    #monitor_joystick(reactor)
-    monitor_ipod()
+    monitor_joystick(reactor)
+    #monitor_ipod()
 
     # VehicleNetworkAdapter
     #initGeniviVNA(reactor)

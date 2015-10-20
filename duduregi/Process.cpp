@@ -62,7 +62,8 @@ int Process::getPID() {
 bool Process::quit()
 {
     if(mProcess)
-        mProcess->terminate();
+        //mProcess->terminate(); // try to terminate
+        mProcess->kill(); // just kill (XXX term does not work on minnow)
     return true;
 }
 void Process::slotStarted()

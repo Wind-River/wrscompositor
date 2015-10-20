@@ -14,4 +14,5 @@ python /opt/windriver/wr-amb/wr_amb.py &
 cd `dirname $0`
 
 #exec ./duduregi -plugin evdevmouse -plugin evdevkeyboard -plugin evdevtouch -plugin evdevtable
-exec ./duduregi -plugin evdevtouch -plugin evdevtable
+#exec ./duduregi -plugin evdevtouch -plugin evdevtable
+exec ./duduregi # no evdev plugins on minnow max, if add them, unpredictable focus issue will follow
