@@ -306,6 +306,11 @@ Item {
                     y: backItem.height - coverFlow.root.height
                     width: coverFlow.root.width
                     height: coverFlow.root.height
+                    property string projectionStatus: "none"
+                    onProjectionStatusChanged: {
+                        if(projectionView.projectionStatus == "disconnected")
+                            itemClicked();
+                    }
                     MediaPlayer {
                         id: mediaPlayer
                         autoLoad: false

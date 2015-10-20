@@ -71,8 +71,10 @@ Item {
         // window destroy callback
         function removeWindow(windowContainer) {
             console.log('window destroyed '+windowContainer);
-            if(windowContainer.androidAutoProjection)
+            if(windowContainer.androidAutoProjection) {
                 root.androidAutoEnabled = false;
+                mainmenu.androidAutoContainer.projectionStatus = "disconnected";
+            }
 
             var layer = geniviExt.mainScreen.layerById(1000); // application layer
             layer.removeSurface(windowContainer.ivi_surface);
@@ -319,6 +321,7 @@ Item {
             windowContainer = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
             windowContainer.androidAutoProjection = true
             root.androidAutoEnabled = true;
+            mainmenu.androidAutoContainer.projectionStatus = "connected";
         } else
             windowContainer = windowContainerComponent.createObject(background);
 
