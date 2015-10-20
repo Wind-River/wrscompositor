@@ -6,7 +6,7 @@ if [ "$1" == "--init" ]; then
 	export DBUS_SESSION_BUS_ADDRESS=`dbus-daemon --session --print-addres --fork`
 fi
 #export XDG_RUNTIME_DIR="/run/user/0"
-export QT_QPA_EGLFS_KMS_CONFIG=/opt/windriver/kms_conf.json
+export QT_QPA_EGLFS_KMS_CONFIG=/etc/qt5/kms_conf.json
 export QT_QPA_EGLFS_PHYSICAL_WIDTH=1920
 export QT_QPA_EGLFS_PHYSICAL_HEIGHT=1080
 export `dbus-launch`
