@@ -43,6 +43,8 @@ public:
     QWaylandQuickSurface *fullscreenSurface() const;
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
 #endif
+private slots:
+    void slotFocusObjectChanged(QObject *);
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
 signals:

@@ -33,6 +33,7 @@ DuduregiCompositor::DuduregiCompositor()
     QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
     QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
 #endif
+    connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
 
 }
 
@@ -41,6 +42,10 @@ DuduregiCompositor::~DuduregiCompositor() {
     //settings.setValue("size", size());
     //settings.setValue("windowState", windowState());
     settings.setValue("position", position());
+}
+
+void DuduregiCompositor::slotFocusObjectChanged(QObject *obj) {
+    qDebug() << "[41m%s" << __func__ << "[0m" << obj;
 }
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
