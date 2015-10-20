@@ -49,13 +49,6 @@ Item {
             background: "images/genivi-background.jpg"
         }
         ListElement {
-            name: "Android Auto"
-            icon: "icons/android-logo-grey.png"
-            type: "projection"
-            iconRotate: false
-            path: "data/androidauto.h264"
-        }
-        ListElement {
             name: "Navigation";
             icon: "icons/navi.png"
             type: "quick-html5app"
@@ -76,6 +69,13 @@ Item {
             icon: "icons/waterdepth-icon-small.png"
             type: "quick-html5app"
             path: 'file:///opt/windriver/share/html5apps/WRWaterDepth/index.html';
+        }
+        ListElement {
+            name: "Android Auto"
+            icon: "icons/android-logo-grey.png"
+            type: "projection"
+            iconRotate: false
+            path: "data/androidauto.h264"
         }
         /*
         ListElement {
@@ -121,7 +121,7 @@ Item {
 
     CoverFlow {
         id: coverFlow
-		androidAutoEnabled: mainMenu.androidAutoEnabled
+        androidAutoEnabled: mainMenu.androidAutoEnabled
         root: mainMenu.root
         listModel: appModel
 

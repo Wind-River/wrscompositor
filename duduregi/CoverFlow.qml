@@ -28,6 +28,10 @@ Item {
 
     ProjectionMode {
         id: projectionModeAndroidAuto
+        onReturnToHomeRequested: {
+            console.log('return to home !!!');
+            menuShow(myPathView.currentIndex);
+        }
     }
 
 
@@ -108,8 +112,11 @@ Item {
                     projectionModeAndroidAuto.sendVideoFocus(false);
                 } else {
                     if(type == "projection") {
-                        coverFlow.androidAutoProjectionMode = visible;
-                        projectionModeAndroidAuto.sendVideoFocus(true);
+                        if(coverFlow.androidAutoEnabled) {
+                            coverFlow.androidAutoProjectionMode = visible;
+                            projectionModeAndroidAuto.sendVideoFocus(true);
+                        } else
+                            itemClicked();
                     }
                 }
             }
@@ -332,7 +339,7 @@ Item {
                     Component.onCompleted: {
                         if(type == 'projection') {
                             projectionModeAndroidAuto.mediaPlayer = mediaPlayer
-							coverFlow.androidAutoContainer = projectionView
+                            coverFlow.androidAutoContainer = projectionView
                         }
                     }
                 }

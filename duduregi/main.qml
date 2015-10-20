@@ -48,7 +48,7 @@ Item {
 
     StatusBar {
         id: statusBar
-		androidAutoEnabled: root.androidAutoEnabled
+        androidAutoEnabled: root.androidAutoEnabled
         visible: !mainmenu.androidAutoProjectionMode
         //z: mainmenu.androidAutoProjectionMode?-1:200
         onHeightChanged: {
@@ -231,7 +231,7 @@ Item {
 
         MainMenu {
             id: mainmenu
-    		androidAutoEnabled: root.androidAutoEnabled
+            androidAutoEnabled: root.androidAutoEnabled
             z: 100
             root: root
             Component.onCompleted: {

@@ -20,6 +20,8 @@ Q_SIGNALS:
     void focusEvent(bool acquired);
 public Q_SLOTS:
     void returnToNative();
+signals:
+    void returnToNativeCalled();
 };
 
 class ProjectionStream : public QTcpSocket
@@ -55,6 +57,10 @@ public:
     Q_INVOKABLE void sendKeyReleased(int keycode);
     Q_INVOKABLE void sendVideoFocus(int acquired);
     void setMediaPlayer(QObject *obj);
+
+signals:
+    void returnToHomeRequested();
+
 private:
     ProjectionModePrivate *mPM;
     QMediaPlayer *mMediaPlayer;
@@ -64,6 +70,7 @@ protected:
 
 private slots:
     void slotMediaStatusChanged(QMediaPlayer::MediaStatus);
+    void slotReturnToHomeRequested();
 
 };
 

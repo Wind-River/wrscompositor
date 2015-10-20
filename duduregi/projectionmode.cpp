@@ -21,12 +21,14 @@ ProjectionModePrivate::ProjectionModePrivate(QObject *parent) :
 
 void ProjectionModePrivate::returnToNative() {
     qDebug() << __func__;
+    emit returnToNativeCalled();
 }
 
 ProjectionMode::ProjectionMode(QObject *parent) :
     QTcpServer(parent), mMediaPlayer(0)
 {
     mPM = new ProjectionModePrivate();
+    connect(mPM, SIGNAL(returnToNativeCalled()), this, SLOT(slotReturnToHomeRequested()));
     new ProjectionModeAdaptor(mPM);
     QDBusConnection connection = QDBusConnection::sessionBus();
     if(getuid() == 0) {
@@ -37,6 +39,9 @@ ProjectionMode::ProjectionMode(QObject *parent) :
     qDebug() << "register" << connection.registerService("com.windriver.automotive.ProjectionMode");
 
     listen(QHostAddress(QHostAddress::LocalHost), 32323);
+}
+void ProjectionMode::slotReturnToHomeRequested() {
+    emit returnToHomeRequested();
 }
 void ProjectionMode::sendMouseMove(int x, int y) {
     emit mPM->touchEvent(x, y, 2);
