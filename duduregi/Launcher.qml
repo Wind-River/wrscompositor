@@ -15,7 +15,8 @@ Item {
         ListElement {
             label: "AM Monitor"
             description: "Audio Manager Monitor"
-            exec: "/home/jpark/demo/am-monitor-wayland.sh"
+            //exec: "/home/jpark/demo/am-monitor-wayland.sh"
+            exec: "AudioManagerMonitor"
             type: "capp"
             multiple: false
             taskmanage: true
