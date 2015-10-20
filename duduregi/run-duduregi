@@ -1,10 +1,17 @@
 #!/bin/bash
-export QT_QPA_PLATFORM=kms
+export QT_QPA_PLATFORM=eglfs
 if [ "$1" == "--init" ]; then
 	#/opt/windriver/wr-amb/run-wr-amb 2>/tmp/kkk &
 	pulseaudio --system &
 	export DBUS_SESSION_BUS_ADDRESS=`dbus-daemon --session --print-addres --fork`
 fi
 #export XDG_RUNTIME_DIR="/run/user/0"
+export QT_QPA_EGLFS_KMS_CONFIG=/opt/windriver/kms_conf.json
+export QT_QPA_EGLFS_PHYSICAL_WIDTH=1920
+export QT_QPA_EGLFS_PHYSICAL_HEIGHT=1080
+export `dbus-launch`
+python /opt/windriver/wr-amb/wr_amb.py &
 cd `dirname $0`
-exec ./duduregi -plugin evdevmouse -plugin evdevkeyboard -plugin evdevtouch -plugin evdevtable 
+
+#exec ./duduregi -plugin evdevmouse -plugin evdevkeyboard -plugin evdevtouch -plugin evdevtable
+exec ./duduregi -plugin evdevtouch -plugin evdevtable
