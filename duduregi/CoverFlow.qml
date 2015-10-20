@@ -137,6 +137,10 @@ Item {
                 } else if (event.key == Qt.Key_F2) {
                     webview.url = "about:blank";
                 } else if (event.key == Qt.Key_F1) {
+                    // XXX to avoid enter by F1 into submenu
+                    if(side==Flipable.Front)
+                        return;
+                    // XXX for exit from submenu
                     webview.focus = false;
                     itemClicked();
                     myFlipable.focus = true;
