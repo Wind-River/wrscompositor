@@ -80,6 +80,8 @@ Item {
             layer.removeSurface(windowContainer.ivi_surface);
             windowContainer.destroy();
             CompositorLogic.removeWindow(windowContainer);
+			if(Conf.useMultiWindowFeature)
+				CompositorLogic.relayoutForMultiWindow(background.width, background.height);
         }
 
 
@@ -336,13 +338,11 @@ Item {
         windowContainer.targetX = 0;
         windowContainer.targetY = 0;
         windowContainer.targetWidth = window.size.width;
-        windowContainer.targetHeight = window.size.height - statusBar.height;
+        windowContainer.targetHeight = window.size.height;
         if(windowContainer.androidAutoProjection) {
             windowContainer.z = -1
             windowContainer.targetX = 0;
             windowContainer.targetY = 0;
-            windowContainer.targetWidth = window.size.width;
-            windowContainer.targetHeight = window.size.height;
             windowContainer.scaledWidth = Conf.displayWidth/window.size.width;
             windowContainer.scaledHeight = Conf.displayHeight/window.size.height;
         }
@@ -353,19 +353,29 @@ Item {
             if(root.waitProcess.cmd.indexOf("onitor")>0) // AM Monitor
             {
                 windowContainer.targetY = - statusBar.height;
-                windowContainer.targetHeight = window.size.height;
             }
             root.waitProcess.setWindow(windowContainer);
             root.waitProcess = null;
         }
 
-        CompositorLogic.addWindow(windowContainer);
+		if(!Conf.useMultiWindowFeature)
+			CompositorLogic.addWindow(windowContainer);
+		else { // for multi window feature enabled mode
+			// stretch to maximum size as default
+            windowContainer.scaledWidth = background.width/window.size.width;
+            windowContainer.scaledHeight = background.height/window.size.height;
+			console.log("oscaleds "+background.height/window.size.height);
+
+			// add window and relayout for multi window feature
+			CompositorLogic.addMultiWindow(windowContainer,
+									background.width, background.height);
+		}
 
         windowContainer.opacity = 1
 
         if(!windowContainer.androidAutoProjection) {
-            if(root.currentWindow != null)
-                root.currentWindow.visible = false
+			if(!Conf.useMultiWindowFeature)
+				CompositorLogic.hideWithout(windowContainer);
             root.currentWindow = windowContainer
 
             if(mainmenu.visible)

@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Window 2.0
+import "config.js" as Conf
 
 Item {
     id: container
@@ -33,4 +34,25 @@ Item {
             container.rootBackground.removeWindow(container);
         }
     }
+    Behavior on x {
+		enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+    }
+
+    Behavior on y {
+		enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+    }
+
+    Behavior on scaledWidth {
+		enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+    }
+
+    Behavior on scaledHeight {
+		enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+    }
+
+
 }

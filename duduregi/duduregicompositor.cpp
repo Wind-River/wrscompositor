@@ -45,7 +45,8 @@ DuduregiCompositor::~DuduregiCompositor() {
 }
 
 void DuduregiCompositor::slotFocusObjectChanged(QObject *obj) {
-    qDebug() << "[41m%s" << __func__ << "[0m" << obj;
+    //qDebug() << "[41m" << __func__ << "[0m" << obj;
+    qDebug() << __func__  << obj;
 }
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
