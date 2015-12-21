@@ -84,11 +84,12 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 #endif
 
+    DuduregiCompositor compositor;
+
 #if DUDUREGI_DIGITALCLUSTER
     DigitalCluster dc;
 #endif
 
-    DuduregiCompositor compositor;
     if(mode != HEIGHT_FULLSCREEN) {
         if(mode == HEIGHT_720) {
             compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1280, 720)).toRect());
@@ -108,6 +109,8 @@ int main(int argc, char *argv[])
     dc.show();
 #endif
     compositor.show();
+    //DuduregiCompositor rearcompositor("cluster.qml", "wayland-1");
+    //rearcompositor.show();
 
     int ret = app.exec();
 

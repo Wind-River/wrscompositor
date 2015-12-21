@@ -1,9 +1,9 @@
 #include "duduregiconfig.h"
 #include "duduregicompositor.h"
 
-DuduregiCompositor::DuduregiCompositor()
+DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &display)
 #if DUDUREGI_WAYLAND_COMPOSITOR
-        : QWaylandQuickCompositor(0, DefaultExtensions | SubSurfaceExtension)
+        : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension)
         //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_screen(QWaylandCompositor::handle()->wl_display(), 1)
@@ -12,7 +12,10 @@ DuduregiCompositor::DuduregiCompositor()
 #endif
 {
     setTitle(QLatin1String("Wind River Duduregi Wayland Compositor"));
-    setSource(QUrl("main.qml"));
+    QUrl programUrl = QUrl("main.qml");
+    if(!program.isNull())
+        programUrl = QUrl(program);
+    setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
     setColor(Qt::black);
     winId();

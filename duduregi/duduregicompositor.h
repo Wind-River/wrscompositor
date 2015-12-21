@@ -38,7 +38,7 @@ class DuduregiCompositor : public QQuickView
 #endif
 
 public:
-    DuduregiCompositor();
+    DuduregiCompositor(const QString &program=QString::null, const QString &display=QString::null);
     ~DuduregiCompositor();
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
