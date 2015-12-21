@@ -27,7 +27,7 @@ Build
 ::
 
 	$ cd duduregi
-	$ ./configure --with-wlcompositor --with-webengine
+	$ ./configure --with-wlcompositor --without-webengine
 	$ make
 
 
@@ -45,7 +45,7 @@ duduregi Wayland (Experimental)
 ::
 
 	$ cd duduregi
-	$ ./configure --with-wlcompositor --with-webengine
+	$ ./configure --with-wlcompositor --without-webengine
 	$ make
 
 
