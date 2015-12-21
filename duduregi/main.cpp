@@ -16,17 +16,47 @@
 #include "wr_dbusclient.h"
 #include "projectionmode.h"
 
-#ifdef DIGITALCLUSTER
-#include <QQuickView>
+#if DUDUREGI_DIGITALCLUSTER
+#include "digitalcluster.h"
 #endif
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
 #include "GeniviWaylandIVIExtension.h"
 #endif
 
+#define HEIGHT_FULLSCREEN 0xFFFF
+#define HEIGHT_720 720
+#define HEIGHT_1080 1080
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    int mode = HEIGHT_FULLSCREEN;
+    QStringList args = app.arguments();
+    QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+
+    if(args.contains("--720")) {
+        mode = HEIGHT_720;
+    } else if(args.contains("--1080")) {
+        mode = HEIGHT_1080;
+    } else if(app.arguments().contains("--clean-geometry")) {
+        settings.clear();
+        settings.sync();
+        qCritical() << "Geometry Cache Cleared";
+        return 0;
+    } else if(app.arguments().contains("--help")) {
+        qCritical() << "Wind River Duduregi Wayland Compositor";
+        qCritical() << "Usage:";
+        qCritical() << "  " << app.arguments().at(0) << " [arguments]";
+        qCritical() << "";
+        qCritical() << "Available Arguments";
+        qCritical() << "  --help            Show this help";
+        qCritical() << "  --720             Show main window as 720px height";
+        qCritical() << "  --1080            Show main window as 1080px height";
+        qCritical() << "  --clean-geometry  Clean saved window geometry";
+        return 0;
+    }
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
@@ -54,26 +84,37 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 #endif
 
-#ifdef DIGITALCLUSTER
-    QQuickView kv;
-    kv.setSource(QUrl("cluster.qml"));
-    kv.setResizeMode(QQuickView::SizeRootObjectToView);
-    kv.setScreen(QGuiApplication::screens().at(1));
-    kv.setGeometry(screenGeometry);
-    kv.show();
+#if DUDUREGI_DIGITALCLUSTER
+    DigitalCluster dc;
 #endif
 
     DuduregiCompositor compositor;
-    if(app.arguments().contains("--720")||app.arguments().contains("--1080")) {
-        if(app.arguments().contains("--720"))
-            compositor.setGeometry(50, 50, 1280, 720);
-        else
-            compositor.setGeometry(50, 50, 1920, 1080);
-        QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
-        compositor.setPosition(settings.value("position").toPoint());
-    } else
+    if(mode != HEIGHT_FULLSCREEN) {
+        if(mode == HEIGHT_720) {
+            compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1280, 720)).toRect());
+#if DUDUREGI_DIGITALCLUSTER
+            dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1280, 720)).toRect());
+#endif
+        } else {
+            compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1920, 1080)).toRect());
+#if DUDUREGI_DIGITALCLUSTER
+            dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1920, 1080)).toRect());
+#endif
+        }
+    } else { // full screen
         compositor.setGeometry(screenGeometry);
+    }
+#if DUDUREGI_DIGITALCLUSTER
+    dc.show();
+#endif
     compositor.show();
 
-    return app.exec();
+    int ret = app.exec();
+
+    if(mode != HEIGHT_FULLSCREEN) { // save last geometry
+        settings.setValue("geometry-for-maindisplay", compositor.geometry());
+        settings.setValue("geometry-for-cluster", dc.geometry());
+    }
+
+    return ret;
 }

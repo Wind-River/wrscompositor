@@ -38,15 +38,10 @@ DuduregiCompositor::DuduregiCompositor()
 }
 
 DuduregiCompositor::~DuduregiCompositor() {
-    QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
-    //settings.setValue("size", size());
-    //settings.setValue("windowState", windowState());
-    settings.setValue("position", position());
 }
 
 void DuduregiCompositor::slotFocusObjectChanged(QObject *obj) {
-    //qDebug() << "[41m" << __func__ << "[0m" << obj;
-    qDebug() << __func__  << obj;
+    (void)obj;
 }
 
 #if DUDUREGI_WAYLAND_COMPOSITOR

@@ -1,3 +1,5 @@
+#ifndef DUDUREGI_COMPOSITOR
+#define DUDUREGI_COMPOSITOR
 #include "duduregiconfig.h"
 #if DUDUREGI_WAYLAND_COMPOSITOR
 #include <QtCompositor/qwaylandsurfaceitem.h>
@@ -125,3 +127,4 @@ private:
     GeniviWaylandIVIExtension::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
 #endif
 };
+#endif
