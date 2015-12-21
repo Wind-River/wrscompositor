@@ -10,6 +10,7 @@ echo "  --with-digitalcluster  build with digital cluster feature (on 2nd displa
 echo "  --without-maindisplay  build without main display"
 echo "  --without-wlcompositor build without digital cluster feature"
 echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
+exit
 }
 
 if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
