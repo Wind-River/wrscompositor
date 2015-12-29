@@ -116,7 +116,9 @@ int main(int argc, char *argv[])
 
     if(mode != HEIGHT_FULLSCREEN) { // save last geometry
         settings.setValue("geometry-for-maindisplay", compositor.geometry());
+#if DUDUREGI_DIGITALCLUSTER
         settings.setValue("geometry-for-cluster", dc.geometry());
+#endif
     }
 
     return ret;
