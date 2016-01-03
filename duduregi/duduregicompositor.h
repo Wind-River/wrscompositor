@@ -45,6 +45,11 @@ public:
     QWaylandQuickSurface *fullscreenSurface() const;
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
 #endif
+#if DUDUREGI_REARDISPLAY
+    void setRearDisplay(QQuickView *);
+    QWaylandQuickOutput* mainOutput() { return mMainOutput; };
+    QWaylandQuickOutput* rearOutput() { return mRearOutput; };
+#endif
 private slots:
     void slotFocusObjectChanged(QObject *);
 
@@ -69,6 +74,11 @@ protected:
     void surfaceCreated(QWaylandSurface *surface);
 
 private:
+#if DUDUREGI_REARDISPLAY
+    QQuickView *mRearDisplay;
+    QWaylandQuickOutput *mRearOutput;
+#endif
+    QWaylandQuickOutput *mMainOutput;
     QWaylandQuickSurface *m_fullscreenSurface;
     GeniviWaylandIVIExtension::IVIScene *mGeniviExt;
 #endif

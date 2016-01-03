@@ -89,6 +89,13 @@ int main(int argc, char *argv[])
 #if DUDUREGI_DIGITALCLUSTER
     DigitalCluster dc;
 #endif
+#if DUDUREGI_REARDISPLAY
+    QQuickView rd;
+    rd.setTitle(QLatin1String("Wind River Duduregi's Rear Display Example"));
+    rd.setSource(QUrl("reardisplay.qml"));
+    rd.setResizeMode(QQuickView::SizeRootObjectToView);
+    compositor.setRearDisplay(&rd);
+#endif
 
     if(mode != HEIGHT_FULLSCREEN) {
         if(mode == HEIGHT_720) {
@@ -96,10 +103,16 @@ int main(int argc, char *argv[])
 #if DUDUREGI_DIGITALCLUSTER
             dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1280, 720)).toRect());
 #endif
+#if DUDUREGI_REARDISPLAY
+            rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1280, 720)).toRect());
+#endif
         } else {
             compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1920, 1080)).toRect());
 #if DUDUREGI_DIGITALCLUSTER
             dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1920, 1080)).toRect());
+#endif
+#if DUDUREGI_REARDISPLAY
+            rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1920, 1080)).toRect());
 #endif
         }
     } else { // full screen
@@ -107,6 +120,9 @@ int main(int argc, char *argv[])
     }
 #if DUDUREGI_DIGITALCLUSTER
     dc.show();
+#endif
+#if DUDUREGI_REARDISPLAY
+    rd.show();
 #endif
     compositor.show();
     //DuduregiCompositor rearcompositor("cluster.qml", "wayland-1");
@@ -118,6 +134,9 @@ int main(int argc, char *argv[])
         settings.setValue("geometry-for-maindisplay", compositor.geometry());
 #if DUDUREGI_DIGITALCLUSTER
         settings.setValue("geometry-for-cluster", dc.geometry());
+#endif
+#if DUDUREGI_REARDISPLAY
+        settings.setValue("geometry-for-reardisplay", rd.geometry());
 #endif
     }
 

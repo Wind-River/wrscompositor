@@ -7,8 +7,9 @@ echo
 echo "Standard options:"
 echo "  --help                 print this message"
 echo "  --with-digitalcluster  build with digital cluster feature (on 2nd display)"
+echo "  --with-reardisplay     build with rear display feature (on 3rd display)"
 echo "  --without-maindisplay  build without main display"
-echo "  --without-wlcompositor build without digital cluster feature"
+echo "  --without-wlcompositor build without wayland compositor feature (deprecated)"
 echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
 exit
 }
@@ -20,6 +21,7 @@ fi
 
 SUPPORT_MAINDISPLAY=1
 SUPPORT_DCLUSTER=0
+SUPPORT_REARDISPLAY=0
 SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
@@ -32,6 +34,9 @@ for opt do
 	;;
     --with-digitalcluster)
 		SUPPORT_DCLUSTER=1
+	;;
+    --with-reardisplay)
+		SUPPORT_REARDISPLAY=1
 	;;
     --without-wlcompositor)
 		SUPPORT_WLCOMPOSITOR=0
@@ -48,6 +53,7 @@ done
 echo "Build configuration"
 echo "  SUPPORT_MAINDISPLAY=$SUPPORT_MAINDISPLAY"
 echo "  SUPPORT_DIGITALCLUSTER=$SUPPORT_DCLUSTER"
+echo "  SUPPORT_REARDISPLAY=$SUPPORT_REARDISPLAY"
 echo "  SUPPORT_WLCOMPOSITOR=$SUPPORT_WLCOMPOSITOR"
 echo "  SUPPORT_WEBENGINE=$SUPPORT_WEBENGINE"
 echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
@@ -91,6 +97,7 @@ printf "Generating duduregiconfig.h ..."
 cat duduregiconfig.h.in | sed \
 -e "s/DUDUREGI_MAINDISPLAY 0/DUDUREGI_MAINDISPLAY $SUPPORT_MAINDISPLAY/" \
 -e "s/DUDUREGI_DIGITALCLUSTER 0/DUDUREGI_DIGITALCLUSTER $SUPPORT_DCLUSTER/" \
+-e "s/DUDUREGI_REARDISPLAY 0/DUDUREGI_REARDISPLAY $SUPPORT_REARDISPLAY/" \
 -e "s/DUDUREGI_WAYLAND_COMPOSITOR 0/DUDUREGI_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
 -e "s/DUDUREGI_WEBENGINE 0/DUDUREGI_WEBENGINE $SUPPORT_WEBENGINE/" \
 -e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \

@@ -24,7 +24,9 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
     addDefaultShell();
-    createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+    mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
+    setPrimaryOutput(mMainOutput);
+    mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
@@ -42,6 +44,15 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 
 DuduregiCompositor::~DuduregiCompositor() {
 }
+
+#if DUDUREGI_REARDISPLAY
+void DuduregiCompositor::setRearDisplay(QQuickView *v) {
+    mRearDisplay = v;
+    mRearOutput = static_cast<QWaylandQuickOutput*>(createOutput(v, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
+    // XXX if do not set geometry to last output, main display will be abnormaly rendered, need to investigation
+    mRearOutput->setGeometry(QRect(0, 0, 1280, 720));
+}
+#endif
 
 void DuduregiCompositor::slotFocusObjectChanged(QObject *obj) {
     (void)obj;
