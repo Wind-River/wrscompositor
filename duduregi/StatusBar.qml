@@ -9,9 +9,12 @@ Item {
     z: 50000
     property string wmi: ""
     property bool androidAutoEnabled: false
+    property bool currentWindowExposed: false
 
     signal closeWindow
     signal logoClicked
+    signal swapWindow
+    signal cloneWindow
 
     Rectangle {
         id: statusbarBackground
@@ -72,6 +75,48 @@ Item {
         color: "white"
         smooth: true
         font.bold: true
+    }
+
+    Image {
+        id: cloneWindowButton
+        source: "icons/clone-window.svg"
+        anchors.right: androidAuto.left
+        anchors.rightMargin: width/10
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Conf.useMultiWaylandDisplayFeature && statusBar.currentWindowExposed
+        width: height
+        height: parent.height * 3 / 5
+        MouseArea {
+            id: cloneButtonArea
+            anchors.fill: parent
+            onClicked: {
+                cloneWindow();
+            }
+        }
+        opacity: (cloneButtonArea.pressed?0.8:1.0)
+        scale: (cloneButtonArea.pressed?0.9:1.0)
+        smooth: true
+    }
+
+    Image {
+        id: swapWindowButton
+        source: "icons/swap-window.svg"
+        anchors.right: cloneWindowButton.left
+        anchors.rightMargin: width/10
+        anchors.verticalCenter: parent.verticalCenter
+        visible: Conf.useMultiWaylandDisplayFeature && statusBar.currentWindowExposed
+        width: height
+        height: parent.height * 3 / 5
+        MouseArea {
+            id: swapButtonArea
+            anchors.fill: parent
+            onClicked: {
+                swapWindow();
+            }
+        }
+        opacity: (swapButtonArea.pressed?0.8:1.0)
+        scale: (swapButtonArea.pressed?0.9:1.0)
+        smooth: true
     }
 
     Image {

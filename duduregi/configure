@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SUPPOTED_TARGETDEVICES=( default minnowmax)
+
 show_help() {
 echo "Usage: configure [options]"
 echo "Options: [defaults in brackets after descriptions]"
@@ -11,12 +13,19 @@ echo "  --with-reardisplay     build with rear display feature (on 3rd display)"
 echo "  --without-maindisplay  build without main display"
 echo "  --without-wlcompositor build without wayland compositor feature (deprecated)"
 echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
-exit
+echo "  --target-device=NAME   Set JS configuration for specific target device"
+echo ""
+echo "Supported target devices:"
+for name in "${SUPPOTED_TARGETDEVICES[@]}"
+do
+	echo "  $name"
+done
 }
 
 if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
 then
     show_help
+	exit
 fi
 
 SUPPORT_MAINDISPLAY=1
@@ -25,6 +34,7 @@ SUPPORT_REARDISPLAY=0
 SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
+TARGET_DEVICE=default
 
 for opt do
     optval="${opt#*=}"
@@ -44,8 +54,24 @@ for opt do
     --without-webengine)
 		SUPPORT_WEBENGINE=0
 	;;
+    --target-device=*)
+		for name in "${SUPPOTED_TARGETDEVICES[@]}"
+		do
+			if [ $name = $optval ]; then
+                TARGET_DEVICE=$optval
+				break
+			fi
+		done
+		if [ $optval != $TARGET_DEVICE ]; then
+			show_help
+			echo
+			echo "\"$optval\" is not supported target device"
+			exit
+		fi
+	;;
     --help)
 	show_help
+	exit
 	;;
     esac
 done
@@ -57,6 +83,7 @@ echo "  SUPPORT_REARDISPLAY=$SUPPORT_REARDISPLAY"
 echo "  SUPPORT_WLCOMPOSITOR=$SUPPORT_WLCOMPOSITOR"
 echo "  SUPPORT_WEBENGINE=$SUPPORT_WEBENGINE"
 echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
+echo "  TARGET_DEVICE=$TARGET_DEVICE"
 echo
 
 printf "Generating duduregi.pro ..."
@@ -82,6 +109,17 @@ echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> duduregi.pro
 
 fi
 
+if [ "$SUPPORT_DCLUSTER" = "1" ]; then
+echo "HEADERS += digitalcluster.h" >> duduregi.pro
+echo "SOURCES += digitalcluster.cpp" >> duduregi.pro
+fi
+
+if [ "$SUPPORT_REARDISPLAY" = "1" ]; then
+echo "HEADERS += reardisplay.h" >> duduregi.pro
+echo "SOURCES += reardisplay.cpp" >> duduregi.pro
+echo "OTHER_FILES += rearmain.qml" >> duduregi.pro
+fi
+
 if [ "$SUPPORT_DBUS" = "1" ]; then
 echo "QT += dbus" >> duduregi.pro
 fi
@@ -103,6 +141,20 @@ cat duduregiconfig.h.in | sed \
 -e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \
 > duduregiconfig.h
 echo $'\r'"Generating duduregiconfig.h ................................... Done"
+
+printf "Generating config.js ..."
+JSCONFIG="config-$TARGET_DEVICE.js"
+if [ -f "$JSCONFIG" ]; then
+	cp -f config-default.js config.js
+	if [ $JSCONFIG != "config-default.js" ]; then
+		cat $JSCONFIG >> config.js
+	fi
+echo $'\r'"Generating config.js .......................................... Done"
+else
+echo $'\r'"Generating config.js .......................................... Failure"
+echo "Error, could not find $JSCONFIG."
+exit
+fi
 echo
 
 if [ -f /opt/windriver/bin/qmake ]; then

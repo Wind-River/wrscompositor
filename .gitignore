@@ -4,6 +4,7 @@ ui_*
 moc_*
 *.cfg
 Makefile.duduregi
+duduregi/config.js
 duduregi/duduregi
 duduregi/qwayland-server-*
 duduregi/wayland-*protocol.c

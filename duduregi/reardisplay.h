@@ -1,5 +1,5 @@
-#ifndef DUDUREGI_CLUSTER_H
-#define DUDUREGI_CLUSTER_H
+#ifndef REAR_DISPLAY_H
+#define REAR_DISPLAY_H
 #include "duduregiconfig.h"
 
 #include <QSurfaceFormat>
@@ -10,12 +10,12 @@
 
 #include <QTimer>
 
-class DigitalCluster : public QQuickView
+class RearDisplay : public QQuickView
 {
     Q_OBJECT
 
 public:
-    DigitalCluster(QWindow *parent = 0);
-    virtual ~DigitalCluster();
+    RearDisplay(QWindow *parent = 0);
+    virtual ~RearDisplay();
 };
 #endif

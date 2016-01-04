@@ -19,6 +19,9 @@
 #if DUDUREGI_DIGITALCLUSTER
 #include "digitalcluster.h"
 #endif
+#if DUDUREGI_REARDISPLAY
+#include "reardisplay.h"
+#endif
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
 #include "GeniviWaylandIVIExtension.h"
@@ -90,10 +93,7 @@ int main(int argc, char *argv[])
     DigitalCluster dc;
 #endif
 #if DUDUREGI_REARDISPLAY
-    QQuickView rd;
-    rd.setTitle(QLatin1String("Wind River Duduregi's Rear Display Example"));
-    rd.setSource(QUrl("reardisplay.qml"));
-    rd.setResizeMode(QQuickView::SizeRootObjectToView);
+    RearDisplay rd;
     compositor.setRearDisplay(&rd);
 #endif
 

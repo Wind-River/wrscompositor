@@ -54,6 +54,7 @@ Item {
         onHeightChanged: {
             Conf.statusBarHeight = statusBar.height
         }
+        currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
     }
     Image {
         id: background
@@ -80,8 +81,8 @@ Item {
             layer.removeSurface(windowContainer.ivi_surface);
             windowContainer.destroy();
             CompositorLogic.removeWindow(windowContainer);
-			if(Conf.useMultiWindowFeature)
-				CompositorLogic.relayoutForMultiWindow(background.width, background.height);
+            if(Conf.useMultiWindowFeature)
+                CompositorLogic.relayoutForMultiWindow(background.width, background.height);
         }
 
 
@@ -359,24 +360,24 @@ Item {
             root.waitProcess = null;
         }
 
-		if(!Conf.useMultiWindowFeature)
-			CompositorLogic.addWindow(windowContainer);
-		else { // for multi window feature enabled mode
-			// stretch to maximum size as default
+        if(!Conf.useMultiWindowFeature)
+            CompositorLogic.addWindow(windowContainer);
+        else { // for multi window feature enabled mode
+            // stretch to maximum size as default
             windowContainer.scaledWidth = background.width/window.size.width;
             windowContainer.scaledHeight = background.height/window.size.height;
-			console.log("oscaleds "+background.height/window.size.height);
+            console.log("oscaleds "+background.height/window.size.height);
 
-			// add window and relayout for multi window feature
-			CompositorLogic.addMultiWindow(windowContainer,
-									background.width, background.height);
-		}
+            // add window and relayout for multi window feature
+            CompositorLogic.addMultiWindow(windowContainer,
+                                    background.width, background.height);
+        }
 
         windowContainer.opacity = 1
 
         if(!windowContainer.androidAutoProjection) {
-			if(!Conf.useMultiWindowFeature)
-				CompositorLogic.hideWithout(windowContainer);
+            if(!Conf.useMultiWindowFeature)
+                CompositorLogic.hideWithout(windowContainer);
             root.currentWindow = windowContainer
 
             if(mainmenu.visible)
@@ -406,5 +407,15 @@ Item {
     }
     onHeightChanged: {
         Conf.displayHeight = height;
+    }
+    Component.onCompleted: {
+        if(!Conf.useMultiWaylandDisplayFeature)
+            return;
+        statusBar.swapWindow.connect(function() {
+            console.log("swap button clicked");
+        });
+        statusBar.cloneWindow.connect(function() {
+            console.log("clone button clicked");
+        });
     }
 }
