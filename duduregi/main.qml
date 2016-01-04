@@ -74,6 +74,9 @@ Item {
         // window destroy callback
         function removeWindow(windowContainer) {
             console.log('window destroyed '+windowContainer);
+            if(root.currentWindow == windowContainer)
+                root.currentWindow = null;
+
             if(windowContainer.androidAutoProjection) {
                 root.androidAutoEnabled = false;
                 mainmenu.androidAutoContainer.projectionStatus = "disconnected";
@@ -306,6 +309,15 @@ Item {
             mainmenu.hide();
     }
 
+    function swappedWindowRestored(windowFrame) {
+        if(!Conf.useMultiWaylandDisplayFeature)
+            return;
+        console.log("swappedWindowRestored: "+windowFrame);
+        windowFrame.parent = background
+        CompositorLogic.addWindow(windowFrame);
+        root.currentWindow = windowFrame;
+    }
+
     function windowAdded(window) {
         console.log('window added '+window);
         console.log('window added title:'+window.title);
@@ -416,6 +428,7 @@ Item {
         statusBar.swapWindow.connect(function() {
             console.log("swap button clicked");
             console.log(root.currentWindow);
+            root.currentWindow.position = "rear";
             root.swapWindowRequested(root.currentWindow);
             CompositorLogic.removeWindow(root.currentWindow);
             root.currentWindow = null;

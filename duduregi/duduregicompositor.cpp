@@ -27,6 +27,9 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
     mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
     setPrimaryOutput(mMainOutput);
     mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
+    //mMainOutput->window()->setMinimumSize(QSize(0, 0));
+    //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
+    mMainOutput->window()->setFlags(Qt::WindowCloseButtonHint);
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
@@ -42,6 +45,7 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 
 #if DUDUREGI_REARDISPLAY
     QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
+    QObject::connect(this, SIGNAL(swappedWindowRestored(QVariant)), rootObject(), SLOT(swappedWindowRestored(QVariant)));
 #endif
 }
 
@@ -50,27 +54,36 @@ DuduregiCompositor::~DuduregiCompositor() {
 
 #if DUDUREGI_REARDISPLAY
 void DuduregiCompositor::setRearDisplay(QQuickView *v) {
-    mRearDisplay = v;
-    mRearOutput = static_cast<QWaylandQuickOutput*>(createOutput(v, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
+    mRearDisplay = qobject_cast<RearDisplay*>(v);
+    mRearOutput = qobject_cast<QWaylandQuickOutput*>(createOutput(v, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
     // XXX if do not set geometry to last output, main display will be abnormaly rendered, need to investigation
+    qDebug() << mRearOutput->window()->minimumSize();
+    qDebug() << mRearOutput->window()->maximumSize();
     mRearOutput->setGeometry(QRect(0, 0, 1280, 720));
+    //mRearOutput->window()->setMinimumSize(QSize(0, 0));
+    //mRearOutput->window()->setMaximumSize(QSize(16777215, 16777215));
+    mRearOutput->window()->setFlags(Qt::WindowCloseButtonHint);
 }
 void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
-    qDebug() << windowFrame;
-    windowFrame->setParent(mRearDisplay->rootObject());
-    windowFrame->setParentItem(mRearDisplay->rootObject());
     QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
-    qDebug() << surfaceItem;
-    qDebug() << surfaceItem->surface();
+    qDebug() << windowFrame;
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     surface->setMainOutput(mRearOutput);
+    windowFrame->setParent(mRearDisplay->rootObject());
+    windowFrame->setParentItem(mRearDisplay->rootObject());
+    /*
     QWaylandSurfaceLeaveEvent *le = new QWaylandSurfaceLeaveEvent(mMainOutput);
     QWaylandSurfaceEnterEvent *ee = new QWaylandSurfaceEnterEvent(mRearOutput);
     qApp->sendEvent(surface, le);
     qApp->sendEvent(surface, ee);
     qApp->flush();
     mRearDisplay->update();
+    */
+    qobject_cast<RearDisplay*>(mRearDisplay)->addSwappedWindow(windowFrame);
+}
+void DuduregiCompositor::restoreSwappedWindow(QQuickItem *windowFrame) {
+    emit swappedWindowRestored(QVariant::fromValue(windowFrame));
 }
 #endif
 

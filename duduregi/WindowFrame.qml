@@ -1,4 +1,5 @@
 import QtQuick 2.1
+
 import QtQuick.Window 2.0
 import "config.js" as Conf
 
@@ -21,6 +22,7 @@ Item {
 
     property real scaledWidth: 1.0
     property real scaledHeight: 1.0
+    property string position: "main"
 
     transformOrigin: Item.Center
     transform: Scale {

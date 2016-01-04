@@ -22,6 +22,9 @@
 #include <QSettings>
 
 #include <QTimer>
+#if DUDUREGI_REARDISPLAY
+#include "reardisplay.h"
+#endif
 
 class DuduregiCompositor : public QQuickView
 #if DUDUREGI_WAYLAND_COMPOSITOR
@@ -49,6 +52,9 @@ public:
     void setRearDisplay(QQuickView *);
     QWaylandQuickOutput* mainOutput() { return mMainOutput; };
     QWaylandQuickOutput* rearOutput() { return mRearOutput; };
+    void restoreSwappedWindow(QQuickItem *windowFrame);
+signals:
+    void swappedWindowRestored(QVariant window);
 #endif
 private slots:
     void slotFocusObjectChanged(QObject *);
@@ -76,7 +82,7 @@ protected:
 
 private:
 #if DUDUREGI_REARDISPLAY
-    QQuickView *mRearDisplay;
+    RearDisplay *mRearDisplay;
     QWaylandQuickOutput *mRearOutput;
 #endif
     QWaylandQuickOutput *mMainOutput;

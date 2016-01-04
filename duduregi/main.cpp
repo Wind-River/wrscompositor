@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
 #if DUDUREGI_REARDISPLAY
     RearDisplay rd;
     compositor.setRearDisplay(&rd);
+    rd.setMainDisplay(&compositor);
+    rd.setMainOutput(compositor.mainOutput());
 #endif
 
     if(mode != HEIGHT_FULLSCREEN) {
