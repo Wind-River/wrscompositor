@@ -45,6 +45,8 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 
 #if DUDUREGI_REARDISPLAY
     QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
+    QObject::connect(rootObject(), SIGNAL(cloneWindowRequested(QVariant)), this, SLOT(slotCloneWindow(QVariant)));
+    QObject::connect(rootObject(), SIGNAL(closeClonedWindowRequested(QVariant)), this, SLOT(slotCloseClonedWindow(QVariant)));
     QObject::connect(this, SIGNAL(swappedWindowRestored(QVariant)), rootObject(), SLOT(swappedWindowRestored(QVariant)));
 #endif
 }
@@ -84,6 +86,22 @@ void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
 }
 void DuduregiCompositor::restoreSwappedWindow(QQuickItem *windowFrame) {
     emit swappedWindowRestored(QVariant::fromValue(windowFrame));
+}
+void DuduregiCompositor::slotCloneWindow(const QVariant &v) {
+    QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
+    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
+    surface->setMainOutput(mRearOutput);
+    QWaylandSurfaceItem *clonedSurfaceItem = static_cast<QWaylandSurfaceItem*>(createView(surface));
+    surface->setMainOutput(mMainOutput);
+    qobject_cast<RearDisplay*>(mRearDisplay)->addClonedWindow(clonedSurfaceItem);
+    mRearDisplay->update();
+}
+void DuduregiCompositor::slotCloseClonedWindow(const QVariant &v) {
+    QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
+    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
+    qobject_cast<RearDisplay*>(mRearDisplay)->closeClonedWindow(surface);
 }
 #endif
 

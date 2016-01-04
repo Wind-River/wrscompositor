@@ -58,7 +58,11 @@ signals:
 #endif
 private slots:
     void slotFocusObjectChanged(QObject *);
+#if DUDUREGI_REARDISPLAY
     void slotSwapWindow(const QVariant &v);
+    void slotCloneWindow(const QVariant &v);
+    void slotCloseClonedWindow(const QVariant &v);
+#endif
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
 signals:

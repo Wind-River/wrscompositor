@@ -10,6 +10,7 @@ Item {
     property string wmi: ""
     property bool androidAutoEnabled: false
     property bool currentWindowExposed: false
+    property bool cloneAvailable: true
 
     signal closeWindow
     signal logoClicked
@@ -79,7 +80,7 @@ Item {
 
     Image {
         id: cloneWindowButton
-        source: "icons/clone-window.svg"
+        source: statusBar.cloneAvailable?"icons/clone-window.svg":"icons/restore-cloned-window.svg"
         anchors.right: androidAuto.left
         anchors.rightMargin: width/10
         anchors.verticalCenter: parent.verticalCenter

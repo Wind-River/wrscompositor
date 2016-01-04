@@ -27,12 +27,17 @@ public:
     RearDisplay(QWindow *parent = 0);
     virtual ~RearDisplay();
     void addSwappedWindow(QQuickItem *windowFrame);
+    void addClonedWindow(QWaylandSurfaceItem *item);
+    void closeClonedWindow(QWaylandQuickSurface *surface);
     void setMainDisplay(QQuickView *qv) { mMainDisplay = qv; };
     void setMainOutput(QWaylandQuickOutput *o) { mMainOutput = o; };
 signals:
     void windowSwapped(QVariant window);
+    void windowCloned(QVariant window);
+    void windowCloneClosed(QVariant window);
 private slots:
     void slotSwappedWindowRestore(const QVariant &v);
+    void slotClonedSurfaceDestroy(const QVariant &v);
 private:
     QQuickView *mMainDisplay;
     QWaylandQuickOutput* mMainOutput;

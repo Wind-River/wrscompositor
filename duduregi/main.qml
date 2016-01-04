@@ -16,6 +16,8 @@ Item {
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
     signal swapWindowRequested(var anObject)
+    signal cloneWindowRequested(var anObject)
+    signal closeClonedWindowRequested(var anObject)
 
     onHasFullscreenWindowChanged: {
         console.log("has fullscreen window: " + hasFullscreenWindow);
@@ -57,6 +59,7 @@ Item {
             Conf.statusBarHeight = statusBar.height
         }
         currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
+        cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
     }
     Image {
         id: background
@@ -84,6 +87,9 @@ Item {
 
             var layer = geniviExt.mainScreen.layerById(1000); // application layer
             layer.removeSurface(windowContainer.ivi_surface);
+            if(Conf.useMultiWaylandDisplayFeature && windowContainer.cloned) {
+                root.closeClonedWindowRequested(windowContainer);
+            }
             windowContainer.destroy();
             CompositorLogic.removeWindow(windowContainer);
             if(Conf.useMultiWindowFeature)
@@ -435,6 +441,13 @@ Item {
         });
         statusBar.cloneWindow.connect(function() {
             console.log("clone button clicked");
+            if(root.currentWindow.cloned) {
+                root.closeClonedWindowRequested(root.currentWindow);
+                root.currentWindow.cloned = false;
+            } else {
+                root.cloneWindowRequested(root.currentWindow);
+                root.currentWindow.cloned = true;
+            }
         });
     }
 }

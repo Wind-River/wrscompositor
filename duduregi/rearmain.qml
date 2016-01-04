@@ -8,8 +8,10 @@ Rectangle {
     color: "#ff0000"
     anchors.fill: parent
     property variant currentWindow: null
+    property var cloneSurfaceItemList: null;
 
     signal swappedWindowRestoreRequested(var anObject)
+    signal clonedSurfaceItemDestroyed(var anObject)
 
     Rectangle {
         id: statusBar
@@ -49,7 +51,7 @@ Rectangle {
 
         Image {
             id: swapWindowButton
-            source: "icons/swap-window.svg"
+            source: "icons/restore-swapped-window.svg"
             anchors.right: dateTime.left
             anchors.rightMargin: width
             anchors.verticalCenter: parent.verticalCenter
@@ -107,5 +109,26 @@ Rectangle {
         console.log("swapped window added: "+windowFrame);
         windowFrame.parent = background
         rearRoot.currentWindow = windowFrame
+    }
+    function windowCloned(surfaceItem) {
+        console.log("cloned: "+surfaceItem);
+        surfaceItem.parent = background
+        if (rearRoot.cloneSurfaceItemList == null)
+            rearRoot.cloneSurfaceItemList = new Array(0);
+        rearRoot.cloneSurfaceItemList.push(surfaceItem);
+    }
+    function windowCloneClosed(surface) {
+        console.log("cloned closed: "+surface);
+        var i;
+        for (i = 0; i < rearRoot.cloneSurfaceItemList.length; i++) {
+            var surfaceItem = rearRoot.cloneSurfaceItemList[i];
+            if(surfaceItem.surface == surface) {
+                rearRoot.cloneSurfaceItemList.splice(i, 1);
+                rearRoot.clonedSurfaceItemDestroyed(surfaceItem);
+                break;
+            }
+        }
+    }
+    Component.onCompleted: {
     }
 }

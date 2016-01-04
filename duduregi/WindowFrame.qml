@@ -23,6 +23,7 @@ Item {
     property real scaledWidth: 1.0
     property real scaledHeight: 1.0
     property string position: "main"
+    property bool cloned: false
 
     transformOrigin: Item.Center
     transform: Scale {
