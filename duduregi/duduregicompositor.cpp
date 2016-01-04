@@ -40,6 +40,9 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 #endif
     connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
 
+#if DUDUREGI_REARDISPLAY
+    QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
+#endif
 }
 
 DuduregiCompositor::~DuduregiCompositor() {
@@ -51,6 +54,23 @@ void DuduregiCompositor::setRearDisplay(QQuickView *v) {
     mRearOutput = static_cast<QWaylandQuickOutput*>(createOutput(v, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
     // XXX if do not set geometry to last output, main display will be abnormaly rendered, need to investigation
     mRearOutput->setGeometry(QRect(0, 0, 1280, 720));
+}
+void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
+    QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
+    qDebug() << windowFrame;
+    windowFrame->setParent(mRearDisplay->rootObject());
+    windowFrame->setParentItem(mRearDisplay->rootObject());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
+    qDebug() << surfaceItem;
+    qDebug() << surfaceItem->surface();
+    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
+    surface->setMainOutput(mRearOutput);
+    QWaylandSurfaceLeaveEvent *le = new QWaylandSurfaceLeaveEvent(mMainOutput);
+    QWaylandSurfaceEnterEvent *ee = new QWaylandSurfaceEnterEvent(mRearOutput);
+    qApp->sendEvent(surface, le);
+    qApp->sendEvent(surface, ee);
+    qApp->flush();
+    mRearDisplay->update();
 }
 #endif
 

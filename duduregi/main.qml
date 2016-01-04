@@ -15,6 +15,8 @@ Item {
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
+    signal swapWindowRequested(var anObject)
+
     onHasFullscreenWindowChanged: {
         console.log("has fullscreen window: " + hasFullscreenWindow);
     }
@@ -413,6 +415,10 @@ Item {
             return;
         statusBar.swapWindow.connect(function() {
             console.log("swap button clicked");
+            console.log(root.currentWindow);
+            root.swapWindowRequested(root.currentWindow);
+            CompositorLogic.removeWindow(root.currentWindow);
+            root.currentWindow = null;
         });
         statusBar.cloneWindow.connect(function() {
             console.log("clone button clicked");

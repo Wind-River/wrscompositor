@@ -52,6 +52,7 @@ public:
 #endif
 private slots:
     void slotFocusObjectChanged(QObject *);
+    void slotSwapWindow(const QVariant &v);
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
 signals:
