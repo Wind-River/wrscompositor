@@ -80,12 +80,15 @@ function removeWindow(window)
     windowList.splice(i, 1);
 }
 
-function findBySurfaceItem(surfaceItem)
+function findBySurface(surface)
 {
     var i;
+    //console.log("findBySurface "+surface);
     for (i = 0; i < windowList.length; i++) {
-        if (windowList[i].child.surface == surfaceItem.surface)
+        //console.log(i+". "+windowList[i]);
+        if (windowList[i].surface == surface)
             return windowList[i];
     }
+    //console.log("couldn't find windowFrmae for this surface");
     return null;
 }

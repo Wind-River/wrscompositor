@@ -13,6 +13,7 @@ Qt Installation for duduregi & demo stuff
 
 	$ cd qt-every....5.5.0     # Qt
 	$ ./configure -prefix /opt/windriver ...
+	$ # ./configure -prefix /opt/windriver -nomake examples -nomake tests -confirm-license -opensource -kms
 	$ make -j8 && make install
 	$ cd qtwayland             # QtWayland
 	$ /opt/windriver/bin/qmake CONFIG+=wayland-compositor

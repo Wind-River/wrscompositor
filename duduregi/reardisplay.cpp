@@ -22,7 +22,7 @@ RearDisplay::RearDisplay(QWindow *parent)
     QObject::connect(this, SIGNAL(windowCloned(QVariant)), rootObject(), SLOT(windowCloned(QVariant)));
     QObject::connect(this, SIGNAL(windowCloneClosed(QVariant)), rootObject(), SLOT(windowCloneClosed(QVariant)));
     QObject::connect(rootObject(), SIGNAL(swappedWindowRestoreRequested(QVariant)), this, SLOT(slotSwappedWindowRestore(QVariant)));
-    QObject::connect(rootObject(), SIGNAL(clonedWindowRestoreRequested(QVariant)), this, SLOT(slotClonedWindowRestore(QVariant)));
+    //QObject::connect(rootObject(), SIGNAL(clonedWindowRestoreRequested(QVariant)), this, SLOT(slotClonedWindowRestore(QVariant)));
     QObject::connect(rootObject(), SIGNAL(clonedSurfaceItemDestroyed(QVariant)), this, SLOT(slotClonedSurfaceDestroy(QVariant)));
 }
 

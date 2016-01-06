@@ -42,6 +42,7 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
     QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
 #endif
     connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
+    QObject::connect(this, SIGNAL(windowDestroyed(QVariant)), rootObject(), SLOT(windowDestroyed(QVariant)));
 
 #if DUDUREGI_REARDISPLAY
     QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
@@ -68,7 +69,7 @@ void DuduregiCompositor::setRearDisplay(QQuickView *v) {
 }
 void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
-    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("surfaceItem").value<QObject*>());
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     surface->setMainOutput(mRearOutput);
     QWaylandSurfaceItem *clonedSurfaceItem = static_cast<QWaylandSurfaceItem*>(createView(surface));
@@ -83,7 +84,7 @@ void DuduregiCompositor::restoreSwappedWindow(QWaylandSurfaceItem *surfaceItem) 
 }
 void DuduregiCompositor::slotCloneWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
-    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("surfaceItem").value<QObject*>());
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     surface->setMainOutput(mRearOutput);
     QWaylandSurfaceItem *clonedSurfaceItem = static_cast<QWaylandSurfaceItem*>(createView(surface));
@@ -114,9 +115,9 @@ Q_INVOKABLE QWaylandSurfaceItem* DuduregiCompositor::item(QWaylandSurface *surf)
 }
 
 
-void DuduregiCompositor::destroyWindow(QVariant window) {
-    qvariant_cast<QObject *>(window)->deleteLater();
-}
+//void DuduregiCompositor::destroyWindow(QVariant window) {
+//    qvariant_cast<QObject *>(window)->deleteLater();
+//}
 
 void DuduregiCompositor::setFullscreenSurface(QWaylandQuickSurface *surface) {
     if (surface == m_fullscreenSurface)
@@ -139,6 +140,8 @@ void DuduregiCompositor::surfaceDestroyed() {
     QWaylandQuickSurface *surface = static_cast<QWaylandQuickSurface *>(sender());
     if (surface == m_fullscreenSurface)
         m_fullscreenSurface = 0;
+
+    emit windowDestroyed(QVariant::fromValue(surface));
 }
 
 void DuduregiCompositor::sendCallbacks() {

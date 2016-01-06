@@ -74,30 +74,6 @@ Item {
         source: "alameda.jpg"
         smooth: true
 
-        // window destroy callback
-        function removeWindow(windowContainer) {
-            console.log('window destroyed '+windowContainer);
-            if(root.currentWindow == windowContainer)
-                root.currentWindow = null;
-
-            if(windowContainer.androidAutoProjection) {
-                root.androidAutoEnabled = false;
-                mainmenu.androidAutoContainer.projectionStatus = "disconnected";
-            }
-
-            var layer = geniviExt.mainScreen.layerById(1000); // application layer
-            layer.removeSurface(windowContainer.ivi_surface);
-            console.log('position '+windowContainer.position);
-            if(Conf.useMultiWaylandDisplayFeature && (windowContainer.cloned || windowContainer.position != 'main')) {
-                root.closeClonedWindowRequested(windowContainer.child);
-            }
-            windowContainer.destroy();
-            CompositorLogic.removeWindow(windowContainer);
-            if(Conf.useMultiWindowFeature)
-                CompositorLogic.relayoutForMultiWindow(background.width, background.height);
-        }
-
-
         Item {
             id: currentApp
             anchors.fill: parent
@@ -321,17 +297,42 @@ Item {
             return;
         console.log("swappedWindowRestored: "+surfaceItem);
 
-        var windowFrame = CompositorLogic.findBySurfaceItem(surfaceItem);
+        var windowFrame = CompositorLogic.findBySurface(surfaceItem.surface);
         console.log(windowFrame);
         root.raiseWindow(windowFrame);
     }
+    function windowDestroyed(surface) {
+        console.log('window destroyed '+surface);
+        var windowFrame = CompositorLogic.findBySurface(surface);
+        if(!windowFrame)
+            return;
+        if(root.currentWindow == windowFrame)
+            root.currentWindow = null;
 
-    function windowAdded(window) {
-        console.log('window added '+window);
-        console.log('window added title:'+window.title);
-        console.log('window added className:'+window.className);
-        console.log('window added client: '+window.client);
-        console.log('window added pid: '+window.client.processId);
+        if(windowFrame.androidAutoProjection) {
+            root.androidAutoEnabled = false;
+            mainmenu.androidAutoContainer.projectionStatus = "disconnected";
+        }
+
+        var layer = geniviExt.mainScreen.layerById(1000); // application layer
+        layer.removeSurface(windowFrame.ivi_surface);
+        console.log('position '+windowFrame.position);
+        if(Conf.useMultiWaylandDisplayFeature && (windowFrame.cloned || windowFrame.position != 'main')) {
+            root.closeClonedWindowRequested(windowFrame.surfaceItem);
+        }
+        windowFrame.destroy();
+        CompositorLogic.removeWindow(windowFrame);
+        if(Conf.useMultiWindowFeature)
+            CompositorLogic.relayoutForMultiWindow(background.width, background.height);
+
+    }
+
+    function windowAdded(surface) {
+        console.log('surface added '+surface);
+        console.log('surface added title:'+surface.title);
+        console.log('surface added className:'+surface.className);
+        console.log('surface added client: '+surface.client);
+        console.log('surface added pid: '+surface.client.processId);
         console.log(geniviExt.mainScreen);
         console.log(geniviExt.mainScreen.layerCount());
         console.log(geniviExt.mainScreen.layer(0));
@@ -340,77 +341,78 @@ Item {
 
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowContainer;
-        if(window.title == 'gsteglgles') {
-            // XXX window from android on Minnow Max target
+        var windowFrame;
+        if(surface.title == 'gsteglgles') {
+            // XXX surface from android on Minnow Max target
             console.log('wayland android auto');
-            windowContainer = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
-            windowContainer.androidAutoProjection = true
+            windowFrame = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
+            windowFrame.androidAutoProjection = true
             root.androidAutoEnabled = true;
             mainmenu.androidAutoContainer.projectionStatus = "connected";
         } else
-            windowContainer = windowContainerComponent.createObject(background);
+            windowFrame = windowContainerComponent.createObject(background);
 
-        windowContainer.rootBackground = background
-        windowContainer.z = 50
-        windowContainer.child = compositor.item(window);
-        windowContainer.child.parent = windowContainer;
-        windowContainer.child.touchEventsEnabled = true;
-        windowContainer.ivi_surface = layer.addSurface(0, 0, window.size.width, window.size.height, windowContainer);
-        windowContainer.ivi_surface.id = window.client.processId;
+        windowFrame.rootBackground = background
+        windowFrame.z = 50
+        windowFrame.surface = surface;
+        windowFrame.surfaceItem = compositor.item(surface);
+        windowFrame.surfaceItem.parent = windowFrame;
+        windowFrame.surfaceItem.touchEventsEnabled = true;
+        windowFrame.ivi_surface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
+        windowFrame.ivi_surface.id = surface.client.processId;
 
-        windowContainer.targetX = 0;
-        windowContainer.targetY = 0;
-        windowContainer.targetWidth = window.size.width;
-        windowContainer.targetHeight = window.size.height;
-        if(windowContainer.androidAutoProjection) {
-            windowContainer.z = -1
-            windowContainer.targetX = 0;
-            windowContainer.targetY = 0;
-            windowContainer.scaledWidth = Conf.displayWidth/window.size.width;
-            windowContainer.scaledHeight = Conf.displayHeight/window.size.height;
+        windowFrame.targetX = 0;
+        windowFrame.targetY = 0;
+        windowFrame.targetWidth = surface.size.width;
+        windowFrame.targetHeight = surface.size.height;
+        if(windowFrame.androidAutoProjection) {
+            windowFrame.z = -1
+            windowFrame.targetX = 0;
+            windowFrame.targetY = 0;
+            windowFrame.scaledWidth = Conf.displayWidth/surface.size.width;
+            windowFrame.scaledHeight = Conf.displayHeight/surface.size.height;
         }
 
-        if(root.waitProcess && root.waitProcess.pid == window.client.processId)
+        if(root.waitProcess && root.waitProcess.pid == surface.client.processId)
         {
             // XXX hard code for AM Monitor
             if(root.waitProcess.cmd.indexOf("onitor")>0) // AM Monitor
             {
-                windowContainer.targetY = - statusBar.height;
+                windowFrame.targetY = - statusBar.height;
             }
-            root.waitProcess.setWindow(windowContainer);
+            root.waitProcess.setWindow(windowFrame);
             root.waitProcess = null;
         }
 
         if(!Conf.useMultiWindowFeature)
-            CompositorLogic.addWindow(windowContainer);
-        else { // for multi window feature enabled mode
+            CompositorLogic.addWindow(windowFrame);
+        else { // for multi surface feature enabled mode
             // stretch to maximum size as default
-            windowContainer.scaledWidth = background.width/window.size.width;
-            windowContainer.scaledHeight = background.height/window.size.height;
-            console.log("oscaleds "+background.height/window.size.height);
+            windowFrame.scaledWidth = background.width/surface.size.width;
+            windowFrame.scaledHeight = background.height/surface.size.height;
+            console.log("oscaleds "+background.height/surface.size.height);
 
-            // add window and relayout for multi window feature
-            CompositorLogic.addMultiWindow(windowContainer,
+            // add surface and relayout for multi surface feature
+            CompositorLogic.addMultiWindow(windowFrame,
                                     background.width, background.height);
         }
 
-        windowContainer.opacity = 1
+        windowFrame.opacity = 1
 
-        if(!windowContainer.androidAutoProjection) {
+        if(!windowFrame.androidAutoProjection) {
             if(!Conf.useMultiWindowFeature)
-                CompositorLogic.hideWithout(windowContainer);
-            root.currentWindow = windowContainer
+                CompositorLogic.hideWithout(windowFrame);
+            root.currentWindow = windowFrame
 
             if(mainmenu.visible)
                 mainmenu.hide();
         }
     }
 
-    function windowResized(window) {
-        console.log('window resized '+window);
-        window.width = window.surface.size.width;
-        window.height = window.surface.size.height;
+    function windowResized(surface) {
+        console.log('surface resized '+surface);
+        surface.width = surface.surface.size.width;
+        surface.height = surface.surface.size.height;
     }
 
     Keys.onPressed: {
@@ -445,7 +447,7 @@ Item {
         statusBar.cloneWindow.connect(function() {
             console.log("clone button clicked");
             if(root.currentWindow.cloned) {
-                root.closeClonedWindowRequested(root.currentWindow.child);
+                root.closeClonedWindowRequested(root.currentWindow.surfaceItem);
                 root.currentWindow.cloned = false;
             } else {
                 root.cloneWindowRequested(root.currentWindow);

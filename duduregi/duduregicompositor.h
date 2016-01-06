@@ -66,12 +66,13 @@ private slots:
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
 signals:
-    void windowAdded(QVariant window);
-    void windowResized(QVariant window);
+    void windowAdded(QVariant surface);
+    void windowResized(QVariant surface);
     void fullscreenSurfaceChanged();
+    void windowDestroyed(QVariant surface);
 
 public slots:
-    void destroyWindow(QVariant window);
+    //void destroyWindow(QVariant window);
     void setFullscreenSurface(QWaylandQuickSurface *surface);
 
 private slots:

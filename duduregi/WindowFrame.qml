@@ -5,7 +5,8 @@ import "config.js" as Conf
 
 Item {
     id: container
-    property variant child: null
+    property variant surfaceItem: null
+    property variant surface: null
 
     x: targetX
     y: targetY
@@ -31,12 +32,15 @@ Item {
         yScale: container.scaledHeight
     }
 
+    /*
     Connections {
-        target: container.child ? container.child : null
+        target: container.surfaceItem ? container.surfaceItem : null
         onSurfaceDestroyed: {
+            console.log("onSurfaceDestroyed");
             container.rootBackground.removeWindow(container);
         }
     }
+    */
     Behavior on x {
 		enabled: Conf.useMultiWindowFeature
         NumberAnimation { easing.type: Easing.InCubic; duration: 200; }

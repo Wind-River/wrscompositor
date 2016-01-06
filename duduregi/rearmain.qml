@@ -11,6 +11,7 @@ Rectangle {
     property var clonedSurfaceItemList: null;
 
     signal swappedWindowRestoreRequested(var anObject)
+    signal clonedWindowRestoreRequested(var anObject)
     signal clonedSurfaceItemDestroyed(var anObject)
 
     Rectangle {
@@ -122,14 +123,19 @@ Rectangle {
     function windowCloneClosed(surface) {
         console.log("cloned closed: "+surface);
         var i;
+        console.log("====================================");
         for (i = 0; i < rearRoot.clonedSurfaceItemList.length; i++) {
             var surfaceItem = rearRoot.clonedSurfaceItemList[i];
+            console.log("check "+surfaceItem.surface+" "+surface);
             if(surfaceItem.surface == surface) {
+                console.log("removed"+surface);
                 rearRoot.clonedSurfaceItemList.splice(i, 1);
                 rearRoot.clonedSurfaceItemDestroyed(surfaceItem);
+                surfaceItem.parent = null; // delete
                 break;
             }
         }
+        console.log("====================================");
     }
     Component.onCompleted: {
     }
