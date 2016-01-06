@@ -105,7 +105,7 @@ Item {
         anchors.right: cloneWindowButton.left
         anchors.rightMargin: width/10
         anchors.verticalCenter: parent.verticalCenter
-        visible: Conf.useMultiWaylandDisplayFeature && statusBar.currentWindowExposed
+        visible: Conf.useMultiWaylandDisplayFeature && statusBar.currentWindowExposed && statusBar.cloneAvailable
         width: height
         height: parent.height * 3 / 5
         MouseArea {

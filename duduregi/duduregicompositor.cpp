@@ -69,23 +69,17 @@ void DuduregiCompositor::setRearDisplay(QQuickView *v) {
 void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
     QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
-    qDebug() << windowFrame;
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     surface->setMainOutput(mRearOutput);
-    windowFrame->setParent(mRearDisplay->rootObject());
-    windowFrame->setParentItem(mRearDisplay->rootObject());
-    /*
-    QWaylandSurfaceLeaveEvent *le = new QWaylandSurfaceLeaveEvent(mMainOutput);
-    QWaylandSurfaceEnterEvent *ee = new QWaylandSurfaceEnterEvent(mRearOutput);
-    qApp->sendEvent(surface, le);
-    qApp->sendEvent(surface, ee);
-    qApp->flush();
-    mRearDisplay->update();
-    */
-    qobject_cast<RearDisplay*>(mRearDisplay)->addSwappedWindow(windowFrame);
+    QWaylandSurfaceItem *clonedSurfaceItem = static_cast<QWaylandSurfaceItem*>(createView(surface));
+    surface->setMainOutput(mMainOutput);
+
+    qobject_cast<RearDisplay*>(mRearDisplay)->addSwappedWindow(clonedSurfaceItem);
 }
-void DuduregiCompositor::restoreSwappedWindow(QQuickItem *windowFrame) {
-    emit swappedWindowRestored(QVariant::fromValue(windowFrame));
+void DuduregiCompositor::restoreSwappedWindow(QWaylandSurfaceItem *surfaceItem) {
+    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
+    surface->setMainOutput(mMainOutput);
+    emit swappedWindowRestored(QVariant::fromValue(surfaceItem));
 }
 void DuduregiCompositor::slotCloneWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
@@ -98,8 +92,7 @@ void DuduregiCompositor::slotCloneWindow(const QVariant &v) {
     mRearDisplay->update();
 }
 void DuduregiCompositor::slotCloseClonedWindow(const QVariant &v) {
-    QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
-    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(v.value<QObject*>());
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     qobject_cast<RearDisplay*>(mRearDisplay)->closeClonedWindow(surface);
 }

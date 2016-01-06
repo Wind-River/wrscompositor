@@ -8,7 +8,7 @@ Rectangle {
     color: "#ff0000"
     anchors.fill: parent
     property variant currentWindow: null
-    property var cloneSurfaceItemList: null;
+    property var clonedSurfaceItemList: null;
 
     signal swappedWindowRestoreRequested(var anObject)
     signal clonedSurfaceItemDestroyed(var anObject)
@@ -64,7 +64,6 @@ Rectangle {
                 onClicked: {
                     if(!rearRoot.currentWindow)
                         return;
-                    rearRoot.currentWindow.position = "main";
                     rearRoot.swappedWindowRestoreRequested(rearRoot.currentWindow);
                     rearRoot.currentWindow = null;
                 }
@@ -105,25 +104,28 @@ Rectangle {
         smooth: true
     }
 
-    function windowSwapped(windowFrame) {
-        console.log("swapped window added: "+windowFrame);
-        windowFrame.parent = background
-        rearRoot.currentWindow = windowFrame
+    function windowSwapped(surfaceItem) {
+        console.log("swapped window added: "+surfaceItem);
+        surfaceItem.parent = background
+        rearRoot.currentWindow = surfaceItem
+        if (rearRoot.clonedSurfaceItemList == null)
+            rearRoot.clonedSurfaceItemList = new Array(0);
+        rearRoot.clonedSurfaceItemList.push(surfaceItem);
     }
     function windowCloned(surfaceItem) {
         console.log("cloned: "+surfaceItem);
         surfaceItem.parent = background
-        if (rearRoot.cloneSurfaceItemList == null)
-            rearRoot.cloneSurfaceItemList = new Array(0);
-        rearRoot.cloneSurfaceItemList.push(surfaceItem);
+        if (rearRoot.clonedSurfaceItemList == null)
+            rearRoot.clonedSurfaceItemList = new Array(0);
+        rearRoot.clonedSurfaceItemList.push(surfaceItem);
     }
     function windowCloneClosed(surface) {
         console.log("cloned closed: "+surface);
         var i;
-        for (i = 0; i < rearRoot.cloneSurfaceItemList.length; i++) {
-            var surfaceItem = rearRoot.cloneSurfaceItemList[i];
+        for (i = 0; i < rearRoot.clonedSurfaceItemList.length; i++) {
+            var surfaceItem = rearRoot.clonedSurfaceItemList[i];
             if(surfaceItem.surface == surface) {
-                rearRoot.cloneSurfaceItemList.splice(i, 1);
+                rearRoot.clonedSurfaceItemList.splice(i, 1);
                 rearRoot.clonedSurfaceItemDestroyed(surfaceItem);
                 break;
             }

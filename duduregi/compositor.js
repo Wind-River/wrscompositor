@@ -79,3 +79,13 @@ function removeWindow(window)
     }
     windowList.splice(i, 1);
 }
+
+function findBySurfaceItem(surfaceItem)
+{
+    var i;
+    for (i = 0; i < windowList.length; i++) {
+        if (windowList[i].child.surface == surfaceItem.surface)
+            return windowList[i];
+    }
+    return null;
+}

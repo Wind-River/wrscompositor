@@ -13,6 +13,9 @@ export `dbus-launch`
 python /opt/windriver/wr-amb/wr_amb.py &
 cd `dirname $0`
 
+# only for PC env
+#export QT_XCB_GL_INTEGRATION=xcb_egl
+
 #exec ./duduregi -plugin evdevmouse -plugin evdevkeyboard -plugin evdevtouch -plugin evdevtable
 #exec ./duduregi -plugin evdevtouch -plugin evdevtable
 exec ./duduregi # no evdev plugins on minnow max, if add them, unpredictable focus issue will follow

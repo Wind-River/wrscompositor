@@ -39,13 +39,9 @@ void RearDisplay::closeClonedWindow(QWaylandQuickSurface *surface) {
 }
 
 void RearDisplay::slotSwappedWindowRestore(const QVariant &v) {
-    QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
-    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("child").value<QObject*>());
-    qDebug() << windowFrame;
-    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
-    surface->setMainOutput(mMainOutput);
-    windowFrame->setParent(mMainDisplay->rootObject());
-    windowFrame->setParentItem(mMainDisplay->rootObject());
+    QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(v.value<QObject*>());
+    //QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
+    //surface->setMainOutput(mMainOutput);
     /*
     QWaylandSurfaceLeaveEvent *le = new QWaylandSurfaceLeaveEvent(mMainOutput);
     QWaylandSurfaceEnterEvent *ee = new QWaylandSurfaceEnterEvent(mRearOutput);
@@ -54,7 +50,8 @@ void RearDisplay::slotSwappedWindowRestore(const QVariant &v) {
     qApp->flush();
     mRearDisplay->update();
     */
-    qobject_cast<DuduregiCompositor*>(mMainDisplay)->restoreSwappedWindow(windowFrame);
+    qobject_cast<DuduregiCompositor*>(mMainDisplay)->restoreSwappedWindow(surfaceItem);
+    surfaceItem->deleteLater();
 }
 
 void RearDisplay::slotClonedSurfaceDestroy(const QVariant &v) {

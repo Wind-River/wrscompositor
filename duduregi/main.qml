@@ -87,8 +87,9 @@ Item {
 
             var layer = geniviExt.mainScreen.layerById(1000); // application layer
             layer.removeSurface(windowContainer.ivi_surface);
-            if(Conf.useMultiWaylandDisplayFeature && windowContainer.cloned) {
-                root.closeClonedWindowRequested(windowContainer);
+            console.log('position '+windowContainer.position);
+            if(Conf.useMultiWaylandDisplayFeature && (windowContainer.cloned || windowContainer.position != 'main')) {
+                root.closeClonedWindowRequested(windowContainer.child);
             }
             windowContainer.destroy();
             CompositorLogic.removeWindow(windowContainer);
@@ -315,13 +316,14 @@ Item {
             mainmenu.hide();
     }
 
-    function swappedWindowRestored(windowFrame) {
+    function swappedWindowRestored(surfaceItem) {
         if(!Conf.useMultiWaylandDisplayFeature)
             return;
-        console.log("swappedWindowRestored: "+windowFrame);
-        windowFrame.parent = background
-        CompositorLogic.addWindow(windowFrame);
-        root.currentWindow = windowFrame;
+        console.log("swappedWindowRestored: "+surfaceItem);
+
+        var windowFrame = CompositorLogic.findBySurfaceItem(surfaceItem);
+        console.log(windowFrame);
+        root.raiseWindow(windowFrame);
     }
 
     function windowAdded(window) {
@@ -434,15 +436,16 @@ Item {
         statusBar.swapWindow.connect(function() {
             console.log("swap button clicked");
             console.log(root.currentWindow);
+            if(root.currentWindow.cloned)
+                return;
             root.currentWindow.position = "rear";
             root.swapWindowRequested(root.currentWindow);
-            CompositorLogic.removeWindow(root.currentWindow);
-            root.currentWindow = null;
+            root.currentWindow.visible = false;
         });
         statusBar.cloneWindow.connect(function() {
             console.log("clone button clicked");
             if(root.currentWindow.cloned) {
-                root.closeClonedWindowRequested(root.currentWindow);
+                root.closeClonedWindowRequested(root.currentWindow.child);
                 root.currentWindow.cloned = false;
             } else {
                 root.cloneWindowRequested(root.currentWindow);

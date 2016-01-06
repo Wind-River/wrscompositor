@@ -52,7 +52,7 @@ public:
     void setRearDisplay(QQuickView *);
     QWaylandQuickOutput* mainOutput() { return mMainOutput; };
     QWaylandQuickOutput* rearOutput() { return mRearOutput; };
-    void restoreSwappedWindow(QQuickItem *windowFrame);
+    void restoreSwappedWindow(QWaylandSurfaceItem *surfaceItem);
 signals:
     void swappedWindowRestored(QVariant window);
 #endif
