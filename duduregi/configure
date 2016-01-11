@@ -35,6 +35,7 @@ SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
 TARGET_DEVICE=default
+OPTARGS=""
 
 for opt do
     optval="${opt#*=}"
@@ -73,6 +74,9 @@ for opt do
 	show_help
 	exit
 	;;
+	*)
+		OPTARGS="$opt $OPTARGS"
+	;;
     esac
 done
 
@@ -84,6 +88,7 @@ echo "  SUPPORT_WLCOMPOSITOR=$SUPPORT_WLCOMPOSITOR"
 echo "  SUPPORT_WEBENGINE=$SUPPORT_WEBENGINE"
 echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
 echo "  TARGET_DEVICE=$TARGET_DEVICE"
+echo "  OPTARGS: $OPTARGS"
 echo
 
 printf "Generating duduregi.pro ..."
@@ -145,11 +150,17 @@ echo $'\r'"Generating duduregiconfig.h ................................... Done"
 printf "Generating config.js ..."
 JSCONFIG="config-$TARGET_DEVICE.js"
 if [ -f "$JSCONFIG" ]; then
-	cp -f config-default.js config.js
+	cp -f config-default.js config.js.local
 	if [ $JSCONFIG != "config-default.js" ]; then
-		cat $JSCONFIG >> config.js
+		cat $JSCONFIG >> config.js.local
 	fi
+	if [ ! -f "config.js" ]; then
+		cp config.js.local config.js
 echo $'\r'"Generating config.js .......................................... Done"
+	else
+echo $'\r'"Generating config.js ................................ Already Exists"
+echo $'\r'"                     ...................... saved as config.js.local"
+	fi
 else
 echo $'\r'"Generating config.js .......................................... Failure"
 echo "Error, could not find $JSCONFIG."
@@ -160,7 +171,7 @@ echo
 if [ -f /opt/windriver/bin/qmake ]; then
 	echo "Found Qt Build for Wind River: /opt/windriver"
 	echo "/opt/windriver/bin/qmake will be used for build"
-	/opt/windriver/bin/qmake && echo "Makefile generated"
+	/opt/windriver/bin/qmake $OPTARGS && echo "Makefile generated"
 else
-	qmake && echo "Makefile generated"
+	qmake $OPTARGS && echo "Makefile generated"
 fi
