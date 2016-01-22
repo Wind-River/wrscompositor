@@ -1,0 +1,56 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ContrastEffect.qml</file>
+        <file>CoverFlow.qml</file>
+        <file>Launcher.qml</file>
+        <file>MainMenu.qml</file>
+        <file>StatusBar.qml</file>
+        <file>WindowChrome.qml</file>
+        <file>WindowContainer.qml</file>
+        <file>WindowFrame.qml</file>
+        <file>cluster.qml</file>
+        <file>compositor.js</file>
+        <file>config.js</file>
+        <file>main.qml</file>
+        <file>rearmain.qml</file>
+        <file>sprintf.js</file>
+        <file>alameda.jpg</file>
+        <file>background.jpg</file>
+        <file>closebutton.png</file>
+        <file>icons/navi.png</file>
+        <file>icons/genivi.png</file>
+        <file>icons/clone-window.svg</file>
+        <file>icons/menu-close.png</file>
+        <file>icons/angrybird.png</file>
+        <file>icons/gdp-icon-nav.png</file>
+        <file>icons/waterdepth-icon-small.png</file>
+        <file>icons/ipod-shuffle-4g.png</file>
+        <file>icons/hvac.png</file>
+        <file>icons/restore-cloned-window.svg</file>
+        <file>icons/gdp-icon-fuel.png</file>
+        <file>icons/restore-swapped-window.svg</file>
+        <file>icons/gdp-icon-ammonitor.png</file>
+        <file>icons/wayland.png</file>
+        <file>icons/settings.png</file>
+        <file>icons/tizen-on-white.png</file>
+        <file>icons/tizen-on-dark.png</file>
+        <file>icons/android-logo.png</file>
+        <file>icons/gdp-icon-mediaplayer.png</file>
+        <file>icons/genivi-notext.png</file>
+        <file>icons/gdp-icon-app.png</file>
+        <file>icons/android-logo-grey.png</file>
+        <file>icons/swap-window.svg</file>
+        <file>icons/gdp-icon-browser.png</file>
+        <file>images/artwork.jpg</file>
+        <file>images/bt.png</file>
+        <file>images/close.png</file>
+        <file>images/genivi-background.jpg</file>
+        <file>images/tizen-background.png</file>
+        <file>images/tizen-on-dark-small.png</file>
+        <file>images/wr-black.png</file>
+        <file>images/wr-red.png</file>
+        <file>images/wr.png</file>
+        <file>images/xdg-background.png</file>
+    </qresource>
+</RCC>
+
