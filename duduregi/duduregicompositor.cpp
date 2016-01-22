@@ -12,7 +12,9 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 #endif
 {
     setTitle(QLatin1String("Wind River Duduregi Wayland Compositor"));
-    QUrl programUrl = QUrl("main.qml");
+    QUrl programUrl = QUrl("qrc:///main.qml");
+    if(qApp->arguments().contains("--debug"))
+        programUrl = QUrl("main.qml");
     if(!program.isNull())
         programUrl = QUrl(program);
     setSource(programUrl);

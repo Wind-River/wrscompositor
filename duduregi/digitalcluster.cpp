@@ -8,7 +8,10 @@ DigitalCluster::DigitalCluster(QWindow *parent)
     : QQuickView(parent)
 {
     setTitle(QLatin1String("Wind River Duduregi Digital Cluster Example"));
-    setSource(QUrl("cluster.qml"));
+    QUrl programUrl = QUrl("qrc:///cluster.qml");
+    if(qApp->arguments().contains("--debug"))
+        programUrl = QUrl("cluster.qml");
+    setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
 
     QScreen *screen = QGuiApplication::primaryScreen();

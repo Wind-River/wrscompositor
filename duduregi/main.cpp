@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
         qCritical() << "";
         qCritical() << "Available Arguments";
         qCritical() << "  --help            Show this help";
+        qCritical() << "  --debug           Load QML files from directory";
         qCritical() << "  --720             Show main window as 720px height";
         qCritical() << "  --1080            Show main window as 1080px height";
         qCritical() << "  --clean-geometry  Clean saved window geometry";
