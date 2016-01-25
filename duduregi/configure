@@ -14,6 +14,7 @@ echo "  --without-maindisplay  build without main display"
 echo "  --without-wlcompositor build without wayland compositor feature (deprecated)"
 echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
 echo "  --target-device=NAME   Set JS configuration for specific target device"
+echo "  --without-qmake        don't execute qmake in configure"
 echo ""
 echo "Supported target devices:"
 for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -34,6 +35,7 @@ SUPPORT_REARDISPLAY=0
 SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
+MANUAL_QMAKE=0
 TARGET_DEVICE=default
 OPTARGS=""
 
@@ -54,6 +56,9 @@ for opt do
 	;;
     --without-webengine)
 		SUPPORT_WEBENGINE=0
+	;;
+    --without-qmake)
+		MANUAL_QMAKE=1
 	;;
     --target-device=*)
 		for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -168,10 +173,14 @@ exit
 fi
 echo
 
-if [ -f /opt/windriver/bin/qmake ]; then
-	echo "Found Qt Build for Wind River: /opt/windriver"
-	echo "/opt/windriver/bin/qmake will be used for build"
-	/opt/windriver/bin/qmake $OPTARGS && echo "Makefile generated"
+if [ "$MANUAL_QMAKE" = "0" ]; then
+	if [ -f /opt/windriver/bin/qmake ]; then
+		echo "Found Qt Build for Wind River: /opt/windriver"
+		echo "/opt/windriver/bin/qmake will be used for build"
+		/opt/windriver/bin/qmake $OPTARGS && echo "Makefile generated"
+	else
+		qmake $OPTARGS && echo "Makefile generated"
+	fi
 else
-	qmake $OPTARGS && echo "Makefile generated"
+	echo "Please execute qmake to create a Makefile"
 fi
