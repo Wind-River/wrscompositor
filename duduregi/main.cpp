@@ -43,6 +43,12 @@ int main(int argc, char *argv[])
         mode = HEIGHT_720;
     } else if(args.contains("--1080")) {
         mode = HEIGHT_1080;
+    } else if(args.contains("--list-displays")) {
+        for(int i=0; i<QGuiApplication::screens().count(); i++) {
+            QScreen *screen = QGuiApplication::screens().at(i);
+            qDebug() << i << screen->name() << screen->size();
+        }
+        return 0;
     } else if(app.arguments().contains("--clean-geometry")) {
         settings.clear();
         settings.sync();
@@ -59,6 +65,7 @@ int main(int argc, char *argv[])
         qCritical() << "  --720             Show main window as 720px height";
         qCritical() << "  --1080            Show main window as 1080px height";
         qCritical() << "  --clean-geometry  Clean saved window geometry";
+        qCritical() << "  --list-displays   Show display list";
         return 0;
     }
 

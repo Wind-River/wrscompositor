@@ -17,7 +17,7 @@ RearDisplay::RearDisplay(QWindow *parent)
 
     QScreen *screen = QGuiApplication::primaryScreen();
     if(QGuiApplication::screens().count() > 1) {
-        screen = QGuiApplication::screens().at(3); // third
+        screen = QGuiApplication::screens().at(2); // third
         setScreen(screen);
     }
     setGeometry(screen->availableGeometry());
