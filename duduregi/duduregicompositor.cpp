@@ -7,54 +7,76 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
         //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_screen(QWaylandCompositor::handle()->wl_display(), 1)
-              , m_fullscreenSurface(0), mGeniviExt(0)
+              , m_fullscreenSurface(0), mGeniviExt(0), mProgram(program)
 
 #endif
 {
+
     setTitle(QLatin1String("Wind River Duduregi Wayland Compositor"));
-    QUrl programUrl = QUrl("qrc:///main.qml");
-    if(qApp->arguments().contains("--debug"))
-        programUrl = QUrl("main.qml");
-    if(!program.isNull())
-        programUrl = QUrl(program);
-    setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
     setColor(Qt::black);
     winId();
-
-    rootContext()->setContextProperty("compositor", this);
-
 #if DUDUREGI_WAYLAND_COMPOSITOR
     addDefaultShell();
-    mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
-    setPrimaryOutput(mMainOutput);
-    mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
-    //mMainOutput->window()->setMinimumSize(QSize(0, 0));
-    //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
-    mMainOutput->window()->setFlags(Qt::WindowCloseButtonHint);
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
     QtWaylandServer::ivi_controller::init(QWaylandCompositor::handle()->wl_display(), 1);
 #endif
-
-
-#if DUDUREGI_WAYLAND_COMPOSITOR
-    QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
-    QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
-#endif
-    connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
-    QObject::connect(this, SIGNAL(windowDestroyed(QVariant)), rootObject(), SLOT(windowDestroyed(QVariant)));
-
-#if DUDUREGI_REARDISPLAY
-    QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
-    QObject::connect(rootObject(), SIGNAL(cloneWindowRequested(QVariant)), this, SLOT(slotCloneWindow(QVariant)));
-    QObject::connect(rootObject(), SIGNAL(closeClonedWindowRequested(QVariant)), this, SLOT(slotCloseClonedWindow(QVariant)));
-    QObject::connect(this, SIGNAL(swappedWindowRestored(QVariant)), rootObject(), SLOT(swappedWindowRestored(QVariant)));
-#endif
 }
 
 DuduregiCompositor::~DuduregiCompositor() {
+}
+
+void DuduregiCompositor::loadQmlComponent(const QSize &size)
+{
+    QObject *object = rootObject();
+
+    if (object == NULL) {
+        qDebug() << "Try to load QML Component";
+        QUrl programUrl = QUrl("qrc:///main.qml");
+        if(qApp->arguments().contains("--debug"))
+            programUrl = QUrl("main.qml");
+        if(!mProgram.isNull())
+            programUrl = QUrl(mProgram);
+
+        QVariant width = QVariant(size.width());
+        QVariant height = QVariant(size.height());
+
+        rootContext()->setContextProperty("compositor", this);
+        rootContext()->setContextProperty("windowHeight", height);
+        rootContext()->setContextProperty("windowWidth", width);
+
+        setSource(programUrl);
+
+        mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
+        setPrimaryOutput(mMainOutput);
+        mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
+        //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
+        //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
+        mMainOutput->window()->setFlags(Qt::WindowCloseButtonHint);
+
+#if DUDUREGI_WAYLAND_COMPOSITOR
+        QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
+        QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
+#endif
+        connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
+        QObject::connect(this, SIGNAL(windowDestroyed(QVariant)), rootObject(), SLOT(windowDestroyed(QVariant)));
+#if DUDUREGI_REARDISPLAY
+        QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
+        QObject::connect(rootObject(), SIGNAL(cloneWindowRequested(QVariant)), this, SLOT(slotCloneWindow(QVariant)));
+        QObject::connect(rootObject(), SIGNAL(closeClonedWindowRequested(QVariant)), this, SLOT(slotCloseClonedWindow(QVariant)));
+        QObject::connect(this, SIGNAL(swappedWindowRestored(QVariant)), rootObject(), SLOT(swappedWindowRestored(QVariant)));
+#endif
+    } else {
+        qDebug() << "Try to update window size in QML Component";
+        QQuickItem *item = qobject_cast<QQuickItem*>(object);
+        item->setWidth(size.width());
+        item->setHeight(size.height());
+    }
+
+    qDebug() << "Resized window's width = " << size.width();
+    qDebug() << "Resized window's height = " << size.height();
 }
 
 #if DUDUREGI_REARDISPLAY
@@ -157,6 +179,8 @@ void DuduregiCompositor::resizeEvent(QResizeEvent *event)
 {
     QQuickView::resizeEvent(event);
     QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
+
+    loadQmlComponent(event->size());
 
     if(!mGeniviExt && width() > 0 && height() > 0) {
         // this should be after 'wl_output' created, So this is right place

@@ -46,6 +46,7 @@ public:
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
     QWaylandQuickSurface *fullscreenSurface() const;
+    void loadQmlComponent(const QSize &size);
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
 #endif
 #if DUDUREGI_REARDISPLAY
@@ -93,6 +94,7 @@ private:
     QWaylandQuickOutput *mMainOutput;
     QWaylandQuickSurface *m_fullscreenSurface;
     GeniviWaylandIVIExtension::IVIScene *mGeniviExt;
+    QString mProgram;
 #endif
 
 

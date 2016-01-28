@@ -8,6 +8,9 @@ import com.windriver.genivi 1.0
 Item {
     id: root
 
+    height: windowHeight
+    width: windowWidth
+
     property variant currentWindow: null
     property variant waitProcess: null
     property bool androidAutoEnabled: false
@@ -224,6 +227,8 @@ Item {
 
         MainMenu {
             id: mainmenu
+            height: parent.height
+            width: parent.width
             androidAutoEnabled: root.androidAutoEnabled
             z: 100
             root: root

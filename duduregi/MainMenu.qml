@@ -125,6 +125,7 @@ Item {
         root: mainMenu.root
         listModel: appModel
 
+        height: parent.height
         width: parent.width
         anchors.fill: parent
 
