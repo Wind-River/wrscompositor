@@ -16,7 +16,7 @@ duduregi/Makefile
 duduregi/projectionmode_adaptor.cpp
 duduregi/projectionmode_adaptor.h
 duduregi/config.js.local
-duduregi/qrc_assets.cpp
+duduregi/qrc_*.cpp
 genivi/web-api-vehicle/src/VehicleDataSimulator/Makefile
 genivi/web-api-vehicle/src/VehicleDataSimulator/VehicleDataSimulator
 genivi/web-api-vehicle/src/VehicleNetworkAdapter/VehicleNetworkAdapter

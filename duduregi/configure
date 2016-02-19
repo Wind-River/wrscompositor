@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SUPPOTED_TARGETDEVICES=( default minnowmax)
+SUPPOTED_TARGETDEVICES=( x11 minnowmax)
+SUPPOTED_HMIPROFILES=( classic)
 
 show_help() {
 echo "Usage: configure [options]"
@@ -14,13 +15,29 @@ echo "  --without-maindisplay  build without main display"
 echo "  --without-wlcompositor build without wayland compositor feature (deprecated)"
 echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
 echo "  --target-device=NAME   Set JS configuration for specific target device"
+echo "  --hmi-profile=NAME     Set HMI Profile"
 echo "  --without-qmake        don't execute qmake in configure"
 echo ""
 echo "Supported target devices:"
 for name in "${SUPPOTED_TARGETDEVICES[@]}"
 do
-	echo "  $name"
+	if [ "$name" = "x11" ]; then
+		echo "  $name (default for PC dev environment)"
+	else
+		echo "  $name"
+	fi
 done
+echo ""
+echo "Supported HMI profile:"
+for name in "${SUPPOTED_HMIPROFILES[@]}"
+do
+	if [ "$name" = "classic" ]; then
+		echo "  $name (default for demo)"
+	else
+		echo "  $name"
+	fi
+done
+echo
 }
 
 if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
@@ -36,7 +53,8 @@ SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=1
 SUPPORT_DBUS=1
 MANUAL_QMAKE=0
-TARGET_DEVICE=default
+TARGET_DEVICE=x11
+HMI_PROFILE=classic
 OPTARGS=""
 
 for opt do
@@ -72,6 +90,21 @@ for opt do
 			show_help
 			echo
 			echo "\"$optval\" is not supported target device"
+			exit
+		fi
+	;;
+    --hmi-profile=*)
+		for name in "${SUPPOTED_HMIPROFILES[@]}"
+		do
+			if [ $name = $optval ]; then
+                HMI_PROFILE=$optval
+				break
+			fi
+		done
+		if [ $optval != $HMI_PROFILE ]; then
+			show_help
+			echo
+			echo "\"$optval\" is not supported HMI Profile"
 			exit
 		fi
 	;;
@@ -137,6 +170,12 @@ echo "QT += multimedia" >> duduregi.pro
 
 cat duduregi.pro.in >> duduregi.pro
 
+HMI_RC="hmi-$HMI_PROFILE.qrc"
+if [ ! -f "$HMI_RC" ]; then
+	echo "Error, no qrc file for HMI Profile $HMI_PROFILE"
+else
+	echo "RESOURCES += $HMI_RC" >> duduregi.pro
+fi
 
 echo $'\r'"Generating duduregi.pro ....................................... Done"
 
@@ -155,8 +194,8 @@ echo $'\r'"Generating duduregiconfig.h ................................... Done"
 printf "Generating config.js ..."
 JSCONFIG="config-$TARGET_DEVICE.js"
 if [ -f "$JSCONFIG" ]; then
-	cp -f config-default.js config.js.local
-	if [ $JSCONFIG != "config-default.js" ]; then
+	cp -f config-x11.js config.js.local
+	if [ $JSCONFIG != "config-x11.js" ]; then
 		cat $JSCONFIG >> config.js.local
 	fi
 	if [ ! -f "config.js" ]; then
