@@ -36,7 +36,7 @@ void DuduregiCompositor::loadQmlComponent(const QSize &size)
         qDebug() << "Try to load QML Component";
         QUrl programUrl = QUrl("qrc:///main.qml");
         if(qApp->arguments().contains("--debug"))
-            programUrl = QUrl("main.qml");
+            programUrl = QUrl("hmi/" DUDUREGI_HMI_PROFILE "/main.qml");
         if(!mProgram.isNull())
             programUrl = QUrl(mProgram);
 

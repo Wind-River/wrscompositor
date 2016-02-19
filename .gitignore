@@ -4,7 +4,7 @@ ui_*
 moc_*
 *.cfg
 Makefile.duduregi
-duduregi/config.js
+duduregi/hmi/*/config.js
 duduregi/duduregi
 duduregi/qwayland-server-*
 duduregi/wayland-*protocol.c
@@ -15,7 +15,8 @@ duduregi/*.moc
 duduregi/Makefile
 duduregi/projectionmode_adaptor.cpp
 duduregi/projectionmode_adaptor.h
-duduregi/config.js.local
+duduregi/*.local
+duduregi/hmi-*.qrc
 duduregi/qrc_*.cpp
 genivi/web-api-vehicle/src/VehicleDataSimulator/Makefile
 genivi/web-api-vehicle/src/VehicleDataSimulator/VehicleDataSimulator

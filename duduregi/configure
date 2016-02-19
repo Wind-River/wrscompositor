@@ -16,6 +16,7 @@ echo "  --without-wlcompositor build without wayland compositor feature (depreca
 echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
 echo "  --target-device=NAME   Set JS configuration for specific target device"
 echo "  --hmi-profile=NAME     Set HMI Profile"
+echo "  --overwrite            overwrite existing config.js by new target/hmi config"
 echo "  --without-qmake        don't execute qmake in configure"
 echo ""
 echo "Supported target devices:"
@@ -55,6 +56,7 @@ SUPPORT_DBUS=1
 MANUAL_QMAKE=0
 TARGET_DEVICE=x11
 HMI_PROFILE=classic
+OVERWRITE=0
 OPTARGS=""
 
 for opt do
@@ -108,6 +110,9 @@ for opt do
 			exit
 		fi
 	;;
+    --overwrite)
+		OVERWRITE=1
+	;;
     --help)
 	show_help
 	exit
@@ -126,6 +131,7 @@ echo "  SUPPORT_WLCOMPOSITOR=$SUPPORT_WLCOMPOSITOR"
 echo "  SUPPORT_WEBENGINE=$SUPPORT_WEBENGINE"
 echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
 echo "  TARGET_DEVICE=$TARGET_DEVICE"
+echo "  HMI_PROFILE=$HMI_PROFILE"
 echo "  OPTARGS: $OPTARGS"
 echo
 
@@ -171,11 +177,19 @@ echo "QT += multimedia" >> duduregi.pro
 cat duduregi.pro.in >> duduregi.pro
 
 HMI_RC="hmi-$HMI_PROFILE.qrc"
-if [ ! -f "$HMI_RC" ]; then
-	echo "Error, no qrc file for HMI Profile $HMI_PROFILE"
-else
-	echo "RESOURCES += $HMI_RC" >> duduregi.pro
-fi
+RCPATH="../../$HMI_RC"
+cd hmi/$HMI_PROFILE
+echo "<RCC>" > $RCPATH
+echo "  <qresource prefix=\"/\">" >> $RCPATH
+for name in `find . -name '*.qml' -o -name '*.js' -o -name '*.jpg' -o -name '*.png' -o -name '*.svg' | sed -e "s/.\///"`
+do
+	echo "    <file alias=\"$name\">hmi/$HMI_PROFILE/$name</file>" >> $RCPATH
+done
+echo "  </qresource>" >> $RCPATH
+echo "</RCC>" >> $RCPATH
+cd -
+echo "RESOURCES += $HMI_RC" >> duduregi.pro
+
 
 echo $'\r'"Generating duduregi.pro ....................................... Done"
 
@@ -188,26 +202,37 @@ cat duduregiconfig.h.in | sed \
 -e "s/DUDUREGI_WAYLAND_COMPOSITOR 0/DUDUREGI_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
 -e "s/DUDUREGI_WEBENGINE 0/DUDUREGI_WEBENGINE $SUPPORT_WEBENGINE/" \
 -e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \
+-e "s/DEFAULT_TARGET_DEVICE/$TARGET_DEVICE/" \
+-e "s/DEFAULT_HMI_PROFILE/$HMI_PROFILE/" \
 > duduregiconfig.h
 echo $'\r'"Generating duduregiconfig.h ................................... Done"
 
-printf "Generating config.js ..."
-JSCONFIG="config-$TARGET_DEVICE.js"
-if [ -f "$JSCONFIG" ]; then
-	cp -f config-x11.js config.js.local
-	if [ $JSCONFIG != "config-x11.js" ]; then
-		cat $JSCONFIG >> config.js.local
+printf "Generating config.js for hmi profile ..."
+TARGETDIR="targets/$TARGET_DEVICE"
+CONFIGJS=hmi/$HMI_PROFILE/config.js
+if [ -d "$TARGETDIR" ]; then
+	OVERWRITTEN=0
+	if [ -f $CONFIGJS ]; then
+echo $'\r'"Generating config.js for hmi profile ................ Already Exists"
+		if [ "$OVERWRITE" = "0" ]; then
+			echo "Error, Could not write $CONFIGJS, It's alreay exists"
+			echo "Use --overwrite or remove it first before do configure"
+			exit 1
+		fi
+		OVERWRITTEN=1
 	fi
-	if [ ! -f "config.js" ]; then
-		cp config.js.local config.js
-echo $'\r'"Generating config.js .......................................... Done"
+	cp -f config-default.js $CONFIGJS
+	if [ -f "$TARGETDIR/config-opt.js" ]; then
+		cat $TARGETDIR/config-opt.js >> $CONFIGJS
+	fi
+	if [ "$OVERWRITTEN" = "1" ]; then
+echo $'\r'"                                     overwritten at $CONFIGJS"
 	else
-echo $'\r'"Generating config.js ................................ Already Exists"
-echo $'\r'"                     ...................... saved as config.js.local"
+echo $'\r'"Generating config.js for hmi profile .......................... Done"
 	fi
 else
-echo $'\r'"Generating config.js .......................................... Failure"
-echo "Error, could not find $JSCONFIG."
+echo $'\r'"Generating config.js for hmi profile ....................... Failure"
+echo "Error, not supported target device: $TARGET_DEVICE"
 exit
 fi
 echo
@@ -223,3 +248,4 @@ if [ "$MANUAL_QMAKE" = "0" ]; then
 else
 	echo "Please execute qmake to create a Makefile"
 fi
+echo "Configuration Completed"
