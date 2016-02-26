@@ -6,7 +6,7 @@
 #include "duduregicompositor.h"
 
 #if DUDUREGI_WEBENGINE
-#include <QtWebEngineWidgets>
+#include <QtWebEngine>
 #else
 #include <QtWebKitWidgets>
 #endif
@@ -33,7 +33,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
     int mode = HEIGHT_FULLSCREEN;
     QStringList args = app.arguments();

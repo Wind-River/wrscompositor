@@ -1,6 +1,5 @@
 import QtQuick 2.1
-//import QtWebEngine 0.9
-import QtWebKit 3.0
+import QtWebEngine 1.2
 import QtMultimedia 5.0
 import com.windriver.automotive 1.0
 
@@ -274,8 +273,7 @@ Item {
                     height: parent.height
                     visible: background == null
                 }
-                //WebEngineView  {
-                WebView  {
+                WebEngineView  {
                     id: webview
                     url: "about:blank"
                     visible: type == "quick-html5app"

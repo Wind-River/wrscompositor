@@ -139,7 +139,7 @@ printf "Generating duduregi.pro ..."
 echo "QT += quick qml network" > duduregi.pro
 
 if [ "$SUPPORT_WEBENGINE" = "1" ]; then
-echo "QT += webenginewidgets" >> duduregi.pro
+echo "QT += webengine" >> duduregi.pro
 else
 echo "QT += webkitwidgets" >> duduregi.pro
 fi
