@@ -12,12 +12,11 @@ echo "  --help                 print this message"
 echo "  --with-digitalcluster  build with digital cluster feature (on 2nd display)"
 echo "  --with-reardisplay     build with rear display feature (on 3rd display)"
 echo "  --without-maindisplay  build without main display"
-echo "  --without-wlcompositor build without wayland compositor feature (deprecated)"
-echo "  --without-webengine    build with WebView (WebKit) instead of WebEngine"
 echo "  --target-device=NAME   Set JS configuration for specific target device"
 echo "  --hmi-profile=NAME     Set HMI Profile"
 echo "  --overwrite            overwrite existing config.js by new target/hmi config"
 echo "  --without-qmake        don't execute qmake in configure"
+echo "  --with-qtdir=QTDIR     set QTDIR (e.g - /usr/local)"
 echo ""
 echo "Supported target devices:"
 for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -57,6 +56,7 @@ MANUAL_QMAKE=0
 TARGET_DEVICE=x11
 HMI_PROFILE=classic
 OVERWRITE=0
+QTDIR=/usr
 OPTARGS=""
 
 for opt do
@@ -71,14 +71,15 @@ for opt do
     --with-reardisplay)
 		SUPPORT_REARDISPLAY=1
 	;;
-    --without-wlcompositor)
-		SUPPORT_WLCOMPOSITOR=0
-	;;
-    --without-webengine)
-		SUPPORT_WEBENGINE=0
-	;;
     --without-qmake)
 		MANUAL_QMAKE=1
+	;;
+    --with-qtdir=*)
+		if [ ! -f "$optval/bin/qmake" ]; then
+			echo "Error, Could not found $optval/bin/qmake"
+			exit 1
+		fi
+		QTDIR=$optval
 	;;
     --target-device=*)
 		for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -123,6 +124,23 @@ for opt do
     esac
 done
 
+if [ ! -f $QTDIR/bin/qmake ]; then
+	if [ -f /opt/windriver/bin/qmake ]; then
+		QTDIR=/opt/windriver
+	else
+		echo "Error, Could not found qmake from $QTDIR/bin"
+		exit 1
+	fi
+fi
+
+if [ ! -f /opt/windriver/bin/qmake ]; then
+	echo "Found Qt Build for Wind River: /opt/windriver"
+	echo "/opt/windriver/bin/qmake will be used for build"
+	/opt/windriver/bin/qmake $OPTARGS && echo "Makefile generated"
+else
+	qmake $OPTARGS && echo "Makefile generated"
+fi
+
 echo "Build configuration"
 echo "  SUPPORT_MAINDISPLAY=$SUPPORT_MAINDISPLAY"
 echo "  SUPPORT_DIGITALCLUSTER=$SUPPORT_DCLUSTER"
@@ -134,6 +152,13 @@ echo "  TARGET_DEVICE=$TARGET_DEVICE"
 echo "  HMI_PROFILE=$HMI_PROFILE"
 echo "  OPTARGS: $OPTARGS"
 echo
+echo "Qt information"
+echo "  QTDIR=$QTDIR"
+echo "  Qt Version=`$QTDIR/bin/qmake -query QT_VERSION`"
+echo "  QMake Path=$QTDIR/bin/qmake"
+echo "  QMake Version=`$QTDIR/bin/qmake -query QMAKE_VERSION`"
+echo
+
 
 printf "Generating duduregi.pro ..."
 echo "QT += quick qml network" > duduregi.pro
@@ -238,13 +263,7 @@ fi
 echo
 
 if [ "$MANUAL_QMAKE" = "0" ]; then
-	if [ -f /opt/windriver/bin/qmake ]; then
-		echo "Found Qt Build for Wind River: /opt/windriver"
-		echo "/opt/windriver/bin/qmake will be used for build"
-		/opt/windriver/bin/qmake $OPTARGS && echo "Makefile generated"
-	else
-		qmake $OPTARGS && echo "Makefile generated"
-	fi
+	$QTDIR/bin/qmake $OPTARGS && echo "Makefile generated"
 else
 	echo "Please execute qmake to create a Makefile"
 fi
