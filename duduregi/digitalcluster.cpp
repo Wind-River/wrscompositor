@@ -10,7 +10,7 @@ DigitalCluster::DigitalCluster(QWindow *parent)
     setTitle(QLatin1String("Wind River Duduregi Digital Cluster Example"));
     QUrl programUrl = QUrl("qrc:///cluster.qml");
     if(qApp->arguments().contains("--debug"))
-        programUrl = QUrl("cluster.qml");
+        programUrl = QUrl("hmi/" DUDUREGI_HMI_PROFILE "/cluster.qml");
     setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
 

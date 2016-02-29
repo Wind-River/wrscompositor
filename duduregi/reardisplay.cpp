@@ -11,7 +11,7 @@ RearDisplay::RearDisplay(QWindow *parent)
     setTitle(QLatin1String("Wind River Duduregi Rear Display Example"));
     QUrl programUrl = QUrl("qrc:///rearmain.qml");
     if(qApp->arguments().contains("--debug"))
-        programUrl = QUrl("rearmain.qml");
+        programUrl = QUrl("hmi/" DUDUREGI_HMI_PROFILE "/rearmain.qml");
     setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
 
