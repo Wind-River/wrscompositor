@@ -268,3 +268,4 @@ else
 	echo "Please execute qmake to create a Makefile"
 fi
 echo "Configuration Completed"
+echo $0 $@ > config.log
