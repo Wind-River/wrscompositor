@@ -1,5 +1,4 @@
 import QtQuick 2.1
-import QtWebEngine 1.2
 import QtMultimedia 5.0
 import com.windriver.automotive 1.0
 
@@ -52,6 +51,7 @@ Item {
             id: myFlipable
 
             property bool flipped: false
+            property variant webview: null
 
             width: itemWidth; height: itemHeight
             z: PathView.z
@@ -76,9 +76,35 @@ Item {
                    }
                    */
                     if((type == "quick-html5app" || type == "projection") && myFlipable.flipped) {
-                        console.log('icon clicked webview.url='+webview.url);
-                        if(type == "quick-html5app" && webview.url == "about:blank") {
-                            console.log('icon clicked webview.url='+webview.url);
+                        //console.log('icon clicked webview.url='+webview.url);
+                        if(type == "quick-html5app" && (!webview || webview.url == "about:blank")) {
+                            //console.log('icon clicked webview.url='+webview.url);
+                            webview = Qt.createQmlObject('
+                import QtQuick 2.1;
+                import QtWebEngine 1.2;
+                WebEngineView  {
+                    id: mywebview;
+                    url: "about:blank";
+                    visible: type == "quick-html5app";
+                    width: coverFlow.width;
+                    height: coverFlow.height;
+                    Keys.onPressed: {
+                        console.log("key on mywebview "+event.key);
+                        if (event.key == Qt.Key_Backspace || event.key == Qt.Key_F1) {
+                            mywebview.focus = false;
+                            itemClicked();
+                            myFlipable.focus = true;
+                        }
+                    }
+                    onUrlChanged: {
+                        if(url == "about:blank" && mywebview.focus) {
+                            mywebview.focus = false;
+                            itemClicked();
+                            myFlipable.focus = true;
+                        };
+                    }
+                }
+                            ', backItem, "QuickHTML5App");
                             webview.focus = true
                             webview.url = path
                         } else if (type == "projection") {
@@ -122,7 +148,7 @@ Item {
             Component.onCompleted: {
                 coverFlow.menuShow.connect(function(i) {
                     if(index == i) {
-                        webview.focus = false;
+                        if(webview) webview.focus = false;
                         itemClicked();
                         myFlipable.focus = true;
                     }
@@ -134,13 +160,13 @@ Item {
                 if (event.key == Qt.Key_Return) {
                     itemClicked();
                 } else if (event.key == Qt.Key_F2) {
-                    webview.url = "about:blank";
+                    if(webview) webview.url = "about:blank";
                 } else if (event.key == Qt.Key_F1) {
                     // XXX to avoid enter by F1 into submenu
                     if(side==Flipable.Front)
                         return;
                     // XXX for exit from submenu
-                    webview.focus = false;
+                    if(webview) webview.focus = false;
                     itemClicked();
                     myFlipable.focus = true;
                     /*
@@ -221,7 +247,7 @@ Item {
                 }
                 Image {
                     id: quitButton
-                    visible: webview.url != "about:blank" && myPathView.currentIndex == index
+                    visible: (webview && webview.url != "about:blank") && myPathView.currentIndex == index
                     enabled: visible
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -236,7 +262,7 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             console.log('quit '+name);
-                            webview.url = "about:blank";
+                            if(webview) webview.url = "about:blank";
                         }
                     }
                 }
@@ -272,29 +298,6 @@ Item {
                     width: parent.height*itemWidth/itemHeight
                     height: parent.height
                     visible: background == null
-                }
-                WebEngineView  {
-                    id: webview
-                    url: "about:blank"
-                    visible: type == "quick-html5app"
-                    width: coverFlow.width
-                    height: coverFlow.height
-                    //anchors.fill: parent
-                    Keys.onPressed: {
-                        console.log('key on webview '+event.key);
-                        if (event.key == Qt.Key_Backspace || event.key == Qt.Key_F1) {
-                            webview.focus = false;
-                            itemClicked();
-                            myFlipable.focus = true;
-                        }
-                    }
-                    onUrlChanged: {
-                        if(url == "about:blank" && webview.focus) {
-                            webview.focus = false;
-                            itemClicked()
-                            myFlipable.focus = true;
-                        };
-                    }
                 }
                 VideoOutput {
                     id: projectionView
