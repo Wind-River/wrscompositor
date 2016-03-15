@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# Copyright © 2016 Wind River Systems, Inc.
+# The right to copy, distribute, modify, or otherwise make use of this software may be licensed only pursuant to the terms of an applicable Wind River license agreement.
+
+DEVICE=
+JSON_OUTPUT=$XDG_RUNTIME_DIR/qt5_eglfs_kms.json
+
+for card in `ls -d /sys/class/drm/card0/card0-*`
+do
+    if [ $(cat $card/enabled) = 'enabled' ] && [ $(cat $card/status) = 'connected' ]; then
+        number=`echo ${card##*-}`
+        var=`echo ${card##*/} | awk -F "-" '{print $1,$2}'`
+
+        set -- $var
+        connector=$2
+		if [ "$DEVICE" = "" ]; then
+        	DEVICE=$1
+cat <<EOF > $JSON_OUTPUT
+{
+    "device": "/dev/dri/$DEVICE",
+    "hwcursor": false,
+    "pbuffers": true,
+    "outputs": [
+EOF
+		fi
+
+        name=${connector}${number}
+        modes=`cat $card/modes | awk 'NR==1 {print;exit}'`
+cat <<EOF >> $JSON_OUTPUT
+		{
+			"name": "$name",
+			"mode": "$modes"
+		},
+EOF
+    fi
+done
+
+echo "	]" >> $JSON_OUTPUT
+echo "}" >> $JSON_OUTPUT
+
+
+echo "Json conf for Qt5 eglfs-kms backend has been generated"
+echo "$JSON_OUTPUT:"
+cat $JSON_OUTPUT
