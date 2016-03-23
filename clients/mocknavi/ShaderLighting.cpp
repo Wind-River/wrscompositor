@@ -92,7 +92,7 @@ ShaderLighting::~ShaderLighting()
 
 bool ShaderLighting::initShader()
 {
-    GLint glResult = GL_FALSE;
+    //GLint glResult = GL_FALSE;
 
     const char* fragmentShaderCode = m_fragmentCode.c_str();
     const char* vertexShaderCode = m_vertexCode.c_str();
@@ -260,7 +260,7 @@ void ShaderLighting::use(vec3f* position, vec4f* color)
 }
 
 
-void ShaderLighting::timerEvent(QTimerEvent*e)
+void ShaderLighting::timerEvent(QTimerEvent*)
 {
     update();
 }

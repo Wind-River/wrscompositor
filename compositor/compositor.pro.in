@@ -5,3 +5,9 @@ SOURCES += main.cpp Process.cpp vna_dbusclient.cpp wr_dbusclient.cpp duduregicom
 OTHER_FILES = ContrastEffect.qml  main.qml  WindowChrome.qml  WindowContainer.qml alameda.jpg closebutton.png compositor.js
 
 TARGET = duduregi-compositor
+output.files = duduregi-composito
+output.path = $$PREFIX/bin
+dbusconfig.files = targets/common/etc/dbus-1/*
+dbusconfig.path = $$PREFIX/etc/dbus-1
+INSTALLS += output dbusconfig
+

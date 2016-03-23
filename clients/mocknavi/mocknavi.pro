@@ -35,5 +35,5 @@ RESOURCES += \
     shaders.qrc
 
 # install
-target.path = $$[QT_INSTALL_EXAMPLES]/opengl/cube
-INSTALLS += target
+#target.path = $$[QT_INSTALL_EXAMPLES]/opengl/cube
+#INSTALLS += target

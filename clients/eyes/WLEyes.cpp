@@ -420,8 +420,8 @@ WLEyes::drawFillPoly(const int nPoint, const float* points, const float color[4]
 bool
 WLEyes::initShader()
 {
-    GLint result = 0;
-    char* log = NULL;
+    //GLint result = 0;
+    //char* log = NULL;
 
     program.addShaderFromSourceCode(QOpenGLShader::Fragment,sourceFragShader);
     program.addShaderFromSourceCode(QOpenGLShader::Vertex,sourceVertexShader);

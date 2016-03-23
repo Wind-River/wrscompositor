@@ -97,7 +97,7 @@ private:
     ES2ShaderObject gShaderObject;
     ES2VertexBuffer gVertexBuffer;
 // Fragment shader code
-    char* sourceFragShader = "  \
+    const char* sourceFragShader = "  \
     uniform mediump vec4 u_color; \
     void main(void)               \
     {                             \
@@ -105,7 +105,7 @@ private:
     }";
 
 // Vertex shader code
-    char* sourceVertexShader = " \
+    const char* sourceVertexShader = " \
     attribute highp vec4 a_vertex; \
     uniform mediump mat4 u_matrix; \
     void main(void)                \
