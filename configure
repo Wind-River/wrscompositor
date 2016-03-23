@@ -1,0 +1,270 @@
+#!/bin/bash
+# Copyright © 2016 Wind River Systems, Inc.
+#
+# The right to copy, distribute, modify, or otherwise make use of this
+# software may be licensed only pursuant to the terms of an applicable
+# Wind River license agreement.
+
+SUPPOTED_TARGETDEVICES=( x11 minnowmax)
+SUPPOTED_HMIPROFILES=( classic)
+DUDUREGIPRO=compositor/compositor.pro
+
+show_help() {
+echo "Usage: configure [options]"
+echo "Options: [defaults in brackets after descriptions]"
+echo
+echo "Standard options:"
+echo "  --help                 print this message"
+echo "  --with-digitalcluster  build with digital cluster feature (on 2nd display)"
+echo "  --with-reardisplay     build with rear display feature (on 3rd display)"
+echo "  --without-maindisplay  build without main display"
+echo "  --target-device=NAME   Set JS configuration for specific target device"
+echo "  --hmi-profile=NAME     Set HMI Profile"
+echo "  --overwrite            overwrite existing config.js by new target/hmi config"
+echo "  --without-qmake        don't execute qmake in configure"
+echo "  --with-qtdir=QTDIR     set QTDIR (e.g - /usr/local)"
+echo ""
+echo "Supported target devices:"
+for name in "${SUPPOTED_TARGETDEVICES[@]}"
+do
+	if [ "$name" = "x11" ]; then
+		echo "  $name (default for PC dev environment)"
+	else
+		echo "  $name"
+	fi
+done
+echo ""
+echo "Supported HMI profile:"
+for name in "${SUPPOTED_HMIPROFILES[@]}"
+do
+	if [ "$name" = "classic" ]; then
+		echo "  $name (default for demo)"
+	else
+		echo "  $name"
+	fi
+done
+echo
+}
+
+if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
+then
+    show_help
+	exit
+fi
+
+SUPPORT_MAINDISPLAY=1
+SUPPORT_DCLUSTER=0
+SUPPORT_REARDISPLAY=0
+SUPPORT_WLCOMPOSITOR=1
+SUPPORT_WEBENGINE=1
+SUPPORT_DBUS=1
+MANUAL_QMAKE=0
+TARGET_DEVICE=x11
+HMI_PROFILE=classic
+OVERWRITE=0
+QTDIR=/usr
+OPTARGS=""
+
+for opt do
+    optval="${opt#*=}"
+    case "$opt" in
+    --without-maindisplay)
+		SUPPORT_MAINDISPLAY=0
+	;;
+    --with-digitalcluster)
+		SUPPORT_DCLUSTER=1
+	;;
+    --with-reardisplay)
+		SUPPORT_REARDISPLAY=1
+	;;
+    --without-qmake)
+		MANUAL_QMAKE=1
+	;;
+    --with-qtdir=*)
+		if [ ! -f "$optval/bin/qmake" ]; then
+			echo "Error, Could not found $optval/bin/qmake"
+			exit 1
+		fi
+		QTDIR=$optval
+	;;
+    --target-device=*)
+		for name in "${SUPPOTED_TARGETDEVICES[@]}"
+		do
+			if [ $name = $optval ]; then
+                TARGET_DEVICE=$optval
+				break
+			fi
+		done
+		if [ $optval != $TARGET_DEVICE ]; then
+			show_help
+			echo
+			echo "\"$optval\" is not supported target device"
+			exit
+		fi
+	;;
+    --hmi-profile=*)
+		for name in "${SUPPOTED_HMIPROFILES[@]}"
+		do
+			if [ $name = $optval ]; then
+                HMI_PROFILE=$optval
+				break
+			fi
+		done
+		if [ $optval != $HMI_PROFILE ]; then
+			show_help
+			echo
+			echo "\"$optval\" is not supported HMI Profile"
+			exit
+		fi
+	;;
+    --overwrite)
+		OVERWRITE=1
+	;;
+    --help)
+	show_help
+	exit
+	;;
+	*)
+		OPTARGS="$opt $OPTARGS"
+	;;
+    esac
+done
+
+if [ ! -f $QTDIR/bin/qmake ]; then
+	if [ -f /opt/windriver/bin/qmake ]; then
+		QTDIR=/opt/windriver
+	else
+		echo "Error, Could not found qmake from $QTDIR/bin"
+		exit 1
+	fi
+fi
+export PATH=$QTDIR/bin:$PATH
+
+echo "Build configuration"
+echo "  SUPPORT_MAINDISPLAY=$SUPPORT_MAINDISPLAY"
+echo "  SUPPORT_DIGITALCLUSTER=$SUPPORT_DCLUSTER"
+echo "  SUPPORT_REARDISPLAY=$SUPPORT_REARDISPLAY"
+echo "  SUPPORT_WLCOMPOSITOR=$SUPPORT_WLCOMPOSITOR"
+echo "  SUPPORT_WEBENGINE=$SUPPORT_WEBENGINE"
+echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
+echo "  TARGET_DEVICE=$TARGET_DEVICE"
+echo "  HMI_PROFILE=$HMI_PROFILE"
+echo "  OPTARGS: $OPTARGS"
+echo
+echo "Qt information"
+echo "  QTDIR=$QTDIR"
+echo "  Qt Version=`$QTDIR/bin/qmake -query QT_VERSION`"
+echo "  QMake Path=$QTDIR/bin/qmake"
+echo "  QMake Version=`$QTDIR/bin/qmake -query QMAKE_VERSION`"
+echo
+
+
+printf "Generating compositor.pro ..."
+echo "QT += quick qml network" > $DUDUREGIPRO
+
+if [ "$SUPPORT_WEBENGINE" = "1" ]; then
+echo "QT += webengine" >> $DUDUREGIPRO
+else
+echo "QT += webkitwidgets" >> $DUDUREGIPRO
+fi
+
+if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
+echo "DEFINES += QT_COMPOSITOR_QUICK" >> $DUDUREGIPRO
+echo "QT += compositor" >> $DUDUREGIPRO
+
+echo "QT += compositor-private" >> $DUDUREGIPRO
+echo "CONFIG +=wayland-scanner" >> $DUDUREGIPRO
+echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> $DUDUREGIPRO
+echo "CONFIG += link_pkgconfig" >> $DUDUREGIPRO
+echo "PKGCONFIG += wayland-server" >> $DUDUREGIPRO
+echo "HEADERS += GeniviWaylandIVIExtension.h" >> $DUDUREGIPRO
+echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> $DUDUREGIPRO
+
+fi
+
+if [ "$SUPPORT_DCLUSTER" = "1" ]; then
+echo "HEADERS += digitalcluster.h" >> $DUDUREGIPRO
+echo "SOURCES += digitalcluster.cpp" >> $DUDUREGIPRO
+fi
+
+if [ "$SUPPORT_REARDISPLAY" = "1" ]; then
+echo "HEADERS += reardisplay.h" >> $DUDUREGIPRO
+echo "SOURCES += reardisplay.cpp" >> $DUDUREGIPRO
+echo "OTHER_FILES += rearmain.qml" >> $DUDUREGIPRO
+fi
+
+if [ "$SUPPORT_DBUS" = "1" ]; then
+echo "QT += dbus" >> $DUDUREGIPRO
+fi
+echo "QT += multimedia" >> $DUDUREGIPRO
+
+cat $DUDUREGIPRO.in >> $DUDUREGIPRO
+
+HMI_RC="hmi-$HMI_PROFILE.qrc"
+RCPATH="../../$HMI_RC"
+cd compositor/hmi/$HMI_PROFILE
+echo "<RCC>" > $RCPATH
+echo "  <qresource prefix=\"/\">" >> $RCPATH
+for name in `find . -name '*.qml' -o -name '*.js' -o -name '*.jpg' -o -name '*.png' -o -name '*.svg' | sed -e "s/.\///"`
+do
+	echo "    <file alias=\"$name\">hmi/$HMI_PROFILE/$name</file>" >> $RCPATH
+done
+echo "  </qresource>" >> $RCPATH
+echo "</RCC>" >> $RCPATH
+cd -
+echo "RESOURCES += $HMI_RC" >> $DUDUREGIPRO
+
+
+echo $'\r'"Generating compositor.pro ....................................... Done"
+
+
+printf "Generating duduregiconfig.h ..."
+cat compositor/duduregiconfig.h.in | sed \
+-e "s/DUDUREGI_MAINDISPLAY 0/DUDUREGI_MAINDISPLAY $SUPPORT_MAINDISPLAY/" \
+-e "s/DUDUREGI_DIGITALCLUSTER 0/DUDUREGI_DIGITALCLUSTER $SUPPORT_DCLUSTER/" \
+-e "s/DUDUREGI_REARDISPLAY 0/DUDUREGI_REARDISPLAY $SUPPORT_REARDISPLAY/" \
+-e "s/DUDUREGI_WAYLAND_COMPOSITOR 0/DUDUREGI_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
+-e "s/DUDUREGI_WEBENGINE 0/DUDUREGI_WEBENGINE $SUPPORT_WEBENGINE/" \
+-e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \
+-e "s/DEFAULT_TARGET_DEVICE/$TARGET_DEVICE/" \
+-e "s/DEFAULT_HMI_PROFILE/$HMI_PROFILE/" \
+> compositor/duduregiconfig.h
+echo $'\r'"Generating duduregiconfig.h ................................... Done"
+
+printf "Generating config.js for hmi profile ..."
+TARGETDIR="compositor/targets/$TARGET_DEVICE"
+CONFIGJS=compositor/hmi/$HMI_PROFILE/config.js
+if [ -d "$TARGETDIR" ]; then
+	OVERWRITTEN=0
+	if [ -f $CONFIGJS ]; then
+echo $'\r'"Generating config.js for hmi profile ................ Already Exists"
+		if [ "$OVERWRITE" = "0" ]; then
+			echo "Error, Could not write $CONFIGJS, It's alreay exists"
+			echo "Use --overwrite or remove it first before do configure"
+			exit 1
+		fi
+		OVERWRITTEN=1
+	fi
+	cp -f compositor/config-default.js $CONFIGJS
+	if [ -f "$TARGETDIR/config-opt.js" ]; then
+		cat $TARGETDIR/config-opt.js >> $CONFIGJS
+	fi
+	if [ "$OVERWRITTEN" = "1" ]; then
+echo $'\r'"                       overwritten at $CONFIGJS"
+	else
+echo $'\r'"Generating config.js for hmi profile .......................... Done"
+	fi
+else
+echo $'\r'"Generating config.js for hmi profile ....................... Failure"
+echo "Error, not supported target device: $TARGET_DEVICE"
+exit
+fi
+echo
+
+if [ "$MANUAL_QMAKE" = "0" ]; then
+	qmake $OPTARGS && echo "Makefile generated"
+else
+	echo "Please execute qmake to create a Makefile"
+fi
+echo "Configuration Completed"
+echo $0 $@ > config.log

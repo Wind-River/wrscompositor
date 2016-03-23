@@ -1,12 +1,11 @@
-WR's Genivi based IVI system demo
-=================================
+Wind River Wayland Compositor (a.k.a duduregi)
+==============================================
 
-* based on wr-tizenivi demo
-* run on wayland/x.org
-* add genivi features
-* add HTML5 app f/w
+* for GENIVI/AGL platform
+* part of Helix Cockpit
+* GENIVI Compliant
 
-Qt Installation for duduregi & demo stuff
+Qt Installation for duduregi (for dev env)
 ------------------------------------------
 
 ::
@@ -20,46 +19,31 @@ Qt Installation for duduregi & demo stuff
 	$ make -j8 && make install
 
 
-duduregi X11
-------------
-
 Build
+------
 
 ::
 
-	$ cd duduregi
-	$ ./configure --with-wlcompositor --without-webengine
-	$ make
-
-
-Run on Desktop environment
-
-::
-
-	$ Xephyr :1 -ac -screen 800x480 &
-	$ DISPLAY=:1 ./duduregi
-
-
-duduregi Wayland (Experimental)
--------------------------------
-
-::
-
-	$ cd duduregi
-	$ ./configure --with-wlcompositor --without-webengine
+	$ ./configure --help
+	$ ./configure --with-qtdir=/opt/windriver --overwrite
 	$ make
 
 
 WR-AMB (WindRiver Automotive Message Broker)
 --------------------------------------------
 
+* for demo purpose
+* WebSocket Gateway for Google Earth Plugin based Driving Simulator
+* Joystic Driving Wheel handler and uinput event generator
+* local webserver which serves HTML5 app contents
+
 ::
 
 	$ cd wr-amb
 	$ ./wr-amb
 
-HTML5 Applications
-------------------
+Setup HTML5 Applications Demo
+-----------------------------
 
 ::
 
@@ -67,57 +51,3 @@ HTML5 Applications
 	$ ln -sf $(pwd)/html5apps /opt/windriver/share/html5apps
 	$ ln -sf $(pwd)/tizen-web-ui-fw /opt/windriver/share/tizen-web-ui-fw
 
-
-Native Qt App examples
-----------------------
-
-::
-
-	$ cd qt5-examples
-	$ cd eyes
-	$ /opt/windriver/bin/qmake && make
-	$ cp eyes /opt/windriver/bin
-	$ cd ../qt5-examples
-	$ cd mocknavi
-	$ /opt/windriver/bin/qmake && make
-	$ cp mocknavi /opt/windriver/bin
-
-Genivi VehicleDataSimulator (VDS)
-----------------------------------
-
-Build
-
-::
-
-	$ cd genivi/web-api-vehicle/src/VehicleDataSimulator/
-	$ qmake-qt4
-	$ make
-
-Run on PC
-
-::
-
-	$ cp ../../bin/network.cfg
-	Edit VNA_IP as Target Device's IP in the network.cfg
-	$ ./VehicleDataSimulator
-
-Supported Vehicle Info
-
-* Vehicle Information -> World Manufacturer ID
-* Running Status 1 -> Speedometer
-
-Genivi VehicleNetworkAdapter (VNA)
-----------------------------------
-
-Build
-
-::
-
-	$ make
-
-Run on Target
-
-::
-
-	$ cp ../../bin/network.cfg
-	$ ./VehicleDataSimulator
