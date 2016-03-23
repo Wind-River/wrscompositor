@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = compositor clients
+SUBDIRS = compositor vt-handler clients

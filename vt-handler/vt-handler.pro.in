@@ -1,0 +1,9 @@
+QT += dbus
+#HEADERS += vt-handler.h
+#SOURCES += vt-handler.cpp
+SOURCES += main.cpp
+
+TARGET = duduregi-vt-handler
+output.files = duduregi-vt-handler
+output.path = $$PREFIX/bin
+INSTALLS += output

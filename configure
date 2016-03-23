@@ -220,11 +220,11 @@ do
 done
 echo "  </qresource>" >> $RCPATH
 echo "</RCC>" >> $RCPATH
-cd -
+cd ../../..
 echo "RESOURCES += $HMI_RC" >> $DUDUREGIPRO
 
 
-echo $'\r'"Generating compositor.pro ....................................... Done"
+echo $'\r'"Generating compositor.pro .................................... Done"
 
 
 printf "Generating duduregiconfig.h ..."
@@ -238,7 +238,7 @@ cat compositor/duduregiconfig.h.in | sed \
 -e "s/DEFAULT_TARGET_DEVICE/$TARGET_DEVICE/" \
 -e "s/DEFAULT_HMI_PROFILE/$HMI_PROFILE/" \
 > compositor/duduregiconfig.h
-echo $'\r'"Generating duduregiconfig.h ................................... Done"
+echo $'\r'"Generating duduregiconfig.h .................................. Done"
 
 printf "Generating config.js for hmi profile ..."
 TARGETDIR="compositor/targets/$TARGET_DEVICE"
@@ -246,7 +246,7 @@ CONFIGJS=compositor/hmi/$HMI_PROFILE/config.js
 if [ -d "$TARGETDIR" ]; then
 	OVERWRITTEN=0
 	if [ -f $CONFIGJS ]; then
-echo $'\r'"Generating config.js for hmi profile ................ Already Exists"
+echo $'\r'"Generating config.js for hmi profile ............... Already Exists"
 		if [ "$OVERWRITE" = "0" ]; then
 			echo "Error, Could not write $CONFIGJS, It's alreay exists"
 			echo "Use --overwrite or remove it first before do configure"
@@ -259,9 +259,9 @@ echo $'\r'"Generating config.js for hmi profile ................ Already Exists"
 		cat $TARGETDIR/config-opt.js >> $CONFIGJS
 	fi
 	if [ "$OVERWRITTEN" = "1" ]; then
-echo $'\r'"                       overwritten at $CONFIGJS"
+echo $'\r'"                    overwritten at $CONFIGJS"
 	else
-echo $'\r'"Generating config.js for hmi profile .......................... Done"
+echo $'\r'"Generating config.js for hmi profile ......................... Done"
 	fi
 else
 echo $'\r'"Generating config.js for hmi profile ....................... Failure"
@@ -269,6 +269,12 @@ echo "Error, not supported target device: $TARGET_DEVICE"
 exit
 fi
 echo
+
+
+printf "Generating vt-handler.pro ..."
+echo "PREFIX=$PREFIX" > vt-handler/vt-handler.pro
+cat vt-handler/vt-handler.pro.in >> vt-handler/vt-handler.pro
+echo $'\r'"Generating vt-handler.pro .................................... Done"
 
 if [ "$MANUAL_QMAKE" = "0" ]; then
 	qmake $OPTARGS && echo "Makefile generated"
