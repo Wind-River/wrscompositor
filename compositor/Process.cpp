@@ -42,26 +42,26 @@ bool Process::execute(const QString &cmd)
     connect(mProcess, SIGNAL(finished(int)), this, SLOT(slotCompleted(int)));
     connect(mProcess, SIGNAL(readyReadStandardError()), this, SLOT(slotStandardError()));
     connect(mProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(slotStandardOutput()));
-    QStringList args;
+    QStringList args = cmd.split(" ");
     QStringList paths;
     paths << "/opt/windriver/bin";
     paths << "/usr/local/bin";
     paths << "/usr/bin";
     if(cmd.startsWith("..")) {
-        QFileInfo fi(cmd);
+        QFileInfo fi(args[0]);
         mProcess->setWorkingDirectory(fi.dir().absolutePath());
-        mProcess->start(cmd, args);
+        mProcess->start(args[0], args.mid(1));
     } else if(!cmd.startsWith("/")) {
         Q_FOREACH (const QString &dirpath, paths) {
-            if(QFileInfo::exists(dirpath+"/"+cmd.split(" ")[0])) {
-                qDebug() << dirpath+"/"+cmd;
-                mProcess->start(dirpath+"/"+cmd, args);
-                break;
+            if(QFileInfo::exists(dirpath+"/"+args[0])) {
+                qDebug() << dirpath+"/"+args[0];
+                mProcess->start(dirpath+"/"+args[0], args.mid(1));
+                return true;
             }
         }
         return false;
     } else
-        mProcess->start(cmd, args);
+        mProcess->start(args[0], args.mid(1));
     return true;
 }
 QString Process::getCmd() const {

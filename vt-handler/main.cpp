@@ -9,16 +9,26 @@
 #include <QFileInfo>
 #include <QLocalServer>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#define DRM_MAJOR 226
 
 class VTHandlerClient: public QLocalSocket {
     Q_OBJECT
 public:
     VTHandlerClient(QObject *parent=Q_NULLPTR) : QLocalSocket(parent) {
         connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
+        connect(this, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
     }
 public slots:
     void slotConnected() {
         qDebug() << "connected";
+    }
+    void slotDisconnected() {
+        qDebug() << "duduregi-compositor socket disclosed";
+        qApp->quit();
     }
 public:
     int readFd() {
@@ -43,11 +53,10 @@ public:
         msg.msg_iov = iov;
         msg.msg_iovlen = 1;
 
-        qDebug() << "fd" << socketDescriptor();
         do {
             len = recvmsg(socketDescriptor(), &msg, 0);
-        } while (len < 0 && errno == EINTR);
-        qDebug() << "recv len " << len;
+        } while (len < 0 && (errno == EINTR || errno == EAGAIN));
+        //qDebug() << "recv len " << len << errno << EINTR << EAGAIN;
 
         for(cmsg = CMSG_FIRSTHDR(&msg);
                 cmsg != NULL;
@@ -71,6 +80,13 @@ int main(int argc, char *argv[])
     if(c.waitForConnected()) {
         int fd = c.readFd();
         qDebug() << "read drm_fd " << fd;
+        struct stat s;
+        fstat(fd, &s);
+        qDebug() << "MAJOR_DRM" << major(s.st_rdev);
+        if(major(s.st_rdev) != DRM_MAJOR) {
+            qDebug() << "Error, Received fd is not DRM device";
+            exit(1);
+        }
     }
 
     return app.exec();
