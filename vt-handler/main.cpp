@@ -70,9 +70,7 @@ int main(int argc, char *argv[])
     c.connectToServer(".duduregi-vt");
     if(c.waitForConnected()) {
         int fd = c.readFd();
-        char buf[BUFSIZ]={0,};
-        read(fd, buf, BUFSIZ);
-        qDebug() << buf;
+        qDebug() << "read drm_fd " << fd;
     }
 
     return app.exec();

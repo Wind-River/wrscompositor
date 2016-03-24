@@ -165,6 +165,25 @@ echo "  QMake Version=`$QTDIR/bin/qmake -query QMAKE_VERSION`"
 echo
 
 
+printf "Checking pkg-config wayland-server ..."
+if ! pkg-config gbm --exists wayland-server ; then
+echo $'\r'"Checking pkg-config wayland-server ........................ Failure"
+echo "Error, Please install libwayland-dev package"
+exit 1
+else
+echo $'\r'"Checking pkg-config wayland-server ........................... Done"
+fi
+
+
+printf "Checking pkg-config gbm ..."
+if ! pkg-config --exists gbm ; then
+echo $'\r'"Checking pkg-config gbm ................................... Failure"
+echo "Error, Please install libgbm-dev package"
+exit 1
+else
+echo $'\r'"Checking pkg-config gbm ...................................... Done"
+fi
+
 printf "Generating compositor.pro ..."
 echo "QT += quick qml network" > $DUDUREGIPRO
 
@@ -182,7 +201,7 @@ echo "QT += compositor-private" >> $DUDUREGIPRO
 echo "CONFIG +=wayland-scanner" >> $DUDUREGIPRO
 echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> $DUDUREGIPRO
 echo "CONFIG += link_pkgconfig" >> $DUDUREGIPRO
-echo "PKGCONFIG += wayland-server" >> $DUDUREGIPRO
+echo "PKGCONFIG += wayland-server gbm" >> $DUDUREGIPRO
 echo "HEADERS += GeniviWaylandIVIExtension.h" >> $DUDUREGIPRO
 echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> $DUDUREGIPRO
 
@@ -264,7 +283,7 @@ echo $'\r'"                    overwritten at $CONFIGJS"
 echo $'\r'"Generating config.js for hmi profile ......................... Done"
 	fi
 else
-echo $'\r'"Generating config.js for hmi profile ....................... Failure"
+echo $'\r'"Generating config.js for hmi profile ...................... Failure"
 echo "Error, not supported target device: $TARGET_DEVICE"
 exit
 fi

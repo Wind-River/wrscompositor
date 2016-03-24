@@ -42,6 +42,9 @@
 #include <QFileInfo>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include "gbm.h"
+
+#include <qpa/qplatformnativeinterface.h>
 
 
 #define HEIGHT_FULLSCREEN 0xFFFF
@@ -53,9 +56,12 @@ class VTHandlerServer: public QLocalServer {
     Q_OBJECT
 public:
     VTHandlerServer(QObject *parent=Q_NULLPTR):
-        QLocalServer(parent), mClient(0) {
+        QLocalServer(parent), mClient(0), m_gbm_device(0) {
         connect(this, SIGNAL(newConnection()), this, SLOT(slotAccept()));
         QTimer::singleShot(0, this, SLOT(slotIdle()));
+    }
+    void setGBM(struct gbm_device *gbm) {
+        m_gbm_device = gbm;
     }
 public slots:
     void slotIdle() {
@@ -64,11 +70,11 @@ public slots:
         qDebug() << "VT Handler Server is staring at " << fullServerName();
         if(QFileInfo::exists("../vt-handler/duduregi-vt-handler")) {
             // for debug
-            p.execute("../vt-handler/duduregi-vt-handler");
+            mProcess.execute("../vt-handler/duduregi-vt-handler");
         } else {
-            p.execute("duduregi-vt-handler"); // exec in PATH
+            mProcess.execute("duduregi-vt-handler"); // exec in PATH
         }
-        qDebug() << "Run VT handler PID:" << p.getPID();
+        qDebug() << "Run VT handler PID:" << mProcess.getPID();
     };
     void slotAccept() {
         qDebug() << "duduregi-vt-handler is connected";
@@ -92,7 +98,8 @@ public slots:
         iov[0].iov_base = data;
         iov[0].iov_len = sizeof(data);
 
-        fd = open("/tmp/test", O_RDONLY);
+        if(m_gbm_device)
+            fd = gbm_device_get_fd(m_gbm_device);
         if (fd != -1) {
             msg.msg_name = NULL;
             msg.msg_namelen = 0;
@@ -116,7 +123,8 @@ public slots:
     }
 private:
     QLocalSocket *mClient;
-    Process p;
+    Process mProcess;
+    struct gbm_device *m_gbm_device;
 };
 
 int main(int argc, char *argv[])
@@ -157,6 +165,14 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    VTHandlerServer s;
+    if(getuid() == 0) { // root
+        s.removeServer(".duduregi-vt");
+        s.listen(".duduregi-vt");
+        QPlatformNativeInterface *npi = app.platformNativeInterface();
+        s.setGBM((struct gbm_device*)npi->nativeResourceForIntegration("nativedisplay"));
+    }
+
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
 #if 0
@@ -182,12 +198,6 @@ int main(int argc, char *argv[])
 #if DUDUREGI_WEBENGINE
     QtWebEngine::initialize();
 #endif
-
-    VTHandlerServer s;
-    if(getuid() == 0) { // root
-        s.removeServer(".duduregi-vt");
-        s.listen(".duduregi-vt");
-    }
 
     DuduregiCompositor compositor;
 
