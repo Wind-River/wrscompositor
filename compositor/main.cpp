@@ -34,9 +34,90 @@
 #include "GeniviWaylandIVIExtension.h"
 #endif
 
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <QFileInfo>
+#include <QLocalServer>
+#include <QLocalSocket>
+
+
 #define HEIGHT_FULLSCREEN 0xFFFF
 #define HEIGHT_720 720
 #define HEIGHT_1080 1080
+
+
+class VTHandlerServer: public QLocalServer {
+    Q_OBJECT
+public:
+    VTHandlerServer(QObject *parent=Q_NULLPTR):
+        QLocalServer(parent), mClient(0) {
+        connect(this, SIGNAL(newConnection()), this, SLOT(slotAccept()));
+        QTimer::singleShot(0, this, SLOT(slotIdle()));
+    }
+public slots:
+    void slotIdle() {
+        if(!isListening())
+            return;
+        qDebug() << "VT Handler Server is staring at " << fullServerName();
+        if(QFileInfo::exists("../vt-handler/duduregi-vt-handler")) {
+            // for debug
+            p.execute("../vt-handler/duduregi-vt-handler");
+        } else {
+            p.execute("duduregi-vt-handler"); // exec in PATH
+        }
+        qDebug() << "Run VT handler PID:" << p.getPID();
+    };
+    void slotAccept() {
+        qDebug() << "duduregi-vt-handler is connected";
+        if(mClient) {
+            mClient->disconnectFromServer();
+            delete mClient;
+        }
+        mClient = nextPendingConnection();
+
+        struct msghdr msg;
+        struct iovec iov[1];
+        struct cmsghdr *cmsg = NULL;
+        int fd = -1;
+        char fdbuf[CMSG_SPACE(sizeof(int))];
+        char data[1] = {0, };
+        ssize_t len;
+
+        memset(&msg, 0, sizeof(struct msghdr));
+        memset(&fdbuf, 0, CMSG_SPACE(sizeof(int)));
+        data[0] = ' ';
+        iov[0].iov_base = data;
+        iov[0].iov_len = sizeof(data);
+
+        fd = open("/tmp/test", O_RDONLY);
+        if (fd != -1) {
+            msg.msg_name = NULL;
+            msg.msg_namelen = 0;
+            msg.msg_iov = iov;
+            msg.msg_iovlen = 1;
+            msg.msg_controllen = CMSG_SPACE(sizeof(int));
+            msg.msg_control = fdbuf;
+
+            cmsg = CMSG_FIRSTHDR(&msg);
+            cmsg->cmsg_level = SOL_SOCKET;
+            cmsg->cmsg_type = SCM_RIGHTS;
+            cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+
+            *((int *) CMSG_DATA(cmsg)) = fd;
+        }
+
+        do {
+            len = sendmsg(mClient->socketDescriptor(), &msg, 0);
+        } while (len < 0 && errno == EINTR);
+        qDebug() << "sent drm fd" << fd;
+    }
+private:
+    QLocalSocket *mClient;
+    Process p;
+};
 
 int main(int argc, char *argv[])
 {
@@ -102,6 +183,12 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 #endif
 
+    VTHandlerServer s;
+    if(getuid() == 0) { // root
+        s.removeServer(".duduregi-vt");
+        s.listen(".duduregi-vt");
+    }
+
     DuduregiCompositor compositor;
 
 #if DUDUREGI_DIGITALCLUSTER
@@ -159,3 +246,5 @@ int main(int argc, char *argv[])
 
     return ret;
 }
+
+#include "main.moc"

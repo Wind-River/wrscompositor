@@ -47,7 +47,11 @@ bool Process::execute(const QString &cmd)
     paths << "/opt/windriver/bin";
     paths << "/usr/local/bin";
     paths << "/usr/bin";
-    if(!cmd.startsWith("/")) {
+    if(cmd.startsWith("..")) {
+        QFileInfo fi(cmd);
+        mProcess->setWorkingDirectory(fi.dir().absolutePath());
+        mProcess->start(cmd, args);
+    } else if(!cmd.startsWith("/")) {
         Q_FOREACH (const QString &dirpath, paths) {
             if(QFileInfo::exists(dirpath+"/"+cmd.split(" ")[0])) {
                 qDebug() << dirpath+"/"+cmd;

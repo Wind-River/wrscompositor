@@ -1,4 +1,4 @@
-QT += dbus
+QT += dbus network
 #HEADERS += vt-handler.h
 #SOURCES += vt-handler.cpp
 SOURCES += main.cpp

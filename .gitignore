@@ -24,4 +24,7 @@ clients/eyes/eyes
 clients/mocknavi/Makefile
 clients/mocknavi/mocknavi
 clients/mocknavi/qrc_shaders.cpp
-
+vt-handler/Makefile
+vt-handler/duduregi-vt-handler
+vt-handler/*.moc
+vt-handler/*.pro
