@@ -23,7 +23,7 @@ echo "  --target-device=NAME   Set JS configuration for specific target device"
 echo "  --hmi-profile=NAME     Set HMI Profile"
 echo "  --overwrite            overwrite existing config.js by new target/hmi config"
 echo "  --without-qmake        don't execute qmake in configure"
-echo "  --with-qtdir=QTDIR     set QTDIR (e.g - /usr/local)"
+echo "  --with-qmake=path      set qmake path (e.g - /usr/bin/qmake)"
 echo ""
 echo "Supported target devices:"
 for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -63,7 +63,7 @@ MANUAL_QMAKE=0
 TARGET_DEVICE=x11
 HMI_PROFILE=classic
 OVERWRITE=0
-QTDIR=/usr
+QMAKEPATH=
 OPTARGS=""
 PREFIX=/usr
 
@@ -82,12 +82,12 @@ for opt do
     --without-qmake)
 		MANUAL_QMAKE=1
 	;;
-    --with-qtdir=*)
-		if [ ! -f "$optval/bin/qmake" ]; then
-			echo "Error, Could not found $optval/bin/qmake"
+    --with-qmake=*)
+		if [ ! -f "$optval" ]; then
+			echo "Error, Could not found $optval"
 			exit 1
 		fi
-		QTDIR=$optval
+		QMAKEPATH=$optval
 	;;
     --prefix=*)
 		PREFIX=$optval
@@ -135,15 +135,27 @@ for opt do
     esac
 done
 
-if [ ! -f $QTDIR/bin/qmake ]; then
-	if [ -f /opt/windriver/bin/qmake ]; then
-		QTDIR=/opt/windriver
-	else
-		echo "Error, Could not found qmake from $QTDIR/bin"
-		exit 1
+
+
+if [ "$QMAKEPATH" = "" ]; then
+QMAKEPATH_IN_LINUXDISTROS=( /usr/bin /usr/bin/qt5)
+FOUND=0
+for bindir in "${QMAKEPATH_IN_LINUXDISTROS[@]}"
+do
+	if [ -f $bindir/qmake ]; then
+		QMAKEPATH=$bindir/qmake
+		break
+	elif [ -f $bindir/qmake-qt5 ]; then
+		QMAKEPATH=$bindir/qmake-qt5
+		break
 	fi
+done
 fi
-export PATH=$QTDIR/bin:$PATH
+if [ "$QMAKEPATH" = "" ]; then
+	echo "Error, Could not found qmake, please set with --with-qmake"
+	exit 1
+fi
+export PATH=`dirname $QMAKEPATH`:$PATH
 
 echo "Build configuration"
 echo "  SUPPORT_MAINDISPLAY=$SUPPORT_MAINDISPLAY"
@@ -158,17 +170,19 @@ echo "  OPTARGS: $OPTARGS"
 echo "  PREFIX: $PREFIX"
 echo
 echo "Qt information"
-echo "  QTDIR=$QTDIR"
-echo "  Qt Version=`$QTDIR/bin/qmake -query QT_VERSION`"
-echo "  QMake Path=$QTDIR/bin/qmake"
-echo "  QMake Version=`$QTDIR/bin/qmake -query QMAKE_VERSION`"
+echo "  Qt Version=`$QMAKEPATH -query QT_VERSION`"
+echo "  QMake Path=$QMAKEPATH"
+echo "  QMake Version=`$QMAKEPATH -query QMAKE_VERSION`"
 echo
 
 
 printf "Checking pkg-config wayland-server ..."
-if ! pkg-config gbm --exists wayland-server ; then
+if ! pkg-config --exists wayland-server ; then
 echo $'\r'"Checking pkg-config wayland-server ........................ Failure"
-echo "Error, Please install libwayland-dev package"
+echo "Error, Please install wayland development package(s)"
+echo "   ubuntu: libwayland-dev"
+echo "   fedora: wayland-devel, libwayland-server-devel"
+echo "           libwayland-client-devel, libwayland-cursor-devel"
 exit 1
 else
 echo $'\r'"Checking pkg-config wayland-server ........................... Done"
@@ -177,7 +191,9 @@ fi
 printf "Checking pkg-config gbm ..."
 if ! pkg-config --exists gbm ; then
 echo $'\r'"Checking pkg-config gbm ................................... Failure"
-echo "Error, Please install libgbm-dev package"
+echo "Error, Please install gbm development package(s)"
+echo "   ubuntu: libgbm-dev"
+echo "   fedora: mesa-libgbm-devel"
 exit 1
 else
 echo $'\r'"Checking pkg-config gbm ...................................... Done"
@@ -187,6 +203,9 @@ printf "Checking pkg-config libsystemd-login ..."
 if ! pkg-config --exists libsystemd-login ; then
 echo $'\r'"Checking pkg-config libsystemd-login ...................... Failure"
 echo "Error, Please install libsystemd-login-dev package"
+echo "Error, Please install systemd development package(s)"
+echo "   ubuntu: libsystemd-login-dev"
+echo "   fedora: systemd-devel"
 exit 1
 else
 echo $'\r'"Checking pkg-config libsystemd-login ......................... Done"
@@ -304,7 +323,7 @@ cat vt-handler/vt-handler.pro.in >> vt-handler/vt-handler.pro
 echo $'\r'"Generating vt-handler.pro .................................... Done"
 
 if [ "$MANUAL_QMAKE" = "0" ]; then
-	qmake $OPTARGS && echo "Makefile generated"
+	$QMAKEPATH $OPTARGS && echo "Makefile generated"
 else
 	echo "Please execute qmake to create a Makefile"
 fi
