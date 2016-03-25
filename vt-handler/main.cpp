@@ -1,3 +1,10 @@
+/*
+ * Copyright © 2016 Wind River Systems, Inc.
+ *
+ * The right to copy, distribute, modify, or otherwise make use of this
+ * software may be licensed only pursuant to the terms of an applicable
+ * Wind River license agreement.
+ */
 #include <QCoreApplication>
 #include <QDebug>
 #include <QLocalSocket>
@@ -13,6 +20,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "logind-client.h"
+
 #define DRM_MAJOR 226
 
 class VTHandlerClient: public QLocalSocket {
@@ -22,12 +31,16 @@ public:
         connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
         connect(this, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
     }
+    void setDRMFd(int fd) { mLogind.setDRMFd(fd); mLogind.systemdConnect(); };
+private:
+    LogindClient mLogind;
 public slots:
     void slotConnected() {
         qDebug() << "connected";
     }
     void slotDisconnected() {
         qDebug() << "duduregi-compositor socket disclosed";
+        mLogind.restoreTTY();
         qApp->quit();
     }
 public:
@@ -87,6 +100,7 @@ int main(int argc, char *argv[])
             qDebug() << "Error, Received fd is not DRM device";
             exit(1);
         }
+        c.setDRMFd(fd);
     }
 
     return app.exec();

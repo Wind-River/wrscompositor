@@ -1,7 +1,9 @@
 QT += dbus network
-#HEADERS += vt-handler.h
-#SOURCES += vt-handler.cpp
-SOURCES += main.cpp
+HEADERS += logind-client.h
+SOURCES += main.cpp logind-client.cpp
+
+CONFIG += link_pkgconfig
+PKGCONFIG += libsystemd-login libdrm
 
 TARGET = duduregi-vt-handler
 output.files = duduregi-vt-handler

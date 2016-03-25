@@ -7,6 +7,8 @@
  */
 #include "duduregiconfig.h"
 #include "duduregicompositor.h"
+#include <QProcess>
+#include <sys/signal.h>
 
 DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &display)
 #if DUDUREGI_WAYLAND_COMPOSITOR
@@ -180,6 +182,27 @@ void DuduregiCompositor::sendCallbacks() {
         sendFrameCallbacks(QList<QWaylandSurface *>() << m_fullscreenSurface);
     else
         sendFrameCallbacks(surfaces());
+}
+
+void DuduregiCompositor::keyPressEvent(QKeyEvent *event)
+{
+    qDebug() << __func__ << event << event->nativeScanCode() << event->nativeVirtualKey();
+    Qt::KeyboardModifiers m = event->modifiers();
+    if(((m&Qt::ControlModifier)==Qt::ControlModifier)) {
+       // ((m&Qt::AltModifier)==Qt::AltModifier)) {
+        qDebug() << "F1?" << (event->key() == Qt::Key_F1);
+        qDebug() << "F7?" << (event->key() == Qt::Key_F7);
+        for(int key = Qt::Key_F1; key < Qt::Key_F9; key++) {
+            if(event->key() == key) {
+                //qDebug() << QString("Ctrl+Alt+F%1").arg(key-Qt::Key_F1+1);
+                qDebug() << QString("Ctrl+(Alt)+F%1").arg(key-Qt::Key_F1+1);
+                QProcess::execute(QString("bash -c \"kill -%1 `pidof duduregi-vt-handler`\"").arg(SIGRTMIN+key-Qt::Key_F1));
+                event->ignore();
+                return;
+            }
+        }
+    }
+    QQuickView::keyPressEvent(event);
 }
 
 void DuduregiCompositor::resizeEvent(QResizeEvent *event)

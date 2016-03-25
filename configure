@@ -174,7 +174,6 @@ else
 echo $'\r'"Checking pkg-config wayland-server ........................... Done"
 fi
 
-
 printf "Checking pkg-config gbm ..."
 if ! pkg-config --exists gbm ; then
 echo $'\r'"Checking pkg-config gbm ................................... Failure"
@@ -182,6 +181,15 @@ echo "Error, Please install libgbm-dev package"
 exit 1
 else
 echo $'\r'"Checking pkg-config gbm ...................................... Done"
+fi
+
+printf "Checking pkg-config libsystemd-login ..."
+if ! pkg-config --exists libsystemd-login ; then
+echo $'\r'"Checking pkg-config libsystemd-login ...................... Failure"
+echo "Error, Please install libsystemd-login-dev package"
+exit 1
+else
+echo $'\r'"Checking pkg-config libsystemd-login ......................... Done"
 fi
 
 printf "Generating compositor.pro ..."

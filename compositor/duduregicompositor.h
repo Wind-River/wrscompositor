@@ -90,6 +90,7 @@ private slots:
     void sendCallbacks();
 
 protected:
+    void keyPressEvent(QKeyEvent *event);
     void resizeEvent(QResizeEvent *event);
     void surfaceCreated(QWaylandSurface *surface);
 

@@ -181,7 +181,7 @@ public:
         mStarted = false;
         if(QFileInfo::exists("../vt-handler/duduregi-vt-handler")) {
             // for debug
-            mStarted = mProcess.execute("../vt-handler/duduregi-vt-handler"+args);
+            mStarted = mProcess.execute("../vt-handler/duduregi-vt-handler-dbg"+args);
         } else {
             mStarted = mProcess.execute("duduregi-vt-handler"+args); // exec in PATH
         }
