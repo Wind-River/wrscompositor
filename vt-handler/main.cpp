@@ -30,10 +30,18 @@ public:
     VTHandlerClient(QObject *parent=Q_NULLPTR) : QLocalSocket(parent) {
         connect(this, SIGNAL(connected()), this, SLOT(slotConnected()));
         connect(this, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
+        mParentPID = getppid();
+        qInfo() << "Parent Compositor: " << mParentPID;
     }
-    void setDRMFd(int fd) { mLogind.setDRMFd(fd); mLogind.systemdConnect(); };
+    void setDRMFd(int fd) {
+        mLogind.setDRMFd(fd);
+        mLogind.systemdConnect();
+        connect(&mLogind, SIGNAL(paused()), this, SLOT(slotPaused()));
+        connect(&mLogind, SIGNAL(resumed()), this, SLOT(slotResumed()));
+    };
 private:
     LogindClient mLogind;
+    int mParentPID;
 public slots:
     void slotConnected() {
         qDebug() << "connected";
@@ -42,6 +50,14 @@ public slots:
         qDebug() << "duduregi-compositor socket disclosed";
         mLogind.restoreTTY();
         qApp->quit();
+    }
+    void slotPaused() {
+        qWarning() << __func__;
+        qWarning() << write("p", 1);
+    }
+    void slotResumed() {
+        qWarning() << __func__;
+        qWarning() << write("r", 1);
     }
 public:
     int readFd() {
@@ -77,27 +93,34 @@ public:
         {
             if(cmsg->cmsg_level == SOL_SOCKET &&
                     cmsg->cmsg_type == SCM_RIGHTS) {
-                return *((int*)CMSG_DATA(cmsg));
+                return *reinterpret_cast<int*>CMSG_DATA(cmsg);
             }
         }
         return -1;
     }
 };
 
-
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+
+    QStringList args = app.arguments();
+    if(args.contains("--test")) {
+        LogindClient logind;
+        logind.systemdConnect();
+        return app.exec();
+    }
+
     VTHandlerClient c;
     c.connectToServer(".duduregi-vt");
     if(c.waitForConnected()) {
         int fd = c.readFd();
-        qDebug() << "read drm_fd " << fd;
+        qInfo() << "read drm_fd " << fd;
         struct stat s;
         fstat(fd, &s);
         qDebug() << "MAJOR_DRM" << major(s.st_rdev);
         if(major(s.st_rdev) != DRM_MAJOR) {
-            qDebug() << "Error, Received fd is not DRM device";
+            qCritical() << "Error, Received fd is not DRM device";
             exit(1);
         }
         c.setDRMFd(fd);

@@ -10,7 +10,7 @@
 #include <QDBusVariant>
 
 #include "logind-client.h"
-#include <systemd/sd-login.h>
+//#include <systemd/sd-login.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -33,60 +33,111 @@
 
 #define LOGIND_SERVICE "org.freedesktop.login1"
 #define LOGIND_SESSION_IF "org.freedesktop.login1.Session"
+#define LOGIND_MANAGER_IF "org.freedesktop.login1.Manager"
 #define XDG_PROPERTIES_IF "org.freedesktop.DBus.Properties"
 
 
 static LogindClient *thiz;
 
-LogindClient::LogindClient() {
+LogindClient::LogindClient() : mDRMFd(-1) {
 }
 
 void LogindClient::systemdConnect() {
     if (!QDBusConnection::systemBus().isConnected()) {
-        qDebug() << "Could not connect to the D-Bus session.\n";
+        qWarning() << "Could not connect to the D-Bus session.\n";
         return;
     }
 
 
+    /*
     int r = -1;
-    char *seat = NULL;
+    //char *seat = NULL;
     char *session = NULL;
     r = sd_pid_get_session(getpid(), &session);
     if(r < 0) {
-        qDebug() << "Could not get session from systemd";
+        qWarning() << "Could not get session from systemd";
         return;
     }
-    qDebug() << "Current login session:" << session;
-    mSession = session;
+    qWarning() << "Current login session:" << session;
     free(session);
+    */
 
-    setupTTY();
-    return;
-
-
+    qWarning() << "GetSessionByPID" << getppid();
     QDBusMessage ret;
     ret = QDBusConnection::systemBus().call(
             QDBusMessage::createMethodCall (LOGIND_SERVICE,
-                QString("/org/freedesktop/login1/session/%1").arg(mSession),
-                LOGIND_SESSION_IF, "TakeControl"));
-    qDebug() << ret;
+                QString("/org/freedesktop/login1"),
+                LOGIND_MANAGER_IF,
+                QStringLiteral("GetSessionByPID")) << (uint)getppid());
+    qWarning() << ret;
+    mSession = ret.arguments()[0].value<QDBusObjectPath>().path();
+    qWarning() << "session path" << mSession;
 
+    ret = QDBusConnection::systemBus().call(
+            QDBusMessage::createMethodCall (LOGIND_SERVICE,
+                mSession,
+                LOGIND_SESSION_IF, QStringLiteral("TakeControl")) << false);
+    qWarning() << ret;
+
+
+    /*
     r = sd_session_get_seat(session, &seat);
     if(r < 0) {
-        qDebug() << "Could not get seat from systemd";
+        qWarning() << "Could not get seat from systemd";
         return;
     }
-    qDebug() << "Current login seat:" << seat;
+    qWarning() << "Current login seat:" << seat;
     mSeat = seat;
     free(seat);
+
 
 #ifdef sd_session_get_vt
     unsigned int vtnr;
     if(sd_session_get_vt(session, &vtnr) >= 0) {
         // check tty and vt#
     }
+    qWarning() << "vtnr: " << vtnr;
 #endif
+    */
+
+    setupTTY();
+
+
+#if 0
+    if(mDRMFd > 0) {
+        struct stat s;
+        fstat(mDRMFd, &s);
+        qWarning() << "TakeDevice";
+        ret = QDBusConnection::systemBus().call(
+                QDBusMessage::createMethodCall (LOGIND_SERVICE,
+                    mSession, LOGIND_SESSION_IF, QStringLiteral("TakeDevice"))
+                 << major(s.st_rdev)
+                 << minor(s.st_rdev));
+        qWarning() << ret;
+        //mDRMFd = ret.arguments()[0].value<QDBusUnixFileDescriptor>().fileDescriptor();
+        qWarning() << "new drm fd" << mDRMFd;
+    }
+#endif
+
+    qWarning() << "connect pausedevice signal" <<
+        QDBusConnection::systemBus().connect(LOGIND_SERVICE,
+            mSession, LOGIND_SESSION_IF,
+            QStringLiteral("PauseDevice"), this,
+            SLOT(slotPauseDevice(uint, uint, QString)));
+
 }
+
+void LogindClient::slotPauseDevice(uint major, uint minor, const QString &type) {
+    qWarning() << __func__ << major << minor << type;
+    QDBusMessage ret;
+    ret = QDBusConnection::systemBus().call(
+            QDBusMessage::createMethodCall (LOGIND_SERVICE,
+                QString("/org/freedesktop/login1"),
+                LOGIND_MANAGER_IF,
+                QStringLiteral("PauseDeviceComplete")) << major << minor);
+    qWarning() << ret;
+}
+
 
 static int kb_mode;
 static int tty;
@@ -109,11 +160,11 @@ int LogindClient::setupTTY() {
         QDBusMessage ret;
         ret = QDBusConnection::systemBus().call(
                 QDBusMessage::createMethodCall (LOGIND_SERVICE,
-                    QString("/org/freedesktop/login1/session/%1").arg(mSession),
-                    //QString("/org/freedesktop/login1/session/%1").arg("c6"),
-                    XDG_PROPERTIES_IF, "Get") << LOGIND_SESSION_IF << "TTY");
+                    mSession, XDG_PROPERTIES_IF,
+                    QStringLiteral("Get")) << LOGIND_SESSION_IF << "TTY");
         ttyPath=ret.arguments()[0].value<QDBusVariant>().variant().toString();
-
+        if(!ttyPath.startsWith("/"))
+            ttyPath = "/dev/"+ttyPath;
     }
 
     if(t && strcmp(t, ttyPath.toUtf8().constData()) == 0)
@@ -121,7 +172,7 @@ int LogindClient::setupTTY() {
     else
         tty = open(ttyPath.toUtf8().constData(), O_RDWR | O_NOCTTY);
 
-    qDebug() << "ttyPath: "<< ttyPath << "ttyfd" << tty;
+    qWarning() << "ttyPath: "<< ttyPath << "ttyfd" << tty;
     /*
     } else {
         int tty0 = open("/dev/tty0", O_WRONLY | O_CLOEXEC);
@@ -140,27 +191,14 @@ int LogindClient::setupTTY() {
         qCritical() << "failed to open tty" << ttyPath;
         return 1;
     }
-    qDebug() << "fstat" << fstat(tty, &buf);
-    qDebug() << "major" << major(buf.st_rdev) << TTY_MAJOR;
-    qDebug() << "minor" << minor(buf.st_rdev);
+    qWarning() << "fstat" << fstat(tty, &buf);
+    qWarning() << "major" << major(buf.st_rdev) << TTY_MAJOR;
+    qWarning() << "minor" << minor(buf.st_rdev);
     if (fstat(tty, &buf) == -1 ||
             major(buf.st_rdev) != TTY_MAJOR || minor(buf.st_rdev) == 0) {
-        qDebug() << ttyPath << "is not vt";
+        qWarning() << ttyPath << "is not vt";
         return 1;
     }
-
-    /*
-    qDebug() << __func__ << __LINE__;
-    uint key;
-    for (key = KEY_F1; key < KEY_F9; key++) {
-        qDebug() << __func__ << __LINE__;
-        qDebug() << "key" << key << (key-KEY_F1+1);
-        ioctl(tty, VT_ACTIVATE, key-KEY_F1+1);
-        qDebug() << __func__ << __LINE__;
-    }
-    qDebug() << __func__ << __LINE__;
-    */
-
 
     if (ioctl(tty, KDGKBMODE, &kb_mode))
         qWarning() << "failed to get kb mode";
@@ -171,14 +209,11 @@ int LogindClient::setupTTY() {
     if (ioctl(tty, KDSETMODE, KD_GRAPHICS))
         qWarning() << "failed to set KD_GRAPHICS mode";
 
-    qDebug() << __func__ << __LINE__;
-
     if (::socketpair(AF_UNIX, SOCK_STREAM, 0, mSigFD))
         qFatal("Couldn't create socketpair for signal handler");
     mSNSig = new QSocketNotifier(mSigFD[1], QSocketNotifier::Read, this);
     connect(mSNSig, SIGNAL(activated(int)), this, SLOT(slotSigNotifier(int)));
     thiz = this;
-    qDebug() << __func__ << __LINE__;
 
     struct sigaction sa;
     sa.sa_flags = 0;
@@ -191,7 +226,7 @@ int LogindClient::setupTTY() {
     sigaction(SIGINT, &sa, 0);
     sigaction(SIGUSR1, &sa, 0);
     sigaction(SIGUSR2, &sa, 0);
-    qDebug() << "sigmax" << SIGRTMAX;
+    qWarning() << "sigmax" << SIGRTMAX;
 
     mode.mode = VT_PROCESS;
     mode.relsig = SIGUSR1;
@@ -200,32 +235,35 @@ int LogindClient::setupTTY() {
     //mode.acqsig = SIGUSR2;
     if (ioctl(tty, VT_SETMODE, &mode) < 0)
         qWarning() << "failed to set VT_STMODE";
-    qDebug() << __func__ << __LINE__;
 
     return 0;
 }
 
 void LogindClient::signalHandler(int sigNo) {
-    qDebug() << __func__ << __LINE__ << sigNo;
-    ::write(thiz->mSigFD[0], &sigNo, sizeof(sigNo));
-    qDebug() << __func__ << __LINE__;
+    int r = ::write(thiz->mSigFD[0], &sigNo, sizeof(sigNo));
+    (void)r;
 }
 
-void LogindClient::slotSigNotifier(int fd) {
-    qDebug() << __func__ << __LINE__ << fd;
+void LogindClient::slotSigNotifier(int) {
     int sigNo;
-    ::read(mSigFD[1], &sigNo, sizeof(sigNo));
-    qDebug() << "read sig" << sigNo;
+    int r = ::read(mSigFD[1], &sigNo, sizeof(sigNo));
+    qWarning() << "read sig" << sigNo << r << "drm_fd" << mDRMFd;
     if (sigNo == SIGUSR1) {
-        qDebug() << "drop";
-        drmDropMaster(mDRMFd);
-        ioctl(tty, VT_RELDISP, 1);
+        qWarning() << "drop";
+        r = drmDropMaster(mDRMFd);
+        qWarning() << "drmDropMaster(" << mDRMFd << ")" << r;
+        r = ioctl(tty, VT_RELDISP, 1);
+        qWarning() << "ioctl(tty, VT_RELDISP, 1) =>" << r;
+        emit paused();
     } else if (sigNo == SIGUSR2) {
-        qDebug() << "set";
-        ioctl(tty, VT_RELDISP, VT_ACKACQ);
-        drmSetMaster(mDRMFd);
+        qWarning() << "set";
+        r = ioctl(tty, VT_RELDISP, VT_ACKACQ);
+        qWarning() << "ioctl(tty, VT_RELDISP, VT_ACKACQ) =>" << r;
+        r = drmSetMaster(mDRMFd);
+        qWarning() << "drmSetMaster(" << mDRMFd << ")" << r;
+        emit resumed();
     } else if (sigNo == SIGINT) {
-        qDebug() << "restore";
+        qWarning() << "restore";
         restoreTTY();
     } else {
         for(int i=0; i<9; i++) {
@@ -239,7 +277,6 @@ void LogindClient::slotSigNotifier(int fd) {
 
 
 void LogindClient::restoreTTY() {
-    qDebug() << __func__ << __LINE__;
     if (ioctl(tty, KDSKBMUTE, 0) && ioctl(tty, KDSKBMODE, K_UNICODE))
     //if (ioctl(tty, KDSKBMUTE, 0) && ioctl(tty, KDSKBMODE, kb_mode))
         qWarning() << "failed to restore kb mode";
@@ -250,5 +287,4 @@ void LogindClient::restoreTTY() {
     mode.mode = VT_AUTO;
     if (ioctl(tty, VT_SETMODE, &mode) < 0)
         qWarning() << "failed to set VTMODE as AUTO";
-    qDebug() << __func__ << __LINE__;
 }

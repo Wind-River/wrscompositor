@@ -54,97 +54,6 @@
 #define HEIGHT_1080 1080
 static int mode = HEIGHT_FULLSCREEN;
 
-int start_duduregi(QGuiApplication *app = NULL) {
-    qDebug() << "Starting duduregi ... with uid " << getuid();
-
-    QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenGeometry = screen->availableGeometry();
-#if 0
-    QDesktopWidget d;
-    QRect screenGeometry = d.screenGeometry();
-#endif
-
-    qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
-    qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
-    qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
-    qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
-#if DUDUREGI_WAYLAND_COMPOSITOR
-    qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
-    qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
-    qmlRegisterType<GeniviWaylandIVIExtension::IVILayer>("com.windriver.genivi", 1, 0, "IVILayer");
-    qmlRegisterType<GeniviWaylandIVIExtension::IVISurface>("com.windriver.genivi", 1, 0, "IVISurface");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVILayer* >("IVILayer*");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVISurface* >("IVISurface*");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScreen* >("IVIScreen*");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
-#endif
-
-#if DUDUREGI_WEBENGINE
-    QtWebEngine::initialize();
-#endif
-
-    DuduregiCompositor compositor;
-
-#if DUDUREGI_DIGITALCLUSTER
-    DigitalCluster dc;
-#endif
-#if DUDUREGI_REARDISPLAY
-    RearDisplay rd;
-    compositor.setRearDisplay(&rd);
-    rd.setMainDisplay(&compositor);
-    rd.setMainOutput(compositor.mainOutput());
-#endif
-
-    if(mode != HEIGHT_FULLSCREEN) {
-        if(mode == HEIGHT_720) {
-            compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1280, 720)).toRect());
-#if DUDUREGI_DIGITALCLUSTER
-            dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1280, 720)).toRect());
-#endif
-#if DUDUREGI_REARDISPLAY
-            rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1280, 720)).toRect());
-#endif
-        } else {
-            compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1920, 1080)).toRect());
-#if DUDUREGI_DIGITALCLUSTER
-            dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1920, 1080)).toRect());
-#endif
-#if DUDUREGI_REARDISPLAY
-            rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1920, 1080)).toRect());
-#endif
-        }
-    } else { // full screen
-        compositor.setGeometry(screenGeometry);
-    }
-#if DUDUREGI_DIGITALCLUSTER
-    dc.show();
-#endif
-#if DUDUREGI_REARDISPLAY
-    rd.show();
-#endif
-    compositor.show();
-    //DuduregiCompositor rearcompositor("cluster.qml", "wayland-1");
-    //rearcompositor.show();
-
-    if(app == NULL)
-        return 0;
-
-    int ret = app->exec();
-
-    if(mode != HEIGHT_FULLSCREEN) { // save last geometry
-        settings.setValue("geometry-for-maindisplay", compositor.geometry());
-#if DUDUREGI_DIGITALCLUSTER
-        settings.setValue("geometry-for-cluster", dc.geometry());
-#endif
-#if DUDUREGI_REARDISPLAY
-        settings.setValue("geometry-for-reardisplay", rd.geometry());
-#endif
-    }
-
-    return ret;
-}
-
 class VTHandlerServer: public QLocalServer {
     Q_OBJECT
 public:
@@ -190,6 +99,9 @@ public:
         else
             qDebug() << "Failed to start duduregi-vt-handler";
     };
+    void addDisplay(QQuickWindow *disp) {
+        mDisplayList << disp;
+    };
 public slots:
     void slotAccept() {
         qDebug() << "duduregi-vt-handler is connected";
@@ -228,12 +140,25 @@ public slots:
             cmsg->cmsg_type = SCM_RIGHTS;
             cmsg->cmsg_len = CMSG_LEN(sizeof(int));
 
-            *((int *) CMSG_DATA(cmsg)) = fd;
+            *reinterpret_cast<int *>CMSG_DATA(cmsg) = fd;
 
             do {
                 len = sendmsg(mClient->socketDescriptor(), &msg, MSG_NOSIGNAL);
             } while (len < 0 && errno == EINTR);
             qDebug() << "sent drm fd" << fd;
+            connect(mClient, SIGNAL(readyRead()), this, SLOT(slotCommand()));
+        }
+    }
+    void slotCommand() {
+        char cmd[32] = {0, };
+        int r = mClient->read(cmd, 1);
+        qInfo() << __func__ << r << cmd;
+        if(cmd[0] == 'r') {
+            for(int i=0; i<mDisplayList.count(); i++) {
+                QQuickWindow *d = mDisplayList.at(i);
+                d->update();
+                qWarning() << d << "updated by VT switch back";
+            }
         }
     }
 private:
@@ -243,6 +168,7 @@ private:
     QString mTTY;
     QGuiApplication *mApp;
     bool mStarted;
+    QList<QQuickWindow*> mDisplayList;
 };
 
 int main(int argc, char *argv[])
@@ -308,9 +234,11 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
 
+                    int r;
                     qDebug() << "setuid to " << pw->pw_name;
-                    ::setuid(pw->pw_uid);
-                    setgid(pw->pw_gid);
+                    r = ::setuid(pw->pw_uid);
+                    r = ::setgid(pw->pw_gid);
+                    (void)r;
                     initgroups(pw->pw_name, pw->pw_gid);
 
                     char xdgruntimedir[32] = {0, };
@@ -321,7 +249,95 @@ int main(int argc, char *argv[])
             }
         }
     }
-    return start_duduregi(&app);
+
+    qDebug() << "Starting duduregi ... with uid " << getuid();
+
+    QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+#if 0
+    QDesktopWidget d;
+    QRect screenGeometry = d.screenGeometry();
+#endif
+
+    qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
+    qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
+    qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
+    qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
+#if DUDUREGI_WAYLAND_COMPOSITOR
+    qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVILayer>("com.windriver.genivi", 1, 0, "IVILayer");
+    qmlRegisterType<GeniviWaylandIVIExtension::IVISurface>("com.windriver.genivi", 1, 0, "IVISurface");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVILayer* >("IVILayer*");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVISurface* >("IVISurface*");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScreen* >("IVIScreen*");
+    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
+#endif
+
+#if DUDUREGI_WEBENGINE
+    QtWebEngine::initialize();
+#endif
+
+    DuduregiCompositor compositor;
+    s.addDisplay(&compositor);
+
+
+#if DUDUREGI_DIGITALCLUSTER
+    DigitalCluster dc;
+    s.addDisplay(&dc);
+#endif
+#if DUDUREGI_REARDISPLAY
+    RearDisplay rd;
+    s.addDisplay(&rd);
+    compositor.setRearDisplay(&rd);
+    rd.setMainDisplay(&compositor);
+    rd.setMainOutput(compositor.mainOutput());
+#endif
+
+    if(mode != HEIGHT_FULLSCREEN) {
+        if(mode == HEIGHT_720) {
+            compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1280, 720)).toRect());
+#if DUDUREGI_DIGITALCLUSTER
+            dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1280, 720)).toRect());
+#endif
+#if DUDUREGI_REARDISPLAY
+            rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1280, 720)).toRect());
+#endif
+        } else {
+            compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1920, 1080)).toRect());
+#if DUDUREGI_DIGITALCLUSTER
+            dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1920, 1080)).toRect());
+#endif
+#if DUDUREGI_REARDISPLAY
+            rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1920, 1080)).toRect());
+#endif
+        }
+    } else { // full screen
+        compositor.setGeometry(screenGeometry);
+    }
+#if DUDUREGI_DIGITALCLUSTER
+    dc.show();
+#endif
+#if DUDUREGI_REARDISPLAY
+    rd.show();
+#endif
+    compositor.show();
+    //DuduregiCompositor rearcompositor("cluster.qml", "wayland-1");
+    //rearcompositor.show();
+
+    int ret = app.exec();
+
+    if(mode != HEIGHT_FULLSCREEN) { // save last geometry
+        settings.setValue("geometry-for-maindisplay", compositor.geometry());
+#if DUDUREGI_DIGITALCLUSTER
+        settings.setValue("geometry-for-cluster", dc.geometry());
+#endif
+#if DUDUREGI_REARDISPLAY
+        settings.setValue("geometry-for-reardisplay", rd.geometry());
+#endif
+    }
+    return ret;
 }
 
 #include "main.moc"

@@ -24,10 +24,14 @@ public:
     void systemdConnect();
     void restoreTTY();
     void setDRMFd(int fd) { mDRMFd = fd; };
+signals:
+    void paused();
+    void resumed();
 private:
     int setupTTY();
 private slots:
     void slotSigNotifier(int);
+    void slotPauseDevice(uint, uint, const QString&);
 private:
     QString mSession;
     QString mSeat;
