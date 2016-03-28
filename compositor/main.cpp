@@ -45,6 +45,7 @@
 #include "gbm.h"
 #include <pwd.h>
 #include <grp.h>
+#include <security/pam_appl.h>
 
 #include <qpa/qplatformnativeinterface.h>
 
@@ -53,6 +54,16 @@
 #define HEIGHT_720 720
 #define HEIGHT_1080 1080
 static int mode = HEIGHT_FULLSCREEN;
+
+static int pam_conv_cb(int msg_count,
+        const struct pam_message **messages,
+        struct pam_response **responses, void *user_data) {
+    (void)msg_count;
+    (void)messages;
+    (void)responses;
+    (void)user_data;
+    return PAM_SUCCESS;
+}
 
 class VTHandlerServer: public QLocalServer {
     Q_OBJECT
@@ -76,6 +87,58 @@ public:
                 mTTY = tty.capturedTexts()[1];
             }
         }
+    }
+    bool setupPAM(struct passwd *pw) {
+        int err;
+        struct pam_conv conv = {pam_conv_cb, NULL};
+        err = pam_start("login", pw->pw_name, &conv, &mPH);
+        if (err != PAM_SUCCESS) {
+            qCritical() << "failed to pam_start";
+            return false;
+        }
+
+        /*
+        err = pam_set_item(mPH, PAM_TTY, "/dev/tty1");
+        if (err != PAM_SUCCESS) {
+            qCritical() << "failed to set PAM_TTY";
+            return false;
+        }
+        */
+
+        err = pam_open_session(mPH, 0);
+        if (err != PAM_SUCCESS) {
+            qCritical("failed to open pam session");
+            return false;
+        }
+
+        int r;
+        qDebug() << "setuid to " << pw->pw_name;
+        r = ::setuid(pw->pw_uid);
+        r = ::setgid(pw->pw_gid);
+        (void)r;
+        initgroups(pw->pw_name, pw->pw_gid);
+
+        char xdgruntimedir[32] = {0, };
+        sprintf(xdgruntimedir, "/run/user/%d", pw->pw_uid);
+        qInfo() << "reset XDG_RUNTIME_DIR to " << xdgruntimedir;
+        ::setenv("XDG_RUNTIME_DIR", xdgruntimedir, 1);
+
+        ::setenv("USER", pw->pw_name, 1);
+        ::setenv("LOGNAME", pw->pw_name, 1);
+        ::setenv("HOME", pw->pw_dir, 1);
+        ::setenv("SHELL", pw->pw_shell, 1);
+
+        char **env = pam_getenvlist(mPH);
+        if (env) {
+            for (int i = 0; env[i]; ++i) {
+                if (putenv(env[i]) < 0)
+                    qCritical() << "putenv failed" << env[i];
+            }
+            free(env);
+        }
+
+        //::system("export");
+        return true;
     }
     void setGBM(struct gbm_device *gbm) {
         m_gbm_device = gbm;
@@ -175,6 +238,7 @@ private:
     bool mStarted;
     bool mConnected;
     QList<QQuickWindow*> mDisplayList;
+    pam_handle_t *mPH;
 };
 
 int main(int argc, char *argv[])
@@ -236,21 +300,13 @@ int main(int argc, char *argv[])
                         getpwnam(user.capturedTexts()[1].toUtf8().constData());
 
                     if(!pw) {
-                        qDebug() << "No such user" << user.capturedTexts()[1];
+                        qCritical()<< "No such user"<<user.capturedTexts()[1];
                         exit(1);
                     }
-
-                    int r;
-                    qDebug() << "setuid to " << pw->pw_name;
-                    r = ::setuid(pw->pw_uid);
-                    r = ::setgid(pw->pw_gid);
-                    (void)r;
-                    initgroups(pw->pw_name, pw->pw_gid);
-
-                    char xdgruntimedir[32] = {0, };
-                    sprintf(xdgruntimedir, "/run/user/%d", pw->pw_uid);
-                    qInfo() << "reset XDG_RUNTIME_DIR to " << xdgruntimedir;
-                    ::setenv("XDG_RUNTIME_DIR", xdgruntimedir, 1);
+                    if(!s.setupPAM(pw)) {
+                        qCritical()<< "Failed to start PAM session";
+                        exit(1);
+                    }
                 }
             }
         }

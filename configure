@@ -175,6 +175,16 @@ echo "  QMake Path=$QMAKEPATH"
 echo "  QMake Version=`$QMAKEPATH -query QMAKE_VERSION`"
 echo
 
+#printf "Checking pam devel ..."
+#if [ ! -f /usr/include/security/pam_appl.h ]; then
+#echo $'\r'"Checking pam devel ........................................ Failure"
+#echo "Error, Please install wayland development package(s)"
+#echo "   ubuntu: libpam0g-dev"
+#echo "   fedora: pam-devel"
+#exit 1
+#else
+#echo $'\r'"Checking pam devel ........................................... Done"
+#fi
 
 printf "Checking pkg-config wayland-server ..."
 if ! pkg-config --exists wayland-server ; then

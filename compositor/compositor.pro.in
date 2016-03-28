@@ -4,6 +4,8 @@ SOURCES += main.cpp Process.cpp vna_dbusclient.cpp wr_dbusclient.cpp duduregicom
 
 OTHER_FILES = ContrastEffect.qml  main.qml  WindowChrome.qml  WindowContainer.qml alameda.jpg closebutton.png compositor.js
 
+LIBS+=-lpam
+
 TARGET = duduregi-compositor
 output.files = duduregi-compositor
 output.path = $$PREFIX/bin
