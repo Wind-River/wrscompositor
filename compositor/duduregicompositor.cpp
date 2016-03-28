@@ -196,7 +196,8 @@ void DuduregiCompositor::keyPressEvent(QKeyEvent *event)
             if(event->key() == key) {
                 //qDebug() << QString("Ctrl+Alt+F%1").arg(key-Qt::Key_F1+1);
                 qDebug() << QString("Ctrl+(Alt)+F%1").arg(key-Qt::Key_F1+1);
-                QProcess::execute(QString("bash -c \"kill -%1 `pidof duduregi-vt-handler`\"").arg(SIGRTMIN+key-Qt::Key_F1));
+                //QProcess::execute(QString("bash -c \"kill -%1 `pidof duduregi-vt-handler`\"").arg(SIGRTMIN+key-Qt::Key_F1));
+                QProcess::execute(QString("dbus-send --system --dest=org.freedesktop.login1 --type=method_call --print-reply /org/freedesktop/login1/seat/seat0  org.freedesktop.login1.Seat.SwitchTo uint32:%1").arg(key-Qt::Key_F1+1));
                 event->ignore();
                 return;
             }
