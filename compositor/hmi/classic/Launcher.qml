@@ -16,6 +16,11 @@ Item {
     //property string modelType: "waland"
     property string modelType: "genivi"
     anchors.fill: parent
+
+    SystemdDbusClient {
+        id: systemd_dbusClient
+    }
+
     //
     ListModel {
         id: geniviApps
@@ -27,6 +32,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
+            systemd: false
             iconPath: "icons/gdp-icon-ammonitor.png"
         }
         ListElement {
@@ -36,6 +42,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
+            systemd: false
             iconPath: "icons/gdp-icon-app.png"
         }
         ListElement {
@@ -45,6 +52,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
+            systemd: false
             iconPath: "icons/gdp-icon-fuel.png"
         }
         ListElement {
@@ -54,6 +62,7 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
+            systemd: false
             iconPath: "icons/gdp-icon-browser.png"
         }
         ListElement {
@@ -63,7 +72,9 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
+            systemd: false
             iconPath: "icons/gdp-icon-nav.png"
+            unitFile: "mocknavi.service"
         }
         ListElement {
             label: "Media Player"
@@ -72,7 +83,9 @@ Item {
             type: "capp"
             multiple: false
             taskmanage: true
+            systemd: false
             iconPath: "icons/gdp-icon-mediaplayer.png"
+            unitFile: "eyes.service"
         }
     }
     ListModel {
@@ -211,30 +224,58 @@ Item {
         cellWidth: ((width/4.0)|0)
         cellHeight: cellWidth
         delegate:  Item {
+            property variant window: null
             property bool pressed: false
             width: ((grid.cellWidth * 0.8) | 0)
             height: ((grid.cellHeight * 0.8) | 0)
             //selected: GridView.isCurrentItem
             //onClicked: main.launch(name)
             function launch() {
-                console.log('launch: '+exec);
-                console.log('pid: '+process.pid);
-                if(!multiple) {
+                var pid = systemd ? systemd_unit.pid : process.pid;
+                window = systemd ? systemd_unit.window : process.window;
+                console.log('launch: '+ systemd ? unitFile : exec);
+                console.log('pid: ' + pid);
+                if (!multiple) {
                     console.log('no multiple');
-                    if(process.pid != 0) {
+                    if(pid != 0) {
                         console.log('no pid');
-                        if(process.window != null) {
-                            console.log('haswindow'+process.window);
-                            launcher.root.raiseWindow(process.window);
+                        if(window != null) {
+                            console.log('has window ' + window);
+                            launcher.root.raiseWindow(window);
                         }
                         return;
                     }
                 }
-                process.execute(exec);
+                if (systemd) systemd_dbusClient.startUnit(unitFile);
+                else process.execute(exec);
             }
+
             function quit() {
-                process.quit();
+                if (systemd) systemd_dbusClient.stopUnit(unitFile);
+                else process.quit();
             }
+
+            SystemdUnit {
+                id: systemd_unit
+                unitPath: unitFile
+                property variant window: null
+                property variant cmd: unitFile
+
+                onPidChanged: {
+                    console.log("program launched by systemd's dbus, pid = " + pid);
+                    console.log(launcher.root);
+                    launcher.root.waitProcess = systemd_unit;
+                }
+                Component.onCompleted: {
+                    if (systemd)
+                        systemd_dbusClient.registerUnit(systemd_unit);
+                }
+                function setWindow(window) {
+                    console.log('setWindow '+ window);
+                    systemd_unit.window = window;
+                }
+            }
+
             Process {
                 id: process
                 property variant window: null
@@ -301,6 +342,7 @@ Item {
         }
 
     }
+
     Keys.onLeftPressed: { grid.moveCurrentIndexLeft(); event.accepted = true}
     Keys.onRightPressed: { grid.moveCurrentIndexRight(); event.accepted = true}
     Keys.onUpPressed: { grid.moveCurrentIndexUp(); event.accepted = true}

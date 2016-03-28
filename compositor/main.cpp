@@ -19,6 +19,7 @@
 #endif
 
 #include "Process.h"
+#include "systemd-util.h"
 //#include "vna_dbusclient.h"
 #include "wr_dbusclient.h"
 #include "projectionmode.h"
@@ -322,8 +323,9 @@ int main(int argc, char *argv[])
     QDesktopWidget d;
     QRect screenGeometry = d.screenGeometry();
 #endif
-
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
+    qmlRegisterType<SystemdDbusClient>("com.windriver.duduregi", 1, 0, "SystemdDbusClient");
+    qmlRegisterType<SystemdUnit>("com.windriver.duduregi", 1, 0, "SystemdUnit");
     //qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
