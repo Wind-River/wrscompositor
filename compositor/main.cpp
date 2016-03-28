@@ -19,7 +19,7 @@
 #endif
 
 #include "Process.h"
-#include "vna_dbusclient.h"
+//#include "vna_dbusclient.h"
 #include "wr_dbusclient.h"
 #include "projectionmode.h"
 
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
 #endif
 
     qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
-    qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
+    //qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
 #if DUDUREGI_WAYLAND_COMPOSITOR

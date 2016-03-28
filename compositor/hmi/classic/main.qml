@@ -34,6 +34,7 @@ Item {
     }
 
 
+    /*
     VNADBusClient {
         id: vna_dbusClient
 
@@ -45,6 +46,7 @@ Item {
             statusBar.setWMI(vehicleInfoWMI)
         }
     }
+    */
 
     WRDBusClient {
         id: wr_dbusClient
@@ -223,13 +225,13 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: background.width / 20
             anchors.bottom: parent.bottom
-            text: vna_dbusClient.speedometer+" Km"
+            text: ""//vna_dbusClient.speedometer+" Km"
             font.pointSize: background.height/5
             color: "white"
             smooth: true
             font.bold: true
             style: Text.Outline
-            visible: vna_dbusClient.speedometer
+            visible: false//vna_dbusClient.speedometer
         }
 
         MainMenu {
