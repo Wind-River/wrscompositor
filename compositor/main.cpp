@@ -111,13 +111,6 @@ public:
             return false;
         }
 
-        int r;
-        qDebug() << "setuid to " << pw->pw_name;
-        r = ::setuid(pw->pw_uid);
-        r = ::setgid(pw->pw_gid);
-        (void)r;
-        initgroups(pw->pw_name, pw->pw_gid);
-
         char xdgruntimedir[32] = {0, };
         sprintf(xdgruntimedir, "/run/user/%d", pw->pw_uid);
         qInfo() << "reset XDG_RUNTIME_DIR to " << xdgruntimedir;
@@ -131,12 +124,20 @@ public:
         char **env = pam_getenvlist(mPH);
         if (env) {
             for (int i = 0; env[i]; ++i) {
+                qInfo() << env[i];
                 if (putenv(env[i]) < 0)
                     qCritical() << "putenv failed" << env[i];
             }
             free(env);
         }
 
+
+        int r;
+        qDebug() << "setuid to " << pw->pw_name;
+        r = ::setuid(pw->pw_uid);
+        r = ::setgid(pw->pw_gid);
+        (void)r;
+        initgroups(pw->pw_name, pw->pw_gid);
         //::system("export");
         return true;
     }
