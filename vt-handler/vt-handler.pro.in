@@ -3,7 +3,8 @@ HEADERS += logind-client.h
 SOURCES += main.cpp logind-client.cpp
 
 CONFIG += link_pkgconfig
-PKGCONFIG += libsystemd-login libdrm
+#PKGCONFIG += libsystemd-login libdrm
+PKGCONFIG += libdrm
 
 TARGET = duduregi-vt-handler
 output.files = duduregi-vt-handler

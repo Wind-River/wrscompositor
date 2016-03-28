@@ -209,17 +209,17 @@ else
 echo $'\r'"Checking pkg-config gbm ...................................... Done"
 fi
 
-printf "Checking pkg-config libsystemd-login ..."
-if ! pkg-config --exists libsystemd-login ; then
-echo $'\r'"Checking pkg-config libsystemd-login ...................... Failure"
-echo "Error, Please install libsystemd-login-dev package"
-echo "Error, Please install systemd development package(s)"
-echo "   ubuntu: libsystemd-login-dev"
-echo "   fedora: systemd-devel"
-exit 1
-else
-echo $'\r'"Checking pkg-config libsystemd-login ......................... Done"
-fi
+#printf "Checking pkg-config libsystemd-login ..."
+#if ! pkg-config --exists libsystemd-login ; then
+#echo $'\r'"Checking pkg-config libsystemd-login ...................... Failure"
+#echo "Error, Please install libsystemd-login-dev package"
+#echo "Error, Please install systemd development package(s)"
+#echo "   ubuntu: libsystemd-login-dev"
+#echo "   fedora: systemd-devel"
+#exit 1
+#else
+#echo $'\r'"Checking pkg-config libsystemd-login ......................... Done"
+#fi
 
 printf "Generating compositor.pro ..."
 echo "QT += quick qml network" > $DUDUREGIPRO
