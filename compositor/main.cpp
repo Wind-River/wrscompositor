@@ -58,7 +58,8 @@ class VTHandlerServer: public QLocalServer {
     Q_OBJECT
 public:
     VTHandlerServer(QGuiApplication *app, QObject *parent=Q_NULLPTR):
-        QLocalServer(parent), mClient(0), m_gbm_device(0), mStarted(false) {
+        QLocalServer(parent), mClient(0), m_gbm_device(0), mStarted(false),
+        mConnected(false) {
         connect(this, SIGNAL(newConnection()), this, SLOT(slotAccept()));
 
         QPlatformNativeInterface *npi = app->platformNativeInterface();
@@ -82,10 +83,13 @@ public:
     bool vtHandlerStarted() {
         return mStarted;
     }
+    bool vtHandlerConnected() {
+        return mConnected;
+    }
     void startVTHandler() {
         if(!isListening())
             return;
-        qDebug() << "VT Handler Server is staring at " << fullServerName();
+        qInfo() << "VT Handler Server is staring at " << fullServerName();
         QString args = QString(" --tty=%1").arg(mTTY);
         mStarted = false;
         if(QFileInfo::exists("../vt-handler/duduregi-vt-handler")) {
@@ -148,6 +152,7 @@ public slots:
             qDebug() << "sent drm fd" << fd;
             connect(mClient, SIGNAL(readyRead()), this, SLOT(slotCommand()));
         }
+        mConnected = true;
     }
     void slotCommand() {
         char cmd[32] = {0, };
@@ -168,6 +173,7 @@ private:
     QString mTTY;
     QGuiApplication *mApp;
     bool mStarted;
+    bool mConnected;
     QList<QQuickWindow*> mDisplayList;
 };
 
@@ -191,22 +197,22 @@ int main(int argc, char *argv[])
         QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
         settings.clear();
         settings.sync();
-        qCritical() << "Geometry Cache Cleared";
+        qInfo() << "Geometry Cache Cleared";
         return 0;
     } else if(app.arguments().contains("--help")) {
-        qCritical() << "Wind River Duduregi Wayland Compositor";
-        qCritical() << "Usage:";
-        qCritical() << "  " << app.arguments().at(0) << " [arguments]";
-        qCritical() << "";
-        qCritical() << "Available Arguments";
-        qCritical() << "  --help            Show this help";
-        qCritical() << "  --debug           Load QML files from directory";
-        qCritical() << "  --720             Show main window as 720px height";
-        qCritical() << "  --1080            Show main window as 1080px height";
-        qCritical() << "  --tty=path        tty dev path (e.g - /dev/tty1)";
-        qCritical() << "  --user=username   username for duduregi-compositor";
-        qCritical() << "  --clean-geometry  Clean saved window geometry";
-        qCritical() << "  --list-displays   Show display list";
+        qInfo() << "Wind River Duduregi Wayland Compositor";
+        qInfo() << "Usage:";
+        qInfo() << "  " << app.arguments().at(0) << " [arguments]";
+        qInfo() << "";
+        qInfo() << "Available Arguments";
+        qInfo() << "  --help            Show this help";
+        qInfo() << "  --debug           Load QML files from directory";
+        qInfo() << "  --720             Show main window as 720px height";
+        qInfo() << "  --1080            Show main window as 1080px height";
+        qInfo() << "  --tty=path        tty dev path (e.g - /dev/tty1)";
+        qInfo() << "  --user=username   username for duduregi-compositor";
+        qInfo() << "  --clean-geometry  Clean saved window geometry";
+        qInfo() << "  --list-displays   Show display list";
         return 0;
     }
 
@@ -215,11 +221,11 @@ int main(int argc, char *argv[])
         s.removeServer(".duduregi-vt");
         if(s.listen(".duduregi-vt")) {
             s.startVTHandler();
-            qDebug() << "Waiting until duduregi-vt-handler launched";
-            while(!s.vtHandlerStarted()) {
+            qInfo() << "Waiting until duduregi-vt-handler launched";
+            while(!s.vtHandlerStarted() || !s.vtHandlerConnected()) {
                 app.processEvents();
             }
-            qDebug() << "duduregi-vt-handler has been launched";
+            qInfo() << "duduregi-vt-handler has been launched";
 
             // XXX setuid
             QRegExp user("--user=(\\S+)");
@@ -243,14 +249,14 @@ int main(int argc, char *argv[])
 
                     char xdgruntimedir[32] = {0, };
                     sprintf(xdgruntimedir, "/run/user/%d", pw->pw_uid);
-                    qDebug() << "reset XDG_RUNTIME_DIR to " << xdgruntimedir;
+                    qInfo() << "reset XDG_RUNTIME_DIR to " << xdgruntimedir;
                     ::setenv("XDG_RUNTIME_DIR", xdgruntimedir, 1);
                 }
             }
         }
     }
 
-    qDebug() << "Starting duduregi ... with uid " << getuid();
+    qInfo() << "Starting duduregi ... with uid " << getuid();
 
     QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
     QScreen *screen = QGuiApplication::primaryScreen();

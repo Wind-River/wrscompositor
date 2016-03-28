@@ -20,6 +20,14 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <sys/ioctl.h>
+#include <linux/vt.h>
+#include <linux/major.h>
+#include <linux/kd.h>
+#ifndef KDSKBMUTE
+#define KDSKBMUTE 0x4B51
+#endif
+
 #include "logind-client.h"
 
 #define DRM_MAJOR 226
@@ -109,6 +117,33 @@ int main(int argc, char *argv[])
         LogindClient logind;
         logind.systemdConnect();
         return app.exec();
+    } else {
+        QStringList args = qApp->arguments();
+        if(getuid()!=0) {
+            qCritical() << "root only operation";
+            return 1;
+        }
+        QRegExp rtty("--reset=(\\S+)");
+        QString ttyPath = "auto";
+        int i = args.indexOf(rtty);
+        if(i >= 0) {
+            if(rtty.exactMatch(args.at(i))) {
+                ttyPath = rtty.capturedTexts()[1];
+            }
+            if(ttyPath != "auto") {
+                int tty=open(ttyPath.toUtf8().constData(), O_RDWR | O_NOCTTY);
+                if (ioctl(tty, KDSKBMUTE, 0)&&ioctl(tty, KDSKBMODE, K_UNICODE))
+                    qWarning() << "failed to restore kb mode";
+                if (ioctl(tty, KDSETMODE, KD_TEXT))
+                    qWarning() << "failed to set KD_TEXT";
+                struct vt_mode mode;
+                mode.mode = VT_AUTO;
+                if (ioctl(tty, VT_SETMODE, &mode) < 0)
+                    qWarning() << "failed to set VTMODE as AUTO";
+                return 0;
+            }
+            return 1;
+        }
     }
 
     VTHandlerClient c;
