@@ -76,13 +76,20 @@ SystemdDbusClient::SystemdDbusClient(QObject *parent) :
 }
 
 void SystemdDbusClient::slotJobNew(uint id, QDBusObjectPath job, QString unit) {
-	qDebug() << __func__;
-	// Nothing to do
+    (void)id;
+    (void)job;
+    (void)unit;
+    qDebug() << __func__;
+    // Nothing to do
 }
 
 void SystemdDbusClient::slotJobRemove(uint id, QDBusObjectPath job, QString unit, QString result) {
-	qDebug() << __func__;
-	// Nothing to do
+    (void)id;
+    (void)job;
+    (void)unit;
+    (void)result;
+    qDebug() << __func__;
+    // Nothing to do
 }
 
 void SystemdDbusClient::slotPropertiesChanged(QString interface_name, QMap<QString,QVariant> changed_properties, QStringList invalidated_properties) {
