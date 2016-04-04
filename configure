@@ -265,20 +265,6 @@ echo "PREFIX=$PREFIX" >> $DUDUREGIPRO
 
 cat $DUDUREGIPRO.in >> $DUDUREGIPRO
 
-HMI_RC="hmi-$HMI_PROFILE.qrc"
-RCPATH="../../$HMI_RC"
-cd compositor/hmi/$HMI_PROFILE
-echo "<RCC>" > $RCPATH
-echo "  <qresource prefix=\"/\">" >> $RCPATH
-for name in `find . -name '*.qml' -o -name '*.js' -o -name '*.jpg' -o -name '*.png' -o -name '*.svg' | sed -e "s/.\///"`
-do
-	echo "    <file alias=\"$name\">hmi/$HMI_PROFILE/$name</file>" >> $RCPATH
-done
-echo "  </qresource>" >> $RCPATH
-echo "</RCC>" >> $RCPATH
-cd ../../..
-echo "RESOURCES += $HMI_RC" >> $DUDUREGIPRO
-
 
 echo $'\r'"Generating compositor.pro .................................... Done"
 
@@ -325,6 +311,22 @@ echo "Error, not supported target device: $TARGET_DEVICE"
 exit
 fi
 echo
+
+printf "Generating hmi-xxx.qrc ..."
+HMI_RC="hmi-$HMI_PROFILE.qrc"
+RCPATH="../../$HMI_RC"
+cd compositor/hmi/$HMI_PROFILE
+echo "<RCC>" > $RCPATH
+echo "  <qresource prefix=\"/\">" >> $RCPATH
+for name in `find . -name '*.qml' -o -name '*.js' -o -name '*.jpg' -o -name '*.png' -o -name '*.svg' | sed -e "s/.\///"`
+do
+	echo "    <file alias=\"$name\">hmi/$HMI_PROFILE/$name</file>" >> $RCPATH
+done
+echo "  </qresource>" >> $RCPATH
+echo "</RCC>" >> $RCPATH
+cd ../../..
+echo "RESOURCES += $HMI_RC" >> $DUDUREGIPRO
+echo $'\r'"Generating hmi-xxx.qrc ....................................... Done"
 
 
 printf "Generating vt-handler.pro ..."
