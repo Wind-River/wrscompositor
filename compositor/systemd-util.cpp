@@ -12,13 +12,15 @@ SystemdUnit::SystemdUnit(QObject *parent) :
 }
 
 void SystemdUnit::setUnitPath(const QString &unitFile) {
-	QDBusMessage ret = QDBusConnection::sessionBus().call(
-		QDBusMessage::createMethodCall(SYSTEMD_SERVICE,
-			SYSTEMD_OBJECT_PATH,
-			SYSTEMD_MANAGER_IF,
-			QStringLiteral("LoadUnit")) << unitFile);
+    if(unitFile == "")
+        return;
+    QDBusMessage ret = QDBusConnection::sessionBus().call(
+            QDBusMessage::createMethodCall(SYSTEMD_SERVICE,
+                    SYSTEMD_OBJECT_PATH,
+                    SYSTEMD_MANAGER_IF,
+                    QStringLiteral("LoadUnit")) << unitFile);
 
-	mUnitPath = ret.arguments()[0].value<QDBusObjectPath>().path();
+    mUnitPath = ret.arguments()[0].value<QDBusObjectPath>().path();
 }
 
 void SystemdUnit::notifyPidChanged(uint pid) {

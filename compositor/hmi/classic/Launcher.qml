@@ -17,9 +17,6 @@ Item {
     property string modelType: "genivi"
     anchors.fill: parent
 
-    SystemdDbusClient {
-        id: systemd_dbusClient
-    }
 
     //
     ListModel {
@@ -257,7 +254,7 @@ Item {
 
             SystemdUnit {
                 id: systemd_unit
-                unitPath: unitFile
+                unitPath: systemd?unitFile:""
                 property variant window: null
                 property variant cmd: unitFile
 
