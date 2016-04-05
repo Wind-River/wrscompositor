@@ -135,10 +135,17 @@ public:
 
         int r;
         qDebug() << "setuid to " << pw->pw_name;
-        r = ::setuid(pw->pw_uid);
         r = ::setgid(pw->pw_gid);
-        (void)r;
-        initgroups(pw->pw_name, pw->pw_gid);
+        if(r < 0)
+            qWarning() << "Failed to setgid to " << pw->pw_gid;
+        r = initgroups(pw->pw_name, pw->pw_gid);
+        if(r < 0)
+            qWarning() << "Failed to initgroups for " <<
+                                pw->pw_name << pw->pw_gid;
+        r = ::setuid(pw->pw_uid);
+        if(r < 0)
+            qWarning() << "Failed to setuid to " << pw->pw_uid;
+
         //::system("export");
         return true;
     }
