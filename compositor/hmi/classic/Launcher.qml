@@ -45,7 +45,8 @@ Item {
         ListElement {
             label: "Fuel Stop Advisor"
             description: "Fuel Stop Advisor"
-            exec: "/opt/windriver/bin/assistant"
+            //exec: "/opt/windriver/bin/assistant"
+            exec: "qdbusviewer-qt5"
             type: "capp"
             multiple: false
             taskmanage: true
@@ -76,7 +77,8 @@ Item {
         ListElement {
             label: "Media Player"
             description: "Media Player"
-            exec: "eyes"
+            //exec: "eyes"
+            exec: "mediaplayer"
             type: "capp"
             multiple: false
             taskmanage: true
