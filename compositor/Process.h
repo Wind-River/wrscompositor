@@ -24,6 +24,9 @@ public:
     Q_INVOKABLE bool execute(const QString &cmd);
     Q_INVOKABLE bool quit();
 
+public:
+    static QString WAYLAND_DISPlAY;
+
 signals:
     void pidChanged(int pid);
     void cmdChanged(const QString &cmd);

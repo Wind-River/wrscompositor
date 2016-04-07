@@ -10,7 +10,7 @@
 #include <QProcess>
 #include <sys/signal.h>
 
-DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &display)
+DuduregiCompositor::DuduregiCompositor(const QString &display, const QString &program)
 #if DUDUREGI_WAYLAND_COMPOSITOR
         : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension)
         //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
@@ -20,7 +20,7 @@ DuduregiCompositor::DuduregiCompositor(const QString &program, const QString &di
 
 #endif
 {
-
+    qInfo() << QString("Starts with WAYLAND_DISPLAY=%1").arg(display);
     setTitle(QLatin1String("Wind River Duduregi Wayland Compositor"));
     setResizeMode(QQuickView::SizeRootObjectToView);
     setColor(Qt::black);

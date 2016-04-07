@@ -286,6 +286,7 @@ int main(int argc, char *argv[])
         qInfo() << "  --user=username   username for duduregi-compositor";
         qInfo() << "  --clean-geometry  Clean saved window geometry";
         qInfo() << "  --list-displays   Show display list";
+        qInfo() << "  --display=NUM     Set WAYLAND_DISPLAY environment, default NUM=0";
         return 0;
     }
 
@@ -351,7 +352,17 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 #endif
 
-    DuduregiCompositor compositor;
+    int i = -1;
+    QString waylandDisplay="wayland-0";
+    QRegExp displayNum("--display=(\\d+)");
+    i = args.indexOf(displayNum);
+    if(i >= 0) {
+        if(displayNum.exactMatch(args.at(i))) {
+            waylandDisplay = "wayland-"+displayNum.capturedTexts()[1];
+            Process::WAYLAND_DISPlAY = waylandDisplay;
+        }
+    }
+    DuduregiCompositor compositor(waylandDisplay);
     s.addDisplay(&compositor);
 
 

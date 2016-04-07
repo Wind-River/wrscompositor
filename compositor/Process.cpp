@@ -16,6 +16,7 @@
 #include <QFileInfo>
 #include <stdlib.h>
 
+QString Process::WAYLAND_DISPlAY = "wayland-0";
 //Q_DECLARE_METATYPE(QList<QObject*>)
 
 Process::Process(QObject *parent) :
@@ -33,6 +34,7 @@ bool Process::execute(const QString &cmd)
 #if DUDUREGI_WAYLAND_COMPOSITOR
     QStringList env = QProcess::systemEnvironment();
     env << "QT_QPA_PLATFORM=wayland";
+    env << QString("WAYLAND_DISPLAY=%1").arg(Process::WAYLAND_DISPlAY);
     //env << "LD_LIBRARY_PATH=/opt/workspaces/wl/out/lib";
     //env << "QT_XCB_GL_INTEGRATION=xcb_egl";
     mProcess->setEnvironment(env);
