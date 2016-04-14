@@ -19,6 +19,7 @@ echo "  --prefix=DIR           prefix dir for installation"
 echo "  --with-digitalcluster  build with digital cluster feature (on 2nd display)"
 echo "  --with-reardisplay     build with rear display feature (on 3rd display)"
 echo "  --without-maindisplay  build without main display"
+echo "  --enable-webengine     Use WebEngine instead of WebKit for WebRuntime"
 echo "  --target-device=NAME   Set JS configuration for specific target device"
 echo "  --hmi-profile=NAME     Set HMI Profile"
 echo "  --overwrite            overwrite existing config.js by new target/hmi config"
@@ -57,7 +58,7 @@ SUPPORT_MAINDISPLAY=1
 SUPPORT_DCLUSTER=0
 SUPPORT_REARDISPLAY=0
 SUPPORT_WLCOMPOSITOR=1
-SUPPORT_WEBENGINE=1
+SUPPORT_WEBENGINE=0
 SUPPORT_DBUS=1
 MANUAL_QMAKE=0
 TARGET_DEVICE=x11
@@ -72,6 +73,9 @@ for opt do
     case "$opt" in
     --without-maindisplay)
 		SUPPORT_MAINDISPLAY=0
+	;;
+    --enable-webengine)
+		SUPPORT_WEBENGINE=1
 	;;
     --with-digitalcluster)
 		SUPPORT_DCLUSTER=1
@@ -300,6 +304,10 @@ echo $'\r'"Generating config.js for hmi profile ............... Already Exists"
 	if [ -f "$TARGETDIR/config-opt.js" ]; then
 		cat $TARGETDIR/config-opt.js >> $CONFIGJS
 	fi
+	if [ "$SUPPORT_WEBENGINE" = "1" ]; then
+		echo "useWebEngine = $SUPPORT_WEBENGINE;" >> $CONFIGJS
+	fi
+
 	if [ "$OVERWRITTEN" = "1" ]; then
 echo $'\r'"                    overwritten at $CONFIGJS"
 	else

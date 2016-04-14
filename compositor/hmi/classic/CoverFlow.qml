@@ -86,10 +86,16 @@ Item {
                         //console.log('icon clicked webview.url='+webview.url);
                         if(type == "quick-html5app" && (!webview || webview.url == "about:blank")) {
                             //console.log('icon clicked webview.url='+webview.url);
+                            var importstm = 'import QtWebKit 3.0;'
+                            var webviewstm = 'WebView';
+                            if(Conf.useWebEngine) {
+                                importstm = 'import QtWebEngine 1.2;'
+                                webviewstm = 'WebEngineView';
+                            }
                             webview = Qt.createQmlObject('
                 import QtQuick 2.1;
-                import QtWebEngine 1.2;
-                WebEngineView  {
+                '+importstm+'
+                '+webviewstm+'  {
                     id: mywebview;
                     url: "about:blank";
                     visible: type == "quick-html5app";
