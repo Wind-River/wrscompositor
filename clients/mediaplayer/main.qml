@@ -25,6 +25,7 @@ Item {
     VideoOutput {
         source: mediaplayer
         anchors.fill: parent
+        fillMode: VideoOutput.Stretch
         visible: true;
     }
     Component.onCompleted: {
