@@ -222,7 +222,7 @@ fi
 #fi
 
 printf "Generating compositor.pro ..."
-echo "QT += quick qml network" > $DUDUREGIPRO
+echo "QT += quick qml network gui-private" > $DUDUREGIPRO
 
 if [ "$SUPPORT_WEBENGINE" = "1" ]; then
 echo "QT += webengine" >> $DUDUREGIPRO
