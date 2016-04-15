@@ -7,30 +7,41 @@
  */
 import QtQuick 2.0
 import QtMultimedia 5.0
+import Qt.labs.folderlistmodel 2.1
 
 Item {
+    id: root
     anchors.fill: parent
-    MediaPlayer {
-        id: mediaplayer
-        source: "file:///home/windriver/sample.ogv"
-        autoLoad: true
-        loops: Audio.Infinite
-        onError: {
-            if (MediaPlayer.NoError != error) {
-                console.warn("error " + error);
-                console.warn("errorString " + errorString)
+
+    Playlist {
+        id: playlist
+        mediaPlayer: player
+
+        fm: FolderListModel {
+            id: fm
+            folder: "file:///home/windriver/Videos"
+            showDirs: false
+            showDotAndDotDot: false
+            nameFilters: ["*.ogv"]
+            property bool ready: count > 0
+            // startup initialization;
+            onReadyChanged: {
+                if (player.status == MediaPlayer.NoMedia) {
+                    playlist.setIndex(0);
+                    player.play();
+                }
             }
         }
     }
+
+    MediaPlayer {
+        id: player
+    }
+
     VideoOutput {
-        source: mediaplayer
+        source: player
         anchors.fill: parent
         fillMode: VideoOutput.Stretch
         visible: true;
-    }
-    Component.onCompleted: {
-        mediaplayer.play();
-        console.warn('souce: '+mediaplayer.source);
-        console.warn('status: '+mediaplayer.playbackState);
     }
 }
