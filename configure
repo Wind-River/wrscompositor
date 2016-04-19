@@ -6,7 +6,7 @@
 # Wind River license agreement.
 
 SUPPOTED_TARGETDEVICES=( x11 minnowmax)
-SUPPOTED_HMIPROFILES=( classic)
+SUPPOTED_HMIPROFILES=( classic cockpit)
 DUDUREGIPRO=compositor/compositor.pro
 
 show_help() {
