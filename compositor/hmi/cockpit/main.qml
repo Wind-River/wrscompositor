@@ -24,6 +24,8 @@ Item {
 
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
+    property int surfaceWidth: root.width - sidePanel.width
+    property int surfaceHeight: root.height - statusBar.height - dockBar.height
 
     signal swapWindowRequested(var anObject)
     signal cloneWindowRequested(var anObject)
@@ -72,6 +74,16 @@ Item {
         }
         currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
         cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
+    }
+    SidePanel {
+        id: sidePanel
+        anchors.top: statusBar.bottom
+        anchors.right: parent.right
+        anchors.bottom: dockBar.top
+        width: parent.width * 0.34
+    }
+    DockBar {
+        id: dockBar
     }
     Image {
         id: background

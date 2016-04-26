@@ -7,12 +7,14 @@
  */
 import QtQuick 2.1
 import "config.js" as Conf
+import QtGraphicalEffects 1.0
+
 
 Item {
     id: statusBar
     anchors.top: parent.top
     width: parent.width
-    height: parent.height/12
+    height: parent.height/10
     z: 50000
     property string wmi: ""
     property bool androidAutoEnabled: false
@@ -24,47 +26,36 @@ Item {
     signal swapWindow
     signal cloneWindow
 
+    FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
+
+
     Rectangle {
         id: statusbarBackground
-        color: "#2e2e2e"
+        color: "black"
         anchors.fill: parent
     }
 
-    /*
-    Image {
-        id: logo
-        //source: "images/tizen-on-dark-small.png"
-        source: "icons/genivi-notext.png"
-        anchors.left: parent.left
-        anchors.leftMargin: width/10
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height
-        opacity: (logoButtonArea.pressed?0.8:1.0)
-        smooth: true
-        MouseArea {
-            id: logoButtonArea
-            anchors.fill: parent
-            onClicked: {
-                logoClicked();
-            }
+    LinearGradient {
+        width: parent.width * 5.39 / 16
+        height: parent.height
+        anchors.right: parent.right
+        start: Qt.point(0, 0)
+        end: Qt.point(300, 0)
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "black" }
+            GradientStop { position: 1.0; color: "#3BBDED" }
         }
     }
-    */
 
-    Image {
-        id: logo_title
-        //source: "images/wr.png"
-        //height: statusBar.height * 0.4
-        //anchors.left: logo.right
-        source: "images/wr-red.png"
-        height: statusBar.height * 0.7
+    RingIcon {
+        id: navi_icon
+        icon: "resources/navi.svg"
         anchors.left: parent.left
+        anchors.leftMargin: parent.width * 0.01
         anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
+        height: parent.height * 0.7
+        width: height
         smooth: true
-        //visible: statusBar.wmi == ""
-        opacity: (logoButtonArea.pressed?0.8:1.0)
         MouseArea {
             id: logoButtonArea
             anchors.fill: parent
@@ -73,6 +64,9 @@ Item {
             }
         }
     }
+
+
+    /*
     Text {
         id: wmi_title
         anchors.left: logo_title.right
@@ -84,7 +78,6 @@ Item {
         smooth: true
         font.bold: true
     }
-
     Image {
         id: cloneWindowButton
         source: statusBar.cloneAvailable?"icons/clone-window.svg":"icons/restore-cloned-window.svg"
@@ -138,42 +131,92 @@ Item {
         smooth: true
 		visible: statusBar.androidAutoEnabled
     }
-    Image {
-        id: bluetooth
-        source: "images/bt.png"
-        anchors.right: dateTime.left
-        anchors.rightMargin: width/20
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.75
-        smooth: true
-    }
+    */
     Text {
-        id: dateTime
-        anchors.right: closeButton.left
-        anchors.rightMargin: width/20
+        id: dateTime1
+        anchors.left: navi_icon.right
+        anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
-        text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
-        font.pointSize: ((statusBar.height*0.4/Conf.densityAdjust)|0)
+        //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
+        text: Qt.formatDateTime(new Date(), "hh:mm")
+        font.pointSize: ((statusBar.height*0.35/Conf.densityAdjust)|0)
+        font.family: tungsten.name
+        font.bold: true
         color: "white"
         smooth: true
     }
 
     Timer {
         interval: 1000; running: true; repeat: true
-        onTriggered: dateTime.text = Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
+        onTriggered: dateTime1.text = Qt.formatDateTime(new Date(), "hh:mm")
     }
 
-    /*
-    Image {
-        id: closeButton
-    source: "images/close.png"
+    Text {
+        id: dateTime2
+        anchors.left: dateTime1.right
+        anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.75
+        //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
+        text: Qt.formatDateTime(new Date(), "dddd MMMM dd")
+        font.pointSize: ((statusBar.height*0.35/Conf.densityAdjust)|0)
+        font.family: tungsten.name
+        color: "white"
         smooth: true
     }
-    */
+
+    Timer {
+        interval: 1000; running: true; repeat: true
+        onTriggered: dateTime2.text = Qt.formatDateTime(new Date(), "dddd MMMM dd")
+    }
+
+    Image {
+        id: wifi
+        source: "resources/wifi-symbol.svg"
+        anchors.left: dateTime2.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.3
+        smooth: true
+    }
+    Image {
+        id: rssi
+        source: "resources/signal-symbol.svg"
+        anchors.left: wifi.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.3
+        smooth: true
+    }
+
+
+    Image {
+        id: weather
+        source: "tango/error.svg"
+        anchors.right: temp.left
+        anchors.rightMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.7
+        smooth: true
+    }
+
+    Text {
+        id: temp
+        anchors.right: parent.right
+        anchors.rightMargin: parent.width/60
+        anchors.verticalCenter: parent.verticalCenter
+        text: "0°"
+        font.pointSize: ((statusBar.height*0.35/Conf.densityAdjust)|0)
+        font.family: tungsten.name
+        font.bold: true
+        color: "white"
+        smooth: true
+    }
+
+
+    /*
     Image {
         id: closeButton
         source: "icons/menu-close.png"
@@ -194,13 +237,57 @@ Item {
         scale: (buttonArea.pressed?0.9:1.0)
         smooth: true
     }
+    */
 
     function showCloseButton(flag) {
-        closeButton.width = flag?closeButton.height:0;
+        //closeButton.width = flag?closeButton.height:0;
     }
 
     function setWMI(wmi) {
         statusBar.wmi = wmi
+    }
+    Timer {
+        id: weatherCrawler
+        interval: 2000; running: true; repeat: true
+        onTriggered: {
+            weatherCrawler.interval = 360000;
+            var doc = new XMLHttpRequest();
+            doc.onreadystatechange = function() {
+                if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
+                    console.log('header received');
+                    console.log(doc.status);
+                    console.log(doc.readyState);
+                    console.log(doc.getAllResponseHeaders ());
+                    console.log(doc.getResponseHeader ("Last-Modified"));
+                } else if (doc.readyState == XMLHttpRequest.DONE) {
+                    console.log('done')
+                    if(doc.status==200) {
+                        console.log(doc.readyState);
+                        var data = JSON.parse(doc.responseText);
+                        //console.log(data.city);
+                        //console.log(data.city.name);
+                        //console.log(data.list.length);
+                        if(data.list.length > 0) {
+                            var i = data.list[0].weather[0];
+                            // kelvin to celcius
+                            var t=parseInt(data.list[0].main.temp-273.15);
+                            //console.log(i.description);
+                            if(i.icon == '01n')
+                                weather.source='tango/01n.svg';
+                            else
+                                weather.source='tango/'+i.icon.slice(0, 2)+'d.svg';
+                            temp.text = t+"°"
+                        }
+                    } else
+                        weather.source='tango/error.svg';
+                }
+            }
+            doc.onerror = function() {
+                weather.source='tango/error.svg';
+            }
+            doc.open("GET", "http://api.openweathermap.org/data/2.5/forecast/city?id=1835848&APPID=a65e5b4240ef1dacf58c8d121734e48d");
+            doc.send();
+        }
     }
 
 }
