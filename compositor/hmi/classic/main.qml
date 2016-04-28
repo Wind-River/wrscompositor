@@ -356,7 +356,7 @@ Item {
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
-        if(surface.title == 'gsteglgles') {
+        if(surface.title == 'gsteglgles' || surface.title == 'OpenGL Renderer') {
             // XXX surface from android on Minnow Max target
             console.log('wayland android auto');
             windowFrame = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
