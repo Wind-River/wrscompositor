@@ -22,7 +22,12 @@ Item {
     SidePanelMedia {
         id: media
         visible: true;
-        anchors.fill: parent
+    }
+
+    SidePanelHVAC {
+        id: hvac
+        visible: true;
+        anchors.top: media.bottom
     }
 
 

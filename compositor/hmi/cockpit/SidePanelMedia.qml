@@ -15,8 +15,18 @@ Item {
     property variant playlist: null
     property int track_index: -1
     property string soundcast_clientid: "c21ebb25eb644205d93434032620af47"
+    property bool widgetMode: false
+
+    width : parent.width
+    height : root.widgetMode?(artwork.height+root.width / 15):parent.height
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
+    /*
+    Rectangle {
+        color: "blue";
+        anchors.fill: parent
+    }
+    */
 
     Component.onCompleted: {
         var doc = new XMLHttpRequest();
@@ -38,6 +48,7 @@ Item {
                         if(!info.artwork_url)
                             continue;
                         playlist.push(info);
+                        trackListModel.append(info);
                     }
                     mediaplayer.init();
                 } else {
@@ -116,6 +127,7 @@ Item {
     Item {
         id: playbuttonpanel
         anchors.left: artwork.right
+        anchors.leftMargin: root.width / 40
         anchors.bottom: playinfopanel.top
         width: waveformbg.width
         height: (artwork.height - waveformbg.height)/2
@@ -143,18 +155,16 @@ Item {
             source: "resources/backward.svg"
             width: backwardArea.pressed?root.width/14:root.width/16
             height: width
-            anchors.right: playbutton.left
-            anchors.rightMargin: width
+            anchors.left: playbuttonpanel.left
+            anchors.leftMargin: width
             anchors.verticalCenter: playbuttonpanel.verticalCenter
             MouseArea {
                 id: backwardArea
                 anchors.fill: parent
                 onClicked: {
                     waveposition.width = 0;
-                    root.track_index = root.track_index - 2;
-                    if(root.track_index < -1)
-                        root.track_index = -1;
-                    mediaplayer.stop(); // to play previous track
+                    tracktime.text = "Loading ...";
+                    playbackControlPrev.start();
                 }
             }
         }
@@ -163,15 +173,16 @@ Item {
             source: "resources/forward.svg"
             width: forwardArea.pressed?root.width/14:root.width/16
             height: width
-            anchors.left: playbutton.right
-            anchors.leftMargin: width
+            anchors.right: playbuttonpanel.right
+            anchors.rightMargin: width
             anchors.verticalCenter: playbuttonpanel.verticalCenter
             MouseArea {
                 id: forwardArea
                 anchors.fill: parent
                 onClicked: {
                     waveposition.width = 0;
-                    mediaplayer.stop(); // to play next track
+                    tracktime.text = "Loading ...";
+                    playbackControlNext.start();
                 }
             }
         }
@@ -179,6 +190,7 @@ Item {
     Item {
         id: playinfopanel
         anchors.left: artwork.right
+        anchors.leftMargin: root.width / 40
         anchors.bottom: waveformbg.top
         width: waveformbg.width
         height: (artwork.height - waveformbg.height)/2
@@ -209,6 +221,49 @@ Item {
         }
     }
     Timer {
+        id: playbackControlNext
+        interval: 100
+        running: false
+        repeat: false
+        onTriggered: {
+            if((root.track_index+1) == root.playlist.length)
+                root.track_index = 0;
+            else
+                root.track_index += 1;
+
+            mediaplayer.stoppedByPlaybackControl = true;
+            mediaplayer.stop(); // to play previous track
+        }
+    }
+    Timer {
+        id: playbackControlPrev
+        interval: 100
+        running: false
+        repeat: false
+        onTriggered: {
+            root.track_index = root.track_index - 1;
+            if(root.track_index < 0)
+                root.track_index = root.playlist.length - 1;
+            mediaplayer.stoppedByPlaybackControl = true;
+            mediaplayer.stop(); // to play previous track
+        }
+    }
+    Timer {
+        id: playbackControlAuto
+        interval: 1000
+        running: false
+        repeat: false
+        onTriggered: {
+            // auto play the next track
+            if((root.track_index+1) == root.playlist.length)
+                root.track_index = 0;
+            else
+                root.track_index += 1;
+
+            mediaplayer.playStream();
+        }
+    }
+    Timer {
         id: playbackTimer
         interval: 1000
         running: mediaplayer.playbackState==MediaPlayer.PlayingState
@@ -221,6 +276,11 @@ Item {
                 return;
             waveposition.width = parseInt(position*waveformbg.width/duration);
 
+            if(position > duration) {
+                position = duration;
+                waveposition.width = waveformbg.width;
+            }
+
             if(mediaplayer.status == MediaPlayer.Buffering)
                 tracktime.text = "Buffering ...";
             else if(mediaplayer.status == MediaPlayer.Stalled)
@@ -231,6 +291,7 @@ Item {
     }
     MediaPlayer {
         id: mediaplayer
+        property bool stoppedByPlaybackControl: false
         function init() {
             console.log('mediaplayer init');
             if(root.playlist.length == 0)
@@ -242,8 +303,15 @@ Item {
             var streamurl = info.stream_url + '?client_id='+root.soundcast_clientid
             console.log('streamurl: '+streamurl);
             mediaplayer.source = streamurl
+            mediaplayer.volume = 0.5; // 50%
             mediaplayer.play();
             root.track_index = -1;
+        }
+        function playStream() {
+            var info = root.playlist[root.track_index];
+            var streamurl = info.stream_url + '?client_id='+root.soundcast_clientid
+            mediaplayer.source = streamurl
+            mediaplayer.play();
         }
         onError: {
             console.log('onerror '+error+' '+errorString);
@@ -275,22 +343,124 @@ Item {
         onStopped: {
             console.log('stopped');
         }
+
         onPlaybackStateChanged: {
             console.log('playback state changed '+mediaplayer.playbackState);
             if(mediaplayer.playbackState==MediaPlayer.StoppedState) {
-                // auto play the next track
-                if((root.track_index+1) == root.playlist.length)
-                    root.track_index = 0;
-                else
-                    root.track_index += 1;
-
-                var info = root.playlist[root.track_index];
-                var streamurl = info.stream_url + '?client_id='+root.soundcast_clientid
-                mediaplayer.source = streamurl
-                mediaplayer.play();
+                if(mediaplayer.stoppedByPlaybackControl) {
+                    mediaplayer.playStream();
+                    mediaplayer.stoppedByPlaybackControl = false;
+                } else
+                    playbackControlAuto.start();
             }
         }
 
+    }
+
+    ListModel {
+        id: trackListModel
+    }
+
+    Item {
+        id: addonPanel
+        visible: !root.widgetMode
+        anchors.bottom: root.bottom
+        width: root.width
+        height: parent.height - (artwork.height+root.width/15)
+        Item {
+            id: volumePanel
+            width: root.width
+            height: root.width / 10
+
+            property int value: 50
+            property int minimumValue: 0
+            property int maximumValue: 100
+
+            Image {
+                id: volumeLabel
+                source: "resources/volume-up.svg"
+                width: root.width/15
+                height: width
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: width
+            }
+            Rectangle {
+                id: "volumeSlider"
+                color: "darkgray";
+                width: volumePanel.width
+                height: volumePanel.height
+                anchors.top: volumePanel.top
+                anchors.bottom: volumePanel.bottom
+                anchors.right: volumePanel.right
+                anchors.rightMargin: parent.width / 10
+                anchors.left: volumeLabel.right
+                anchors.leftMargin: parent.width / 15
+                anchors.topMargin: parent.height*2/5
+                anchors.bottomMargin: parent.height*2/5
+                anchors.verticalCenter: parent.verticalCenter
+                radius: 10
+                Rectangle {
+                    id: "volumeTip"
+                    color: "#3BBDED"
+                    width: volumePanel.height
+                    height: width
+                    x: (parent.width/2)-width/2
+                    anchors.verticalCenter: parent.verticalCenter
+                    border.width: width/20
+                    border.color: "white"
+                    radius: 10
+                    Text {
+                        id: volumeText
+                        text: "50%"
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.pointSize: parent.height/3
+                        font.family: tungsten.name
+                        font.bold: true
+                        color: "white"
+                        smooth: true
+                    }
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                function change(mouse) {
+                    var x = mouse.x - volumeSlider.x
+                    var pos = x / volumeSlider.width * (volumePanel.maximumValue - volumePanel.minimumValue) + volumePanel.minimumValue;
+                    volumePanel.value = pos
+                    console.log("volume: "+pos+" "+pos);
+                    volumeTip.x = x - volumeTip.width/2;
+                    mediaplayer.volume = pos / 100;
+                    volumeText.text = parseInt(pos)+"%";
+                }
+                onClicked: {
+                    if(mouse.x >= volumeSlider.x && mouse.x <= (parent.width-(parent.width-(volumeSlider.x+volumeSlider.width))))
+                        change(mouse);
+                }
+                onPositionChanged: {
+                    if(mouse.x >= volumeSlider.x && mouse.x <= (parent.width-(parent.width-(volumeSlider.x+volumeSlider.width))))
+                        change(mouse);
+                }
+            }
+
+        }
+
+        ListView {
+            id: playListView
+            model: trackListModel
+            anchors.bottom: addonPanel.bottom
+            delegate: Text {
+                id: trackItem
+                height: 30
+                text: "<i>"+user.username+"</i> - "+title
+                font.pointSize: waveform.height/2
+                font.family: tungsten.name
+                font.bold: true
+                color: "white"
+                smooth: true
+            }
+        }
     }
 }
 
