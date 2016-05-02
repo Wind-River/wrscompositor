@@ -38,7 +38,7 @@ ProjectionMode::ProjectionMode(QObject *parent) :
     connect(mPM, SIGNAL(returnToNativeCalled()), this, SLOT(slotReturnToHomeRequested()));
     new ProjectionModeAdaptor(mPM);
     QDBusConnection connection = QDBusConnection::sessionBus();
-    if(getuid() == 0) {
+    if(qApp->arguments().contains("--dbus-systembus")) {
         qDebug() << "connection to systemBus";
         connection = QDBusConnection::systemBus();
     }

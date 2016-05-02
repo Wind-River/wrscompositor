@@ -288,6 +288,7 @@ int main(int argc, char *argv[])
         qInfo() << "  --clean-geometry  Clean saved window geometry";
         qInfo() << "  --list-displays   Show display list";
         qInfo() << "  --display=NUM     Set WAYLAND_DISPLAY environment, default NUM=0";
+        qInfo() << "  --dbus-systembus  Create D-Bus services on SystemBus";
         return 0;
     }
 
