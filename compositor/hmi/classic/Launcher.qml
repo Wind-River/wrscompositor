@@ -35,7 +35,7 @@ Item {
         ListElement {
             label: "Application"
             description: "Application"
-            exec: "/opt/windriver/bin/assistant"
+            exec: "/usr/bin/qt5/designer"
             type: "capp"
             multiple: false
             taskmanage: true
@@ -45,8 +45,7 @@ Item {
         ListElement {
             label: "Fuel Stop Advisor"
             description: "Fuel Stop Advisor"
-            //exec: "/opt/windriver/bin/assistant"
-            exec: "qdbusviewer-qt5"
+            exec: "/usr/bin/qt5/qdbusviewer"
             type: "capp"
             multiple: false
             taskmanage: true
@@ -56,7 +55,7 @@ Item {
         ListElement {
             label: "Web Browsing"
             description: "Web Browsing"
-            exec: "/opt/windriver/bin/assistant"
+            exec: "/usr/share/qt5/examples/webkitwidgets/browser/browser"
             type: "capp"
             multiple: false
             taskmanage: true
