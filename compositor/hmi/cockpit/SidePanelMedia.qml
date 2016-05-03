@@ -272,7 +272,7 @@ Item {
         running: mediaplayer.playbackState==MediaPlayer.PlayingState
         repeat: true
         onTriggered: {
-            console.log("playback: "+mediaplayer.position+"/"+mediaplayer.duration+" "+mediaplayer.status);
+            //console.log("playback: "+mediaplayer.position+"/"+mediaplayer.duration+" "+mediaplayer.status);
             var duration = mediaplayer.duration;
             var position = mediaplayer.position;
             if(position < 0 || duration < 0)
