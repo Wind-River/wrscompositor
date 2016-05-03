@@ -84,6 +84,11 @@ Item {
     }
     DockBar {
         id: dockBar
+        onLaunch: {
+            console.log('launched by Dock: '+appid);
+            if(!sidePanel.launchWidget(appid))
+                console.log('no such widget or app');
+        }
     }
     Image {
         id: background

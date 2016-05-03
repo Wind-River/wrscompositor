@@ -13,6 +13,7 @@ Item {
     width: parent.width
     height: (parent.height*2)/10
     z: 50000
+    signal launch(string appid);
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -25,33 +26,40 @@ Item {
         id: apps
         ListElement {
             label: "Navigation"
+            appid: "navigation"
             iconPath: "resources/navi.svg"
         }
         ListElement {
             label: "Climate"
+            appid: "hvac"
             iconPath: "resources/hvac.svg"
             iconScale: 0.6
         }
         ListElement {
             label: "Media"
+            appid: "media"
             iconPath: "resources/mobile.svg"
             iconScale: 0.9
         }
         ListElement {
             label: "Phone"
+            appid: "dialer"
             iconPath: "resources/phone.svg"
             iconScale: 0.6
         }
         ListElement {
             label: "Applications"
+            appid: "menu"
             iconPath: "resources/apps.svg"
         }
         ListElement {
             label: "Diagnostics"
+            appid: "diagnostics"
             iconPath: "resources/diagnotics.svg"
         }
         ListElement {
             label: "Settings"
+            appid: "settings"
             iconPath: "resources/settings.svg"
         }
     }
@@ -93,6 +101,7 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     console.log("clicked: "+label);
+                    dockbar.launch(appid);
                 }
             }
         }

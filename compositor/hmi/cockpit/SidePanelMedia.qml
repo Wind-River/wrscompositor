@@ -15,7 +15,7 @@ Item {
     property variant playlist: null
     property int track_index: -1
     property string soundcast_clientid: "c21ebb25eb644205d93434032620af47"
-    property bool widgetMode: false
+    property bool widgetMode: true
 
     width : parent.width
     height : root.widgetMode?(artwork.height+root.width / 15):parent.height
@@ -25,6 +25,8 @@ Item {
     Rectangle {
         color: "blue";
         anchors.fill: parent
+        border.width: width/20
+        border.color: "red"
     }
     */
 
@@ -50,6 +52,7 @@ Item {
                         playlist.push(info);
                         trackListModel.append(info);
                     }
+                    console.log("playlist total "+playlist.length+"tracks");
                     mediaplayer.init();
                 } else {
                     // error
@@ -398,7 +401,6 @@ Item {
                 anchors.leftMargin: parent.width / 15
                 anchors.topMargin: parent.height*2/5
                 anchors.bottomMargin: parent.height*2/5
-                anchors.verticalCenter: parent.verticalCenter
                 radius: 10
                 Rectangle {
                     id: "volumeTip"
@@ -449,16 +451,39 @@ Item {
         ListView {
             id: playListView
             model: trackListModel
+            anchors.top: volumePanel.bottom
+            anchors.topMargin: volumePanel.height*2/3
             anchors.bottom: addonPanel.bottom
+            anchors.left: volumePanel.left
+            anchors.leftMargin: volumePanel.height/2
+            anchors.right: volumePanel.right
+            anchors.rightMargin: volumePanel.height/2
             delegate: Text {
                 id: trackItem
-                height: 30
+                height: volumePanel.height*2/3
                 text: "<i>"+user.username+"</i> - "+title
                 font.pointSize: waveform.height/2
                 font.family: tungsten.name
                 font.bold: true
                 color: "white"
                 smooth: true
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log("click to info id "+id);
+                        for(var i=0; i<root.playlist.length; i++) {
+                            var info = root.playlist[i];
+                            if(info.id == id) {
+                                console.log("clicked index is "+i);
+                                console.log(info.title);
+                                root.track_index = i;
+                                mediaplayer.stoppedByPlaybackControl = true;
+                                mediaplayer.stop(); // to play previous track
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
     }

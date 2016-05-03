@@ -30,6 +30,11 @@ Item {
         anchors.top: media.bottom
     }
 
+    function launchWidget(widgetid) {
+        media.widgetMode = !(widgetid=='media');
+        return false;
+    }
+
 
 }
 
