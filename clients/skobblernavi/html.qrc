@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+		<file>html5/index.html</file>
+		<file>html5/leaflet.css</file>
+		<file>html5/leaflet.js</file>
+		<file>html5/skobbler-2.0.js</file>
+    </qresource>
+</RCC>

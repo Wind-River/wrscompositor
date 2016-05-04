@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = eyes mocknavi mediaplayer
+SUBDIRS = eyes mocknavi mediaplayer skobblernavi

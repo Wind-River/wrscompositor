@@ -98,6 +98,7 @@ Item {
         anchors.leftMargin: parent.width/4
         anchors.right: parent.right
         anchors.rightMargin: parent.width/4
+        interactive: false
         height: cellHeight*4
         cellWidth: width/3
         cellHeight: parent.width/8

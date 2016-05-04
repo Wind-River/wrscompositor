@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>WR Helix Cockpit Navi prototype</title>
+		<link rel="shortcut icon" href="assets/favicon.ico"/>
+		<!-- -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<link rel="stylesheet" href="leaflet.css" />
+		<script src="leaflet.js"></script>
+		<script src="skobbler-2.0.js"></script>
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0 auto;
+				padding 0 auto;
+			}
+			#map {
+				height: 100%;
+				margin: 0 auto;
+				padding 0 auto;
+			}
+		</style>
+		<script language="javascript">
+			function init() {
+				var map = L.skobbler.map('map', {
+					apiKey: '383cff7576d820338a323e215d10c44f',
+					mapStyle: 'night',
+					onewayArrows: true,
+					pois: 'all',
+					primaryLanguage: 'en',
+					fallbackLanguage: 'de',
+					mapLabels: 'localNaming',
+					retinaDisplay: 'auto',
+					zoomControl: false,
+					zoomControlPosition: 'top-left',
+					center: [49.418793,11.117473],
+					zoom: 12
+				});
+				L.marker([49.418793,11.117473]).addTo(map);
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div id="map"></div>
+	</body>
+</html>

@@ -26,6 +26,8 @@ clients/mocknavi/mocknavi
 clients/mocknavi/qrc_shaders.cpp
 clients/mediaplayer/mediaplayer
 clients/mediaplayer/qrc_mediaplayer.cpp
+clients/skobblernavi/qrc_html.cpp
+clients/skobblernavi/skobblernavi
 vt-handler/Makefile
 vt-handler/duduregi-vt-handler
 vt-handler/*.moc

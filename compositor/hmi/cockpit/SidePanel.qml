@@ -26,13 +26,13 @@ Item {
 
     SidePanelHVAC {
         id: hvac
-        visible: false;
+        visible: true;
         anchors.top: media.bottom
     }
 
     SidePanelDialer {
         id: dialer
-        visible: true;
+        visible: false;
         anchors.top: media.bottom
     }
 

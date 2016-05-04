@@ -6,6 +6,7 @@
  * Wind River license agreement.
  */
 import QtQuick 2.1
+import com.windriver.duduregi 1.0
 
 Item {
     id: dockbar
@@ -13,7 +14,7 @@ Item {
     width: parent.width
     height: (parent.height*2)/10
     z: 50000
-    signal launch(string appid);
+    signal launched(string appid);
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -27,39 +28,47 @@ Item {
         ListElement {
             label: "Navigation"
             appid: "navigation"
+            apptype: "native"
+            path: "skobblernavi"
             iconPath: "resources/navi.svg"
         }
         ListElement {
             label: "Climate"
             appid: "hvac"
+            apptype: "widget"
             iconPath: "resources/hvac.svg"
             iconScale: 0.6
         }
         ListElement {
             label: "Media"
             appid: "media"
+            apptype: "widget"
             iconPath: "resources/mobile.svg"
             iconScale: 0.9
         }
         ListElement {
             label: "Phone"
             appid: "dialer"
+            apptype: "widget"
             iconPath: "resources/phone.svg"
             iconScale: 0.6
         }
         ListElement {
             label: "Applications"
             appid: "menu"
+            apptype: "widget"
             iconPath: "resources/apps.svg"
         }
         ListElement {
             label: "Diagnostics"
             appid: "diagnostics"
+            apptype: "widget"
             iconPath: "resources/diagnotics.svg"
         }
         ListElement {
             label: "Settings"
             appid: "settings"
+            apptype: "widget"
             iconPath: "resources/settings.svg"
         }
     }
@@ -101,11 +110,33 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     console.log("clicked: "+label);
-                    dockbar.launch(appid);
+                    if(apptype=="native") {
+                        if(process.pid<0)
+                            process.execute(path);
+                    } else
+                        dockbar.launched(appid);
+                }
+            }
+            Component.onCompleted: {
+                if(appid=="navigation") {
+                    // auto launch
+                    process.execute("skobblernavi");
+                }
+            }
+            Process {
+                id: process
+                property variant window: null
+                onPidChanged: {
+                    console.log('[41mprogram launched[0m');
+                    //console.log(launcher.root);
+                    //launcher.root.waitProcess = process
+                }
+                function setWindow(window) {
+                    console.log('setWindow '+window);
+                    //process.window = window
                 }
             }
         }
-
     }
 
 
