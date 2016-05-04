@@ -26,12 +26,25 @@ Item {
 
     SidePanelHVAC {
         id: hvac
+        visible: false;
+        anchors.top: media.bottom
+    }
+
+    SidePanelDialer {
+        id: dialer
         visible: true;
         anchors.top: media.bottom
     }
 
     function launchWidget(widgetid) {
         media.widgetMode = !(widgetid=='media');
+        hvac.visible = (widgetid == 'hvac');
+        dialer.visible = (widgetid == 'dialer');
+
+        if(widgetid == 'media' ||
+            widgetid == 'hvac' ||
+            widgetid == 'dialer')
+            return true;
         return false;
     }
 
