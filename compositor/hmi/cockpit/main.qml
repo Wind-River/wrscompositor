@@ -86,7 +86,12 @@ Item {
         id: dockBar
         onLaunched: {
             console.log('launched by Dock: '+appid);
-            if(!sidePanel.launchWidget(appid))
+            if(appid=='menu') {
+                if(mainmenu.visible)
+                    mainmenu.hide()
+                else
+                    mainmenu.show()
+            } else if(!sidePanel.launchWidget(appid))
                 console.log('no such widget or app');
         }
     }
@@ -112,16 +117,6 @@ Item {
             root: root
             visible: false
             Component.onCompleted: {
-                statusBar.closeWindow.connect(function() {
-                    console.log('close clicked');
-                    hide();
-                })
-                statusBar.logoClicked.connect(function() {
-                    if(!mainmenu.visible)
-                        mainmenu.show()
-                    else
-                        menuShowRequested()
-                })
                 statusBar.closeWindow.connect(function() {
                     console.log('close clicked');
                     hide();
@@ -274,8 +269,10 @@ Item {
     Keys.onPressed: {
         console.log('key on main: '+event.key);
         if (event.key == Qt.Key_F1) {
-            console.log('[41mF1 - 3 !!!![0m\n');
-            mainmenu.show()
+            if(mainmenu.visible)
+                mainmenu.hide()
+            else
+                mainmenu.show()
         } else if (event.key == Qt.Key_Backspace) {
             console.log('backspace');
             if(mainmenu.visible)
