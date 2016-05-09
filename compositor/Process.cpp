@@ -15,6 +15,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <stdlib.h>
+#include <QDirIterator>
 
 QString Process::WAYLAND_DISPlAY = "wayland-0";
 //Q_DECLARE_METATYPE(QList<QObject*>)
@@ -46,6 +47,15 @@ bool Process::execute(const QString &cmd)
     connect(mProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(slotStandardOutput()));
     QStringList args = cmd.split(" ");
     QStringList paths;
+    if(QFileInfo::exists("../clients")) {
+        QDirIterator it("../clients", QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            QString subpath = it.next();
+            QFileInfo fi(subpath);
+            if(subpath != "." && subpath != ".." && !subpath.endsWith(".") && fi.isDir())
+                paths << subpath;
+        }
+    }
     paths << "/opt/windriver/bin";
     paths << "/usr/local/bin";
     paths << "/usr/bin";
@@ -56,7 +66,10 @@ bool Process::execute(const QString &cmd)
     } else if(!cmd.startsWith("/")) {
         Q_FOREACH (const QString &dirpath, paths) {
             if(QFileInfo::exists(dirpath+"/"+args[0])) {
-                qDebug() << dirpath+"/"+args[0];
+                if(dirpath.startsWith("..")) {
+                    QFileInfo fi(dirpath);
+                    mProcess->setWorkingDirectory(fi.dir().absolutePath());
+                }
                 mProcess->start(dirpath+"/"+args[0], args.mid(1));
                 return true;
             }
