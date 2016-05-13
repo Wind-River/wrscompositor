@@ -117,25 +117,6 @@ Item {
                         dockbar.launched(appid);
                 }
             }
-            Component.onCompleted: {
-                if(appid=="navigation") {
-                    // auto launch
-                    process.execute("skobblernavi");
-                }
-            }
-            Process {
-                id: process
-                property variant window: null
-                onPidChanged: {
-                    console.log('[41mprogram launched[0m');
-                    //console.log(launcher.root);
-                    //launcher.root.waitProcess = process
-                }
-                function setWindow(window) {
-                    console.log('setWindow '+window);
-                    //process.window = window
-                }
-            }
         }
     }
 

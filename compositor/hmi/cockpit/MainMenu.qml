@@ -52,9 +52,7 @@ Item {
             description: "Audio Manager Monitor"
             //exec: "/home/jpark/demo/am-monitor-wayland.sh"
             exec: "AudioManagerMonitor"
-            type: "capp"
             multiple: false
-            taskmanage: true
             systemd: false
             iconPath: "icons/gdp-icon-ammonitor.png"
         }
@@ -62,9 +60,7 @@ Item {
             label: "Application"
             description: "Application"
             exec: "/opt/windriver/bin/assistant"
-            type: "capp"
             multiple: false
-            taskmanage: true
             systemd: false
             iconPath: "icons/gdp-icon-app.png"
         }
@@ -73,9 +69,7 @@ Item {
             description: "Fuel Stop Advisor"
             //exec: "/opt/windriver/bin/assistant"
             exec: "qdbusviewer-qt5"
-            type: "capp"
             multiple: false
-            taskmanage: true
             systemd: false
             iconPath: "icons/gdp-icon-fuel.png"
         }
@@ -83,19 +77,15 @@ Item {
             label: "Web Browsing"
             description: "Web Browsing"
             exec: "/opt/windriver/bin/assistant"
-            type: "capp"
             multiple: false
-            taskmanage: true
             systemd: false
             iconPath: "icons/gdp-icon-browser.png"
         }
         ListElement {
             label: "Navigation"
             description: "Navigation"
-            exec: "mocknavi"
-            type: "capp"
+            exec: "skobblernavi"
             multiple: false
-            taskmanage: true
             systemd: false
             iconPath: "icons/gdp-icon-nav.png"
             unitFile: "mocknavi.service"
@@ -105,9 +95,7 @@ Item {
             description: "Media Player"
             //exec: "eyes"
             exec: "mediaplayer"
-            type: "capp"
             multiple: false
-            taskmanage: true
             systemd: false
             iconPath: "icons/gdp-icon-mediaplayer.png"
             unitFile: "eyes.service"
@@ -141,7 +129,7 @@ Item {
                         console.log('no pid');
                         if(window != null) {
                             console.log('has window ' + window);
-                            launcher.root.raiseWindow(window);
+                            root.raiseWindow(window);
                         }
                         return;
                     }
@@ -163,8 +151,7 @@ Item {
 
                 onPidChanged: {
                     console.log("program launched by systemd's dbus, pid = " + pid);
-                    console.log(launcher.root);
-                    launcher.root.waitProcess = systemd_unit;
+                    root.waitProcess = systemd_unit;
                 }
                 Component.onCompleted: {
                     if (systemd)
@@ -181,17 +168,22 @@ Item {
                 property variant window: null
                 onPidChanged: {
                     console.log('program launched');
-                    console.log(launcher.root);
-                    launcher.root.waitProcess = process
+                    root.waitProcess = process
                 }
                 function setWindow(window) {
                     console.log('setWindow '+window);
                     process.window = window
                 }
             }
+            Component.onCompleted: {
+                // XXX auto launch at starting time
+                if(exec=='skobblernavi') {
+                    launch();
+                }
+            }
             Image {
                 id: appIcon
-                source: type=="wgt"?"/opt/usr/apps/"+exec+"/res/wgt/"+label+".png":iconPath
+                source: iconPath
                 anchors.centerIn: parent
                 scale: (pressed||iconMouseArea.pressed)?(parent.height/height):(parent.height/height)*0.9
                 MouseArea {
