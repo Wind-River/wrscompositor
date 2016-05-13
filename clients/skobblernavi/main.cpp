@@ -11,7 +11,12 @@ int main(int argc, char * argv[])
 
     QWebView w;
     w.load(url);
-    w.showFullScreen();
+    if(getenv("DUDUREGI_WINDOW_DEFAULT_WIDTH")!=NULL) {
+        w.resize(atoi(getenv("DUDUREGI_WINDOW_DEFAULT_WIDTH")),
+                atoi(getenv("DUDUREGI_WINDOW_DEFAULT_HEIGHT")));
+        w.show();
+    } else
+        w.showFullScreen();
 
     return app.exec();
 }

@@ -112,6 +112,8 @@ Item {
             id: mainmenu
             height: parent.height
             width: parent.width
+            windowDefaultWidth: background.width
+            windowDefaultHeight: background.height
             androidAutoEnabled: root.androidAutoEnabled
             z: 100
             root: root
@@ -205,6 +207,8 @@ Item {
 
         windowFrame.rootBackground = background
         windowFrame.z = 50
+        windowFrame.width = surface.size.width;
+        windowFrame.height = surface.size.height;
         windowFrame.surface = surface;
         windowFrame.surfaceItem = compositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
@@ -226,18 +230,17 @@ Item {
 
         if(root.waitProcess && root.waitProcess.pid == surface.client.processId)
         {
-            // XXX hard code for AM Monitor
-            if(root.waitProcess.cmd.indexOf("onitor")>0) // AM Monitor
-            {
-                windowFrame.targetY = - statusBar.height;
-            }
             root.waitProcess.setWindow(windowFrame);
             root.waitProcess = null;
         }
 
-        if(!Conf.useMultiWindowFeature)
+        if(!Conf.useMultiWindowFeature) {
+            // XXX scale to fit into main area
+            console.log("background.width: "+background.width);
+            windowFrame.scaledWidth = background.width/surface.size.width;
+            windowFrame.scaledHeight = background.height/surface.size.height;
             CompositorLogic.addWindow(windowFrame);
-        else { // for multi surface feature enabled mode
+        } else { // for multi surface feature enabled mode
             // stretch to maximum size as default
             windowFrame.scaledWidth = background.width/surface.size.width;
             windowFrame.scaledHeight = background.height/surface.size.height;

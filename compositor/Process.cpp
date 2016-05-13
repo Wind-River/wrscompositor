@@ -21,7 +21,7 @@ QString Process::WAYLAND_DISPlAY = "wayland-0";
 //Q_DECLARE_METATYPE(QList<QObject*>)
 
 Process::Process(QObject *parent) :
-    QObject(parent), mProcess(0)
+    QObject(parent), mProcess(0), mWDW(1920), mWDH(1080)
 {
 }
 bool Process::execute(const QString &cmd)
@@ -36,6 +36,8 @@ bool Process::execute(const QString &cmd)
     QStringList env = QProcess::systemEnvironment();
     env << "QT_QPA_PLATFORM=wayland";
     env << QString("WAYLAND_DISPLAY=%1").arg(Process::WAYLAND_DISPlAY);
+    env << QString("DUDUREGI_WINDOW_DEFAULT_WIDTH=%1").arg(mWDW);
+    env << QString("DUDUREGI_WINDOW_DEFAULT_HEIGHT=%1").arg(mWDH);
     //env << "LD_LIBRARY_PATH=/opt/workspaces/wl/out/lib";
     //env << "QT_XCB_GL_INTEGRATION=xcb_egl";
     mProcess->setEnvironment(env);

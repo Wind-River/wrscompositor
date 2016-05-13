@@ -16,6 +16,8 @@ Item {
     property bool androidAutoProjectionMode: null;//coverFlow.androidAutoProjectionMode
     property bool androidAutoEnabled: falsed
     property variant androidAutoContainer: null;//coverFlow.androidAutoContainer
+    property int windowDefaultWidth: 1920
+    property int windowDefaultHeight: 1080
     Rectangle {
         id: background
         anchors.fill: parent
@@ -166,6 +168,8 @@ Item {
             Process {
                 id: process
                 property variant window: null
+                windowDefaultWidth: mainMenu.windowDefaultWidth
+                windowDefaultHeight: mainMenu.windowDefaultHeight
                 onPidChanged: {
                     console.log('program launched');
                     root.waitProcess = process
