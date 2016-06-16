@@ -60,10 +60,13 @@ void DuduregiCompositor::loadQmlComponent(const QSize &size)
 
         mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
         setPrimaryOutput(mMainOutput);
-        mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
+        //mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
         //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
         //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
         mMainOutput->window()->setFlags(Qt::WindowCloseButtonHint);
+        mMainOutput->window()->setFlags(Qt::MSWindowsFixedSizeDialogHint); //Set window to fixed size
+        mMainOutput->window()->setFlags(Qt::CustomizeWindowHint); //Set window with no title bar
+        mMainOutput->window()->setFlags(Qt::FramelessWindowHint); //Set a frameless window
 
 #if DUDUREGI_WAYLAND_COMPOSITOR
         QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
