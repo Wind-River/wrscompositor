@@ -51,8 +51,8 @@ using std::cout;
 #define DEFAULT_FPS      30.0
 #define DEFAULT_ANIM     30.0
 #define DEFAULT_SURFACE  SURFACE_EXAMPLE_EGLX11_APPLICATION
-#define DEFAULT_WIDTH    800
-#define DEFAULT_HEIGHT   480
+#define DEFAULT_WIDTH    1920
+#define DEFAULT_HEIGHT   1080
 #define DEFAULT_OPACITY  1.0
 #define DEFAULT_NOSKY    false
 #define DEFAULT_HELP     false
@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
     }
     */
     ShaderLighting navi(DEFAULT_FPS, DEFAULT_ANIM);
+    navi.resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     navi.show();
 #else
     QLabel note("OpenGL Support required");
