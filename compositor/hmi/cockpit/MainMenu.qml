@@ -86,7 +86,7 @@ Item {
         ListElement {
             label: "Navigation"
             description: "Navigation"
-            exec: "skobblernavi"
+            exec: "mocknavi"
             multiple: false
             systemd: false
             iconPath: "icons/gdp-icon-nav.png"
@@ -181,7 +181,7 @@ Item {
             }
             Component.onCompleted: {
                 // XXX auto launch at starting time
-                if(exec=='skobblernavi') {
+                if(exec=='mocknavi') {
                     launch();
                 }
             }
