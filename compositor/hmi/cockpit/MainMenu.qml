@@ -66,7 +66,7 @@ Item {
         ListElement {
             label: "Application"
             description: "Application"
-            exec: "/opt/windriver/bin/assistant"
+            exec: "skobblernavi"
             multiple: false
             systemd: false
             iconPath: "icons/gdp-icon-app.png"
