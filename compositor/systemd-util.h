@@ -1,3 +1,11 @@
+/*
+ * Copyright © 2016 Wind River Systems, Inc.
+ *
+ * The right to copy, distribute, modify, or otherwise make use of this
+ * software may be licensed only pursuant to the terms of an applicable
+ * Wind River license agreement.
+ */
+
 #ifndef SYSTEMD_UTIL_H
 #define SYSTEMD_UTIL_H
 
@@ -16,7 +24,6 @@ public:
 	void setUnitPath(const QString &unitFile);
 	QString getUnitPath() { return mUnitPath; }
 	void notifyPidChanged(uint pid);
-	void notifyResultChanged(const QString &unitPath, const QString &result);
 signals:
 	void pidChanged(uint pid);
 private:
@@ -37,6 +44,7 @@ private slots:
 	void slotJobRemove(uint, QDBusObjectPath, QString, QString);
 	void slotPropertiesChanged(QString, QMap<QString,QVariant>, QStringList);
 private:
+	void checkResult(uint pid, const QString &result);
 	QString getUnitByPID(uint pid);
 	QVector<SystemdUnit*> mUnitList;
 };

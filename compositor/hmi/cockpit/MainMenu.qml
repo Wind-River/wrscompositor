@@ -18,6 +18,11 @@ Item {
     property variant androidAutoContainer: null;//coverFlow.androidAutoContainer
     property int windowDefaultWidth: 1920
     property int windowDefaultHeight: 1080
+
+    SystemdDbusClient {
+        id: systemd_dbusClient
+    }
+
     Rectangle {
         id: background
         anchors.fill: parent
@@ -52,11 +57,11 @@ Item {
         ListElement {
             label: "AM Monitor"
             description: "Audio Manager Monitor"
-            //exec: "/home/jpark/demo/am-monitor-wayland.sh"
             exec: "AudioManagerMonitor"
             multiple: false
-            systemd: false
+            systemd: true
             iconPath: "icons/gdp-icon-ammonitor.png"
+            unitFile: "AudioManager_Monitor.service"
         }
         ListElement {
             label: "Application"
@@ -78,10 +83,11 @@ Item {
         ListElement {
             label: "Web Browsing"
             description: "Web Browsing"
-            exec: "/opt/windriver/bin/assistant"
+            exec: "/opt/demoui/bin/demoui"
             multiple: false
-            systemd: false
+            systemd: true
             iconPath: "icons/gdp-icon-browser.png"
+            unitFile: "demoui.service"
         }
         ListElement {
             label: "Navigation"
@@ -200,7 +206,7 @@ Item {
                 }
                 Image {
                     id: quitButton
-                    visible: process.pid != 0
+                    visible: (systemd) ? systemd_unit.pid != 0 : process.pid != 0
                     enabled: visible
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -214,8 +220,9 @@ Item {
                         id: quitArea
                         anchors.fill: parent
                         onClicked: {
-                            console.log('quit '+process.pid);
-                            process.quit()
+                            console.log('quit ' + systemd ? systemd_unit.pid : process.pid);
+                            if (systemd) systemd_dbusClient.stopUnit(unitFile);
+                            else process.quit()
                         }
                     }
                 }
