@@ -77,11 +77,11 @@ Item {
                     myFlipable.flipped = !myFlipable.flipped
                     myPathView.interactive = !myFlipable.flipped
                     /*
-                   if(type == "quick-html5app" && myFlipable.flipped) {
+                    if(type == "quick-html5app" && myFlipable.flipped) {
                         var view = Qt.createQmlObject('import QtQuick 2.0; import QtWebKit 3.0; WebView { anchors.fill: parent;}', back);
                         view.url = path;
-                   }
-                   */
+                    }
+                    */
                     if((type == "quick-html5app" || type == "projection") && myFlipable.flipped) {
                         //console.log('icon clicked webview.url='+webview.url);
                         if(type == "quick-html5app" && (!webview || webview.url == "about:blank")) {
@@ -93,31 +93,32 @@ Item {
                                 webviewstm = 'WebEngineView';
                             }
                             webview = Qt.createQmlObject('
-                import QtQuick 2.1;
-                '+importstm+'
-                '+webviewstm+'  {
-                    id: mywebview;
-                    url: "about:blank";
-                    visible: type == "quick-html5app";
-                    width: coverFlow.width;
-                    height: coverFlow.height;
-                    Keys.onPressed: {
-                        console.log("key on mywebview "+event.key);
-                        if (event.key == Qt.Key_Backspace || event.key == Qt.Key_F1) {
-                            mywebview.focus = false;
-                            itemClicked();
-                            myFlipable.focus = true;
-                        }
-                    }
-                    onUrlChanged: {
-                        if(url == "about:blank" && mywebview.focus) {
-                            mywebview.focus = false;
-                            itemClicked();
-                            myFlipable.focus = true;
-                        };
-                    }
-                }
-                            ', backItem, "QuickHTML5App");
+                                        import QtQuick 2.1;
+                                        '+importstm+'
+                                        '+webviewstm+'
+                                        {
+                                            id: mywebview;
+                                            url: "about:blank";
+                                            visible: type == "quick-html5app";
+                                            width: coverFlow.width;
+                                            height: coverFlow.height;
+                                            Keys.onPressed: {
+                                                console.log("key on mywebview "+event.key);
+                                                if (event.key == Qt.Key_Backspace || event.key == Qt.Key_F1) {
+                                                    mywebview.focus = false;
+                                                    itemClicked();
+                                                    myFlipable.focus = true;
+                                                }
+                                            }
+                                            onUrlChanged: {
+                                                if(url == "about:blank" && mywebview.focus) {
+                                                    mywebview.focus = false;
+                                                    itemClicked();
+                                                    myFlipable.focus = true;
+                                                };
+                                            }
+                                        }
+                                        ', backItem, "QuickHTML5App");
                             webview.focus = true
                             webview.url = path
                         } else if (type == "projection") {
