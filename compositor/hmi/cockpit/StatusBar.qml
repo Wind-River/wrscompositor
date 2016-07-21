@@ -18,6 +18,7 @@ Item {
     z: 50000
     property string wmi: ""
     property bool androidAutoEnabled: false
+    property bool androidAutoProjectionMode: false
     property bool currentWindowExposed: false
     property bool cloneAvailable: true
 
@@ -119,18 +120,6 @@ Item {
         scale: (swapButtonArea.pressed?0.9:1.0)
         smooth: true
     }
-
-    Image {
-        id: androidAuto
-        source: "icons/android-logo.png"
-        anchors.right: bluetooth.left
-        anchors.rightMargin: width/20
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.75
-        smooth: true
-		visible: statusBar.androidAutoEnabled
-    }
     */
     Text {
         id: dateTime1
@@ -189,8 +178,28 @@ Item {
         height: statusBar.height * 0.3
         smooth: true
     }
-
-
+    Image {
+        id: androidAuto
+        source: statusBar.androidAutoEnabled ? "icons/android-auto.png" : "icons/android-auto-grey.png"
+        anchors.left: rssi.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.75
+        smooth: true
+        MouseArea {
+            id: aapButtonArea
+            anchors.fill: parent
+            onClicked: {
+                if (statusBar.androidAutoEnabled && !statusBar.androidAutoProjectionMode) {
+                    console.log('AndroidAutoProjection is enabled, try to flip projectionView');
+                    root.flipWindowFrameRequested();
+                }
+            }
+        }
+        // opacity: (aapButtonArea.pressed? 0.8 : 1.0)
+        scale: (aapButtonArea.pressed? 0.9 : 1.0)
+    }
     Image {
         id: weather
         source: "tango/error.svg"

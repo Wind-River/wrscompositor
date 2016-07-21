@@ -6,6 +6,7 @@
  * Wind River license agreement.
  */
 import QtQuick 2.1
+import QtMultimedia 5.0
 import "compositor.js" as CompositorLogic
 import "config.js" as Conf
 import "sprintf.js" as SPrintf
@@ -20,7 +21,6 @@ Item {
 
     property variant currentWindow: null
     property variant waitProcess: null
-    property bool androidAutoEnabled: false
 
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
@@ -30,11 +30,24 @@ Item {
     signal swapWindowRequested(var anObject)
     signal cloneWindowRequested(var anObject)
     signal closeClonedWindowRequested(var anObject)
+    signal flipWindowFrameRequested
 
     onHasFullscreenWindowChanged: {
         console.log("has fullscreen window: " + hasFullscreenWindow);
     }
 
+    ProjectionMode {
+        id: projectionModeAndroidAuto
+
+        property bool androidAutoEnabled: false
+        property bool androidAutoProjectionMode: null
+        property variant androidAutoContainer: null
+
+        onReturnToHomeRequested: {
+            console.log('return to home !!!');
+            root.flipWindowFrameRequested();
+        }
+    }
 
     /*
     VNADBusClient {
@@ -64,76 +77,179 @@ Item {
         }
     }
 
-    StatusBar {
-        id: statusBar
-        androidAutoEnabled: root.androidAutoEnabled
-        visible: !mainmenu.androidAutoProjectionMode
-        //z: mainmenu.androidAutoProjectionMode?-1:200
-        onHeightChanged: {
-            Conf.statusBarHeight = statusBar.height
-        }
-        currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
-        cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
-    }
-    SidePanel {
-        id: sidePanel
-        anchors.top: statusBar.bottom
-        anchors.right: parent.right
-        anchors.bottom: dockBar.top
-        width: parent.width * 0.34
-    }
-    DockBar {
-        id: dockBar
-        onLaunched: {
-            console.log('launched by Dock: '+appid);
-            if(appid=='menu') {
-                if(mainmenu.visible)
-                    mainmenu.hide()
-                else
-                    mainmenu.show()
-            } else if(!sidePanel.launchWidget(appid))
-                console.log('no such widget or app');
-        }
-    }
-    Image {
-        id: background
-        anchors.top: statusBar.bottom
-        width: parent.width - sidePanel.width
-        height: parent.height - statusBar.height - dockBar.height
+    Flipable {
+        id: windowFrameFlip
+        width: parent.width
+        height: parent.height
+        property bool flipped: false
 
-        source: "resources/background.jpg"
-
-        Item {
-            id: currentApp
-            anchors.fill: parent
-        }
-
-        MainMenu {
-            id: mainmenu
-            height: parent.height
+        front: Rectangle { 
+            id: helixCockpit
             width: parent.width
-            windowDefaultWidth: background.width
-            windowDefaultHeight: background.height
-            androidAutoEnabled: root.androidAutoEnabled
-            z: 100
-            root: root
-            visible: false
-            Component.onCompleted: {
-                statusBar.closeWindow.connect(function() {
-                    console.log('close clicked');
-                    hide();
-                })
+            height: parent.height
+            visible: !projectionModeAndroidAuto.androidAutoProjectionMode
+            //z: projectionModeAndroidAuto.androidAutoProjectionMode?-1:200
+            StatusBar {
+                id: statusBar
+                androidAutoEnabled: projectionModeAndroidAuto.androidAutoEnabled
+                androidAutoProjectionMode: projectionModeAndroidAuto.androidAutoProjectionMode
+                onHeightChanged: {
+                    Conf.statusBarHeight = statusBar.height
+                }
+                currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
+                cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
             }
-            onMenuActivated: {
-                statusBar.showCloseButton(flag);
+            SidePanel {
+                id: sidePanel
+                anchors.top: statusBar.bottom
+                anchors.right: parent.right
+                anchors.bottom: dockBar.top
+                width: parent.width * 0.34
+            }
+            DockBar {
+                id: dockBar
+                onLaunched: {
+                    console.log('launched by Dock: '+appid);
+                    if(appid=='menu') {
+                        if(mainmenu.visible)
+                            mainmenu.hide()
+                        else
+                            mainmenu.show()
+                    } else if(!sidePanel.launchWidget(appid))
+                        console.log('no such widget or app');
+                }
+            }
+            Image {
+                id: background
+                anchors.top: statusBar.bottom
+                width: parent.width - sidePanel.width
+                height: parent.height - statusBar.height - dockBar.height
+
+                source: "resources/background.jpg"
+
+                Item {
+                    id: currentApp
+                    anchors.fill: parent
+                }
+
+                MainMenu {
+                    id: mainmenu
+                    height: parent.height
+                    width: parent.width
+                    windowDefaultWidth: background.width
+                    windowDefaultHeight: background.height
+                    z: 100
+                    root: root
+                    visible: false
+                    Component.onCompleted: {
+                        statusBar.closeWindow.connect(function() {
+                            console.log('close clicked');
+                            hide();
+                            })
+                    }
+                    onMenuActivated: {
+                        statusBar.showCloseButton(flag);
+                    }
+                }
+                /*
+                BuiltinNavigation {
+                id: navi
+                anchors.fill: parent
+                }
+                */
             }
         }
-        /*
-        BuiltinNavigation {
-            id: navi
-            anchors.fill: parent
+        back: Rectangle {
+            id: fullscreenProjection
+            width: parent.width
+            height: parent.height
+            anchors.top: parent.top
+            color: "black"
+            VideoOutput {
+                id: projectionView
+                source: mediaPlayer
+                width: parent.width
+                height: parent.height
+                property string projectionStatus: "none"
+                onProjectionStatusChanged: {
+                    if (projectionView.projectionStatus == "disconnected" && projectionView.androidAutoProjectionMode) {
+                        console.log("try to flip helix-cockpit");
+                        root.flipWindowFrameRequested();
+                    }
+                }
+                MediaPlayer {
+                    id: mediaPlayer
+                    autoLoad: false
+                    loops: Audio.Infinite
+                    onError: {
+                        if (MediaPlayer.NoError != error) {
+                            console.log("[41m[qmlvideo][0m VideoItem.onError error " + error + " errorString " + errorString)
+                        }
+                    }
+                }
+                MouseArea {
+                    id: videoMouseArea
+                    anchors.fill: parent
+                    onPressed: {
+                        console.log('mouse pressed '+mouse.x+' '+mouse.y)
+                        projectionModeAndroidAuto.sendMousePressed(mouse.x, mouse.y);
+                    }
+                    onReleased: {
+                        console.log('mouse released '+mouse.x+' '+mouse.y)
+                        projectionModeAndroidAuto.sendMouseReleased(mouse.x, mouse.y);
+                    }
+                    onPositionChanged: {
+                        console.log('mouse pos changed '+mouse.x+' '+mouse.y)
+                        projectionModeAndroidAuto.sendMouseMove(mouse.x, mouse.y);
+                    }
+                }
+                Keys.onPressed: {
+                    console.log('key pressed on projection: '+event.key);
+                    projectionModeAndroidAuto.sendKeyPressed(event.key);
+                }
+                Keys.onReleased: {
+                    console.log('key released on projection: '+event.key);
+                    projectionModeAndroidAuto.sendKeyReleased(event.key);
+                }
+                Component.onCompleted: {
+                    projectionModeAndroidAuto.mediaPlayer = mediaPlayer
+                    projectionModeAndroidAuto.androidAutoContainer = projectionView
+                }
+            }
         }
-        */
+        transform: Rotation {
+            id: rotation
+            origin.x: windowFrameFlip.width/2
+            origin.y: windowFrameFlip.height/2
+            axis.x: 0; axis.y: 1; axis.z: 0     // set axis.y to 1 to rotate around y-axis
+            angle: 0    // the default angle
+        }
+        states: State {
+            name: "back"
+            PropertyChanges { target: rotation; angle: 180 } 
+            when: windowFrameFlip.flipped
+        }
+        transitions: Transition {
+            NumberAnimation { target: rotation; property: "angle"; duration: 500 }
+        }
+
+        onSideChanged: {
+            if(side==Flipable.Front) {
+                console.log('onSideChanged(front), focused window is helix-cockpit');
+                projectionModeAndroidAuto.androidAutoProjectionMode = false;
+                projectionModeAndroidAuto.sendVideoFocus(false);
+            } else {
+                console.log('onSideChanged(back), focused window is projectionView');
+                projectionModeAndroidAuto.androidAutoProjectionMode = true;
+                projectionModeAndroidAuto.sendVideoFocus(true);
+            }
+        }
+        Component.onCompleted: {
+            root.flipWindowFrameRequested.connect(function() {
+                console.log("Recevied flipWindowFrameRequested signal");
+                windowFrameFlip.flipped = !windowFrameFlip.flipped
+            })
+        }
     }
 
     function raiseWindow(window) {
@@ -163,8 +279,8 @@ Item {
             root.currentWindow = null;
 
         if(windowFrame.androidAutoProjection) {
-            root.androidAutoEnabled = false;
-            mainmenu.androidAutoContainer.projectionStatus = "disconnected";
+            projectionModeAndroidAuto.androidAutoEnabled = false;
+            projectionModeAndroidAuto.androidAutoContainer.projectionStatus = "disconnected";
         }
 
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
@@ -195,13 +311,13 @@ Item {
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
-        if(surface.title == 'gsteglgles') {
+        if(surface.title == 'gsteglgles' || surface.title == 'OpenGL Renderer') {
             // XXX surface from android on Minnow Max target
             console.log('wayland android auto');
-            windowFrame = windowContainerComponent.createObject(mainmenu.androidAutoContainer);
+            windowFrame = windowContainerComponent.createObject(projectionModeAndroidAuto.androidAutoContainer);
             windowFrame.androidAutoProjection = true
-            root.androidAutoEnabled = true;
-            mainmenu.androidAutoContainer.projectionStatus = "connected";
+            projectionModeAndroidAuto.androidAutoEnabled = true;
+            projectionModeAndroidAuto.androidAutoContainer.projectionStatus = "connected";
         } else
             windowFrame = windowContainerComponent.createObject(background);
 
@@ -236,9 +352,11 @@ Item {
 
         if(!Conf.useMultiWindowFeature) {
             // XXX scale to fit into main area
-            console.log("background.width: "+background.width);
-            windowFrame.scaledWidth = background.width/surface.size.width;
-            windowFrame.scaledHeight = background.height/surface.size.height;
+            if (!windowFrame.androidAutoProjection) {
+                console.log("background.width: "+background.width);
+                windowFrame.scaledWidth = background.width/surface.size.width;
+                windowFrame.scaledHeight = background.height/surface.size.height;
+            }
             CompositorLogic.addWindow(windowFrame);
         } else { // for multi surface feature enabled mode
             // stretch to maximum size as default
