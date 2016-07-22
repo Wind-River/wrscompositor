@@ -40,7 +40,7 @@ Item {
         id: projectionModeAndroidAuto
 
         property bool androidAutoEnabled: false
-        property bool androidAutoProjectionMode: null
+        property bool androidAutoProjectionMode: false
         property variant androidAutoContainer: null
 
         onReturnToHomeRequested: {
@@ -172,7 +172,8 @@ Item {
                 height: parent.height
                 property string projectionStatus: "none"
                 onProjectionStatusChanged: {
-                    if (projectionView.projectionStatus == "disconnected" && projectionView.androidAutoProjectionMode) {
+                    console.log("onProjectionStatusChanged, projectionStatus is changed");
+                    if (projectionView.projectionStatus == "disconnected" && projectionModeAndroidAuto.androidAutoProjectionMode) {
                         console.log("try to flip helix-cockpit");
                         root.flipWindowFrameRequested();
                     }
