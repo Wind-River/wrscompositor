@@ -187,20 +187,29 @@ Item {
                         }
                     }
                 }
-                MouseArea {
-                    id: videoMouseArea
+
+                MultiPointTouchArea {
+                    id: projectionViewTouchArea
                     anchors.fill: parent
+                    mouseEnabled: true
+                    minimumTouchPoints: 1
+                    maximumTouchPoints: 4
+
                     onPressed: {
-                        console.log('mouse pressed '+mouse.x+' '+mouse.y)
-                        projectionModeAndroidAuto.sendMousePressed(mouse.x, mouse.y);
+                        for (var touch in touchPoints) {
+                            projectionModeAndroidAuto.sendMousePressed(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
+                        }
                     }
                     onReleased: {
-                        console.log('mouse released '+mouse.x+' '+mouse.y)
-                        projectionModeAndroidAuto.sendMouseReleased(mouse.x, mouse.y);
+                        for (var touch in touchPoints) {
+                            projectionModeAndroidAuto.sendMouseReleased(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
+                        }
                     }
-                    onPositionChanged: {
-                        console.log('mouse pos changed '+mouse.x+' '+mouse.y)
-                        projectionModeAndroidAuto.sendMouseMove(mouse.x, mouse.y);
+
+                    onTouchUpdated: {
+                        for (var touch in touchPoints) {
+                            projectionModeAndroidAuto.sendMouseMove(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
+                        }
                     }
                 }
                 Keys.onPressed: {

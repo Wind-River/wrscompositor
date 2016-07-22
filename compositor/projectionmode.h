@@ -22,7 +22,7 @@ public:
     explicit ProjectionModePrivate(QObject *parent = 0);
 
 Q_SIGNALS:
-    void touchEvent(int x, int y, int pressed);
+    void touchEvent(int id, int x, int y, int pressed);
     void keyEvent(int keycode, int pressed);
     void focusEvent(bool acquired);
 public Q_SLOTS:
@@ -57,10 +57,10 @@ class ProjectionMode : public QTcpServer
     Q_PROPERTY(QObject* mediaPlayer WRITE setMediaPlayer);
 public:
     explicit ProjectionMode(QObject *parent = 0);
-    Q_INVOKABLE void sendMousePressed(int x, int y);
+    Q_INVOKABLE void sendMousePressed(int id, int x, int y);
     Q_INVOKABLE void sendKeyPressed(int keycode);
-    Q_INVOKABLE void sendMouseMove(int x, int y);
-    Q_INVOKABLE void sendMouseReleased(int x, int y);
+    Q_INVOKABLE void sendMouseMove(int id, int x, int y);
+    Q_INVOKABLE void sendMouseReleased(int id, int x, int y);
     Q_INVOKABLE void sendKeyReleased(int keycode);
     Q_INVOKABLE void sendVideoFocus(int acquired);
     void setMediaPlayer(QObject *obj);

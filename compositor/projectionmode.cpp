@@ -50,17 +50,17 @@ ProjectionMode::ProjectionMode(QObject *parent) :
 void ProjectionMode::slotReturnToHomeRequested() {
     emit returnToHomeRequested();
 }
-void ProjectionMode::sendMouseMove(int x, int y) {
-    emit mPM->touchEvent(x, y, 2);
+void ProjectionMode::sendMouseMove(int id, int x, int y) {
+    emit mPM->touchEvent(id, x, y, 2);
 };
-void ProjectionMode::sendMousePressed(int x, int y) {
-    emit mPM->touchEvent(x, y, 1);
+void ProjectionMode::sendMousePressed(int id, int x, int y) {
+    emit mPM->touchEvent(id, x, y, 1);
 };
 void ProjectionMode::sendKeyPressed(int keycode) {
     emit mPM->keyEvent(keycode, true);
 }
-void ProjectionMode::sendMouseReleased(int x, int y) {
-    emit mPM->touchEvent(x, y, 0);
+void ProjectionMode::sendMouseReleased(int id, int x, int y) {
+    emit mPM->touchEvent(id, x, y, 0);
 };
 void ProjectionMode::sendKeyReleased(int keycode) {
     emit mPM->keyEvent(keycode, false);
