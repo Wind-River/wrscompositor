@@ -24,28 +24,48 @@ Item {
 
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
-    property int surfaceWidth: root.width - sidePanel.width
-    property int surfaceHeight: root.height - statusBar.height - dockBar.height
-
     signal swapWindowRequested(var anObject)
     signal cloneWindowRequested(var anObject)
     signal closeClonedWindowRequested(var anObject)
-    signal flipWindowFrameRequested
 
     onHasFullscreenWindowChanged: {
         console.log("has fullscreen window: " + hasFullscreenWindow);
     }
 
     ProjectionMode {
-        id: projectionModeAndroidAuto
+        id: projectionMode
 
-        property bool androidAutoEnabled: false
-        property bool androidAutoProjectionMode: false
-        property variant androidAutoContainer: null
+        signal flipHelixCockpitSurface(var identity)
+        signal flipProjectionViewSurface(var identity)
+
+        property int androidAuto: 0
+        property int appleCarPlay: 1
+        property string androidAutoStatus: "none"
+        property string appleCarPlayStatus: "none"
+        property bool androidAutoProjected: false
+        property bool appleCarPlayProjected: false
+        property variant androidAutoProjectionContainer: null
+        property variant appleCarPlayProjectionContainer: null
+
+        onAndroidAutoStatusChanged: {
+            console.log("received onAndroidAutoStatusChanged signal");
+            if (projectionMode.androidAutoStatus == "disconnected" && projectionMode.androidAutoProjected) {
+                console.log("onAndroidAutoStatusChanged, try to flip helix-cockpit");
+                projectionMode.flipHelixCockpitSurface(projectionMode.androidAuto);
+            }
+        }
+
+        onAppleCarPlayStatusChanged: {
+            console.log("onAppleCarPlayStatusChanged, projectionStatus is changed");
+            if (projectionMode.appleCarPlayStatus == "disconnected" && projectionMode.appleCarPlayProjected) {
+                console.log("onAppleCarPlayStatusChanged, try to flip helix-cockpit");
+                projectionMode.flipHelixCockpitSurface(projectionMode.appleCarPlay);
+            }
+        }
 
         onReturnToHomeRequested: {
             console.log('return to home !!!');
-            root.flipWindowFrameRequested();
+            projectionMode.flipHelixCockpitSurface(projectionMode.androidAuto);
         }
     }
 
@@ -82,148 +102,55 @@ Item {
         width: parent.width
         height: parent.height
         property bool flipped: false
+        property int projectionModeIdentity: -1
 
-        front: Rectangle { 
-            id: helixCockpit
-            width: parent.width
-            height: parent.height
-            visible: !projectionModeAndroidAuto.androidAutoProjectionMode
-            //z: projectionModeAndroidAuto.androidAutoProjectionMode?-1:200
-            StatusBar {
-                id: statusBar
-                androidAutoEnabled: projectionModeAndroidAuto.androidAutoEnabled
-                androidAutoProjectionMode: projectionModeAndroidAuto.androidAutoProjectionMode
-                onHeightChanged: {
-                    Conf.statusBarHeight = statusBar.height
-                }
-                currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
-                cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
-            }
-            SidePanel {
-                id: sidePanel
-                anchors.top: statusBar.bottom
-                anchors.right: parent.right
-                anchors.bottom: dockBar.top
-                width: parent.width * 0.34
-            }
-            DockBar {
-                id: dockBar
-                onLaunched: {
-                    console.log('launched by Dock: '+appid);
-                    if(appid=='menu') {
-                        if(mainmenu.visible)
-                            mainmenu.hide()
-                        else
-                            mainmenu.show()
-                    } else if(!sidePanel.launchWidget(appid))
-                        console.log('no such widget or app');
-                }
-            }
-            Image {
-                id: background
-                anchors.top: statusBar.bottom
-                width: parent.width - sidePanel.width
-                height: parent.height - statusBar.height - dockBar.height
-
-                source: "resources/background.jpg"
-
-                Item {
-                    id: currentApp
-                    anchors.fill: parent
-                }
-
-                MainMenu {
-                    id: mainmenu
-                    height: parent.height
-                    width: parent.width
-                    windowDefaultWidth: background.width
-                    windowDefaultHeight: background.height
-                    z: 100
-                    root: root
-                    visible: false
-                    Component.onCompleted: {
-                        statusBar.closeWindow.connect(function() {
-                            console.log('close clicked');
-                            hide();
-                            })
-                    }
-                    onMenuActivated: {
-                        statusBar.showCloseButton(flag);
-                    }
-                }
-                /*
-                BuiltinNavigation {
-                id: navi
-                anchors.fill: parent
-                }
-                */
-            }
+        front: HelixCockpitView {
+            id: helixCockpitView
+            root: root
+            visible: !projectionMode.androidAutoProjected && !projectionMode.appleCarPlayProjected
+            //z: projectionMode.androidAutoProjected?-1:200
         }
-        back: Rectangle {
-            id: fullscreenProjection
+        back: Item {
+            id: projectionViewList
             width: parent.width
             height: parent.height
-            anchors.top: parent.top
-            color: "black"
-            VideoOutput {
-                id: projectionView
-                source: mediaPlayer
-                width: parent.width
-                height: parent.height
-                property string projectionStatus: "none"
-                onProjectionStatusChanged: {
-                    console.log("onProjectionStatusChanged, projectionStatus is changed");
-                    if (projectionView.projectionStatus == "disconnected" && projectionModeAndroidAuto.androidAutoProjectionMode) {
-                        console.log("try to flip helix-cockpit");
-                        root.flipWindowFrameRequested();
-                    }
-                }
-                MediaPlayer {
-                    id: mediaPlayer
-                    autoLoad: false
-                    loops: Audio.Infinite
-                    onError: {
-                        if (MediaPlayer.NoError != error) {
-                            console.log("[41m[qmlvideo][0m VideoItem.onError error " + error + " errorString " + errorString)
-                        }
-                    }
-                }
 
-                MultiPointTouchArea {
-                    id: projectionViewTouchArea
-                    anchors.fill: parent
-                    mouseEnabled: true
-                    minimumTouchPoints: 1
-                    maximumTouchPoints: 4
-
-                    onPressed: {
-                        for (var touch in touchPoints) {
-                            projectionModeAndroidAuto.sendMousePressed(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
-                        }
-                    }
-                    onReleased: {
-                        for (var touch in touchPoints) {
-                            projectionModeAndroidAuto.sendMouseReleased(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
-                        }
-                    }
-
-                    onTouchUpdated: {
-                        for (var touch in touchPoints) {
-                            projectionModeAndroidAuto.sendMouseMove(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
-                        }
-                    }
-                }
-                Keys.onPressed: {
-                    console.log('key pressed on projection: '+event.key);
-                    projectionModeAndroidAuto.sendKeyPressed(event.key);
-                }
-                Keys.onReleased: {
-                    console.log('key released on projection: '+event.key);
-                    projectionModeAndroidAuto.sendKeyReleased(event.key);
-                }
+            ConnectivityProjectionView { 
+                id: androidAutoProjectionView 
+                visible: !projectionMode.appleCarPlayProjected
                 Component.onCompleted: {
-                    projectionModeAndroidAuto.mediaPlayer = mediaPlayer
-                    projectionModeAndroidAuto.androidAutoContainer = projectionView
+                    projectionMode.androidAutoProjectionContainer = androidAutoProjectionView.projectionView
+                }
+            }
+            ConnectivityProjectionView { 
+                id: appleCarPlayPrjectionView 
+                visible: !projectionMode.androidAutoProjected 
+                Component.onCompleted: {
+                    projectionMode.appleCarPlayProjectionContainer = appleCarPlayPrjectionView.projectionView
+                }
+            }
+            MultiPointTouchArea {
+                id: projectionViewTouchArea
+                anchors.fill: parent
+                mouseEnabled: true
+                minimumTouchPoints: 1
+                maximumTouchPoints: 4
+
+                onPressed: {
+                    for (var touch in touchPoints) {
+                        projectionMode.sendMousePressed(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
+                    }
+                }
+                onReleased: {
+                    for (var touch in touchPoints) {
+                        projectionMode.sendMouseReleased(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
+                    }
+                }
+
+                onTouchUpdated: {
+                    for (var touch in touchPoints) {
+                        projectionMode.sendMouseMove(touchPoints[touch].pointId, touchPoints[touch].x, touchPoints[touch].y);
+                    }
                 }
             }
         }
@@ -246,18 +173,31 @@ Item {
         onSideChanged: {
             if(side==Flipable.Front) {
                 console.log('onSideChanged(front), focused window is helix-cockpit');
-                projectionModeAndroidAuto.androidAutoProjectionMode = false;
-                projectionModeAndroidAuto.sendVideoFocus(false);
-            } else {
+                projectionMode.androidAutoProjected = false;
+                projectionMode.appleCarPlayProjected = false;
+                projectionMode.sendVideoFocus(false);
+            } 
+            else {
                 console.log('onSideChanged(back), focused window is projectionView');
-                projectionModeAndroidAuto.androidAutoProjectionMode = true;
-                projectionModeAndroidAuto.sendVideoFocus(true);
+                if (windowFrameFlip.projectionModeIdentity == projectionMode.androidAuto) {
+                    projectionMode.androidAutoProjected = true;
+                    projectionMode.sendVideoFocus(true);
+                } else {
+                    projectionMode.appleCarPlayProjected = true;
+                }
             }
         }
         Component.onCompleted: {
-            root.flipWindowFrameRequested.connect(function() {
-                console.log("Recevied flipWindowFrameRequested signal");
-                windowFrameFlip.flipped = !windowFrameFlip.flipped
+            projectionMode.flipProjectionViewSurface.connect(function(indentity) {
+                console.log("Recevied flipProjectionViewSurface signal");
+                windowFrameFlip.flipped = true; 
+                windowFrameFlip.projectionModeIdentity = indentity;
+            })
+
+            projectionMode.flipHelixCockpitSurface.connect(function(indentity) {
+                console.log("Recevied flipHelixCockpitSurface signal");
+                windowFrameFlip.flipped = false; 
+                windowFrameFlip.projectionModeIdentity = indentity;
             })
         }
     }
@@ -281,16 +221,28 @@ Item {
         root.raiseWindow(windowFrame);
     }
     function windowDestroyed(surface) {
-        console.log('window destroyed '+surface);
+        console.log('surface destroyed '+surface);
+        console.log('surface destroyed title:'+surface.title);
+
         var windowFrame = CompositorLogic.findBySurface(surface);
         if(!windowFrame)
             return;
+
         if(root.currentWindow == windowFrame)
             root.currentWindow = null;
 
-        if(windowFrame.androidAutoProjection) {
-            projectionModeAndroidAuto.androidAutoEnabled = false;
-            projectionModeAndroidAuto.androidAutoContainer.projectionStatus = "disconnected";
+        if (surface.title == 'OpenGL Renderer' && windowFrame.projectionConnectivityStatus) {
+            var name = windowFrame.clientPath;      
+            if (name.indexOf('gal_media') != -1) {
+                console.log("android-auto is disconnected");
+                projectionMode.androidAutoStatus = "disconnected";
+            } else if (name.indexOf('DiO-WrDemo') != -1) { 
+                console.log("apple-carplay is disconnected");
+                projectionMode.appleCarPlayStatus = "disconnected";
+            } else {
+                 console.log('cannot get valid client by pid for projectionMode, name = ' + name);
+                return;
+            }
         }
 
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
@@ -302,7 +254,8 @@ Item {
         windowFrame.destroy();
         CompositorLogic.removeWindow(windowFrame);
         if(Conf.useMultiWindowFeature)
-            CompositorLogic.relayoutForMultiWindow(background.width, background.height);
+            CompositorLogic.relayoutForMultiWindow(helixCockpitView.background.width, 
+                helixCockpitView.background.height);
 
     }
 
@@ -316,23 +269,38 @@ Item {
         console.log(geniviExt.mainScreen.layerCount());
         console.log(geniviExt.mainScreen.layer(0));
         console.log(geniviExt.mainScreen.layer(0).visibility);
-        console.log(currentApp.width+' '+ currentApp.height);
 
+        var name = compositor.getProcessNameByPid(surface.client.processId);
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
-        if(surface.title == 'gsteglgles' || surface.title == 'OpenGL Renderer') {
-            // XXX surface from android on Minnow Max target
-            console.log('wayland android auto');
-            windowFrame = windowContainerComponent.createObject(projectionModeAndroidAuto.androidAutoContainer);
-            windowFrame.androidAutoProjection = true
-            projectionModeAndroidAuto.androidAutoEnabled = true;
-            projectionModeAndroidAuto.androidAutoContainer.projectionStatus = "connected";
-        } else
-            windowFrame = windowContainerComponent.createObject(background);
+        if (surface.title == 'OpenGL Renderer') {  // gstreamer-0.1: gsteglgles
+            if (name.indexOf('gal_media') != -1) {
+                console.log('wayland android auto');
+                projectionMode.androidAutoStatus = "connected";
+                windowFrame = windowContainerComponent.createObject(projectionMode.androidAutoProjectionContainer);
+            } else if (name.indexOf('DiO-WrDemo') != -1) {  
+                console.log('wayland apple carplay');
+                projectionMode.appleCarPlayStatus = "connected";
+                windowFrame = windowContainerComponent.createObject(projectionMode.appleCarPlayProjectionContainer);   
+            } else {
+                console.log('cannot get valid client by pid for projectionMode, name = ' + name);
+                return;
+            }
+            windowFrame.clientPath = name;
+            windowFrame.projectionConnectivityStatus = true;
+            windowFrame.z = -1;
+            windowFrame.scaledWidth = Conf.displayWidth/surface.size.width;
+            windowFrame.scaledHeight = Conf.displayHeight/surface.size.height;
+        } else {
+            windowFrame = windowContainerComponent.createObject(helixCockpitView.background);
+            windowFrame.projectionConnectivityStatus = false;
+            windowFrame.z = 50;   
+            windowFrame.scaledWidth = helixCockpitView.background.width/surface.size.width;
+            windowFrame.scaledHeight = helixCockpitView.background.height/surface.size.height;
+            windowFrame.rootBackground = helixCockpitView.background
+        }
 
-        windowFrame.rootBackground = background
-        windowFrame.z = 50
         windowFrame.width = surface.size.width;
         windowFrame.height = surface.size.height;
         windowFrame.surface = surface;
@@ -341,47 +309,33 @@ Item {
         windowFrame.surfaceItem.touchEventsEnabled = true;
         windowFrame.ivi_surface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
         windowFrame.ivi_surface.id = surface.client.processId;
-
         windowFrame.targetX = 0;
         windowFrame.targetY = 0;
         windowFrame.targetWidth = surface.size.width;
         windowFrame.targetHeight = surface.size.height;
-        if(windowFrame.androidAutoProjection) {
-            windowFrame.z = -1
-            windowFrame.targetX = 0;
-            windowFrame.targetY = 0;
-            windowFrame.scaledWidth = Conf.displayWidth/surface.size.width;
-            windowFrame.scaledHeight = Conf.displayHeight/surface.size.height;
-        }
 
-        if(root.waitProcess && root.waitProcess.pid == surface.client.processId)
-        {
+        if (root.waitProcess && root.waitProcess.pid == surface.client.processId) {
             root.waitProcess.setWindow(windowFrame);
             root.waitProcess = null;
         }
 
-        if(!Conf.useMultiWindowFeature) {
+        if (!Conf.useMultiWindowFeature) {
             // XXX scale to fit into main area
-            if (!windowFrame.androidAutoProjection) {
-                console.log("background.width: "+background.width);
-                windowFrame.scaledWidth = background.width/surface.size.width;
-                windowFrame.scaledHeight = background.height/surface.size.height;
-            }
             CompositorLogic.addWindow(windowFrame);
         } else { // for multi surface feature enabled mode
             // stretch to maximum size as default
-            windowFrame.scaledWidth = background.width/surface.size.width;
-            windowFrame.scaledHeight = background.height/surface.size.height;
-            console.log("oscaleds "+background.height/surface.size.height);
+            windowFrame.scaledWidth = helixCockpitView.background.width/surface.size.width;
+            windowFrame.scaledHeight = helixCockpitView.background.height/surface.size.height;
+            console.log("oscaleds "+ helixCockpitView.background.height/surface.size.height);
 
             // add surface and relayout for multi surface feature
             CompositorLogic.addMultiWindow(windowFrame,
-                                    background.width, background.height);
+                                    helixCockpitView.background.width, background.height);
         }
 
         windowFrame.opacity = 1
 
-        if(!windowFrame.androidAutoProjection) {
+        if(!windowFrame.projectionConnectivityStatus) {
             if(!Conf.useMultiWindowFeature)
                 CompositorLogic.hideWithout(windowFrame);
             root.currentWindow = windowFrame

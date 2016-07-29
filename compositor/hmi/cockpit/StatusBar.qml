@@ -17,8 +17,6 @@ Item {
     height: parent.height/10
     z: 50000
     property string wmi: ""
-    property bool androidAutoEnabled: false
-    property bool androidAutoProjectionMode: false
     property bool currentWindowExposed: false
     property bool cloneAvailable: true
 
@@ -180,7 +178,7 @@ Item {
     }
     Image {
         id: androidAuto
-        source: statusBar.androidAutoEnabled ? "icons/android-auto.png" : "icons/android-auto-grey.png"
+        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
         anchors.left: rssi.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
@@ -191,14 +189,35 @@ Item {
             id: aapButtonArea
             anchors.fill: parent
             onClicked: {
-                if (statusBar.androidAutoEnabled && !statusBar.androidAutoProjectionMode) {
-                    console.log('AndroidAutoProjection is enabled, try to flip projectionView');
-                    root.flipWindowFrameRequested();
+                if (projectionMode.androidAutoStatus == "connected" && !projectionMode.androidAutoProjected) {
+                    console.log('AndroidAutoStatus is connected, try to flip projectionView');
+                    projectionMode.flipProjectionViewSurface(projectionMode.androidAuto);
                 }
             }
         }
         // opacity: (aapButtonArea.pressed? 0.8 : 1.0)
         scale: (aapButtonArea.pressed? 0.9 : 1.0)
+    }
+    Image {
+        id: appleCarPlay
+        source: (projectionMode.appleCarPlayStatus == "connected") ? "icons/apple-carplay.png" : "icons/apple-carplay-grey.png"
+        anchors.left: androidAuto.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.75
+        smooth: true
+        MouseArea {
+            id: carPlayButtonArea
+            anchors.fill: parent
+            onClicked: {
+                if (projectionMode.appleCarPlayStatus == "connected" && !projectionMode.appleCarPlayProjected) {
+                    console.log('appleCarPlay is connected, try to flip projectionView');
+                    projectionMode.flipProjectionViewSurface(projectionMode.appleCarPlay);
+                } 
+            }
+        }
+        scale: (carPlayButtonArea.pressed? 0.9 : 1.0)
     }
     Image {
         id: weather

@@ -55,6 +55,7 @@ public:
     QWaylandQuickSurface *fullscreenSurface() const;
     void loadQmlComponent(const QSize &size);
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
+    Q_INVOKABLE QString getProcessNameByPid(int pid); 
 #endif
 #if DUDUREGI_REARDISPLAY
     void setRearDisplay(QQuickView *);
