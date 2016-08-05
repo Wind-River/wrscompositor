@@ -42,7 +42,7 @@ ProjectionMode::ProjectionMode(QObject *parent) :
         qDebug() << "connection to systemBus";
         connection = QDBusConnection::systemBus();
     }
-    qDebug() << "register" << connection.registerObject("/AndroidAuto", mPM);
+    qDebug() << "register" << connection.registerObject("/ConnectivityProjection", mPM);
     qDebug() << "register" << connection.registerService("com.windriver.automotive.ProjectionMode");
 
     listen(QHostAddress(QHostAddress::LocalHost), 32323);
