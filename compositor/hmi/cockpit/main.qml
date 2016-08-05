@@ -35,7 +35,7 @@ Item {
     ProjectionMode {
         id: projectionMode
 
-        signal flipHelixCockpitSurface(var who)
+        signal flipHelixCockpitSurface()
         signal flipProjectionViewSurface(var who)
 
         property int androidAuto: 0
@@ -51,7 +51,7 @@ Item {
             console.log("received onAndroidAutoStatusChanged signal");
             if (projectionMode.androidAutoStatus == "disconnected" && projectionMode.androidAutoProjected) {
                 console.log("onAndroidAutoStatusChanged, try to flip helix-cockpit");
-                projectionMode.flipHelixCockpitSurface(projectionMode.androidAuto);
+                projectionMode.flipHelixCockpitSurface();
             }
         }
 
@@ -59,13 +59,13 @@ Item {
             console.log("onAppleCarPlayStatusChanged, projectionStatus is changed");
             if (projectionMode.appleCarPlayStatus == "disconnected" && projectionMode.appleCarPlayProjected) {
                 console.log("onAppleCarPlayStatusChanged, try to flip helix-cockpit");
-                projectionMode.flipHelixCockpitSurface(projectionMode.appleCarPlay);
+                projectionMode.flipHelixCockpitSurface();
             }
         }
 
         onReturnToHomeRequested: {
             console.log('return to home !!!');
-            projectionMode.flipHelixCockpitSurface(projectionMode.androidAuto);
+            projectionMode.flipHelixCockpitSurface();
         }
     }
 
@@ -194,10 +194,10 @@ Item {
                 windowFrameFlip.who = who;
             })
 
-            projectionMode.flipHelixCockpitSurface.connect(function(who) {
+            projectionMode.flipHelixCockpitSurface.connect(function() {
                 console.log("Recevied flipHelixCockpitSurface signal");
                 windowFrameFlip.flipped = false; 
-                windowFrameFlip.who = who;
+                windowFrameFlip.who = -1;
             })
         }
     }
