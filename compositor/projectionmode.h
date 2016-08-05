@@ -15,6 +15,9 @@
 #include <QMediaPlayer>
 #include "projectionmode_adaptor.h"
 
+#define ANDROID_AUTO  0
+#define APPLE_CARPLAY 1
+
 class ProjectionModePrivate : public QObject
 {
     Q_OBJECT
@@ -24,7 +27,8 @@ public:
 Q_SIGNALS:
     void touchEvent(int id, int x, int y, int pressed);
     void keyEvent(int keycode, int pressed);
-    void focusEvent(bool acquired);
+    void androidAutoVideoFocusEvent(bool acquired);
+    void appleCarPlayVideoFocusEvent(bool acquired);
 public Q_SLOTS:
     void returnToNative();
 signals:
@@ -62,7 +66,7 @@ public:
     Q_INVOKABLE void sendMouseMove(int id, int x, int y);
     Q_INVOKABLE void sendMouseReleased(int id, int x, int y);
     Q_INVOKABLE void sendKeyReleased(int keycode);
-    Q_INVOKABLE void sendVideoFocus(int acquired);
+    Q_INVOKABLE void sendVideoFocus(int who, bool acquired);
     void setMediaPlayer(QObject *obj);
 
 signals:

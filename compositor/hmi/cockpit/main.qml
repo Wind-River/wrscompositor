@@ -35,8 +35,8 @@ Item {
     ProjectionMode {
         id: projectionMode
 
-        signal flipHelixCockpitSurface(var identity)
-        signal flipProjectionViewSurface(var identity)
+        signal flipHelixCockpitSurface(var who)
+        signal flipProjectionViewSurface(var who)
 
         property int androidAuto: 0
         property int appleCarPlay: 1
@@ -102,7 +102,7 @@ Item {
         width: parent.width
         height: parent.height
         property bool flipped: false
-        property int projectionModeIdentity: -1
+        property int who: -1
 
         front: HelixCockpitView {
             id: helixCockpitView
@@ -175,29 +175,29 @@ Item {
                 console.log('onSideChanged(front), focused window is helix-cockpit');
                 projectionMode.androidAutoProjected = false;
                 projectionMode.appleCarPlayProjected = false;
-                projectionMode.sendVideoFocus(false);
+                projectionMode.sendVideoFocus(projectionMode.androidAuto, false);
+                projectionMode.sendVideoFocus(projectionMode.appleCarPlay, false);
             } 
             else {
                 console.log('onSideChanged(back), focused window is projectionView');
-                if (windowFrameFlip.projectionModeIdentity == projectionMode.androidAuto) {
-                    projectionMode.androidAutoProjected = true;
-                    projectionMode.sendVideoFocus(true);
-                } else {
-                    projectionMode.appleCarPlayProjected = true;
-                }
+                var whoHasFlip = windowFrameFlip.who;
+                projectionMode.androidAutoProjected = (whoHasFlip==projectionMode.androidAuto) ? true : false;
+                projectionMode.appleCarPlayProjected = (whoHasFlip==projectionMode.appleCarPlay) ? true : false; 
+                projectionMode.sendVideoFocus(whoHasFlip, true);
+
             }
         }
         Component.onCompleted: {
-            projectionMode.flipProjectionViewSurface.connect(function(indentity) {
+            projectionMode.flipProjectionViewSurface.connect(function(who) {
                 console.log("Recevied flipProjectionViewSurface signal");
                 windowFrameFlip.flipped = true; 
-                windowFrameFlip.projectionModeIdentity = indentity;
+                windowFrameFlip.who = who;
             })
 
-            projectionMode.flipHelixCockpitSurface.connect(function(indentity) {
+            projectionMode.flipHelixCockpitSurface.connect(function(who) {
                 console.log("Recevied flipHelixCockpitSurface signal");
                 windowFrameFlip.flipped = false; 
-                windowFrameFlip.projectionModeIdentity = indentity;
+                windowFrameFlip.who = who;
             })
         }
     }

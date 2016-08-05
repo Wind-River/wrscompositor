@@ -65,8 +65,11 @@ void ProjectionMode::sendMouseReleased(int id, int x, int y) {
 void ProjectionMode::sendKeyReleased(int keycode) {
     emit mPM->keyEvent(keycode, false);
 }
-void ProjectionMode::sendVideoFocus(int acquired) {
-    emit mPM->focusEvent(acquired);
+void ProjectionMode::sendVideoFocus(int who, bool acquired) {
+    if (who == ANDROID_AUTO)
+        emit mPM->androidAutoVideoFocusEvent(acquired);
+    else if (who == APPLE_CARPLAY)
+        emit mPM->appleCarPlayVideoFocusEvent(acquired);
 }
 
 void ProjectionMode::setMediaPlayer(QObject *obj) {
