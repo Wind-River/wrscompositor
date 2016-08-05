@@ -14,13 +14,20 @@ import com.windriver.automotive 1.0
 import com.windriver.genivi 1.0
 
 Item {
-	id: helixCockpitView
+    id: helixCockpitView
 
-	property variant root: null
-	property variant background: background
-	width: parent.width
+    property variant root: null
+    property variant background: background
+    property variant mainmenu: mainmenu
+
+    property int fullScreenWidth: parent.width
+    property int fullScreenHeight: parent.height - statusBar.height
+    property int defaultScreenWidth: parent.width - sidePanel.width
+    property int defaultScreenHeight: parent.height - statusBar.height - dockBar.height
+
+    width: parent.width
     height: parent.height
-    //z: projectionMode.androidAutoProjected?-1:200
+
     StatusBar {
     	id: statusBar
     	onHeightChanged: {
@@ -87,5 +94,16 @@ Item {
         	anchors.fill: parent
         }
         */
+    }
+
+    Component.onCompleted: {
+        statusBar.fullscreenWindow.connect(function() {
+            var fullscreen = statusBar.fullscreenViewed;
+            CompositorLogic.resizedCurrentWindow(
+                root.currentWindow,
+                fullscreen? helixCockpitView.fullScreenWidth : helixCockpitView.defaultScreenWidth,
+                fullscreen? helixCockpitView.fullScreenHeight : helixCockpitView.defaultScreenHeight
+                );
+        })
     }
 }

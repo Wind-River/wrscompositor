@@ -19,11 +19,13 @@ Item {
     property string wmi: ""
     property bool currentWindowExposed: false
     property bool cloneAvailable: true
+    property bool fullscreenViewed: false
 
     signal closeWindow
     signal logoClicked
     signal swapWindow
     signal cloneWindow
+    signal fullscreenWindow
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -178,7 +180,7 @@ Item {
     }
     Image {
         id: fullscreen
-        source: "icons/full-screen.png"
+        source: statusBar.fullscreenViewed ? "icons/full-screen-close.png" : "icons/full-screen.png"
         anchors.left: rssi.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
@@ -189,6 +191,8 @@ Item {
             id: fullscreenButtonArea
             anchors.fill: parent
             onClicked: {
+                statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
+                fullscreenWindow();
             }
         }
         scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)

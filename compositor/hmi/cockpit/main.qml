@@ -24,6 +24,7 @@ Item {
 
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
+
     signal swapWindowRequested(var anObject)
     signal cloneWindowRequested(var anObject)
     signal closeClonedWindowRequested(var anObject)
@@ -108,7 +109,6 @@ Item {
             id: helixCockpitView
             root: root
             visible: !projectionMode.androidAutoProjected && !projectionMode.appleCarPlayProjected
-            //z: projectionMode.androidAutoProjected?-1:200
         }
         back: Item {
             id: projectionViewList
@@ -207,8 +207,8 @@ Item {
             root.currentWindow.visible = false
         root.currentWindow = window
         root.currentWindow.visible = true
-        if(mainmenu.visible)
-            mainmenu.hide();
+        if(helixCockpitView.mainmenu.visible)
+            helixCockpitView.mainmenu.hide();
     }
 
     function swappedWindowRestored(surfaceItem) {
@@ -340,8 +340,8 @@ Item {
                 CompositorLogic.hideWithout(windowFrame);
             root.currentWindow = windowFrame
 
-            if(mainmenu.visible)
-                mainmenu.hide();
+            if(helixCockpitView.mainmenu.visible)
+                helixCockpitView.mainmenu.hide();
         }
     }
 
@@ -354,14 +354,14 @@ Item {
     Keys.onPressed: {
         console.log('key on main: '+event.key);
         if (event.key == Qt.Key_F1) {
-            if(mainmenu.visible)
-                mainmenu.hide()
+            if(helixCockpitView.mainmenu.visible)
+                helixCockpitView.mainmenu.hide()
             else
-                mainmenu.show()
+                helixCockpitView.mainmenu.show()
         } else if (event.key == Qt.Key_Backspace) {
             console.log('backspace');
-            if(mainmenu.visible)
-                mainmenu.hide();
+            if(helixCockpitView.mainmenu.visible)
+                helixCockpitView.mainmenu.hide();
         }
     }
     onWidthChanged: {

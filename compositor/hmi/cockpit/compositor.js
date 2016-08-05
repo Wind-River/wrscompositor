@@ -6,14 +6,11 @@
  * Wind River license agreement.
  */
 
-var windowList = null;
+var windowList = new Array();
 var indexes = null;
 
 function addWindow(window)
 {
-    if (windowList == null)
-        windowList = new Array(0);
-
     windowList.push(window);
 }
 
@@ -84,6 +81,7 @@ function removeWindow(window)
         if (windowList[i] == window)
             break;
     }
+
     windowList.splice(i, 1);
 }
 
@@ -98,4 +96,14 @@ function findBySurface(surface)
     }
     //console.log("couldn't find windowFrmae for this surface");
     return null;
+}
+
+function resizedCurrentWindow(window, resizedWidth, resizedHeight) 
+{
+    window.targetX = 0;
+    window.targetY = 0;
+    window.width = resizedWidth;
+    window.height = resizedHeight;
+    window.scaledWidth = resizedWidth/window.targetWidth;
+    window.scaledHeight = resizedHeight/window.targetHeight;
 }
