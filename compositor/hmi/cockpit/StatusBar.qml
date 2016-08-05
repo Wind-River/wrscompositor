@@ -177,13 +177,31 @@ Item {
         smooth: true
     }
     Image {
-        id: androidAuto
-        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
+        id: fullscreen
+        source: "icons/full-screen.png"
         anchors.left: rssi.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.75
+        height: statusBar.height * 0.7
+        smooth: true
+        MouseArea {
+            id: fullscreenButtonArea
+            anchors.fill: parent
+            onClicked: {
+            }
+        }
+        scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
+    }
+
+    Image {
+        id: androidAuto
+        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
+        anchors.left: fullscreen.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.6
         smooth: true
         MouseArea {
             id: aapButtonArea
@@ -205,7 +223,7 @@ Item {
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.75
+        height: statusBar.height * 0.6
         smooth: true
         MouseArea {
             id: carPlayButtonArea
