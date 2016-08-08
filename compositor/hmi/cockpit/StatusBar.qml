@@ -20,6 +20,7 @@ Item {
     property bool currentWindowExposed: false
     property bool cloneAvailable: true
     property bool fullscreenViewed: false
+    property bool mainMenuActivated: false
 
     signal closeWindow
     signal logoClicked
@@ -191,8 +192,11 @@ Item {
             id: fullscreenButtonArea
             anchors.fill: parent
             onClicked: {
-                statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
-                fullscreenWindow();
+                console.log("statusBar.mainMenuActivated = " + statusBar.mainMenuActivated);
+                if (!statusBar.mainMenuActivated) {
+                    statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
+                    fullscreenWindow();
+                }
             }
         }
         scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
@@ -265,32 +269,8 @@ Item {
         smooth: true
     }
 
-
-    /*
-    Image {
-        id: closeButton
-        source: "icons/menu-close.png"
-        anchors.right: parent.right
-        anchors.rightMargin: width/8
-        width: height
-        height: parent.height * 3 / 4
-        y: (parent.height - height)/2
-        MouseArea {
-            id: buttonArea
-            anchors.fill: parent
-            onClicked: {
-                closeWindow();
-                closeButton.width = 0;
-            }
-        }
-        opacity: (buttonArea.pressed?0.8:1.0)
-        scale: (buttonArea.pressed?0.9:1.0)
-        smooth: true
-    }
-    */
-
-    function showCloseButton(flag) {
-        //closeButton.width = flag?closeButton.height:0;
+    function notifyMainMenuStatus(flag) {
+        mainMenuActivated = flag;
     }
 
     function setWMI(wmi) {

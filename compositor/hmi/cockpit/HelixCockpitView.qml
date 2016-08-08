@@ -29,65 +29,63 @@ Item {
     height: parent.height
 
     StatusBar {
-    	id: statusBar
-    	onHeightChanged: {
-    		Conf.statusBarHeight = statusBar.height
-    	}
-    	currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
-    	cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
+        id: statusBar
+        onHeightChanged: {
+            Conf.statusBarHeight = statusBar.height
+        }
+        currentWindowExposed: root.currentWindow && root.currentWindow.visible && !mainmenu.visible
+        cloneAvailable: root.currentWindow && root.currentWindow.cloned == false
     }
     SidePanel {
-    	id: sidePanel
-    	anchors.top: statusBar.bottom
-    	anchors.right: parent.right
-    	anchors.bottom: dockBar.top
-    	width: parent.width * 0.34
+        id: sidePanel
+        anchors.top: statusBar.bottom
+        anchors.right: parent.right
+        anchors.bottom: dockBar.top
+        width: parent.width * 0.34
     }
     DockBar {
-    	id: dockBar
-    	onLaunched: {
-    		console.log('launched by Dock: '+appid);
-    		if(appid=='menu') {
-    			if(mainmenu.visible)
-    				mainmenu.hide()
-    			else
-    				mainmenu.show()
-    		} else if(!sidePanel.launchWidget(appid))
-    			console.log('no such widget or app');
-    	}
+        id: dockBar
+        onLaunched: {
+            console.log('launched by Dock: '+appid);
+            if(appid=='menu') {
+                if(mainmenu.visible)
+                    mainmenu.hide()
+                else
+                    mainmenu.show()
+            } else if(!sidePanel.launchWidget(appid))
+                console.log('no such widget or app');
+        }
     }
     Image {
-    	id: background
-    	anchors.top: statusBar.bottom
-    	width: parent.width - sidePanel.width
-    	height: parent.height - statusBar.height - dockBar.height
+        id: background
+        anchors.top: statusBar.bottom
+        width: parent.width - sidePanel.width
+        height: parent.height - statusBar.height - dockBar.height
 
-    	source: "resources/background.jpg"
-
-    	Item {
-    		id: currentApp
-    		anchors.fill: parent
-    	}
-
-    	MainMenu {
-    		id: mainmenu
-    		height: parent.height
-    		width: parent.width
-    		windowDefaultWidth: background.width
-    		windowDefaultHeight: background.height
-    		z: 100
-    		root: helixCockpitView.root
-    		visible: false
-    		Component.onCompleted: {
-    			statusBar.closeWindow.connect(function() {
-    				console.log('close clicked');
-    				hide();
-    			})
-    		}
-    		onMenuActivated: {
-    			statusBar.showCloseButton(flag);
-    		}
-    	}
+        source: "resources/background.jpg"
+        Item {
+            id: currentApp
+            anchors.fill: parent
+        }
+        MainMenu {
+            id: mainmenu
+            height: parent.height
+            width: parent.width
+            windowDefaultWidth: background.width
+            windowDefaultHeight: background.height
+            z: 100
+            root: helixCockpitView.root
+            visible: false
+            Component.onCompleted: {
+                statusBar.closeWindow.connect(function() {
+                    console.log('close clicked');
+                    hide();
+                })
+            }
+            onMenuActivated: {
+                statusBar.notifyMainMenuStatus(flag);
+            }
+        }
         /*
         BuiltinNavigation {
         	id: navi
