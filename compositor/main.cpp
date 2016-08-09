@@ -294,6 +294,7 @@ int main(int argc, char *argv[])
 
     VTHandlerServer s(&app);
     if(getuid() == 0) { // root
+#if DUDUREGI_VTHANDLER
         s.removeServer(".duduregi-vt");
         if(s.listen(".duduregi-vt")) {
             s.startVTHandler();
@@ -302,23 +303,23 @@ int main(int argc, char *argv[])
                 app.processEvents();
             }
             qInfo() << "duduregi-vt-handler has been launched";
+        }
+#endif // DUDUREGI_VTHANDLER
+        // XXX setuid
+        QRegExp user("--user=(\\S+)");
+        int i = args.indexOf(user);
+        if(i >= 0) {
+            if(user.exactMatch(args.at(i))) {
+                struct passwd *pw =
+                getpwnam(user.capturedTexts()[1].toUtf8().constData());
 
-            // XXX setuid
-            QRegExp user("--user=(\\S+)");
-            int i = args.indexOf(user);
-            if(i >= 0) {
-                if(user.exactMatch(args.at(i))) {
-                    struct passwd *pw =
-                        getpwnam(user.capturedTexts()[1].toUtf8().constData());
-
-                    if(!pw) {
-                        qCritical()<< "No such user"<<user.capturedTexts()[1];
-                        exit(1);
-                    }
-                    if(!s.setupPAM(pw)) {
-                        qCritical()<< "Failed to start PAM session";
-                        exit(1);
-                    }
+                if(!pw) {
+                    qCritical()<< "No such user"<<user.capturedTexts()[1];
+                    exit(1);
+                }
+                if(!s.setupPAM(pw)) {
+                    qCritical()<< "Failed to start PAM session";
+                    exit(1);
                 }
             }
         }
