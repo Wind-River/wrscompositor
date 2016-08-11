@@ -49,24 +49,24 @@ Item {
         }
     }
 
-    RingIcon {
-        id: navi_icon
-        icon: "resources/navi.svg"
+    Image {
+        id: fullscreen
+        source: "images/wr-red.png"
         anchors.left: parent.left
         anchors.leftMargin: parent.width * 0.01
         anchors.verticalCenter: parent.verticalCenter
-        height: parent.height * 0.7
-        width: height
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.4
         smooth: true
         MouseArea {
-            id: logoButtonArea
+            id: fullscreenButtonArea
             anchors.fill: parent
             onClicked: {
-                logoClicked();
+                clickFullscreenWindow();
             }
         }
+        scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
     }
-
 
     /*
     Text {
@@ -124,7 +124,7 @@ Item {
     */
     Text {
         id: dateTime1
-        anchors.left: navi_icon.right
+        anchors.left: fullscreen.right
         anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
         //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
@@ -180,28 +180,9 @@ Item {
         smooth: true
     }
     Image {
-        id: fullscreen
-        source: statusBar.fullscreenViewed ? "icons/full-screen-close.png" : "icons/full-screen.png"
-        anchors.left: rssi.right
-        anchors.leftMargin: parent.width/70
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.7
-        smooth: true
-        MouseArea {
-            id: fullscreenButtonArea
-            anchors.fill: parent
-            onClicked: {
-                clickFullscreenWindow();
-            }
-        }
-        scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
-    }
-
-    Image {
         id: androidAuto
         source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
-        anchors.left: fullscreen.right
+        anchors.left: rssi.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
