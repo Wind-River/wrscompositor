@@ -50,22 +50,18 @@ Item {
     }
     */
     Behavior on x {
-		enabled: Conf.useMultiWindowFeature
         NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on y {
-		enabled: Conf.useMultiWindowFeature
         NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on scaledWidth {
-		enabled: Conf.useMultiWindowFeature
         NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on scaledHeight {
-		enabled: Conf.useMultiWindowFeature
         NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
