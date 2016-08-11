@@ -26,7 +26,7 @@ Item {
     signal logoClicked
     signal swapWindow
     signal cloneWindow
-    signal fullscreenWindow
+    signal clickFullscreenWindow
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -192,11 +192,7 @@ Item {
             id: fullscreenButtonArea
             anchors.fill: parent
             onClicked: {
-                console.log("statusBar.mainMenuActivated = " + statusBar.mainMenuActivated);
-                if (!statusBar.mainMenuActivated) {
-                    statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
-                    fullscreenWindow();
-                }
+                clickFullscreenWindow();
             }
         }
         scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)

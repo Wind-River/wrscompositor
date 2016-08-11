@@ -95,13 +95,16 @@ Item {
     }
 
     Component.onCompleted: {
-        statusBar.fullscreenWindow.connect(function() {
-            var fullscreen = statusBar.fullscreenViewed;
-            CompositorLogic.resizedCurrentWindow(
-                root.currentWindow,
-                fullscreen? helixCockpitView.fullScreenWidth : helixCockpitView.defaultScreenWidth,
-                fullscreen? helixCockpitView.fullScreenHeight : helixCockpitView.defaultScreenHeight
+        statusBar.clickFullscreenWindow.connect(function() {
+            if (!statusBar.mainMenuActivated && root.currentWindow) {
+                console.log("mainmenu isn't activated, and current Window have focus on helix-cockpit");
+                statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
+                CompositorLogic.resizedCurrentWindow(
+                    root.currentWindow,
+                statusBar.fullscreenViewed? helixCockpitView.fullScreenWidth : helixCockpitView.defaultScreenWidth,
+                statusBar.fullscreenViewed? helixCockpitView.fullScreenHeight : helixCockpitView.defaultScreenHeight
                 );
+            }
         })
     }
 }
