@@ -19,6 +19,7 @@ Item {
     property variant root: null
     property variant background: background
     property variant mainmenu: mainmenu
+    property variant statusBar: statusBar
 
     property int fullScreenWidth: parent.width
     property int fullScreenHeight: parent.height - statusBar.height
@@ -92,19 +93,5 @@ Item {
         	anchors.fill: parent
         }
         */
-    }
-
-    Component.onCompleted: {
-        statusBar.clickFullscreenWindow.connect(function() {
-            if (!statusBar.mainMenuActivated && root.currentWindow) {
-                console.log("mainmenu isn't activated, and current Window have focus on helix-cockpit");
-                statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
-                CompositorLogic.resizedCurrentWindow(
-                    root.currentWindow,
-                statusBar.fullscreenViewed? helixCockpitView.fullScreenWidth : helixCockpitView.defaultScreenWidth,
-                statusBar.fullscreenViewed? helixCockpitView.fullScreenHeight : helixCockpitView.defaultScreenHeight
-                );
-            }
-        })
     }
 }

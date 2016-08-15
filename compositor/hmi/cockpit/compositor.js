@@ -70,7 +70,7 @@ function hideWithout(window) {
     var i;
     for (i = 0; i < windowList.length; i++) {
         if (windowList[i] != window)
-			windowList[i].visible = false;
+            windowList[i].hide();
     }
 }
 
@@ -106,4 +106,32 @@ function resizedCurrentWindow(window, resizedWidth, resizedHeight)
     window.height = resizedHeight;
     window.scaledWidth = resizedWidth/window.targetWidth;
     window.scaledHeight = resizedHeight/window.targetHeight;
+}
+
+function switchNextWindow(currentWindow)
+{
+    var nextWindow = null;
+    var i;
+
+    if (windowList.length == 1) {
+        console.log("only one window existed in compositor. Nothing to do");
+        return null;
+    }
+
+    for (i = 0; i < windowList.length; i++) {
+        if (windowList[i] == currentWindow) {
+            currentWindow.hide();
+            console.log("swiped current window. try to switch next window");
+            if (i + 1 == windowList.length) {
+                console.log("find first window in windowList");
+                nextWindow = windowList[0];
+            } else {
+                console.log("find next-window in windowList");
+                nextWindow = windowList[i+1];
+            }
+            nextWindow.show();
+            break;
+        }
+    }
+    return nextWindow;
 }

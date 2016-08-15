@@ -103,6 +103,7 @@ Item {
         width: parent.width
         height: parent.height
         property bool flipped: false
+        property alias statusBar: helixCockpitView.statusBar
         property int who: -1
 
         front: HelixCockpitView {
@@ -199,14 +200,34 @@ Item {
                 windowFrameFlip.flipped = false; 
                 windowFrameFlip.who = -1;
             })
+
+            statusBar.switchNextWindow.connect(function() {
+                console.log("Recevied switchNextWindow signal");
+                if (!statusBar.mainMenuActivated && !statusBar.fullscreenViewed && root.currentWindow) {
+                    var nextWindow = CompositorLogic.switchNextWindow(root.currentWindow);
+                    if (nextWindow != null)
+                        root.currentWindow = nextWindow
+                }
+            })
+
+            statusBar.resizeCurrentWindow.connect(function() {
+                console.log("Recevied resizeCurrentWindow signal");
+                if (!statusBar.mainMenuActivated && root.currentWindow) {
+                    statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
+                    CompositorLogic.resizedCurrentWindow(
+                        root.currentWindow,
+                        statusBar.fullscreenViewed? helixCockpitView.fullScreenWidth : helixCockpitView.defaultScreenWidth,
+                        statusBar.fullscreenViewed? helixCockpitView.fullScreenHeight : helixCockpitView.defaultScreenHeight);
+                }
+            })
         }
     }
 
     function raiseWindow(window) {
         if(root.currentWindow != null)
-            root.currentWindow.visible = false
+            root.currentWindow.hide();
         root.currentWindow = window
-        root.currentWindow.visible = true
+        root.currentWindow.show();
         if(helixCockpitView.mainmenu.visible)
             helixCockpitView.mainmenu.hide();
     }
@@ -336,9 +357,10 @@ Item {
         windowFrame.opacity = 1
 
         if(!windowFrame.projectionConnectivityStatus) {
-            if(!Conf.useMultiWindowFeature)
+            if(!Conf.useMultiWindowFeature) 
                 CompositorLogic.hideWithout(windowFrame);
             root.currentWindow = windowFrame
+            root.currentWindow.show();
 
             if(helixCockpitView.mainmenu.visible)
                 helixCockpitView.mainmenu.hide();
@@ -380,7 +402,7 @@ Item {
                 return;
             root.currentWindow.position = "rear";
             root.swapWindowRequested(root.currentWindow);
-            root.currentWindow.visible = false;
+            root.currentWindow.hide();
         });
         statusBar.cloneWindow.connect(function() {
             console.log("clone button clicked");

@@ -23,10 +23,10 @@ Item {
     property bool mainMenuActivated: false
 
     signal closeWindow
-    signal logoClicked
     signal swapWindow
     signal cloneWindow
-    signal clickFullscreenWindow
+    signal resizeCurrentWindow
+    signal switchNextWindow
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -50,22 +50,68 @@ Item {
     }
 
     Image {
-        id: fullscreen
+        id: windriver_log
         source: "images/wr-red.png"
         anchors.left: parent.left
         anchors.leftMargin: parent.width * 0.01
         anchors.verticalCenter: parent.verticalCenter
         width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.4
+        height: statusBar.height * 0.6
         smooth: true
-        MouseArea {
-            id: fullscreenButtonArea
+        MultiPointTouchArea {
+            id: cockpitTouchArea
             anchors.fill: parent
-            onClicked: {
-                clickFullscreenWindow();
+            minimumTouchPoints: 1
+            maximumTouchPoints: 2
+            property int touchAction: touchNoAction
+            property int touchNoAction: 1
+            property int touchSwitchedWindowAction: 2
+            property int touchResizedWindowAction: 3
+            property bool started: false
+            touchPoints: [
+                TouchPoint { id: touch1; objectName: "touch 1"; },
+                TouchPoint { id: touch2; objectName: "touch 2"; }
+            ]
+
+            onPressed: {
+                if (cockpitTouchArea.started)
+                    return;
+
+                console.log("onPressed[cockpitTouch]");
+                cockpitTouchArea.started = true;
+                if (touch1.pressed || touch2.pressed)
+                    touchAction = touchResizedWindowAction
+            }
+            onReleased: {
+                if (!cockpitTouchArea.started)
+                    return;
+
+                if (touchAction == touchSwitchedWindowAction) {
+                    console.log("onReleased[cockpitTouch], try to switch next window");
+                    switchNextWindow();
+                } else if (touchAction == touchResizedWindowAction) {
+                    console.log("onReleased[cockpitTouch], try to resize window");
+                    resizeCurrentWindow();
+                } else {
+                    console.log("onReleased[cockpitTouch], Nohting to do for touch");
+                }
+                cockpitTouchArea.started = false;
+                touchAction = touchNoAction;
+            }
+            onTouchUpdated: {
+                if (!cockpitTouchArea.started)
+                    return;
+
+                if (touch1.pressed && touch2.pressed)
+                    touchAction = touchSwitchedWindowAction
+            }
+            onCanceled: {
+                console.log("onCanceled[cockpitTouch]");
+                cockpitTouchArea.started = false;
+                touchAction = touchNoAction;
             }
         }
-        scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
+        scale: (cockpitTouchArea.started ? 0.9 : 1.0)
     }
 
     /*
@@ -124,7 +170,7 @@ Item {
     */
     Text {
         id: dateTime1
-        anchors.left: fullscreen.right
+        anchors.left: windriver_log.right
         anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
         //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")

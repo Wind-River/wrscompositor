@@ -40,6 +40,64 @@ Item {
         yScale: container.scaledHeight
     }
 
+    function hide() {
+        container.state = 'hide';
+    }
+
+    function show() {
+        container.state = 'show';
+    }
+
+    states: [
+        State {
+            name: "show"
+            PropertyChanges { target: container; opacity: 1}
+        },
+        State {
+            name: "hide"
+            PropertyChanges { target: container; opacity: 0}
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "show"
+            to: "hide"
+            SequentialAnimation {
+                NumberAnimation { 
+                    target: container 
+                    properties: "x" 
+                    easing.type: Easing.InCubic
+                    to: -100000
+                    duration: 400 
+                }
+                NumberAnimation { 
+                    target: container 
+                    properties: "opacity" 
+                    duration: 700 
+                }
+            }
+        },
+        Transition {
+            from: "hide"
+            to: "show"
+            SequentialAnimation {
+                NumberAnimation { 
+                    target: container 
+                    properties: "x" 
+                    easing.type: Easing.InCubic
+                    to: 0
+                    duration: 200 
+                }
+                NumberAnimation { 
+                    target: container 
+                    properties: "opacity" 
+                    duration: 700 
+                }
+            }
+        }
+    ] 
+
     /*
     Connections {
         target: container.surfaceItem ? container.surfaceItem : null
@@ -50,20 +108,20 @@ Item {
     }
     */
     Behavior on x {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
 
     Behavior on y {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
 
     Behavior on scaledWidth {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
 
     Behavior on scaledHeight {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
-
-
 }
