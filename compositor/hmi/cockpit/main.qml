@@ -21,7 +21,10 @@ Item {
 
     property variant currentWindow: null
     property variant waitProcess: null
-
+    property alias background: helixCockpitView.background
+    property alias mainmenu: helixCockpitView.mainmenu
+    property alias statusBar: helixCockpitView.statusBar
+    property alias dockBar: helixCockpitView.dockBar
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
@@ -228,8 +231,8 @@ Item {
             root.currentWindow.hide();
         root.currentWindow = window
         root.currentWindow.show();
-        if(helixCockpitView.mainmenu.visible)
-            helixCockpitView.mainmenu.hide();
+        if(mainmenu.visible)
+            mainmenu.hide();
     }
 
     function swappedWindowRestored(surfaceItem) {
@@ -275,8 +278,7 @@ Item {
         windowFrame.destroy();
         CompositorLogic.removeWindow(windowFrame);
         if(Conf.useMultiWindowFeature)
-            CompositorLogic.relayoutForMultiWindow(helixCockpitView.background.width, 
-                helixCockpitView.background.height);
+            CompositorLogic.relayoutForMultiWindow(background.width, background.height);
 
     }
 
@@ -314,12 +316,12 @@ Item {
             windowFrame.scaledWidth = Conf.displayWidth/surface.size.width;
             windowFrame.scaledHeight = Conf.displayHeight/surface.size.height;
         } else {
-            windowFrame = windowContainerComponent.createObject(helixCockpitView.background);
+            windowFrame = windowContainerComponent.createObject(background);
             windowFrame.projectionConnectivityStatus = false;
             windowFrame.z = 50;   
-            windowFrame.scaledWidth = helixCockpitView.background.width/surface.size.width;
-            windowFrame.scaledHeight = helixCockpitView.background.height/surface.size.height;
-            windowFrame.rootBackground = helixCockpitView.background
+            windowFrame.scaledWidth = background.width/surface.size.width;
+            windowFrame.scaledHeight = background.height/surface.size.height;
+            windowFrame.rootBackground = background
         }
 
         windowFrame.width = surface.size.width;
@@ -345,13 +347,13 @@ Item {
             CompositorLogic.addWindow(windowFrame);
         } else { // for multi surface feature enabled mode
             // stretch to maximum size as default
-            windowFrame.scaledWidth = helixCockpitView.background.width/surface.size.width;
-            windowFrame.scaledHeight = helixCockpitView.background.height/surface.size.height;
-            console.log("oscaleds "+ helixCockpitView.background.height/surface.size.height);
+            windowFrame.scaledWidth = background.width/surface.size.width;
+            windowFrame.scaledHeight = background.height/surface.size.height;
+            console.log("oscaleds "+ background.height/surface.size.height);
 
             // add surface and relayout for multi surface feature
             CompositorLogic.addMultiWindow(windowFrame,
-                                    helixCockpitView.background.width, background.height);
+                                    background.width, background.height);
         }
 
         windowFrame.opacity = 1
@@ -362,8 +364,8 @@ Item {
             root.currentWindow = windowFrame
             root.currentWindow.show();
 
-            if(helixCockpitView.mainmenu.visible)
-                helixCockpitView.mainmenu.hide();
+            if(mainmenu.visible)
+                mainmenu.hide();
         }
     }
 
@@ -376,14 +378,14 @@ Item {
     Keys.onPressed: {
         console.log('key on main: '+event.key);
         if (event.key == Qt.Key_F1) {
-            if(helixCockpitView.mainmenu.visible)
-                helixCockpitView.mainmenu.hide()
+            if(mainmenu.visible)
+                mainmenu.hide()
             else
-                helixCockpitView.mainmenu.show()
+                mainmenu.show()
         } else if (event.key == Qt.Key_Backspace) {
             console.log('backspace');
-            if(helixCockpitView.mainmenu.visible)
-                helixCockpitView.mainmenu.hide();
+            if(mainmenu.visible)
+                mainmenu.hide();
         }
     }
     onWidthChanged: {
