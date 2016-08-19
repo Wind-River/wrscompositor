@@ -106,7 +106,6 @@ Item {
         width: parent.width
         height: parent.height
         property bool flipped: false
-        property alias statusBar: helixCockpitView.statusBar
         property int who: -1
 
         front: HelixCockpitView {
