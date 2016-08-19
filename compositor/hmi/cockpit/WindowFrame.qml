@@ -69,12 +69,12 @@ Item {
                     properties: "x" 
                     easing.type: Easing.InCubic
                     to: -100000
-                    duration: 2000
+                    duration: 3000
                 }
                 NumberAnimation {
                     target: container 
                     properties: "opacity" 
-                    duration: 2000
+                    duration: 3000
                 }
             }
             onRunningChanged: {
@@ -104,7 +104,7 @@ Item {
             onRunningChanged: {
                 if ((state == "show") && (running)) {
                     console.log("onRunningChanged, starting showing window");
-                    container.x = 10000; // swipe in from left to right
+                    container.x = 1000; // swipe in from left to right
                     container.visible = true;
                 }
             }
