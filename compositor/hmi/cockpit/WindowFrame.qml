@@ -69,12 +69,18 @@ Item {
                     properties: "x" 
                     easing.type: Easing.InCubic
                     to: -100000
-                    duration: 400 
+                    duration: 2000
                 }
                 NumberAnimation {
                     target: container 
                     properties: "opacity" 
-                    duration: 700 
+                    duration: 2000
+                }
+            }
+            onRunningChanged: {
+                if ((state == "hide") && (!running)) {
+                    console.log("onRunningChanged, finish hiding window");
+                    container.visible = false;
                 }
             }
         },
@@ -87,12 +93,19 @@ Item {
                     properties: "x" 
                     easing.type: Easing.InCubic
                     to: 0
-                    duration: 200 
+                    duration: 1000
                 }
                 NumberAnimation {
                     target: container 
                     properties: "opacity" 
-                    duration: 700 
+                    duration: 1000
+                }
+            }
+            onRunningChanged: {
+                if ((state == "show") && (running)) {
+                    console.log("onRunningChanged, starting showing window");
+                    container.x = 10000; // swipe in from left to right
+                    container.visible = true;
                 }
             }
         }
