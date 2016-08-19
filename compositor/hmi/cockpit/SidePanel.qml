@@ -11,7 +11,7 @@ Item {
     id: sidePanel
     width: parent.width*0.34
     height: parent.height*0.7
-    z: 50000
+    z:  statusBar.fullscreenViewed ? -1 : 50000
 
     Rectangle {
         id: panelBackground

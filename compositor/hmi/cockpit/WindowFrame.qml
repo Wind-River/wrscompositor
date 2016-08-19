@@ -18,7 +18,7 @@ Item {
     x: targetX
     y: targetY
 
-    property bool androidAutoProjection: false
+    property bool projectionConnectivityStatus: false
     property variant rootBackground: null
     property variant ivi_surface: null
     property variant chrome: null
@@ -27,6 +27,7 @@ Item {
     property real targetWidth
     property real targetHeight
     property int index
+    property string clientPath: "none"
 
     property real scaledWidth: 1.0
     property real scaledHeight: 1.0
@@ -39,6 +40,77 @@ Item {
         yScale: container.scaledHeight
     }
 
+    function hide() {
+        container.state = 'hide';
+    }
+
+    function show() {
+        container.state = 'show';
+    }
+
+    states: [
+        State {
+            name: "show"
+            PropertyChanges { target: container; opacity: 1}
+        },
+        State {
+            name: "hide"
+            PropertyChanges { target: container; opacity: 0}
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "show"
+            to: "hide"
+            ParallelAnimation {
+                NumberAnimation {
+                    target: container 
+                    properties: "x" 
+                    easing.type: Easing.InCubic
+                    to: -100000
+                    duration: 3000
+                }
+                NumberAnimation {
+                    target: container 
+                    properties: "opacity" 
+                    duration: 3000
+                }
+            }
+            onRunningChanged: {
+                if ((state == "hide") && (!running)) {
+                    console.log("onRunningChanged, finish hiding window");
+                    container.visible = false;
+                }
+            }
+        },
+        Transition {
+            from: "hide"
+            to: "show"
+            ParallelAnimation {
+                NumberAnimation {
+                    target: container 
+                    properties: "x" 
+                    easing.type: Easing.InCubic
+                    to: 0
+                    duration: 1000
+                }
+                NumberAnimation {
+                    target: container 
+                    properties: "opacity" 
+                    duration: 1000
+                }
+            }
+            onRunningChanged: {
+                if ((state == "show") && (running)) {
+                    console.log("onRunningChanged, starting showing window");
+                    container.x = 1000; // swipe in from left to right
+                    container.visible = true;
+                }
+            }
+        }
+    ] 
+
     /*
     Connections {
         target: container.surfaceItem ? container.surfaceItem : null
@@ -49,24 +121,20 @@ Item {
     }
     */
     Behavior on x {
-		enabled: Conf.useMultiWindowFeature
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
 
     Behavior on y {
-		enabled: Conf.useMultiWindowFeature
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        enabled: Conf.useMultiWindowFeature
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
 
     Behavior on scaledWidth {
-		enabled: Conf.useMultiWindowFeature
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
 
     Behavior on scaledHeight {
-		enabled: Conf.useMultiWindowFeature
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
     }
-
-
 }

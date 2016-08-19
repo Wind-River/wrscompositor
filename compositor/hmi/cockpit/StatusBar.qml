@@ -17,14 +17,16 @@ Item {
     height: parent.height/10
     z: 50000
     property string wmi: ""
-    property bool androidAutoEnabled: false
     property bool currentWindowExposed: false
     property bool cloneAvailable: true
+    property bool fullscreenViewed: false
+    property bool mainMenuActivated: false
 
     signal closeWindow
-    signal logoClicked
     signal swapWindow
     signal cloneWindow
+    signal resizeCurrentWindow
+    signal switchNextWindow
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -47,24 +49,70 @@ Item {
         }
     }
 
-    RingIcon {
-        id: navi_icon
-        icon: "resources/navi.svg"
+    Image {
+        id: windriver_log
+        source: "images/wr-red.png"
         anchors.left: parent.left
         anchors.leftMargin: parent.width * 0.01
         anchors.verticalCenter: parent.verticalCenter
-        height: parent.height * 0.7
-        width: height
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.6
         smooth: true
-        MouseArea {
-            id: logoButtonArea
+        MultiPointTouchArea {
+            id: cockpitTouchArea
             anchors.fill: parent
-            onClicked: {
-                logoClicked();
+            minimumTouchPoints: 1
+            maximumTouchPoints: 2
+            property int touchAction: touchNoAction
+            property int touchNoAction: 1
+            property int touchSwitchedWindowAction: 2
+            property int touchResizedWindowAction: 3
+            property bool started: false
+            touchPoints: [
+                TouchPoint { id: touch1; objectName: "touch 1"; },
+                TouchPoint { id: touch2; objectName: "touch 2"; }
+            ]
+
+            onPressed: {
+                if (cockpitTouchArea.started)
+                    return;
+
+                console.log("onPressed[cockpitTouch]");
+                cockpitTouchArea.started = true;
+                if (touch1.pressed || touch2.pressed)
+                    touchAction = touchResizedWindowAction
+            }
+            onReleased: {
+                if (!cockpitTouchArea.started)
+                    return;
+
+                if (touchAction == touchSwitchedWindowAction) {
+                    console.log("onReleased[cockpitTouch], try to switch next window");
+                    switchNextWindow();
+                } else if (touchAction == touchResizedWindowAction) {
+                    console.log("onReleased[cockpitTouch], try to resize window");
+                    resizeCurrentWindow();
+                } else {
+                    console.log("onReleased[cockpitTouch], Nohting to do for touch");
+                }
+                cockpitTouchArea.started = false;
+                touchAction = touchNoAction;
+            }
+            onTouchUpdated: {
+                if (!cockpitTouchArea.started)
+                    return;
+
+                if (touch1.pressed && touch2.pressed)
+                    touchAction = touchSwitchedWindowAction
+            }
+            onCanceled: {
+                console.log("onCanceled[cockpitTouch]");
+                cockpitTouchArea.started = false;
+                touchAction = touchNoAction;
             }
         }
+        scale: (cockpitTouchArea.started ? 0.9 : 1.0)
     }
-
 
     /*
     Text {
@@ -119,22 +167,10 @@ Item {
         scale: (swapButtonArea.pressed?0.9:1.0)
         smooth: true
     }
-
-    Image {
-        id: androidAuto
-        source: "icons/android-logo.png"
-        anchors.right: bluetooth.left
-        anchors.rightMargin: width/20
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.75
-        smooth: true
-		visible: statusBar.androidAutoEnabled
-    }
     */
     Text {
         id: dateTime1
-        anchors.left: navi_icon.right
+        anchors.left: windriver_log.right
         anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
         //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
@@ -189,8 +225,49 @@ Item {
         height: statusBar.height * 0.3
         smooth: true
     }
-
-
+    Image {
+        id: androidAuto
+        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
+        anchors.left: rssi.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.6
+        smooth: true
+        MouseArea {
+            id: aapButtonArea
+            anchors.fill: parent
+            onClicked: {
+                if (projectionMode.androidAutoStatus == "connected" && !projectionMode.androidAutoProjected) {
+                    console.log('AndroidAutoStatus is connected, try to flip projectionView');
+                    projectionMode.flipProjectionViewSurface(projectionMode.androidAuto);
+                }
+            }
+        }
+        // opacity: (aapButtonArea.pressed? 0.8 : 1.0)
+        scale: (aapButtonArea.pressed? 0.9 : 1.0)
+    }
+    Image {
+        id: appleCarPlay
+        source: (projectionMode.appleCarPlayStatus == "connected") ? "icons/apple-carplay.png" : "icons/apple-carplay-grey.png"
+        anchors.left: androidAuto.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: (height*sourceSize.width)/sourceSize.height
+        height: statusBar.height * 0.6
+        smooth: true
+        MouseArea {
+            id: carPlayButtonArea
+            anchors.fill: parent
+            onClicked: {
+                if (projectionMode.appleCarPlayStatus == "connected" && !projectionMode.appleCarPlayProjected) {
+                    console.log('appleCarPlay is connected, try to flip projectionView');
+                    projectionMode.flipProjectionViewSurface(projectionMode.appleCarPlay);
+                } 
+            }
+        }
+        scale: (carPlayButtonArea.pressed? 0.9 : 1.0)
+    }
     Image {
         id: weather
         source: "tango/error.svg"
@@ -215,32 +292,8 @@ Item {
         smooth: true
     }
 
-
-    /*
-    Image {
-        id: closeButton
-        source: "icons/menu-close.png"
-        anchors.right: parent.right
-        anchors.rightMargin: width/8
-        width: height
-        height: parent.height * 3 / 4
-        y: (parent.height - height)/2
-        MouseArea {
-            id: buttonArea
-            anchors.fill: parent
-            onClicked: {
-                closeWindow();
-                closeButton.width = 0;
-            }
-        }
-        opacity: (buttonArea.pressed?0.8:1.0)
-        scale: (buttonArea.pressed?0.9:1.0)
-        smooth: true
-    }
-    */
-
-    function showCloseButton(flag) {
-        //closeButton.width = flag?closeButton.height:0;
+    function notifyMainMenuStatus(flag) {
+        mainMenuActivated = flag;
     }
 
     function setWMI(wmi) {
@@ -291,4 +344,3 @@ Item {
     }
 
 }
-

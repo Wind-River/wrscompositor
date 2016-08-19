@@ -4,6 +4,7 @@
     <interface name="com.windriver.automotive.ProjectionMode">
         <method name="returnToNative"/>
         <signal name="touchEvent">
+              <arg name="id" type="i" direction="out"/>
               <arg name="x" type="i" direction="out"/>
               <arg name="y" type="i" direction="out"/>
               <arg name="pressed" type="i" direction="out"/>
@@ -12,7 +13,10 @@
               <arg name="keycode" type="i" direction="out"/>
               <arg name="pressed" type="i" direction="out"/>
         </signal>
-        <signal name="focusEvent">
+        <signal name="androidAutoVideoFocusEvent">
+              <arg name="acquired" type="b" direction="out"/>
+        </signal>
+        <signal name="appleCarPlayVideoFocusEvent">
               <arg name="acquired" type="b" direction="out"/>
         </signal>
 

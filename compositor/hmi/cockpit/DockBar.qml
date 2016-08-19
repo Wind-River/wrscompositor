@@ -13,7 +13,7 @@ Item {
     anchors.bottom: parent.bottom
     width: parent.width
     height: (parent.height*2)/10
-    z: 50000
+    z:  statusBar.fullscreenViewed ? -1 : 50000
     signal launched(string appid);
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }

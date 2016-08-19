@@ -13,9 +13,6 @@ Item {
     id: mainMenu
     signal menuActivated(bool flag)
     property variant root: null
-    property bool androidAutoProjectionMode: null;//coverFlow.androidAutoProjectionMode
-    property bool androidAutoEnabled: falsed
-    property variant androidAutoContainer: null;//coverFlow.androidAutoContainer
     property int windowDefaultWidth: 1920
     property int windowDefaultHeight: 1080
 
