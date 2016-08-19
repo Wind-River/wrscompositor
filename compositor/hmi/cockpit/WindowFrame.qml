@@ -63,15 +63,15 @@ Item {
         Transition {
             from: "show"
             to: "hide"
-            SequentialAnimation {
-                NumberAnimation { 
+            ParallelAnimation {
+                NumberAnimation {
                     target: container 
                     properties: "x" 
                     easing.type: Easing.InCubic
                     to: -100000
                     duration: 400 
                 }
-                NumberAnimation { 
+                NumberAnimation {
                     target: container 
                     properties: "opacity" 
                     duration: 700 
@@ -81,15 +81,15 @@ Item {
         Transition {
             from: "hide"
             to: "show"
-            SequentialAnimation {
-                NumberAnimation { 
+            ParallelAnimation {
+                NumberAnimation {
                     target: container 
                     properties: "x" 
                     easing.type: Easing.InCubic
                     to: 0
                     duration: 200 
                 }
-                NumberAnimation { 
+                NumberAnimation {
                     target: container 
                     properties: "opacity" 
                     duration: 700 
