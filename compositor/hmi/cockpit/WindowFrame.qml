@@ -27,6 +27,7 @@ Item {
     property real targetWidth
     property real targetHeight
     property int index
+    property int processId: 0
     property string clientPath: "none"
 
     property real scaledWidth: 1.0

@@ -22,18 +22,20 @@ SystemdUnit::SystemdUnit(QObject *parent) :
 void SystemdUnit::setUnitPath(const QString &unitFile) {
     if(unitFile == "")
         return;
+
+    mUnitFile = unitFile;
     QDBusMessage ret = QDBusConnection::sessionBus().call(
             QDBusMessage::createMethodCall(SYSTEMD_SERVICE,
                     SYSTEMD_OBJECT_PATH,
                     SYSTEMD_MANAGER_IF,
-                    QStringLiteral("LoadUnit")) << unitFile);
-
+                    QStringLiteral("LoadUnit")) << mUnitFile);
     mUnitPath = ret.arguments()[0].value<QDBusObjectPath>().path();
 }
 
 void SystemdUnit::notifyPidChanged(uint pid) {
 	qDebug() << __func__ << "pid = " << pid;
 	mPid = pid;
+
 	emit pidChanged(pid);
 }
 
@@ -105,38 +107,45 @@ void SystemdDbusClient::slotJobRemove(uint id, QDBusObjectPath job, QString unit
 }
 
 void SystemdDbusClient::slotPropertiesChanged(QString interface_name, QMap<QString,QVariant> changed_properties, QStringList invalidated_properties) {
-
 	if (interface_name != "org.freedesktop.systemd1.Service")
 		return;
 
-	qDebug() << __func__;
+	//qDebug() << __func__;
 
 	uint pid = changed_properties["ExecMainPID"].toUInt();
-	if (pid < 0) {
-		qWarning() << __func__ << ", Invalid pid";
-		return;
-	}
-
 	checkResult(pid, 
 		changed_properties["Result"].toString());
 
 	SystemdUnit* unit;
-	QString unitPathByPID = getUnitByPID(pid);
 	foreach (unit, mUnitList) {
 		if (unit != NULL) {
-			if (unitPathByPID.isEmpty() || unitPathByPID.isNull()) {
-				if (pid == unit->getPid()) {
-					qDebug() << __func__ <<", Unit stopped by Systemd-Dbus, pid = " << pid;
-					unit->notifyPidChanged(0);
-				}
+			if (pid == unit->getPid()) {
+				qDebug() << __func__ <<", Unit stopped by Systemd-Dbus, pid = 0";
+				unit->notifyPidChanged(0);
+				return;
 			}
 
-			if (unitPathByPID == unit->getUnitPath()) {
+			if ( (0 == unit->getPid()) && 
+							(getUnitByPID(pid) == unit->getUnitPath())) {
 				qDebug() << __func__ << ", Unit is started by Systemd-Dbus, pid = " << pid;
 				unit->notifyPidChanged(pid);
+				return;
 			}
 		}
 	}
+}
+
+int SystemdDbusClient::getPidByUnitFile(const QString &unitFile) {
+	SystemdUnit* unit;
+	foreach (unit, mUnitList) {
+		if (unit != NULL) {
+			if (unitFile == unit->getUnitFile()) {
+				qDebug() << "get pid value from unitFile, " << unit->getUnitFile();
+				return unit->getPid();
+			}
+		}
+	}
+	return -1;
 }
 
 void SystemdDbusClient::startUnit(const QString &unitFile) {
@@ -184,19 +193,16 @@ void SystemdDbusClient::stopUnit(const QString &unitFile) {
 QString SystemdDbusClient::getUnitByPID(uint pid) {
 	QDBusMessage ret;
 
-	qDebug() << __func__;
-
 	ret = QDBusConnection::sessionBus().call(
 		QDBusMessage::createMethodCall(SYSTEMD_SERVICE,
 			SYSTEMD_OBJECT_PATH,
 			SYSTEMD_MANAGER_IF,
 			QStringLiteral("GetUnitByPID")) << pid);
 
-	qWarning() << ret;
 
 	QString unitPath = ret.arguments()[0].value<QDBusObjectPath>().path();
 
-	qDebug() << __func__ << " unitPath by PID = " << unitPath;
+	//qDebug() << __func__ << " unitPath by PID = " << unitPath;
 
 	return unitPath;
 }

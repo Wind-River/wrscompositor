@@ -245,6 +245,14 @@ Item {
             mainmenu.hide();
     }
 
+    function raiseWindowByProcessId(pid) {
+        var window = CompositorLogic.findByProcessId(pid);
+        if (window != null) {
+            console.log("find window for pid, try to raise window again");
+            root.raiseWindow(window);
+        }
+    }
+
     function swappedWindowRestored(surfaceItem) {
         if(!Conf.useMultiWaylandDisplayFeature)
             return;
@@ -341,6 +349,7 @@ Item {
         windowFrame.surfaceItem.parent = windowFrame;
         windowFrame.surfaceItem.touchEventsEnabled = true;
         windowFrame.ivi_surface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
+        windowFrame.processId = surface.client.processId;
         windowFrame.ivi_surface.id = surface.client.processId;
         windowFrame.targetX = 0;
         windowFrame.targetY = 0;

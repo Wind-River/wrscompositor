@@ -23,12 +23,14 @@ public:
 	uint getPid() { return mPid; }
 	void setUnitPath(const QString &unitFile);
 	QString getUnitPath() { return mUnitPath; }
+	QString getUnitFile() { return mUnitFile; }
 	void notifyPidChanged(uint pid);
 signals:
 	void pidChanged(uint pid);
 private:
 	uint mPid;
 	QString mUnitPath;
+	QString mUnitFile;
 };
 
 class SystemdDbusClient: public QObject
@@ -39,6 +41,7 @@ public:
 	Q_INVOKABLE void startUnit(const QString &unitFile);
 	Q_INVOKABLE void stopUnit(const QString &unitFile);
 	Q_INVOKABLE void registerUnit(SystemdUnit* unit) { mUnitList.append(unit); }
+	Q_INVOKABLE int getPidByUnitFile(const QString &unitFile);
 private slots:
 	void slotJobNew(uint, QDBusObjectPath, QString);
 	void slotJobRemove(uint, QDBusObjectPath, QString, QString);

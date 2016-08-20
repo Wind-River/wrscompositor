@@ -41,6 +41,21 @@ Item {
         parent.focus = true
         menuActivated(false);
     }
+    function launchNative(appid) {
+        var unitFile = appid + ".service"
+        var pid = systemd_dbusClient.getPidByUnitFile(unitFile);
+        if (pid < 0)
+            return;
+
+        if (pid == 0) {
+            console.log("launchNative, native app is launched by systemd. native app = " + appid);
+            systemd_dbusClient.startUnit(unitFile);
+        } else {
+            console.log("launchNative, native app has already launched by systemd. native app = " + appid);
+            root.raiseWindowByProcessId(pid);
+        }
+
+    }
     /*
     Keys.onPressed: {
         console.log('key on menu: '+event.key);
@@ -65,8 +80,9 @@ Item {
             description: "Application"
             exec: "skobblernavi"
             multiple: false
-            systemd: false
+            systemd: true
             iconPath: "icons/gdp-icon-app.png"
+            unitFile: "skobblernavi.service"
         }
         ListElement {
             label: "Fuel Stop Advisor"
@@ -91,19 +107,18 @@ Item {
             description: "Navigation"
             exec: "mocknavi"
             multiple: false
-            systemd: false
+            systemd: true
             iconPath: "icons/gdp-icon-nav.png"
             unitFile: "mocknavi.service"
         }
         ListElement {
             label: "Media Player"
             description: "Media Player"
-            //exec: "eyes"
             exec: "mediaplayer"
             multiple: false
-            systemd: false
+            systemd: true
             iconPath: "icons/gdp-icon-mediaplayer.png"
-            unitFile: "eyes.service"
+            unitFile: "mediaplayer.service"
         }
     }
 
@@ -155,7 +170,7 @@ Item {
                 property variant cmd: unitFile
 
                 onPidChanged: {
-                    console.log("program launched by systemd's dbus, pid = " + pid);
+                    console.log("onPidChanged, pid = " + pid);
                     root.waitProcess = systemd_unit;
                 }
                 Component.onCompleted: {
@@ -184,7 +199,7 @@ Item {
             }
             Component.onCompleted: {
                 // XXX auto launch at starting time
-                if(exec=='mocknavi') {
+                if (unitFile == "skobblernavi.service") {
                     launch();
                 }
             }
@@ -249,5 +264,4 @@ Item {
     Keys.onDownPressed: { grid.moveCurrentIndexDown(); event.accepted = true}
     Keys.onReturnPressed: { grid.currentItem.pressed = true; grid.currentItem.launch(); event.accepted = true}
     Keys.onReleased: { grid.currentItem.pressed = false; if(event.key == Qt.Key_F2) { grid.currentItem.quit(); event.accepted = true }}
-
 }

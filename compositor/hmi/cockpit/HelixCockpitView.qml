@@ -49,14 +49,28 @@ Item {
     DockBar {
         id: dockBar
         onLaunched: {
-            console.log('launched by Dock: '+appid);
-            if(appid=='menu') {
-                if(mainmenu.visible)
-                    mainmenu.hide()
-                else
-                    mainmenu.show()
-            } else if(!sidePanel.launchWidget(appid))
-                console.log('no such widget or app');
+            console.log('launched by Dock: ' + appid);
+            switch (apptype) {
+                case "widget":
+                {
+                    console.log("apptype is widget");
+                    if (appid == 'menu') {
+                        if (mainmenu.visible) mainmenu.hide()
+                        else mainmenu.show()
+                    } else if (!sidePanel.launchWidget(appid)) {
+                        console.log('no such widget or app');
+                    }
+                    break;
+                }
+                case "native":
+                {
+                    console.log("apptype is native");
+                    mainmenu.launchNative(appid);
+                    break;
+                }
+                default:
+                    console.log("invalid app type");
+            }
         }
     }
     Image {

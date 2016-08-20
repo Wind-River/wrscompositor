@@ -14,7 +14,7 @@ Item {
     width: parent.width
     height: (parent.height*2)/12
     z:  50000
-    signal launched(string appid);
+    signal launched(string apptype, string appid);
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -27,9 +27,8 @@ Item {
         id: apps
         ListElement {
             label: "Navigation"
-            appid: "navigation"
+            appid: "mocknavi"
             apptype: "native"
-            path: "skobblernavi"
             iconPath: "resources/navi.svg"
         }
         ListElement {
@@ -109,12 +108,8 @@ Item {
                 id: buttonArea
                 anchors.fill: parent
                 onClicked: {
-                    console.log("clicked: "+label);
-                    if(apptype=="native") {
-                        if(process.pid<0)
-                            process.execute(path);
-                    } else
-                        dockbar.launched(appid);
+                    console.log("clicked: " + label);
+                    dockbar.launched(apptype, appid);
                 }
             }
         }

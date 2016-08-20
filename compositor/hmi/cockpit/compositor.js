@@ -98,6 +98,16 @@ function findBySurface(surface)
     return null;
 }
 
+function findByProcessId(pid)
+{
+    var i;
+    for (i = 0; i < windowList.length; i++) {
+        if (windowList[i].processId == pid)
+            return windowList[i];
+    }
+    return null;
+}
+
 function resizedCurrentWindow(window, resizedWidth, resizedHeight) 
 {
     window.targetX = 0;
