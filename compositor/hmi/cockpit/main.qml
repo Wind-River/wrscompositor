@@ -25,6 +25,7 @@ Item {
     property alias mainmenu: helixCockpitView.mainmenu
     property alias statusBar: helixCockpitView.statusBar
     property alias dockBar: helixCockpitView.dockBar
+    property alias sidePanel: helixCockpitView.sidePanel
     property variant selectedWindow: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
@@ -216,6 +217,16 @@ Item {
                 console.log("Recevied resizeCurrentWindow signal");
                 if (!statusBar.mainMenuActivated && root.currentWindow) {
                     statusBar.fullscreenViewed =! statusBar.fullscreenViewed;
+                    if (statusBar.fullscreenViewed)  {
+                        console.log("hide both sidePanel and dockBar to make current window fullscreen");
+                        sidePanel.hide();
+                        dockBar.hide();
+                    } else {
+                        console.log("show both sidePanel and dockBar to make current window defaultscreen");
+                        sidePanel.show();
+                        dockBar.show();
+                    }
+
                     CompositorLogic.resizedCurrentWindow(
                         root.currentWindow,
                         statusBar.fullscreenViewed? helixCockpitView.fullScreenWidth : helixCockpitView.defaultScreenWidth,

@@ -11,7 +11,7 @@ Item {
     id: sidePanel
     width: parent.width*0.34
     height: parent.height*0.7
-    z:  statusBar.fullscreenViewed ? -1 : 50000
+    z: 50000
 
     Rectangle {
         id: panelBackground
@@ -48,6 +48,46 @@ Item {
         return false;
     }
 
+    function hide() {
+        sidePanel.state = 'hide';
+    }
 
+    function show() {
+        sidePanel.state = 'show';
+    }
+
+    states: [
+        State {
+            name: "show"
+            PropertyChanges { target: sidePanel; opacity: 1; z: 50000 }
+        },
+        State {
+            name: "hide"
+            PropertyChanges { target: sidePanel; opacity: 0; z: -1 }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "show"
+            to: "hide"
+            ParallelAnimation {
+                NumberAnimation { target: sidePanel; properties: "z"; duration: 300 }
+                NumberAnimation { target: sidePanel; properties: "opacity"; duration: 300 }
+            }
+        },
+        Transition {
+            from: "hide"
+            to: "show"
+            ParallelAnimation {
+                NumberAnimation { target: sidePanel; properties: "z"; duration: 500 }
+                NumberAnimation { target: sidePanel; properties: "opacity"; duration: 500 }
+            }
+        }
+    ]
+
+    Component.onCompleted: {
+        console.log("Set show state when creating sidePanel at first-time");
+        sidePanel.show();
+    }
 }
-

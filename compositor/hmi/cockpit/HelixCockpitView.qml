@@ -21,6 +21,7 @@ Item {
     property variant mainmenu: mainmenu
     property variant statusBar: statusBar
     property variant dockBar: dockBar
+    property variant sidePanel: sidePanel
 
     property int fullScreenWidth: parent.width
     property int fullScreenHeight: parent.height - statusBar.height

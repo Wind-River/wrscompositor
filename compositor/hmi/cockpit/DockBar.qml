@@ -13,7 +13,7 @@ Item {
     anchors.bottom: parent.bottom
     width: parent.width
     height: (parent.height*2)/10
-    z:  statusBar.fullscreenViewed ? -1 : 50000
+    z:  50000
     signal launched(string appid);
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
@@ -120,6 +120,46 @@ Item {
         }
     }
 
+    function hide() {
+        dockbar.state = 'hide';
+    }
 
+    function show() {
+        dockbar.state = 'show';
+    }
+
+    states: [
+        State {
+            name: "show"
+            PropertyChanges { target: dockbar; opacity: 1; z: 50000 }
+        },
+        State {
+            name: "hide"
+            PropertyChanges { target: dockbar; opacity: 0; z: -1 }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "show"
+            to: "hide"
+            ParallelAnimation {
+                NumberAnimation { target: dockbar; properties: "z"; duration: 300 }
+                NumberAnimation { target: dockbar; properties: "opacity"; duration: 300 }
+            }
+        },
+        Transition {
+            from: "hide"
+            to: "show"
+            ParallelAnimation {
+                NumberAnimation { target: dockbar; properties: "z"; duration: 500 }
+                NumberAnimation { target: dockbar; properties: "opacity"; duration: 500 }
+            }
+        }
+    ]
+
+    Component.onCompleted: {
+        console.log("Set show state when creating dockbar at first-time");
+        dockbar.show();
+    }
 }
-
