@@ -12,7 +12,7 @@ Item {
     id: dockbar
     anchors.bottom: parent.bottom
     width: parent.width
-    height: (parent.height*2)/10
+    height: (parent.height*2)/12
     z:  50000
     signal launched(string appid);
 
