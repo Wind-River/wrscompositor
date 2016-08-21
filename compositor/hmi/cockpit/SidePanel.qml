@@ -38,14 +38,29 @@ Item {
 
     function launchWidget(widgetid) {
         media.widgetMode = !(widgetid=='media');
-        hvac.visible = (widgetid == 'hvac');
-        dialer.visible = (widgetid == 'dialer');
+        console.log("launchWidget, widgetid = " + widgetid);
 
-        if(widgetid == 'media' ||
-            widgetid == 'hvac' ||
-            widgetid == 'dialer')
-            return true;
-        return false;
+        switch (widgetid) {
+            case 'media':
+                media.show();
+                hvac.hide();
+                dialer.hide();
+                break;
+            case 'hvac':
+                hvac.show();
+                media.hide();
+                dialer.hide();
+                break;
+            case 'dialer':
+                dialer.show();
+                media.hide();
+                hvac.hide();
+                break;
+            default:
+                return false;
+        }
+
+        return true;
     }
 
     function hide() {

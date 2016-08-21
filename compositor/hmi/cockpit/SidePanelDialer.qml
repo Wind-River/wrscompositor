@@ -33,7 +33,73 @@ Item {
     }
     */
 
+    function hide() {
+        root.state = 'hide';
+    }
+
+    function show() {
+        root.state = 'show';
+    }
+
+    states: [
+        State {
+            name: "show"
+            PropertyChanges { target: root; opacity: 1}
+        },
+        State {
+            name: "hide"
+            PropertyChanges { target: root; opacity: 0}
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "show"
+            to: "hide"
+            ParallelAnimation {
+                NumberAnimation {
+                    target: root
+                    properties: "opacity"
+                    easing.type: Easing.InCubic
+                    duration: 300
+                }
+            }
+            onRunningChanged: {
+                if ((state == "hide") && (!running)) {
+                    console.log("onRunningChanged, finish hiding dialer's widget");
+                    root.visible = false;
+                }
+            }
+        },
+        Transition {
+            from: "hide"
+            to: "show"
+            ParallelAnimation {
+                NumberAnimation {
+                    target: root
+                    properties: "x"
+                    easing.type: Easing.InCubic
+                    to: 0
+                    duration: 500
+                }
+                NumberAnimation {
+                    target: root
+                    properties: "opacity"
+                    duration: 500
+                }
+            }
+            onRunningChanged: {
+                if ((state == "show") && (running)) {
+                    console.log("onRunningChanged, starting showing dialer's widget");
+                    root.x = 700; // swipe in from right to left
+                    root.visible = true;
+                }
+            }
+        }
+    ]
+
     Component.onCompleted: {
+        root.hide();
     }
 
     ListModel {

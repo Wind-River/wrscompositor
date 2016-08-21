@@ -29,7 +29,12 @@ Item {
         border.color: "red"
     }
     */
-
+    function show() {
+        addonPanel.show();
+    }
+    function hide() {
+        addonPanel.hide();
+    }
     Component.onCompleted: {
         var doc = new XMLHttpRequest();
         doc.onreadystatechange = function() {
@@ -366,7 +371,7 @@ Item {
 
     Item {
         id: addonPanel
-        visible: !root.widgetMode
+        visible: false
         anchors.bottom: root.bottom
         width: root.width
         height: parent.height - (artwork.height+root.width/15)
@@ -486,7 +491,74 @@ Item {
                 }
             }
         }
+
+        function hide() {
+            addonPanel.state = 'hide';
+        }
+
+        function show() {
+            addonPanel.state = 'show';
+        }
+
+        states: [
+            State {
+                name: "show"
+                PropertyChanges { target: addonPanel; opacity: 1}
+            },
+            State {
+                name: "hide"
+                PropertyChanges { target: addonPanel; opacity: 0}
+            }
+        ]
+
+        transitions: [
+            Transition {
+                from: "show"
+                to: "hide"
+                ParallelAnimation {
+                    NumberAnimation {
+                        target: addonPanel
+                        properties: "opacity"
+                        easing.type: Easing.InCubic
+                        duration: 300
+                    }
+                }
+                onRunningChanged: {
+                    if (!running) {
+                        console.log("onRunningChanged, finish hiding media's widget");
+                        addonPanel.visible = false;
+                    }
+                }
+            },
+            Transition {
+                from: "hide"
+                to: "show"
+                ParallelAnimation {
+                    NumberAnimation {
+                        target: addonPanel
+                        properties: "x"
+                        easing.type: Easing.InCubic
+                        to: 0
+                        duration: 500
+                    }
+                    NumberAnimation {
+                        target: addonPanel
+                        properties: "opacity"
+                        easing.type: Easing.InCubic
+                        duration: 500
+                    }
+                }
+                onRunningChanged: {
+                    if (running) {
+                        console.log("onRunningChanged, starting showing media's widget");
+                        addonPanel.x = 700; // swipe in from right to left
+                        addonPanel.visible = true;
+                    }
+                }
+            }
+        ]
+        Component.onCompleted: {
+            addonPanel.hide();
+        }
     }
 }
-
-
