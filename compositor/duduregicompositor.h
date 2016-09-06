@@ -18,6 +18,7 @@
 #include <QtCompositor/private/qwloutput_p.h>
 #include <QtCompositor/private/qwayland-server-wayland.h>
 #include "qwayland-server-ivi-controller.h"
+#include "qwayland-server-ivi-application.h"
 
 #include "GeniviWaylandIVIExtension.h"
 #endif
@@ -36,6 +37,8 @@
 class DuduregiCompositor : public QQuickView
 #if DUDUREGI_WAYLAND_COMPOSITOR
                       , public QWaylandQuickCompositor
+                      , public QtWaylandServer::ivi_surface
+                      , public QtWaylandServer::ivi_application
                       , public QtWaylandServer::ivi_controller_surface
                       , public QtWaylandServer::ivi_controller_layer
                       , public QtWaylandServer::ivi_controller_screen
@@ -136,8 +139,6 @@ protected:
     void ivi_controller_layer_set_render_order(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_array *id_surfaces);
     void ivi_controller_layer_destroy(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t destroy_scene_object);
 
-
-
     void ivi_controller_screen_bind_resource(QtWaylandServer::ivi_controller_screen::Resource *resource);
     void ivi_controller_screen_destroy_resource(QtWaylandServer::ivi_controller_screen::Resource *resource);
     void ivi_controller_screen_destroy(QtWaylandServer::ivi_controller_screen::Resource *resource);
@@ -146,16 +147,19 @@ protected:
     void ivi_controller_screen_screenshot(QtWaylandServer::ivi_controller_screen::Resource *resource, const QString &filename);
     void ivi_controller_screen_set_render_order(QtWaylandServer::ivi_controller_screen::Resource *resource, wl_array *id_layers);
 
-
-
-
-
     void ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource);
     void ivi_controller_destroy_resource(QtWaylandServer::ivi_controller::Resource *resource);
     void ivi_controller_commit_changes(QtWaylandServer::ivi_controller::Resource *resource);
     void ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id);
     void ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id);
 
+    void ivi_surface_bind_resource(QtWaylandServer::ivi_surface::Resource *resource);
+    void ivi_surface_destroy_resource(QtWaylandServer::ivi_surface::Resource *resource);
+    void ivi_surface_destroy(QtWaylandServer::ivi_surface::Resource *resource);
+
+    void ivi_application_bind_resource(QtWaylandServer::ivi_application::Resource *);
+    void ivi_application_destroy_resource(QtWaylandServer::ivi_application::Resource *);
+    void ivi_application_surface_create(QtWaylandServer::ivi_application::Resource *, uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id);
 private:
     GeniviWaylandIVIExtension::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
 #endif

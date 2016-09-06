@@ -247,6 +247,7 @@ echo "QT += compositor" >> $DUDUREGIPRO
 echo "QT += compositor-private" >> $DUDUREGIPRO
 echo "CONFIG +=wayland-scanner" >> $DUDUREGIPRO
 echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> $DUDUREGIPRO
+echo "WAYLANDSERVERSOURCES += protocols/ivi-application.xml" >> $DUDUREGIPRO
 echo "CONFIG += link_pkgconfig" >> $DUDUREGIPRO
 echo "PKGCONFIG += wayland-server gbm" >> $DUDUREGIPRO
 echo "HEADERS += GeniviWaylandIVIExtension.h" >> $DUDUREGIPRO
