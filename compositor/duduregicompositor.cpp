@@ -31,6 +31,7 @@ DuduregiCompositor::DuduregiCompositor(const QString &display, const QString &pr
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 
     QtWaylandServer::ivi_controller::init(QWaylandCompositor::handle()->wl_display(), 1);
+    QtWaylandServer::ivi_application::init(QWaylandCompositor::handle()->wl_display(), 1);
 #endif
 }
 
@@ -462,23 +463,21 @@ void DuduregiCompositor::ivi_controller_screen_set_render_order(QtWaylandServer:
 
 void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource) {
     qDebug() << __func__;
+
     for(int i=0; i<mGeniviExt->screenCount(); i++) {
         GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
-
         QtWayland::Output *output = screen->waylandOutput()->handle();
         // find wl_output for client
-        if(!output->resourceMap().contains(resource->client()))
-            return;
-        // get wl_resource of wl_output for client
-        QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
+        if(output->resourceMap().contains(resource->client())) {
+            // get wl_resource of wl_output for client
+            QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
 
-        // init screen interface for client
-        QtWaylandServer::ivi_controller_screen::init(resource->handle->client, 0, 1);
-        // send screen(client, r-id of output for screen, screen) 
-        QtWaylandServer::ivi_controller::send_screen(resource->handle, wl_resource_get_id(output_resource->handle), QtWaylandServer::ivi_controller_screen::resource()->handle);
-
+            // init screen interface for client
+            QtWaylandServer::ivi_controller_screen::init(resource->handle->client, 0, 1);
+            // send screen(client, r-id of output for screen, screen) 
+            QtWaylandServer::ivi_controller::send_screen(resource->handle, wl_resource_get_id(output_resource->handle), QtWaylandServer::ivi_controller_screen::resource()->handle);
+        }
     }
-
 
     // XXX should reverse ???
     for(int i=0; i<mGeniviExt->screenCount(); i++) {
@@ -574,4 +573,30 @@ void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_cont
     ivi_controller_surface::send_configuration(resource_ctrlsurface, surface->width(), surface->height());
 
 };
+
+void DuduregiCompositor::ivi_surface_bind_resource(QtWaylandServer::ivi_surface::Resource *) {
+    qDebug() << __func__;
+}
+
+void DuduregiCompositor::ivi_surface_destroy_resource(QtWaylandServer::ivi_surface::Resource *) {
+    qDebug() << __func__;
+}
+
+void DuduregiCompositor::ivi_surface_destroy(QtWaylandServer::ivi_surface::Resource *) {
+    qDebug() << __func__;
+}
+
+void DuduregiCompositor::ivi_application_bind_resource(QtWaylandServer::ivi_application::Resource *) {
+    qDebug() << __func__;
+}
+
+void DuduregiCompositor::ivi_application_destroy_resource(QtWaylandServer::ivi_application::Resource *) {
+    qDebug() << __func__;
+}
+
+void DuduregiCompositor::ivi_application_surface_create(QtWaylandServer::ivi_application::Resource *, uint32_t , struct ::wl_resource *, uint32_t){
+    qDebug() << __func__;
+}
+
+
 #endif
