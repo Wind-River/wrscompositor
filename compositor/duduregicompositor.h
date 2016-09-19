@@ -16,6 +16,7 @@
 #include <QtCompositor/qwaylandquickoutput.h>
 #include <QtCompositor/private/qwlcompositor_p.h>
 #include <QtCompositor/private/qwloutput_p.h>
+#include <QtCompositor/private/qwlinputdevice_p.h>
 #include <QtCompositor/private/qwayland-server-wayland.h>
 #include "qwayland-server-ivi-controller.h"
 #include "qwayland-server-ivi-application.h"

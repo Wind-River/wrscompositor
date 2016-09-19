@@ -1,3 +1,3 @@
 CONFIG += ordered
 TEMPLATE = subdirs
-SUBDIRS = compositor vt-handler clients
+SUBDIRS = compositor vt-handler clients plugins

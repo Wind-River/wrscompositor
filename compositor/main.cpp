@@ -31,6 +31,10 @@
 #include "reardisplay.h"
 #endif
 
+#if DUDUREGI_VIRTUAL_KEYBOARD
+#include "virtualkeyboard.h"
+#endif
+
 #if DUDUREGI_WAYLAND_COMPOSITOR
 #include "GeniviWaylandIVIExtension.h"
 #endif
@@ -340,6 +344,9 @@ int main(int argc, char *argv[])
     //qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
+#if DUDUREGI_VIRTUAL_KEYBOARD
+    qmlRegisterType<VirtualKeyboard>("com.windriver.automotive", 1, 0, "VirtualKeyboard");
+#endif
 #if DUDUREGI_WAYLAND_COMPOSITOR
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");

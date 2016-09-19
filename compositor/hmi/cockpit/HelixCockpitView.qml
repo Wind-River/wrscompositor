@@ -22,6 +22,7 @@ Item {
     property variant statusBar: statusBar
     property variant dockBar: dockBar
     property variant sidePanel: sidePanel
+    property variant inputPanel: inputPanel
 
     property int fullScreenWidth: parent.width
     property int fullScreenHeight: parent.height - statusBar.height
@@ -46,6 +47,60 @@ Item {
         anchors.bottom: dockBar.top
         width: parent.width * 0.34
     }
+
+    InputPanel {
+        id: inputPanel
+        z: 50000
+        y: parent.height
+        width: parent.width
+        height: parent.height/3
+        property variant statusBar: statusBar
+        property variant dockBar: dockBar
+        property variant virutalKeyboard: virutalKeyboard
+        states: State {
+            name: "visible"
+            when: inputPanel.active
+            PropertyChanges {
+                target: inputPanel
+                y: parent.height - inputPanel.height
+            }
+        }
+        transitions: Transition {
+            from: ""
+            to: "visible"
+            reversible: true
+            ParallelAnimation {
+                NumberAnimation {
+                    properties: "y"
+                    duration: 250
+                    easing.type: Easing.InOutQuad
+                }
+            }
+        }
+    }
+
+    VirtualKeyboard {
+        id: virutalKeyboard
+        onShowKeyboardRequested: {
+            console.log("received onShowKeyboardRequested signal");
+            inputPanel.active = true;
+            if(!statusBar.fullscreenViewed)
+                dockBar.hide();
+
+        }
+        onHideKeyboardRequested: {
+            console.log("received onHideKeyboardRequested signal");
+            inputPanel.active = false;
+            if (!statusBar.fullscreenViewed)
+                dockBar.show();
+        }
+        onKeyboardVisibleRequested: {
+            console.log("received onKeyboardVisibleRequested signal");
+            virutalKeyboard.sendActiveState(inputPanel.active);
+
+        }
+    }
+    
     DockBar {
         id: dockBar
         onLaunched: {

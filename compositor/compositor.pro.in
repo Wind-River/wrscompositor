@@ -1,4 +1,4 @@
-DBUS_ADAPTORS += projectionmode.xml
+DBUS_ADAPTORS += projectionmode.xml virtualkeyboard.xml
 HEADERS += Process.h vna_dbusclient.h wr_dbusclient.h duduregicompositor.h projectionmode.h systemd-util.h
 SOURCES += main.cpp Process.cpp vna_dbusclient.cpp wr_dbusclient.cpp duduregicompositor.cpp projectionmode.cpp systemd-util.cpp
 
