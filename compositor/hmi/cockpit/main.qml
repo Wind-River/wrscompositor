@@ -41,7 +41,7 @@ Item {
     ProjectionMode {
         id: projectionMode
 
-        signal flipHelixCockpitSurface()
+        signal flipCockpitSurface()
         signal flipProjectionViewSurface(var who)
 
         property int androidAuto: 0
@@ -57,7 +57,7 @@ Item {
             console.log("received onAndroidAutoStatusChanged signal");
             if (projectionMode.androidAutoStatus == "disconnected" && projectionMode.androidAutoProjected) {
                 console.log("onAndroidAutoStatusChanged, try to flip helix-cockpit");
-                projectionMode.flipHelixCockpitSurface();
+                projectionMode.flipCockpitSurface();
             }
         }
 
@@ -65,41 +65,13 @@ Item {
             console.log("onAppleCarPlayStatusChanged, projectionStatus is changed");
             if (projectionMode.appleCarPlayStatus == "disconnected" && projectionMode.appleCarPlayProjected) {
                 console.log("onAppleCarPlayStatusChanged, try to flip helix-cockpit");
-                projectionMode.flipHelixCockpitSurface();
+                projectionMode.flipCockpitSurface();
             }
         }
 
         onReturnToHomeRequested: {
             console.log('return to home !!!');
-            projectionMode.flipHelixCockpitSurface();
-        }
-    }
-
-    /*
-    VNADBusClient {
-        id: vna_dbusClient
-
-        onVehicleInfoChanged: {
-            if(false) {
-                console.log('vehicleInfoChanged : '+vehicleInfoWMI);
-                console.log('vehicleInfoChanged : '+speedometer);
-            }
-            statusBar.setWMI(vehicleInfoWMI)
-        }
-    }
-    */
-
-    WRDBusClient {
-        id: wr_dbusClient
-
-        onTrackInfoChanged: {
-            console.log('title : '+title);
-            console.log('playState : '+playState);
-            if(playState == 0) // stop
-                iPodArtwork.source = 'images/artwork.jpg';
-        }
-        onArtworkChanged: {
-            iPodArtwork.source = 'data:image/png;base64,'+wr_dbusClient.artwork;
+            projectionMode.flipCockpitSurface();
         }
     }
 
@@ -110,7 +82,7 @@ Item {
         property bool flipped: false
         property int who: -1
 
-        front: HelixCockpitView {
+        front: CockpitView {
             id: helixCockpitView
             root: root
             visible: !projectionMode.androidAutoProjected && !projectionMode.appleCarPlayProjected
@@ -119,6 +91,7 @@ Item {
             id: projectionViewList
             width: parent.width
             height: parent.height
+            visible: Conf.useConnectivityProjectionFeature ? true : false
 
             ConnectivityProjectionView { 
                 id: androidAutoProjectionView 
@@ -185,10 +158,10 @@ Item {
             } 
             else {
                 console.log('onSideChanged(back), focused window is projectionView');
-                var whoHasFlip = windowFrameFlip.who;
-                projectionMode.androidAutoProjected = (whoHasFlip==projectionMode.androidAuto) ? true : false;
-                projectionMode.appleCarPlayProjected = (whoHasFlip==projectionMode.appleCarPlay) ? true : false; 
-                projectionMode.sendVideoFocus(whoHasFlip, true);
+                var whoHasFlipped = windowFrameFlip.who;
+                projectionMode.androidAutoProjected = (whoHasFlipped==projectionMode.androidAuto) ? true : false;
+                projectionMode.appleCarPlayProjected = (whoHasFlipped==projectionMode.appleCarPlay) ? true : false; 
+                projectionMode.sendVideoFocus(whoHasFlipped, true);
 
             }
         }
@@ -199,8 +172,8 @@ Item {
                 windowFrameFlip.who = who;
             })
 
-            projectionMode.flipHelixCockpitSurface.connect(function() {
-                console.log("Recevied flipHelixCockpitSurface signal");
+            projectionMode.flipCockpitSurface.connect(function() {
+                console.log("Recevied flipCockpitSurface signal");
                 windowFrameFlip.flipped = false; 
                 windowFrameFlip.who = -1;
             })
@@ -318,12 +291,13 @@ Item {
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
-        if (surface.title == 'OpenGL Renderer') {  // gstreamer-0.1: gsteglgles
-            if (name.indexOf('gal_media') != -1) {
+        if (Conf.useConnectivityProjectionFeature && surface.title == 'OpenGL Renderer') { 
+             // gstreamer-0.1: gsteglgles
+            if (name.indexOf(Conf.aapName) != -1) {
                 console.log('wayland android auto');
                 projectionMode.androidAutoStatus = "connected";
                 windowFrame = windowContainerComponent.createObject(projectionMode.androidAutoProjectionContainer);
-            } else if (name.indexOf('DiO-WrDemo') != -1) {  
+            } else if (name.indexOf(Conf.carplayName) != -1) {  
                 console.log('wayland apple carplay');
                 projectionMode.appleCarPlayStatus = "connected";
                 windowFrame = windowContainerComponent.createObject(projectionMode.appleCarPlayProjectionContainer);   
