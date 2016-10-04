@@ -14,18 +14,19 @@ echo "Usage: configure [options]"
 echo "Options: [defaults in brackets after descriptions]"
 echo
 echo "Standard options:"
-echo "  --help                 print this message"
-echo "  --prefix=DIR           prefix dir for installation"
-echo "  --with-digitalcluster  build with digital cluster feature (on 2nd display)"
-echo "  --with-reardisplay     build with rear display feature (on 3rd display)"
-echo "  --without-maindisplay  build without main display"
-echo "  --enable-webengine     Use WebEngine instead of WebKit for WebRuntime"
-echo "  --enable-vthandler     Use VT Handler to switch Virtual Terminal"
-echo "  --target-device=NAME   Set JS configuration for specific target device"
-echo "  --hmi-profile=NAME     Set HMI Profile"
-echo "  --overwrite            overwrite existing config.js by new target/hmi config"
-echo "  --without-qmake        don't execute qmake in configure"
-echo "  --with-qmake=path      set qmake path (e.g - /usr/bin/qmake)"
+echo "  --help                      print this message"
+echo "  --prefix=DIR                prefix dir for installation"
+echo "  --with-digitalcluster       build with digital cluster feature (on 2nd display)"
+echo "  --with-reardisplay          build with rear display feature (on 3rd display)"
+echo "  --without-maindisplay       build without main display"
+echo "  --enable-webengine          Use WebEngine instead of WebKit for WebRuntime"
+echo "  --enable-vthandler          Use VT Handler to switch Virtual Terminal"
+echo "  --enable-virtualkeyboard    Use VirtualKebyaord to send key-value to application"
+echo "  --target-device=NAME        Set JS configuration for specific target device"
+echo "  --hmi-profile=NAME          Set HMI Profile"
+echo "  --overwrite                 overwrite existing config.js by new target/hmi config"
+echo "  --without-qmake             don't execute qmake in configure"
+echo "  --with-qmake=path           set qmake path (e.g - /usr/bin/qmake)"
 echo ""
 echo "Supported target devices:"
 for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -61,6 +62,7 @@ SUPPORT_REARDISPLAY=0
 SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=0
 SUPPORT_VTHANDLER=0
+SUPPORT_VIRTUAL_KEYBOARD=0
 SUPPORT_DBUS=1
 MANUAL_QMAKE=0
 TARGET_DEVICE=x11
@@ -81,6 +83,9 @@ for opt do
 	;;
     --enable-vthandler)
 		SUPPORT_VTHANDLER=1
+	;;
+    --enable-virtualkeyboard)
+		SUPPORT_VIRTUAL_KEYBOARD=1
 	;;
     --with-digitalcluster)
 		SUPPORT_DCLUSTER=1
@@ -232,7 +237,7 @@ fi
 #fi
 
 printf "Generating compositor.pro ..."
-echo "QT += quick qml network gui-private" > $DUDUREGIPRO
+echo "QT += quick qml network gui-private"  > $DUDUREGIPRO
 
 if [ "$SUPPORT_WEBENGINE" = "1" ]; then
 echo "QT += webengine" >> $DUDUREGIPRO
@@ -253,6 +258,11 @@ echo "PKGCONFIG += wayland-server gbm" >> $DUDUREGIPRO
 echo "HEADERS += GeniviWaylandIVIExtension.h" >> $DUDUREGIPRO
 echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> $DUDUREGIPRO
 
+fi
+
+if [ "$HMI_PROFILE" = "cockpit" ]; then
+echo "HEADERS += virtualkeyboard.h" >> $DUDUREGIPRO
+echo "SOURCES += virtualkeyboard.cpp" >> $DUDUREGIPRO
 fi
 
 if [ "$SUPPORT_DCLUSTER" = "1" ]; then
@@ -288,6 +298,7 @@ cat compositor/duduregiconfig.h.in | sed \
 -e "s/DUDUREGI_WAYLAND_COMPOSITOR 0/DUDUREGI_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
 -e "s/DUDUREGI_WEBENGINE 0/DUDUREGI_WEBENGINE $SUPPORT_WEBENGINE/" \
 -e "s/DUDUREGI_VTHANDLER 0/DUDUREGI_VTHANDLER $SUPPORT_VTHANDLER/" \
+-e "s/DUDUREGI_VIRTUAL_KEYBOARD 0/DUDUREGI_VIRTUAL_KEYBOARD $SUPPORT_VIRTUAL_KEYBOARD/" \
 -e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \
 -e "s/DEFAULT_TARGET_DEVICE/$TARGET_DEVICE/" \
 -e "s/DEFAULT_HMI_PROFILE/$HMI_PROFILE/" \

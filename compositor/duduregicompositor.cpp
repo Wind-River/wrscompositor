@@ -33,6 +33,9 @@ DuduregiCompositor::DuduregiCompositor(const QString &display, const QString &pr
     QtWaylandServer::ivi_controller::init(QWaylandCompositor::handle()->wl_display(), 1);
     QtWaylandServer::ivi_application::init(QWaylandCompositor::handle()->wl_display(), 1);
 #endif
+#if DUDUREGI_VIRTUAL_KEYBOARD
+    defaultInputDevice()->handle()->setCapabilities(QWaylandInputDevice::Touch | QWaylandInputDevice::Pointer | QWaylandInputDevice::Keyboard);
+#endif
 }
 
 DuduregiCompositor::~DuduregiCompositor() {
