@@ -7,7 +7,7 @@
  */
 #ifndef REAR_DISPLAY_H
 #define REAR_DISPLAY_H
-#include "duduregiconfig.h"
+#include "config.h"
 
 #include <QSurfaceFormat>
 #include <QQmlContext>

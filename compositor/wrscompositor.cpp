@@ -5,13 +5,13 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#include "duduregiconfig.h"
-#include "duduregicompositor.h"
+#include "config.h"
+#include "wrscompositor.h"
 #include <QProcess>
 #include <sys/signal.h>
 
-DuduregiCompositor::DuduregiCompositor(const QString &display, const QString &program)
-#if DUDUREGI_WAYLAND_COMPOSITOR
+WrsCompositor::WrsCompositor(const QString &display, const QString &program)
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
         : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension)
         //, QtWaylandServer::ivi_controller_surface(QWaylandCompositor::handle()->wl_display(), 1)
         //, QtWaylandServer::ivi_controller_layer(QWaylandCompositor::handle()->wl_display(), 1)
@@ -21,11 +21,11 @@ DuduregiCompositor::DuduregiCompositor(const QString &display, const QString &pr
 #endif
 {
     qInfo() << QString("Starts with WAYLAND_DISPLAY=%1").arg(display);
-    setTitle(QLatin1String("Wind River Duduregi Wayland Compositor"));
+    setTitle(QLatin1String("Wind River WrsCompositor Wayland Compositor"));
     setResizeMode(QQuickView::SizeRootObjectToView);
     setColor(Qt::black);
     winId();
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     addDefaultShell();
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
@@ -33,15 +33,15 @@ DuduregiCompositor::DuduregiCompositor(const QString &display, const QString &pr
     QtWaylandServer::ivi_controller::init(QWaylandCompositor::handle()->wl_display(), 1);
     QtWaylandServer::ivi_application::init(QWaylandCompositor::handle()->wl_display(), 1);
 #endif
-#if DUDUREGI_VIRTUAL_KEYBOARD
+#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
     defaultInputDevice()->handle()->setCapabilities(QWaylandInputDevice::Touch | QWaylandInputDevice::Pointer | QWaylandInputDevice::Keyboard);
 #endif
 }
 
-DuduregiCompositor::~DuduregiCompositor() {
+WrsCompositor::~WrsCompositor() {
 }
 
-void DuduregiCompositor::loadQmlComponent(const QSize &size)
+void WrsCompositor::loadQmlComponent(const QSize &size)
 {
     QObject *object = rootObject();
 
@@ -49,7 +49,7 @@ void DuduregiCompositor::loadQmlComponent(const QSize &size)
         qDebug() << "Try to load QML Component";
         QUrl programUrl = QUrl("qrc:///main.qml");
         if(qApp->arguments().contains("--debug"))
-            programUrl = QUrl("hmi/" DUDUREGI_HMI_PROFILE "/main.qml");
+            programUrl = QUrl("hmi/" WRSCOMPOSITOR_HMI_PROFILE "/main.qml");
         if(!mProgram.isNull())
             programUrl = QUrl(mProgram);
 
@@ -62,7 +62,7 @@ void DuduregiCompositor::loadQmlComponent(const QSize &size)
 
         setSource(programUrl);
 
-        mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
+        mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME));
         setPrimaryOutput(mMainOutput);
         //mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
         //mMainOutput->window()->setMaximumSize(QSize(16777215, 16777215));
@@ -72,13 +72,13 @@ void DuduregiCompositor::loadQmlComponent(const QSize &size)
         mMainOutput->window()->setFlags(Qt::CustomizeWindowHint); //Set window with no title bar
         mMainOutput->window()->setFlags(Qt::FramelessWindowHint); //Set a frameless window
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
         QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
         QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
 #endif
         connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
         QObject::connect(this, SIGNAL(windowDestroyed(QVariant)), rootObject(), SLOT(windowDestroyed(QVariant)));
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
         QObject::connect(rootObject(), SIGNAL(swapWindowRequested(QVariant)), this, SLOT(slotSwapWindow(QVariant)));
         QObject::connect(rootObject(), SIGNAL(cloneWindowRequested(QVariant)), this, SLOT(slotCloneWindow(QVariant)));
         QObject::connect(rootObject(), SIGNAL(closeClonedWindowRequested(QVariant)), this, SLOT(slotCloseClonedWindow(QVariant)));
@@ -95,10 +95,10 @@ void DuduregiCompositor::loadQmlComponent(const QSize &size)
     qDebug() << "Resized window's height = " << size.height();
 }
 
-#if DUDUREGI_REARDISPLAY
-void DuduregiCompositor::setRearDisplay(QQuickView *v) {
+#if WRSCOMPOSITOR_REARDISPLAY
+void WrsCompositor::setRearDisplay(QQuickView *v) {
     mRearDisplay = qobject_cast<RearDisplay*>(v);
-    mRearOutput = qobject_cast<QWaylandQuickOutput*>(createOutput(v, DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME));
+    mRearOutput = qobject_cast<QWaylandQuickOutput*>(createOutput(v, WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME));
     // XXX if do not set geometry to last output, main display will be abnormaly rendered, need to investigation
     qDebug() << mRearOutput->window()->minimumSize();
     qDebug() << mRearOutput->window()->maximumSize();
@@ -107,7 +107,7 @@ void DuduregiCompositor::setRearDisplay(QQuickView *v) {
     //mRearOutput->window()->setMaximumSize(QSize(16777215, 16777215));
     mRearOutput->window()->setFlags(Qt::WindowCloseButtonHint);
 }
-void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
+void WrsCompositor::slotSwapWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
     QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("surfaceItem").value<QObject*>());
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
@@ -117,12 +117,12 @@ void DuduregiCompositor::slotSwapWindow(const QVariant &v) {
 
     qobject_cast<RearDisplay*>(mRearDisplay)->addSwappedWindow(clonedSurfaceItem);
 }
-void DuduregiCompositor::restoreSwappedWindow(QWaylandSurfaceItem *surfaceItem) {
+void WrsCompositor::restoreSwappedWindow(QWaylandSurfaceItem *surfaceItem) {
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     surface->setMainOutput(mMainOutput);
     emit swappedWindowRestored(QVariant::fromValue(surfaceItem));
 }
-void DuduregiCompositor::slotCloneWindow(const QVariant &v) {
+void WrsCompositor::slotCloneWindow(const QVariant &v) {
     QQuickItem *windowFrame = qobject_cast<QQuickItem*>(v.value<QObject*>());
     QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(windowFrame->property("surfaceItem").value<QObject*>());
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
@@ -132,29 +132,29 @@ void DuduregiCompositor::slotCloneWindow(const QVariant &v) {
     qobject_cast<RearDisplay*>(mRearDisplay)->addClonedWindow(clonedSurfaceItem);
     mRearDisplay->update();
 }
-void DuduregiCompositor::slotCloseClonedWindow(const QVariant &v) {
+void WrsCompositor::slotCloseClonedWindow(const QVariant &v) {
     QWaylandSurfaceItem *surfaceItem = qobject_cast<QWaylandSurfaceItem*>(v.value<QObject*>());
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface*>(surfaceItem->surface());
     qobject_cast<RearDisplay*>(mRearDisplay)->closeClonedWindow(surface);
 }
 #endif
 
-void DuduregiCompositor::slotFocusObjectChanged(QObject *obj) {
+void WrsCompositor::slotFocusObjectChanged(QObject *obj) {
     (void)obj;
 }
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
-QWaylandQuickSurface* DuduregiCompositor::fullscreenSurface() const
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
+QWaylandQuickSurface* WrsCompositor::fullscreenSurface() const
 {
     return m_fullscreenSurface;
 }
 
-Q_INVOKABLE QWaylandSurfaceItem* DuduregiCompositor::item(QWaylandSurface *surf)
+Q_INVOKABLE QWaylandSurfaceItem* WrsCompositor::item(QWaylandSurface *surf)
 {
     return static_cast<QWaylandSurfaceItem *>(surf->views().first());
 }
 
-Q_INVOKABLE QString DuduregiCompositor::getProcessNameByPid(int pid) {
+Q_INVOKABLE QString WrsCompositor::getProcessNameByPid(int pid) {
 #define MAX_PROCESS_NAME 512
     char name[MAX_PROCESS_NAME] = {0,};
 
@@ -173,28 +173,28 @@ Q_INVOKABLE QString DuduregiCompositor::getProcessNameByPid(int pid) {
     return processName;
 }
 
-//void DuduregiCompositor::destroyWindow(QVariant window) {
+//void WrsCompositor::destroyWindow(QVariant window) {
 //    qvariant_cast<QObject *>(window)->deleteLater();
 //}
 
-void DuduregiCompositor::setFullscreenSurface(QWaylandQuickSurface *surface) {
+void WrsCompositor::setFullscreenSurface(QWaylandQuickSurface *surface) {
     if (surface == m_fullscreenSurface)
         return;
     m_fullscreenSurface = surface;
     emit fullscreenSurfaceChanged();
 }
 
-void DuduregiCompositor::surfaceMapped() {
+void WrsCompositor::surfaceMapped() {
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
     emit windowAdded(QVariant::fromValue(surface));
 }
-void DuduregiCompositor::surfaceUnmapped() {
+void WrsCompositor::surfaceUnmapped() {
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
     if (surface == m_fullscreenSurface)
         m_fullscreenSurface = 0;
 }
 
-void DuduregiCompositor::surfaceDestroyed() {
+void WrsCompositor::surfaceDestroyed() {
     QWaylandQuickSurface *surface = static_cast<QWaylandQuickSurface *>(sender());
     if (surface == m_fullscreenSurface)
         m_fullscreenSurface = 0;
@@ -202,14 +202,14 @@ void DuduregiCompositor::surfaceDestroyed() {
     emit windowDestroyed(QVariant::fromValue(surface));
 }
 
-void DuduregiCompositor::sendCallbacks() {
+void WrsCompositor::sendCallbacks() {
     if (m_fullscreenSurface)
         sendFrameCallbacks(QList<QWaylandSurface *>() << m_fullscreenSurface);
     else
         sendFrameCallbacks(surfaces());
 }
 
-void DuduregiCompositor::keyPressEvent(QKeyEvent *event)
+void WrsCompositor::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << __func__ << event << event->nativeScanCode() << event->nativeVirtualKey();
     Qt::KeyboardModifiers m = event->modifiers();
@@ -218,7 +218,7 @@ void DuduregiCompositor::keyPressEvent(QKeyEvent *event)
         for(int _key = Qt::Key_F1; _key < Qt::Key_F9; _key++) {
             if(key == _key) {
                 qDebug() << QString("Ctrl+(Alt)+F%1").arg(_key-Qt::Key_F1+1);
-                //QProcess::execute(QString("bash -c \"kill -%1 `pidof duduregi-vt-handler`\"").arg(SIGRTMIN+_key-Qt::Key_F1));
+                //QProcess::execute(QString("bash -c \"kill -%1 `pidof wrscompositor-vt-handler`\"").arg(SIGRTMIN+_key-Qt::Key_F1));
                 QProcess::execute(QString("dbus-send --system --dest=org.freedesktop.login1 --type=method_call --print-reply /org/freedesktop/login1/seat/seat0  org.freedesktop.login1.Seat.SwitchTo uint32:%1").arg(_key-Qt::Key_F1+1));
                 event->ignore();
                 return;
@@ -233,7 +233,7 @@ void DuduregiCompositor::keyPressEvent(QKeyEvent *event)
     QQuickView::keyPressEvent(event);
 }
 
-void DuduregiCompositor::resizeEvent(QResizeEvent *event)
+void WrsCompositor::resizeEvent(QResizeEvent *event)
 {
     QQuickView::resizeEvent(event);
     QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
@@ -247,22 +247,22 @@ void DuduregiCompositor::resizeEvent(QResizeEvent *event)
     }
 }
 
-void DuduregiCompositor::surfaceCreated(QWaylandSurface *surface) {
+void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
     connect(surface, SIGNAL(surfaceDestroyed()), this, SLOT(surfaceDestroyed()));
     connect(surface, SIGNAL(mapped()), this, SLOT(surfaceMapped()));
     connect(surface,SIGNAL(unmapped()), this,SLOT(surfaceUnmapped()));
 }
 
 
-void DuduregiCompositor::ivi_controller_surface_bind_resource(QtWaylandServer::ivi_controller_surface::Resource *resource) {
+void WrsCompositor::ivi_controller_surface_bind_resource(QtWaylandServer::ivi_controller_surface::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_surface_destroy_resource(QtWaylandServer::ivi_controller_surface::Resource *resource) {
+void WrsCompositor::ivi_controller_surface_destroy_resource(QtWaylandServer::ivi_controller_surface::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-GeniviWaylandIVIExtension::IVISurface* DuduregiCompositor::findSurfaceByResource(struct ::wl_resource *rsc) {
+GeniviWaylandIVIExtension::IVISurface* WrsCompositor::findSurfaceByResource(struct ::wl_resource *rsc) {
     GeniviWaylandIVIExtension::IVISurface *surface = NULL;
     for(int i=0; i<mGeniviExt->screenCount(); i++) {
         GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
@@ -280,7 +280,7 @@ GeniviWaylandIVIExtension::IVISurface* DuduregiCompositor::findSurfaceByResource
     return surface;
 }
 
-void DuduregiCompositor::ivi_controller_surface_set_visibility(QtWaylandServer::ivi_controller_surface::Resource *resource, uint32_t visibility) {
+void WrsCompositor::ivi_controller_surface_set_visibility(QtWaylandServer::ivi_controller_surface::Resource *resource, uint32_t visibility) {
     (void)resource;
     qDebug() << __func__ << visibility;
     GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
@@ -290,7 +290,7 @@ void DuduregiCompositor::ivi_controller_surface_set_visibility(QtWaylandServer::
     surface->setVisibility(visibility);
     surface->qmlWindowFrame()->setProperty("visible", visibility);
 };
-void DuduregiCompositor::ivi_controller_surface_set_opacity(QtWaylandServer::ivi_controller_surface::Resource *resource, wl_fixed_t opacity) {
+void WrsCompositor::ivi_controller_surface_set_opacity(QtWaylandServer::ivi_controller_surface::Resource *resource, wl_fixed_t opacity) {
     (void)resource;
     qDebug() << __func__ << opacity;
     GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
@@ -300,11 +300,11 @@ void DuduregiCompositor::ivi_controller_surface_set_opacity(QtWaylandServer::ivi
     surface->setOpacity(wl_fixed_to_double(opacity));
     surface->qmlWindowFrame()->setProperty("opacity", wl_fixed_to_double(opacity));
 };
-void DuduregiCompositor::ivi_controller_surface_set_source_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
+void WrsCompositor::ivi_controller_surface_set_source_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << x << y << width << height;
 };
-void DuduregiCompositor::ivi_controller_surface_set_destination_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
+void WrsCompositor::ivi_controller_surface_set_destination_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << x << y << width << height;
     GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
@@ -322,7 +322,7 @@ void DuduregiCompositor::ivi_controller_surface_set_destination_rectangle(QtWayl
     surface->setWidth(width);
     surface->setHeight(height);
 };
-void DuduregiCompositor::ivi_controller_surface_set_configuration(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t width, int32_t height) {
+void WrsCompositor::ivi_controller_surface_set_configuration(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << width << height;
     GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
@@ -333,7 +333,7 @@ void DuduregiCompositor::ivi_controller_surface_set_configuration(QtWaylandServe
     surface->setWidth(width);
     surface->setHeight(height);
 };
-void DuduregiCompositor::ivi_controller_surface_set_orientation(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t orientation) {
+void WrsCompositor::ivi_controller_surface_set_orientation(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t orientation) {
     (void)resource;
     qDebug() << __func__ << orientation;
     GeniviWaylandIVIExtension::IVISurface *surface = findSurfaceByResource(resource->handle);
@@ -358,113 +358,105 @@ void DuduregiCompositor::ivi_controller_surface_set_orientation(QtWaylandServer:
     if(orientation>=0 && orientation<4)
         surface->setOrientation(orientation);
 };
-void DuduregiCompositor::ivi_controller_surface_screenshot(QtWaylandServer::ivi_controller_surface::Resource *resource, const QString &filename) {
+void WrsCompositor::ivi_controller_surface_screenshot(QtWaylandServer::ivi_controller_surface::Resource *resource, const QString &filename) {
     (void)resource;
     qDebug() << __func__ << filename;
 };
-void DuduregiCompositor::ivi_controller_surface_dosend_stats(QtWaylandServer::ivi_controller_surface::Resource *resource) {
+void WrsCompositor::ivi_controller_surface_dosend_stats(QtWaylandServer::ivi_controller_surface::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_surface_destroy(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t destroy_scene_object) {
+void WrsCompositor::ivi_controller_surface_destroy(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t destroy_scene_object) {
     (void)resource;
     qDebug() << __func__ << destroy_scene_object;
 };
 
-
-
-void DuduregiCompositor::ivi_controller_layer_bind_resource(QtWaylandServer::ivi_controller_layer::Resource *resource) {
+void WrsCompositor::ivi_controller_layer_bind_resource(QtWaylandServer::ivi_controller_layer::Resource *resource) {
     (void)resource;
     qDebug() << __func__ ;
 };
-void DuduregiCompositor::ivi_controller_layer_destroy_resource(QtWaylandServer::ivi_controller_layer::Resource *resource) {
+void WrsCompositor::ivi_controller_layer_destroy_resource(QtWaylandServer::ivi_controller_layer::Resource *resource) {
     (void)resource;
     qDebug() << __func__ ;
 };
-void DuduregiCompositor::ivi_controller_layer_set_visibility(QtWaylandServer::ivi_controller_layer::Resource *resource, uint32_t visibility) {
+void WrsCompositor::ivi_controller_layer_set_visibility(QtWaylandServer::ivi_controller_layer::Resource *resource, uint32_t visibility) {
     (void)resource;
     qDebug() << __func__ << visibility;
 };
-void DuduregiCompositor::ivi_controller_layer_set_opacity(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_fixed_t opacity) {
+void WrsCompositor::ivi_controller_layer_set_opacity(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_fixed_t opacity) {
     (void)resource;
     qDebug() << __func__ << opacity;
 };
-void DuduregiCompositor::ivi_controller_layer_set_source_rectangle(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
+void WrsCompositor::ivi_controller_layer_set_source_rectangle(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << x << y << width << height;
 };
-void DuduregiCompositor::ivi_controller_layer_set_destination_rectangle(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
+void WrsCompositor::ivi_controller_layer_set_destination_rectangle(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << x << y << width << height;
 };
-void DuduregiCompositor::ivi_controller_layer_set_configuration(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t width, int32_t height) {
+void WrsCompositor::ivi_controller_layer_set_configuration(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t width, int32_t height) {
     (void)resource;
     qDebug() << __func__ << width << height;
 };
-void DuduregiCompositor::ivi_controller_layer_set_orientation(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t orientation) {
+void WrsCompositor::ivi_controller_layer_set_orientation(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t orientation) {
     (void)resource;
     qDebug() << __func__ << orientation;
 };
-void DuduregiCompositor::ivi_controller_layer_screenshot(QtWaylandServer::ivi_controller_layer::Resource *resource, const QString &filename) {
+void WrsCompositor::ivi_controller_layer_screenshot(QtWaylandServer::ivi_controller_layer::Resource *resource, const QString &filename) {
     (void)resource;
     qDebug() << __func__ << filename;
 };
-void DuduregiCompositor::ivi_controller_layer_clear_surfaces(QtWaylandServer::ivi_controller_layer::Resource *resource) {
+void WrsCompositor::ivi_controller_layer_clear_surfaces(QtWaylandServer::ivi_controller_layer::Resource *resource) {
     (void)resource;
 };
-void DuduregiCompositor::ivi_controller_layer_add_surface(QtWaylandServer::ivi_controller_layer::Resource *resource, struct ::wl_resource *surface) {
-    (void)resource;
-    qDebug() << __func__ << surface;
-};
-void DuduregiCompositor::ivi_controller_layer_remove_surface(QtWaylandServer::ivi_controller_layer::Resource *resource, struct ::wl_resource *surface) {
+void WrsCompositor::ivi_controller_layer_add_surface(QtWaylandServer::ivi_controller_layer::Resource *resource, struct ::wl_resource *surface) {
     (void)resource;
     qDebug() << __func__ << surface;
 };
-void DuduregiCompositor::ivi_controller_layer_set_render_order(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_array *id_surfaces) {
+void WrsCompositor::ivi_controller_layer_remove_surface(QtWaylandServer::ivi_controller_layer::Resource *resource, struct ::wl_resource *surface) {
+    (void)resource;
+    qDebug() << __func__ << surface;
+};
+void WrsCompositor::ivi_controller_layer_set_render_order(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_array *id_surfaces) {
     (void)resource;
     (void)id_surfaces;
 };
-void DuduregiCompositor::ivi_controller_layer_destroy(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t destroy_scene_object) {
+void WrsCompositor::ivi_controller_layer_destroy(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t destroy_scene_object) {
     (void)resource;
     qDebug() << __func__ << destroy_scene_object;
 };
 
-
-
-void DuduregiCompositor::ivi_controller_screen_bind_resource(QtWaylandServer::ivi_controller_screen::Resource *resource) {
+void WrsCompositor::ivi_controller_screen_bind_resource(QtWaylandServer::ivi_controller_screen::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_screen_destroy_resource(QtWaylandServer::ivi_controller_screen::Resource *resource) {
+void WrsCompositor::ivi_controller_screen_destroy_resource(QtWaylandServer::ivi_controller_screen::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_screen_destroy(QtWaylandServer::ivi_controller_screen::Resource *resource) {
+void WrsCompositor::ivi_controller_screen_destroy(QtWaylandServer::ivi_controller_screen::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_screen_clear(QtWaylandServer::ivi_controller_screen::Resource *resource) {
+void WrsCompositor::ivi_controller_screen_clear(QtWaylandServer::ivi_controller_screen::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_screen_add_layer(QtWaylandServer::ivi_controller_screen::Resource *resource, struct ::wl_resource *layer) {
+void WrsCompositor::ivi_controller_screen_add_layer(QtWaylandServer::ivi_controller_screen::Resource *resource, struct ::wl_resource *layer) {
     (void)resource;
     qDebug() << __func__ << layer;
 };
-void DuduregiCompositor::ivi_controller_screen_screenshot(QtWaylandServer::ivi_controller_screen::Resource *resource, const QString &filename) {
+void WrsCompositor::ivi_controller_screen_screenshot(QtWaylandServer::ivi_controller_screen::Resource *resource, const QString &filename) {
     (void)resource;
     qDebug() << __func__ << filename;
 };
-void DuduregiCompositor::ivi_controller_screen_set_render_order(QtWaylandServer::ivi_controller_screen::Resource *resource, wl_array *id_layers) {
+void WrsCompositor::ivi_controller_screen_set_render_order(QtWaylandServer::ivi_controller_screen::Resource *resource, wl_array *id_layers) {
     (void)resource;
     qDebug() << __func__ << id_layers;
 };
 
-
-
-
-
-void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource) {
+void WrsCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource) {
     qDebug() << __func__;
 
     for(int i=0; i<mGeniviExt->screenCount(); i++) {
@@ -501,15 +493,15 @@ void DuduregiCompositor::ivi_controller_bind_resource(QtWaylandServer::ivi_contr
         }
     }
 };
-void DuduregiCompositor::ivi_controller_destroy_resource(QtWaylandServer::ivi_controller::Resource *resource) {
+void WrsCompositor::ivi_controller_destroy_resource(QtWaylandServer::ivi_controller::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_commit_changes(QtWaylandServer::ivi_controller::Resource *resource) {
+void WrsCompositor::ivi_controller_commit_changes(QtWaylandServer::ivi_controller::Resource *resource) {
     (void)resource;
     qDebug() << __func__;
 };
-void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id) {
+void WrsCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id) {
     (void)resource;
     qDebug() << __func__ << id_layer << width << height << id;
     QtWaylandServer::ivi_controller_layer::init(resource->handle->client, id, 1);
@@ -539,7 +531,7 @@ void DuduregiCompositor::ivi_controller_layer_create(QtWaylandServer::ivi_contro
         }
     }
 };
-void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id) {
+void WrsCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id) {
     (void)resource;
     qDebug() << __func__ << id_surface << id;
     GeniviWaylandIVIExtension::IVISurface *surface = NULL;
@@ -577,27 +569,27 @@ void DuduregiCompositor::ivi_controller_surface_create(QtWaylandServer::ivi_cont
 
 };
 
-void DuduregiCompositor::ivi_surface_bind_resource(QtWaylandServer::ivi_surface::Resource *) {
+void WrsCompositor::ivi_surface_bind_resource(QtWaylandServer::ivi_surface::Resource *) {
     qDebug() << __func__;
 }
 
-void DuduregiCompositor::ivi_surface_destroy_resource(QtWaylandServer::ivi_surface::Resource *) {
+void WrsCompositor::ivi_surface_destroy_resource(QtWaylandServer::ivi_surface::Resource *) {
     qDebug() << __func__;
 }
 
-void DuduregiCompositor::ivi_surface_destroy(QtWaylandServer::ivi_surface::Resource *) {
+void WrsCompositor::ivi_surface_destroy(QtWaylandServer::ivi_surface::Resource *) {
     qDebug() << __func__;
 }
 
-void DuduregiCompositor::ivi_application_bind_resource(QtWaylandServer::ivi_application::Resource *) {
+void WrsCompositor::ivi_application_bind_resource(QtWaylandServer::ivi_application::Resource *) {
     qDebug() << __func__;
 }
 
-void DuduregiCompositor::ivi_application_destroy_resource(QtWaylandServer::ivi_application::Resource *) {
+void WrsCompositor::ivi_application_destroy_resource(QtWaylandServer::ivi_application::Resource *) {
     qDebug() << __func__;
 }
 
-void DuduregiCompositor::ivi_application_surface_create(QtWaylandServer::ivi_application::Resource *, uint32_t , struct ::wl_resource *, uint32_t){
+void WrsCompositor::ivi_application_surface_create(QtWaylandServer::ivi_application::Resource *, uint32_t , struct ::wl_resource *, uint32_t){
     qDebug() << __func__;
 }
 

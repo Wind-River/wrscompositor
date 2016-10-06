@@ -8,7 +8,7 @@
 SUPPOTED_TARGETDEVICES=( x11 minnowmax mrb)
 SUPPOTED_HMIPROFILES=( cockpit)
 SUPPORTED_APPSMODEL=( genivi native)
-DUDUREGIPRO=compositor/compositor.pro
+WRSCOMPOSITOR_PRO=compositor/compositor.pro
 
 show_help() {
     echo "Usage: configure [options]"
@@ -271,73 +271,73 @@ fi
 #fi
 
 printf "Generating compositor.pro ..."
-echo "QT += quick qml network gui-private"  > $DUDUREGIPRO
+echo "QT += quick qml network gui-private"  > $WRSCOMPOSITOR_PRO
 
 if [ "$SUPPORT_WEBENGINE" = "1" ]; then
-    echo "QT += webengine" >> $DUDUREGIPRO
+    echo "QT += webengine" >> $WRSCOMPOSITOR_PRO
 else
-    echo "QT += webkitwidgets" >> $DUDUREGIPRO
+    echo "QT += webkitwidgets" >> $WRSCOMPOSITOR_PRO
 fi
 
 if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
-    echo "DEFINES += QT_COMPOSITOR_QUICK" >> $DUDUREGIPRO
-    echo "QT += compositor" >> $DUDUREGIPRO
+    echo "DEFINES += QT_COMPOSITOR_QUICK" >> $WRSCOMPOSITOR_PRO
+    echo "QT += compositor" >> $WRSCOMPOSITOR_PRO
 
-    echo "QT += compositor-private" >> $DUDUREGIPRO
-    echo "CONFIG +=wayland-scanner" >> $DUDUREGIPRO
-    echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> $DUDUREGIPRO
-    echo "WAYLANDSERVERSOURCES += protocols/ivi-application.xml" >> $DUDUREGIPRO
-    echo "CONFIG += link_pkgconfig" >> $DUDUREGIPRO
-    echo "PKGCONFIG += wayland-server gbm" >> $DUDUREGIPRO
-    echo "HEADERS += GeniviWaylandIVIExtension.h" >> $DUDUREGIPRO
-    echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> $DUDUREGIPRO
+    echo "QT += compositor-private" >> $WRSCOMPOSITOR_PRO
+    echo "CONFIG +=wayland-scanner" >> $WRSCOMPOSITOR_PRO
+    echo "WAYLANDSERVERSOURCES += protocols/ivi-controller.xml" >> $WRSCOMPOSITOR_PRO
+    echo "WAYLANDSERVERSOURCES += protocols/ivi-application.xml" >> $WRSCOMPOSITOR_PRO
+    echo "CONFIG += link_pkgconfig" >> $WRSCOMPOSITOR_PRO
+    echo "PKGCONFIG += wayland-server gbm" >> $WRSCOMPOSITOR_PRO
+    echo "HEADERS += GeniviWaylandIVIExtension.h" >> $WRSCOMPOSITOR_PRO
+    echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> $WRSCOMPOSITOR_PRO
 
 fi
 
 if [ "$HMI_PROFILE" = "cockpit" ]; then
-    echo "HEADERS += virtualkeyboard.h" >> $DUDUREGIPRO
-    echo "SOURCES += virtualkeyboard.cpp" >> $DUDUREGIPRO
+    echo "HEADERS += virtualkeyboard.h" >> $WRSCOMPOSITOR_PRO
+    echo "SOURCES += virtualkeyboard.cpp" >> $WRSCOMPOSITOR_PRO
 fi
 
 if [ "$SUPPORT_DCLUSTER" = "1" ]; then
-    echo "HEADERS += digitalcluster.h" >> $DUDUREGIPRO
-    echo "SOURCES += digitalcluster.cpp" >> $DUDUREGIPRO
+    echo "HEADERS += digitalcluster.h" >> $WRSCOMPOSITOR_PRO
+    echo "SOURCES += digitalcluster.cpp" >> $WRSCOMPOSITOR_PRO
 fi
 
 if [ "$SUPPORT_REARDISPLAY" = "1" ]; then
-    echo "HEADERS += reardisplay.h" >> $DUDUREGIPRO
-    echo "SOURCES += reardisplay.cpp" >> $DUDUREGIPRO
-    echo "OTHER_FILES += rearmain.qml" >> $DUDUREGIPRO
+    echo "HEADERS += reardisplay.h" >> $WRSCOMPOSITOR_PRO
+    echo "SOURCES += reardisplay.cpp" >> $WRSCOMPOSITOR_PRO
+    echo "OTHER_FILES += rearmain.qml" >> $WRSCOMPOSITOR_PRO
 fi
 
 if [ "$SUPPORT_DBUS" = "1" ]; then
-    echo "QT += dbus" >> $DUDUREGIPRO
+    echo "QT += dbus" >> $WRSCOMPOSITOR_PRO
 fi
-echo "QT += multimedia" >> $DUDUREGIPRO
+echo "QT += multimedia" >> $WRSCOMPOSITOR_PRO
 
-echo "PREFIX=$PREFIX" >> $DUDUREGIPRO
+echo "PREFIX=$PREFIX" >> $WRSCOMPOSITOR_PRO
 
 
-cat $DUDUREGIPRO.in >> $DUDUREGIPRO
+cat $WRSCOMPOSITOR_PRO.in >> $WRSCOMPOSITOR_PRO
 
 
 echo $'\r'"Generating compositor.pro .................................... Done"
 
 
-printf "Generating duduregiconfig.h ..."
-cat compositor/duduregiconfig.h.in | sed \
-    -e "s/DUDUREGI_MAINDISPLAY 0/DUDUREGI_MAINDISPLAY $SUPPORT_MAINDISPLAY/" \
-    -e "s/DUDUREGI_DIGITALCLUSTER 0/DUDUREGI_DIGITALCLUSTER $SUPPORT_DCLUSTER/" \
-    -e "s/DUDUREGI_REARDISPLAY 0/DUDUREGI_REARDISPLAY $SUPPORT_REARDISPLAY/" \
-    -e "s/DUDUREGI_WAYLAND_COMPOSITOR 0/DUDUREGI_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
-    -e "s/DUDUREGI_WEBENGINE 0/DUDUREGI_WEBENGINE $SUPPORT_WEBENGINE/" \
-    -e "s/DUDUREGI_VTHANDLER 0/DUDUREGI_VTHANDLER $SUPPORT_VTHANDLER/" \
-    -e "s/DUDUREGI_VIRTUAL_KEYBOARD 0/DUDUREGI_VIRTUAL_KEYBOARD $SUPPORT_VIRTUAL_KEYBOARD/" \
-    -e "s/DUDUREGI_DBUS 0/DUDUREGI_DBUS $SUPPORT_DBUS/" \
+printf "Generating config.h for wrscompositor ..."
+cat compositor/config.h.in | sed \
+    -e "s/WRSCOMPOSITOR_MAINDISPLAY 0/WRSCOMPOSITOR_MAINDISPLAY $SUPPORT_MAINDISPLAY/" \
+    -e "s/WRSCOMPOSITOR_DIGITALCLUSTER 0/WRSCOMPOSITOR_DIGITALCLUSTER $SUPPORT_DCLUSTER/" \
+    -e "s/WRSCOMPOSITOR_REARDISPLAY 0/WRSCOMPOSITOR_REARDISPLAY $SUPPORT_REARDISPLAY/" \
+    -e "s/WRSCOMPOSITOR_WAYLAND_COMPOSITOR 0/WRSCOMPOSITOR_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
+    -e "s/WRSCOMPOSITOR_WEBENGINE 0/WRSCOMPOSITOR_WEBENGINE $SUPPORT_WEBENGINE/" \
+    -e "s/WRSCOMPOSITOR_VTHANDLER 0/WRSCOMPOSITOR_VTHANDLER $SUPPORT_VTHANDLER/" \
+    -e "s/WRSCOMPOSITOR_VIRTUAL_KEYBOARD 0/WRSCOMPOSITOR_VIRTUAL_KEYBOARD $SUPPORT_VIRTUAL_KEYBOARD/" \
+    -e "s/WRSCOMPOSITOR_DBUS 0/WRSCOMPOSITOR_DBUS $SUPPORT_DBUS/" \
     -e "s/DEFAULT_TARGET_DEVICE/$TARGET_DEVICE/" \
     -e "s/DEFAULT_HMI_PROFILE/$HMI_PROFILE/" \
-    > compositor/duduregiconfig.h
-echo $'\r'"Generating duduregiconfig.h .................................. Done"
+    > compositor/config.h
+echo $'\r'"Generating config.h for wrscompositor .................................. Done"
 
 printf "Generating config.js for hmi profile ..."
 TARGETDIR="compositor/targets/$TARGET_DEVICE"
@@ -391,7 +391,7 @@ done
 echo "  </qresource>" >> $RCPATH
 echo "</RCC>" >> $RCPATH
 cd ../../..
-echo "RESOURCES += $HMI_RC" >> $DUDUREGIPRO
+echo "RESOURCES += $HMI_RC" >> $WRSCOMPOSITOR_PRO
 echo $'\r'"Generating hmi-xxx.qrc ....................................... Done"
 
 

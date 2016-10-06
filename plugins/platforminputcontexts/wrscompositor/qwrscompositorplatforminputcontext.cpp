@@ -1,17 +1,16 @@
-#include "qduduregiplatforminputcontext.h"
+#include "qwrscompositorplatforminputcontext.h"
 
+#include <QGuiApplication>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
-#include <QGuiApplication>
 #include <QInputMethodEvent>
-#include <QWidget>
 #include <QDebug>
 
-QDuduregiPlatformInputContext::QDuduregiPlatformInputContext()
+QWrsCompositorPlatformInputContext::QWrsCompositorPlatformInputContext()
     : m_focusObject(0) {
     if (!QDBusConnection::sessionBus().isConnected()) {
-        qDebug() << "Could not connect to the D-Bus session in QDuduregiPlatformInputContext.\n";
+        qDebug() << "Could not connect to the D-Bus session in QWrsCompositorPlatformInputContext.\n";
         return;
     }
     m_keyboardInterface = new QDBusInterface("com.windriver.automotive.VirtualKeyboard", "/VirtualKeyboard", "com.windriver.automotive.VirtualKeyboard", QDBusConnection::sessionBus(), this);
@@ -20,43 +19,43 @@ QDuduregiPlatformInputContext::QDuduregiPlatformInputContext()
     connect(m_keyboardInterface, SIGNAL(specialKeyCodePressed(QString)), this, SLOT(keyboardSpecialKeyPressed(QString)));
 }
 
-QDuduregiPlatformInputContext::~QDuduregiPlatformInputContext()
+QWrsCompositorPlatformInputContext::~QWrsCompositorPlatformInputContext()
 {
 }
 
-void QDuduregiPlatformInputContext::update(Qt::InputMethodQueries) {
-    qDebug() << "QDuduregiPlatformInputContext::update()";
+void QWrsCompositorPlatformInputContext::update(Qt::InputMethodQueries) {
+    qDebug() << "QWrsCompositorPlatformInputContext::update()";
 }
 
-bool QDuduregiPlatformInputContext::isValid() const
+bool QWrsCompositorPlatformInputContext::isValid() const
 {
     bool result = m_keyboardInterface->isValid();
-    qDebug() << "QDuduregiPlatformInputContext::isValid(), result = " << result;
+    qDebug() << "QWrsCompositorPlatformInputContext::isValid(), result = " << result;
     return result;
 }
 
-void QDuduregiPlatformInputContext::setFocusObject(QObject *object) 
+void QWrsCompositorPlatformInputContext::setFocusObject(QObject *object) 
 {
-    qDebug() << "QDuduregiPlatformInputContext::setFocusObject(), object = " << object;
+    qDebug() << "QWrsCompositorPlatformInputContext::setFocusObject(), object = " << object;
     m_focusObject = object;
 }
 
-void QDuduregiPlatformInputContext::showInputPanel()
+void QWrsCompositorPlatformInputContext::showInputPanel()
 {
-    qDebug() << "QDuduregiPlatformInputContext::showInputPanel()";
+    qDebug() << "QWrsCompositorPlatformInputContext::showInputPanel()";
     m_keyboardInterface->call("showKeyboard");
 }
 
-void QDuduregiPlatformInputContext::hideInputPanel()
+void QWrsCompositorPlatformInputContext::hideInputPanel()
 {
-    qDebug() << "QDuduregiPlatformInputContext::hideInputPanel()";
+    qDebug() << "QWrsCompositorPlatformInputContext::hideInputPanel()";
     m_keyboardInterface->call("hideKeyboard");
 }
 
-bool QDuduregiPlatformInputContext::isInputPanelVisible() const
+bool QWrsCompositorPlatformInputContext::isInputPanelVisible() const
 {
     const QDBusReply<bool> reply = m_keyboardInterface->call("keyboardVisible");
-    qDebug() << "QDuduregiPlatformInputContext::isInputPanelVisible(), reply = " << reply;
+    qDebug() << "QWrsCompositorPlatformInputContext::isInputPanelVisible(), reply = " << reply;
 
     if (reply.isValid())
         return reply.value();
@@ -64,12 +63,12 @@ bool QDuduregiPlatformInputContext::isInputPanelVisible() const
         return false;
 }
 
-void QDuduregiPlatformInputContext::keyboardSpecialKeyPressed(const QString &keycode)
+void QWrsCompositorPlatformInputContext::keyboardSpecialKeyPressed(const QString &keycode)
 {
     if (!m_focusObject)
         return;
 
-    qDebug() << "QDuduregiPlatformInputContext::keyboardSpecialKeyPressed()";
+    qDebug() << "QWrsCompositorPlatformInputContext::keyboardSpecialKeyPressed()";
     if (keycode == "enter") {
         qDebug() << "Pressed enter button";
         QKeyEvent *pressEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
@@ -87,12 +86,12 @@ void QDuduregiPlatformInputContext::keyboardSpecialKeyPressed(const QString &key
     }
 }
 
-void QDuduregiPlatformInputContext::keyboardKeyPressed(const QString &keycode)
+void QWrsCompositorPlatformInputContext::keyboardKeyPressed(const QString &keycode)
 {
     if (!m_focusObject)
         return;
 
-    qDebug() << "QDuduregiPlatformInputContext::keyboardKeyPressed(), keycode = " << keycode << " m_focusObject = " << m_focusObject;
+    qDebug() << "QWrsCompositorPlatformInputContext::keyboardKeyPressed(), keycode = " << keycode << " m_focusObject = " << m_focusObject;
     QInputMethodEvent event;
     event.setCommitString(keycode);
 

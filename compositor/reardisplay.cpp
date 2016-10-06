@@ -5,8 +5,8 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#include "duduregiconfig.h"
-#include "duduregicompositor.h"
+#include "config.h"
+#include "wrscompositor.h"
 #include "reardisplay.h"
 #include <QGuiApplication>
 #include <QScreen>
@@ -15,10 +15,10 @@
 RearDisplay::RearDisplay(QWindow *parent)
     : QQuickView(parent)
 {
-    setTitle(QLatin1String("Wind River Duduregi Rear Display Example"));
+    setTitle(QLatin1String("Wind River WrsCompositor Rear Display Example"));
     QUrl programUrl = QUrl("qrc:///rearmain.qml");
     if(qApp->arguments().contains("--debug"))
-        programUrl = QUrl("hmi/" DUDUREGI_HMI_PROFILE "/rearmain.qml");
+        programUrl = QUrl("hmi/" WRSCOMPOSITOR_HMI_PROFILE "/rearmain.qml");
     setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
 
@@ -60,7 +60,7 @@ void RearDisplay::slotSwappedWindowRestore(const QVariant &v) {
     qApp->flush();
     mRearDisplay->update();
     */
-    qobject_cast<DuduregiCompositor*>(mMainDisplay)->restoreSwappedWindow(surfaceItem);
+    qobject_cast<WrsCompositor*>(mMainDisplay)->restoreSwappedWindow(surfaceItem);
     surfaceItem->deleteLater();
 }
 

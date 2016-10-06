@@ -5,7 +5,7 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#include "duduregiconfig.h"
+#include "config.h"
 #include "projectionmode.h"
 #include <QVariant>
 #include <QMetaType>

@@ -6,7 +6,7 @@
  * Wind River license agreement.
  */
 import QtQuick 2.1
-import com.windriver.duduregi 1.0
+import com.windriver.wrscompositor 1.0
 
 Item {
     id: dockbar

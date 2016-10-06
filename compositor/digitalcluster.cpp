@@ -5,7 +5,7 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#include "duduregiconfig.h"
+#include "config.h"
 #include "digitalcluster.h"
 #include <QGuiApplication>
 #include <QScreen>
@@ -14,10 +14,10 @@
 DigitalCluster::DigitalCluster(QWindow *parent)
     : QQuickView(parent)
 {
-    setTitle(QLatin1String("Wind River Duduregi Digital Cluster Example"));
+    setTitle(QLatin1String("Wind River WrsCompositor Digital Cluster Example"));
     QUrl programUrl = QUrl("qrc:///cluster.qml");
     if(qApp->arguments().contains("--debug"))
-        programUrl = QUrl("hmi/" DUDUREGI_HMI_PROFILE "/cluster.qml");
+        programUrl = QUrl("hmi/" WRSCOMPOSITOR_HMI_PROFILE "/cluster.qml");
     setSource(programUrl);
     setResizeMode(QQuickView::SizeRootObjectToView);
 

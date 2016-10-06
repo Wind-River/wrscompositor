@@ -5,10 +5,10 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#ifndef DUDUREGI_COMPOSITOR
-#define DUDUREGI_COMPOSITOR
-#include "duduregiconfig.h"
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#ifndef WRS_COMPOSITOR
+#define WRS_COMPOSITOR
+#include "config.h"
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
 #include <QtCompositor/qwaylandsurfaceitem.h>
 #include <QtCompositor/qwaylandoutput.h>
 #include <QtCompositor/qwaylandquickcompositor.h>
@@ -31,12 +31,12 @@
 #include <QSettings>
 
 #include <QTimer>
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
 #include "reardisplay.h"
 #endif
 
-class DuduregiCompositor : public QQuickView
-#if DUDUREGI_WAYLAND_COMPOSITOR
+class WrsCompositor : public QQuickView
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
                       , public QWaylandQuickCompositor
                       , public QtWaylandServer::ivi_surface
                       , public QtWaylandServer::ivi_application
@@ -47,21 +47,21 @@ class DuduregiCompositor : public QQuickView
 #endif
 {
     Q_OBJECT
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     Q_PROPERTY(QWaylandQuickSurface* fullscreenSurface READ fullscreenSurface WRITE setFullscreenSurface NOTIFY fullscreenSurfaceChanged)
 #endif
 
 public:
-    DuduregiCompositor(const QString &display=QString::null, const QString &program=QString::null);
-    ~DuduregiCompositor();
+    WrsCompositor(const QString &display=QString::null, const QString &program=QString::null);
+    ~WrsCompositor();
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     QWaylandQuickSurface *fullscreenSurface() const;
     void loadQmlComponent(const QSize &size);
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
     Q_INVOKABLE QString getProcessNameByPid(int pid); 
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
     void setRearDisplay(QQuickView *);
     QWaylandQuickOutput* mainOutput() { return mMainOutput; };
     QWaylandQuickOutput* rearOutput() { return mRearOutput; };
@@ -71,13 +71,13 @@ signals:
 #endif
 private slots:
     void slotFocusObjectChanged(QObject *);
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
     void slotSwapWindow(const QVariant &v);
     void slotCloneWindow(const QVariant &v);
     void slotCloseClonedWindow(const QVariant &v);
 #endif
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
 signals:
     void windowAdded(QVariant surface);
     void windowResized(QVariant surface);
@@ -100,7 +100,7 @@ protected:
     void surfaceCreated(QWaylandSurface *surface);
 
 private:
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
     RearDisplay *mRearDisplay;
     QWaylandQuickOutput *mRearOutput;
 #endif
@@ -111,7 +111,7 @@ private:
 #endif
 
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
 protected:
     void ivi_controller_surface_bind_resource(QtWaylandServer::ivi_controller_surface::Resource *resource);
     void ivi_controller_surface_destroy_resource(QtWaylandServer::ivi_controller_surface::Resource *resource);

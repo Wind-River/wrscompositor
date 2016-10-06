@@ -1,5 +1,5 @@
-#ifndef QDUDUREGIPLATFORMINPUTCONTEXT_H
-#define QDUDUREGIPLATFORMINPUTCONTEXT_H
+#ifndef QWRSCOMPOSITORPLATFORMINPUTCONTEXT_H
+#define QWRSCOMPOSITORPLATFORMINPUTCONTEXT_H
 
 #include <qpa/qplatforminputcontext.h>
 
@@ -7,13 +7,13 @@ QT_BEGIN_NAMESPACE
 
 class QDBusInterface;
 
-class QDuduregiPlatformInputContext : public QPlatformInputContext
+class QWrsCompositorPlatformInputContext : public QPlatformInputContext
 {
     Q_OBJECT
 
 public:
-    QDuduregiPlatformInputContext();
-    ~QDuduregiPlatformInputContext();
+    QWrsCompositorPlatformInputContext();
+    ~QWrsCompositorPlatformInputContext();
 
     bool isValid() const Q_DECL_OVERRIDE;
     void update(Qt::InputMethodQueries) Q_DECL_OVERRIDE;

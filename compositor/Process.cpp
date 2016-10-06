@@ -5,7 +5,7 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#include "duduregiconfig.h"
+#include "config.h"
 #include "Process.h"
 #include <QVariant>
 #include <QMetaType>
@@ -32,12 +32,12 @@ bool Process::execute(const QString &cmd)
     if(mProcess)
         delete mProcess;
     mProcess = new QProcess();
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     QStringList env = QProcess::systemEnvironment();
     env << "QT_QPA_PLATFORM=wayland";
     env << QString("WAYLAND_DISPLAY=%1").arg(Process::WAYLAND_DISPlAY);
-    env << QString("DUDUREGI_WINDOW_DEFAULT_WIDTH=%1").arg(mWDW);
-    env << QString("DUDUREGI_WINDOW_DEFAULT_HEIGHT=%1").arg(mWDH);
+    env << QString("WRSCOMPOSITOR_WINDOW_DEFAULT_WIDTH=%1").arg(mWDW);
+    env << QString("WRSCOMPOSITOR_WINDOW_DEFAULT_HEIGHT=%1").arg(mWDH);
     //env << "LD_LIBRARY_PATH=/opt/workspaces/wl/out/lib";
     //env << "QT_XCB_GL_INTEGRATION=xcb_egl";
     mProcess->setEnvironment(env);

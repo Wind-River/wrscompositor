@@ -1,3 +1,0 @@
-#!/bin/bash
-exec ./duduregi-vt-handler $@>/tmp/o 2>/tmp/e
-echo exit code: $? >> /tmp/e
