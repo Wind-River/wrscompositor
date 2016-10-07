@@ -56,7 +56,7 @@ public slots:
         qDebug() << "connected";
     }
     void slotDisconnected() {
-        qDebug() << "duduregi-compositor socket disclosed";
+        qDebug() << "wrscompositor socket disclosed";
         mLogind.restoreTTY();
         qApp->quit();
     }
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
     }
 
     VTHandlerClient c;
-    c.connectToServer(".duduregi-vt");
+    c.connectToServer(".wrscompositor-vt");
     if(c.waitForConnected()) {
         int fd = c.readFd();
         qInfo() << "read drm_fd " << fd;

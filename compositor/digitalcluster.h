@@ -5,9 +5,9 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#ifndef DUDUREGI_CLUSTER_H
-#define DUDUREGI_CLUSTER_H
-#include "duduregiconfig.h"
+#ifndef WRSCOMPOSITOR_CLUSTER_H
+#define WRSCOMPOSITOR_CLUSTER_H
+#include "config.h"
 
 #include <QSurfaceFormat>
 #include <QQmlContext>

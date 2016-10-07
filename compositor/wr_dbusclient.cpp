@@ -31,7 +31,7 @@ WRDBusClient::WRDBusClient() {
     mArtwork = "";
     mTrackPosition = 0;
 
-    //QDBusConnection::systemBus().registerService("com.windriver.duduregi");
+    //QDBusConnection::systemBus().registerService("com.windriver.wrscompositor");
     //QDBusConnection::systemBus().registerObject("/", this);
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "track_info", this, SLOT(slotTrackInfoChanged(int, int, uint, int, uint, uint, uint, const QString &, const QString &, const QString &, const QString &)));
     QDBusConnection::systemBus().connect(QString(), QString(), "com.windriver.iAP1", "playstate_changed", this, SLOT(slotPlayStateChanged(uint)));

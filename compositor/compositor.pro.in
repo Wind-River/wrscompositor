@@ -1,13 +1,13 @@
 DBUS_ADAPTORS += projectionmode.xml virtualkeyboard.xml
-HEADERS += Process.h vna_dbusclient.h wr_dbusclient.h duduregicompositor.h projectionmode.h systemd-util.h
-SOURCES += main.cpp Process.cpp vna_dbusclient.cpp wr_dbusclient.cpp duduregicompositor.cpp projectionmode.cpp systemd-util.cpp
+HEADERS += Process.h vna_dbusclient.h wr_dbusclient.h wrscompositor.h projectionmode.h systemd-util.h
+SOURCES += main.cpp Process.cpp vna_dbusclient.cpp wr_dbusclient.cpp wrscompositor.cpp projectionmode.cpp systemd-util.cpp
 
 OTHER_FILES = ContrastEffect.qml  main.qml  WindowChrome.qml  WindowContainer.qml alameda.jpg closebutton.png compositor.js
 
 LIBS+=-lpam
 
-TARGET = duduregi-compositor
-output.files = duduregi-compositor
+TARGET = wrscompositor
+output.files = wrscompositor
 output.path = $$PREFIX/bin
 dbusconfig.files = targets/common/etc/dbus-1/*
 dbusconfig.path = $$PREFIX/etc/dbus-1

@@ -5,14 +5,14 @@
  * software may be licensed only pursuant to the terms of an applicable
  * Wind River license agreement.
  */
-#include "duduregiconfig.h"
+#include "config.h"
 
 #include <QGuiApplication>
 #include <QScreen>
 #include <QSettings>
-#include "duduregicompositor.h"
+#include "wrscompositor.h"
 
-#if DUDUREGI_WEBENGINE
+#if WRSCOMPOSITOR_WEBENGINE
 #include <QtWebEngine>
 #else
 #include <QtWebKitWidgets>
@@ -24,18 +24,18 @@
 #include "wr_dbusclient.h"
 #include "projectionmode.h"
 
-#if DUDUREGI_DIGITALCLUSTER
+#if WRSCOMPOSITOR_DIGITALCLUSTER
 #include "digitalcluster.h"
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
 #include "reardisplay.h"
 #endif
 
-#if DUDUREGI_VIRTUAL_KEYBOARD
+#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
 #include "virtualkeyboard.h"
 #endif
 
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
 #include "GeniviWaylandIVIExtension.h"
 #endif
 
@@ -169,23 +169,23 @@ public:
         qInfo() << "VT Handler Server is staring at " << fullServerName();
         QString args = QString(" --tty=%1").arg(mTTY);
         mStarted = false;
-        if(QFileInfo::exists("../vt-handler/duduregi-vt-handler")) {
+        if(QFileInfo::exists("../vt-handler/wrscompositor-vt-handler")) {
             // for debug
-            mStarted = mProcess.execute("../vt-handler/duduregi-vt-handler-dbg"+args);
+            mStarted = mProcess.execute("../vt-handler/wrscompositor-vt-handler-dbg"+args);
         } else {
-            mStarted = mProcess.execute("duduregi-vt-handler"+args); // exec in PATH
+            mStarted = mProcess.execute("wrscompositor-vt-handler"+args); // exec in PATH
         }
         if(mStarted)
             qDebug() << "Run VT handler PID:" << mProcess.getPID();
         else
-            qDebug() << "Failed to start duduregi-vt-handler";
+            qDebug() << "Failed to start wrscompositor-vt-handler";
     };
     void addDisplay(QQuickWindow *disp) {
         mDisplayList << disp;
     };
 public slots:
     void slotAccept() {
-        qDebug() << "duduregi-vt-handler is connected";
+        qDebug() << "wrscompositor-vt-handler is connected";
         if(mClient) {
             mClient->disconnectFromServer();
             delete mClient;
@@ -272,13 +272,13 @@ int main(int argc, char *argv[])
         }
         return 0;
     } else if(app.arguments().contains("--clean-geometry")) {
-        QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+        QSettings settings(WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME);
         settings.clear();
         settings.sync();
         qInfo() << "Geometry Cache Cleared";
         return 0;
     } else if(app.arguments().contains("--help")) {
-        qInfo() << "Wind River Duduregi Wayland Compositor";
+        qInfo() << "Wind River WrsCompositor Wayland Compositor";
         qInfo() << "Usage:";
         qInfo() << "  " << app.arguments().at(0) << " [arguments]";
         qInfo() << "";
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
         qInfo() << "  --720             Show main window as 720px height";
         qInfo() << "  --1080            Show main window as 1080px height";
         qInfo() << "  --tty=path        tty dev path (e.g - /dev/tty1)";
-        qInfo() << "  --user=username   username for duduregi-compositor";
+        qInfo() << "  --user=username   username for wrscompositor";
         qInfo() << "  --clean-geometry  Clean saved window geometry";
         qInfo() << "  --list-displays   Show display list";
         qInfo() << "  --display=NUM     Set WAYLAND_DISPLAY environment, default NUM=0";
@@ -298,17 +298,17 @@ int main(int argc, char *argv[])
 
     VTHandlerServer s(&app);
     if(getuid() == 0) { // root
-#if DUDUREGI_VTHANDLER
-        s.removeServer(".duduregi-vt");
-        if(s.listen(".duduregi-vt")) {
+#if WRSCOMPOSITOR_VTHANDLER
+        s.removeServer(".wrscompositor-vt");
+        if(s.listen(".wrscompositor-vt")) {
             s.startVTHandler();
-            qInfo() << "Waiting until duduregi-vt-handler launched";
+            qInfo() << "Waiting until wrscompositor-vt-handler launched";
             while(!s.vtHandlerStarted() || !s.vtHandlerConnected()) {
                 app.processEvents();
             }
-            qInfo() << "duduregi-vt-handler has been launched";
+            qInfo() << "wrscompositor-vt-handler has been launched";
         }
-#endif // DUDUREGI_VTHANDLER
+#endif // WRSCOMPOSITOR_VTHANDLER
         // XXX setuid
         QRegExp user("--user=(\\S+)");
         int i = args.indexOf(user);
@@ -329,25 +329,25 @@ int main(int argc, char *argv[])
         }
     }
 
-    qInfo() << "Starting duduregi ... with uid " << getuid();
+    qInfo() << "Starting wrscompositor ... with uid " << getuid();
 
-    QSettings settings(DUDUREGI_MANUFACTURER, DUDUREGI_PRODUCT_NAME);
+    QSettings settings(WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME);
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
 #if 0
     QDesktopWidget d;
     QRect screenGeometry = d.screenGeometry();
 #endif
-    qmlRegisterType<Process>("com.windriver.duduregi", 1, 0, "Process");
-    qmlRegisterType<SystemdDbusClient>("com.windriver.duduregi", 1, 0, "SystemdDbusClient");
-    qmlRegisterType<SystemdUnit>("com.windriver.duduregi", 1, 0, "SystemdUnit");
+    qmlRegisterType<Process>("com.windriver.wrscompositor", 1, 0, "Process");
+    qmlRegisterType<SystemdDbusClient>("com.windriver.wrscompositor", 1, 0, "SystemdDbusClient");
+    qmlRegisterType<SystemdUnit>("com.windriver.wrscompositor", 1, 0, "SystemdUnit");
     //qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
-#if DUDUREGI_VIRTUAL_KEYBOARD
+#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
     qmlRegisterType<VirtualKeyboard>("com.windriver.automotive", 1, 0, "VirtualKeyboard");
 #endif
-#if DUDUREGI_WAYLAND_COMPOSITOR
+#if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
     qmlRegisterType<GeniviWaylandIVIExtension::IVILayer>("com.windriver.genivi", 1, 0, "IVILayer");
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
 #endif
 
-#if DUDUREGI_WEBENGINE
+#if WRSCOMPOSITOR_WEBENGINE
     QtWebEngine::initialize();
 #endif
 
@@ -372,15 +372,15 @@ int main(int argc, char *argv[])
             Process::WAYLAND_DISPlAY = waylandDisplay;
         }
     }
-    DuduregiCompositor compositor(waylandDisplay);
+    WrsCompositor compositor(waylandDisplay);
     s.addDisplay(&compositor);
 
 
-#if DUDUREGI_DIGITALCLUSTER
+#if WRSCOMPOSITOR_DIGITALCLUSTER
     DigitalCluster dc;
     s.addDisplay(&dc);
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
     RearDisplay rd;
     s.addDisplay(&rd);
     compositor.setRearDisplay(&rd);
@@ -391,42 +391,42 @@ int main(int argc, char *argv[])
     if(mode != HEIGHT_FULLSCREEN) {
         if(mode == HEIGHT_720) {
             compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1280, 720)).toRect());
-#if DUDUREGI_DIGITALCLUSTER
+#if WRSCOMPOSITOR_DIGITALCLUSTER
             dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1280, 720)).toRect());
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
             rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1280, 720)).toRect());
 #endif
         } else {
             compositor.setGeometry(settings.value("geometry-for-maindisplay", QRect(50, 50, 1920, 1080)).toRect());
-#if DUDUREGI_DIGITALCLUSTER
+#if WRSCOMPOSITOR_DIGITALCLUSTER
             dc.setGeometry(settings.value("geometry-for-cluster", QRect(100, 100, 1920, 1080)).toRect());
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
             rd.setGeometry(settings.value("geometry-for-reardisplay", QRect(150, 150, 1920, 1080)).toRect());
 #endif
         }
     } else { // full screen
         compositor.setGeometry(screenGeometry);
     }
-#if DUDUREGI_DIGITALCLUSTER
+#if WRSCOMPOSITOR_DIGITALCLUSTER
     dc.show();
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
     rd.show();
 #endif
     compositor.show();
-    //DuduregiCompositor rearcompositor("cluster.qml", "wayland-1");
+    //WrsCompositor rearcompositor("cluster.qml", "wayland-1");
     //rearcompositor.show();
 
     int ret = app.exec();
 
     if(mode != HEIGHT_FULLSCREEN) { // save last geometry
         settings.setValue("geometry-for-maindisplay", compositor.geometry());
-#if DUDUREGI_DIGITALCLUSTER
+#if WRSCOMPOSITOR_DIGITALCLUSTER
         settings.setValue("geometry-for-cluster", dc.geometry());
 #endif
-#if DUDUREGI_REARDISPLAY
+#if WRSCOMPOSITOR_REARDISPLAY
         settings.setValue("geometry-for-reardisplay", rd.geometry());
 #endif
     }

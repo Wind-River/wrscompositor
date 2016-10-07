@@ -1,11 +1,11 @@
-Wind River Wayland Compositor (a.k.a duduregi)
+Wind River Wayland Compositor (a.k.a wrscompositor)
 ==============================================
 
 * for GENIVI/AGL platform
 * part of Helix Cockpit
 * GENIVI Compliant
 
-Qt Installation for duduregi (for dev env)
+Qt Installation for wrscompositor (for dev env)
 ------------------------------------------
 
 ::

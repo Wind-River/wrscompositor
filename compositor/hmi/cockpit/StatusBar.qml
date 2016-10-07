@@ -227,6 +227,7 @@ Item {
     }
     Image {
         id: androidAuto
+        visible: Conf.useConnectivityProjectionFeature ? true : false
         source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
         anchors.left: rssi.right
         anchors.leftMargin: parent.width/70
@@ -249,6 +250,7 @@ Item {
     }
     Image {
         id: appleCarPlay
+        visible: Conf.useConnectivityProjectionFeature ? true : false
         source: (projectionMode.appleCarPlayStatus == "connected") ? "icons/apple-carplay.png" : "icons/apple-carplay-grey.png"
         anchors.left: androidAuto.right
         anchors.leftMargin: parent.width/70

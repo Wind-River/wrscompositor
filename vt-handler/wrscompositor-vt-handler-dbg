@@ -1,0 +1,3 @@
+#!/bin/bash
+exec ./wrscompositor-vt-handler $@>/tmp/o 2>/tmp/e
+echo exit code: $? >> /tmp/e

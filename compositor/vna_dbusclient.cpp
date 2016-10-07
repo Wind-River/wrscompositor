@@ -19,7 +19,7 @@ VNADBusClient::VNADBusClient() {
     }
     mSpeedometer = 0;
 
-    //QDBusConnection::sessionBus().registerService("com.windriver.duduregi");
+    //QDBusConnection::sessionBus().registerService("com.windriver.wrscompositor");
     //QDBusConnection::sessionBus().registerObject("/", this);
     QDBusConnection::sessionBus().connect(QString(), QString(), "org.genivi.vna", "get_vehicleinfo_wmi", this, SLOT(slotVehicleInfoWMI(const QString&)));
     QDBusConnection::sessionBus().connect(QString(), QString(), "org.genivi.vna", "get_runningstatus_speedometer", this, SLOT(slotSpeedometer(ushort)));

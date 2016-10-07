@@ -6,15 +6,19 @@
  * Wind River license agreement.
  */
 import QtQuick 2.1
-import com.windriver.duduregi 1.0
+import com.windriver.wrscompositor 1.0
 import "config.js" as Conf
 
 Item {
     id: mainMenu
+    anchors.fill: parent
+    visible: true
+
     signal menuActivated(bool flag)
     property variant root: null
-    property int windowDefaultWidth: 1920
-    property int windowDefaultHeight: 1080
+    property string modelType: Conf.appsModel
+    property int windowDefaultWidth: Conf.displayWidth
+    property int windowDefaultHeight: Conf.displayHeight
 
     SystemdDbusClient {
         id: systemd_dbusClient
@@ -26,21 +30,23 @@ Item {
         color: "black"
         opacity: 0.8
     }
+
     Behavior on opacity {
         NumberAnimation { easing.type: Easing.InCubic; duration: 400; }
     }
-    anchors.fill: parent
-    visible: true
+
     function show() {
         visible = true
         menuActivated(true);
         focus = true
     }
+
     function hide() {
         visible = false
         parent.focus = true
         menuActivated(false);
     }
+
     function launchNative(appid) {
         var unitFile = appid + ".service"
         var pid = systemd_dbusClient.getPidByUnitFile(unitFile);
@@ -65,7 +71,7 @@ Item {
     }
     */
     ListModel {
-        id: nativeApps
+        id: geniviApps
         ListElement {
             label: "AM Monitor"
             description: "Audio Manager Monitor"
@@ -78,17 +84,13 @@ Item {
         ListElement {
             label: "Application"
             description: "Application"
-            exec: "skobblernavi"
             multiple: false
-            systemd: true
+            systemd: false
             iconPath: "icons/gdp-icon-app.png"
-            unitFile: "skobblernavi.service"
         }
         ListElement {
             label: "Fuel Stop Advisor"
             description: "Fuel Stop Advisor"
-            //exec: "/opt/windriver/bin/assistant"
-            exec: "qdbusviewer-qt5"
             multiple: false
             systemd: false
             iconPath: "icons/gdp-icon-fuel.png"
@@ -105,26 +107,54 @@ Item {
         ListElement {
             label: "Navigation"
             description: "Navigation"
-            exec: "mocknavi"
+            exec: "EGLWLMockNavigation"
             multiple: false
             systemd: true
             iconPath: "icons/gdp-icon-nav.png"
-            unitFile: "mocknavi.service"
+            unitFile: "EGLWLMockNavigation.service"
         }
         ListElement {
             label: "Media Player"
             description: "Media Player"
-            exec: "mediaplayer"
+            multiple: false
+            systemd: false
+            iconPath: "icons/gdp-icon-mediaplayer.png"
+        }
+    }
+
+    ListModel {
+        id: nativeApps
+        ListElement {
+            label: "Web Browsing"
+            description: "Web Browsing"
+            exec: "/usr/share/qt5/examples/webkitwidgets/browser/browser"
+            multiple: false
+            systemd: false
+            iconPath: "icons/native-web.png"
+        }
+        ListElement {
+            label: "Navigation"
+            description: "Navigation"
+            exec: "skobblernavi"
             multiple: false
             systemd: true
-            iconPath: "icons/gdp-icon-mediaplayer.png"
+            iconPath: "icons/native-map-location.png"
+            unitFile: "skobblernavi.service"
+        }
+        ListElement {
+            label: "Video"
+            description: "Video"
+            exec: "mediaplayer"
+            multiple: false
+            systemd: false
+            iconPath: "icons/native-video.png"
             unitFile: "mediaplayer.service"
         }
     }
 
     GridView {
         id: grid
-        model: nativeApps
+        model: modelType == "genivi" ? geniviApps : nativeApps
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width*0.8
