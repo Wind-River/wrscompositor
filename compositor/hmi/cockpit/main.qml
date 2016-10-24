@@ -106,7 +106,6 @@ Item {
             id: projectionViewList
             width: parent.width
             height: parent.height
-            visible: Conf.useConnectivityProjectionFeature ? true : false
 
             ConnectivityProjectionView { 
                 id: androidAutoProjectionView 
@@ -306,7 +305,7 @@ Item {
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
-        if (Conf.useConnectivityProjectionFeature && surface.title == 'OpenGL Renderer') { 
+        if (surface.title == 'OpenGL Renderer') { 
              // gstreamer-0.1: gsteglgles
             if (name.indexOf(Conf.aapName) != -1) {
                 console.log('wayland android auto');
