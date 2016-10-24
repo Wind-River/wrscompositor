@@ -304,7 +304,7 @@ if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
 
 fi
 
-if [ "$HMI_PROFILE" = "cockpit" ]; then
+if [ "$SUPPORT_VIRTUAL_KEYBOARD" = "1" ]; then
     echo "HEADERS += virtualkeyboard.h" >> $WRSCOMPOSITOR_PRO
     echo "SOURCES += virtualkeyboard.cpp" >> $WRSCOMPOSITOR_PRO
 fi
