@@ -169,7 +169,7 @@ Q_INVOKABLE QWaylandSurfaceItem* WrsCompositor::item(QWaylandSurface *surf)
     return static_cast<QWaylandSurfaceItem *>(surf->views().first());
 }
 
-Q_INVOKABLE QString WrsCompositor::getProcessNameByPid(int pid) {
+Q_INVOKABLE QString WrsCompositor::getProcessPathByPid(int pid) {
 #define MAX_PROCESS_NAME 512
     char name[MAX_PROCESS_NAME] = {0,};
 

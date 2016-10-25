@@ -301,17 +301,17 @@ Item {
         console.log(geniviExt.mainScreen.layer(0));
         console.log(geniviExt.mainScreen.layer(0).visibility);
 
-        var name = compositor.getProcessNameByPid(surface.client.processId);
         var layer = geniviExt.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
         if (surface.title == 'OpenGL Renderer') { 
+            var processPath = compositor.getProcessPathByPid(surface.client.processId);
              // gstreamer-0.1: gsteglgles
-            if (name.indexOf(Conf.aapName) != -1) {
+            if (processPath == Conf.aapPath) {
                 console.log('wayland android auto');
                 projectionMode.androidAutoStatus = "connected";
                 windowFrame = windowContainerComponent.createObject(projectionMode.androidAutoProjectionContainer);
-            } else if (name.indexOf(Conf.carplayName) != -1) {  
+            } else if (processPath == Conf.carplayPath) {
                 console.log('wayland apple carplay');
                 projectionMode.appleCarPlayStatus = "connected";
                 windowFrame = windowContainerComponent.createObject(projectionMode.appleCarPlayProjectionContainer);   

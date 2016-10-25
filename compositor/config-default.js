@@ -33,7 +33,7 @@ var useMultiWaylandDisplayFeature = false;
 var densityAdjust = 1.0;
 var useWebEngine = 0;
 var appsModel = 'native';
-var aapName = 'gal_media';
-var carplayName = 'DiO-WrDemo';
+var aapPath = 'none';
+var carplayPath = 'none';
 
 // XXX OVERWRITE DEFAULT CONFIGs FROM HERE
