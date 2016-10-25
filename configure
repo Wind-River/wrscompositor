@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 SUPPOTED_TARGETDEVICES=( x11 minnowmax mrb)
-SUPPOTED_HMIPROFILES=( cockpit)
+SUPPOTED_HMIPROFILES=( classic cockpit)
 SUPPORTED_APPSMODEL=( genivi native)
 WRSCOMPOSITOR_PRO=compositor/compositor.pro
 
@@ -38,7 +38,6 @@ show_help() {
     echo "  --enable-webengine          Use WebEngine instead of WebKit for WebRuntime"
     echo "  --enable-vthandler          Use VT Handler to switch Virtual Terminal"
     echo "  --enable-virtualkeyboard    Use VirtualKebyaord to send key code to application"
-    echo "  --enable-projection         Use Connectivity Projection related to CarPlay/Aap"
     echo "  --apps-model=NAME           Set application model"
     echo "  --target-device=NAME        Set JS configuration for specific target device"
     echo "  --hmi-profile=NAME          Set HMI Profile"
@@ -91,7 +90,6 @@ SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=0
 SUPPORT_VTHANDLER=0
 SUPPORT_VIRTUAL_KEYBOARD=0
-SUPPORT_CONNECTIVITY_PROJECTION=0
 SUPPORT_DBUS=1
 MANUAL_QMAKE=0
 TARGET_DEVICE=x11
@@ -116,9 +114,6 @@ for opt do
             ;;
         --enable-virtualkeyboard)
             SUPPORT_VIRTUAL_KEYBOARD=1
-            ;;
-        --enable-projection)
-            SUPPORT_CONNECTIVITY_PROJECTION=1
             ;;
         --with-digitalcluster)
             SUPPORT_DCLUSTER=1
@@ -309,7 +304,7 @@ if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
 
 fi
 
-if [ "$HMI_PROFILE" = "cockpit" ]; then
+if [ "$SUPPORT_VIRTUAL_KEYBOARD" = "1" ]; then
     echo "HEADERS += virtualkeyboard.h" >> $WRSCOMPOSITOR_PRO
     echo "SOURCES += virtualkeyboard.cpp" >> $WRSCOMPOSITOR_PRO
 fi
@@ -374,9 +369,6 @@ if [ -d "$TARGETDIR" ]; then
     fi
     if [ "$SUPPORT_WEBENGINE" = "1" ]; then
         echo "useWebEngine = $SUPPORT_WEBENGINE;" >> $CONFIGJS
-    fi
-    if [ "$SUPPORT_CONNECTIVITY_PROJECTION" = "1" ]; then
-        echo "useConnectivityProjectionFeature = $SUPPORT_CONNECTIVITY_PROJECTION;" >> $CONFIGJS
     fi
     if [ "$APPS_MODEL" = "genivi" ]; then
         echo "appsModel = '$APPS_MODEL';" >> $CONFIGJS
