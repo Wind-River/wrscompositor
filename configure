@@ -44,6 +44,8 @@ show_help() {
     echo "  --overwrite                 overwrite existing config.js by new target/hmi config"
     echo "  --without-qmake             don't execute qmake in configure"
     echo "  --with-qmake=path           set qmake path (e.g - /usr/bin/qmake)"
+    echo "  --with-carplay=path         set carplay path"
+    echo "  --with-aap=path             set aap path"
     echo ""
     echo "Supported target devices:"
     for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -97,6 +99,8 @@ APPS_MODEL=native
 HMI_PROFILE=cockpit
 OVERWRITE=0
 QMAKEPATH=
+CARPLAY_PATH=none
+AAP_PATH=none
 OPTARGS=""
 PREFIX=/usr
 
@@ -130,6 +134,12 @@ for opt do
                 exit 1
             fi
             QMAKEPATH=$optval
+            ;;
+        --with-carplay=*)
+            CARPLAY_PATH=$optval
+            ;;
+        --with-aap=*)
+            AAP_PATH=$optval
             ;;
         --prefix=*)
             PREFIX=$optval
@@ -225,6 +235,8 @@ echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
 echo "  TARGET_DEVICE=$TARGET_DEVICE"
 echo "  HMI_PROFILE=$HMI_PROFILE"
 echo "  APPS_MODEL=$APPS_MODEL"
+echo "  CARPLAY_PATH=$CARPLAY_PATH"
+echo "  AAP_PATH=$AAP_PATH"
 echo "  OPTARGS: $OPTARGS"
 echo "  PREFIX: $PREFIX"
 echo
@@ -372,6 +384,12 @@ if [ -d "$TARGETDIR" ]; then
     fi
     if [ "$APPS_MODEL" = "genivi" ]; then
         echo "appsModel = '$APPS_MODEL';" >> $CONFIGJS
+    fi
+    if [ "$CARPLAY_PATH" != "none" ]; then
+        echo "carplayPath = '$CARPLAY_PATH';" >> $CONFIGJS
+    fi
+    if [ "$AAP_PATH" != "none" ]; then
+        echo "aapPath = '$AAP_PATH';" >> $CONFIGJS
     fi
     if [ "$OVERWRITTEN" = "1" ]; then
         echo $'\r'"                    overwritten at $CONFIGJS"
