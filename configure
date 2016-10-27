@@ -316,11 +316,6 @@ if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
 
 fi
 
-if [ "$SUPPORT_VIRTUAL_KEYBOARD" = "1" ]; then
-    echo "HEADERS += virtualkeyboard.h" >> $WRSCOMPOSITOR_PRO
-    echo "SOURCES += virtualkeyboard.cpp" >> $WRSCOMPOSITOR_PRO
-fi
-
 if [ "$SUPPORT_DCLUSTER" = "1" ]; then
     echo "HEADERS += digitalcluster.h" >> $WRSCOMPOSITOR_PRO
     echo "SOURCES += digitalcluster.cpp" >> $WRSCOMPOSITOR_PRO

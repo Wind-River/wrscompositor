@@ -38,16 +38,13 @@
 //#include "vna_dbusclient.h"
 #include "wr_dbusclient.h"
 #include "projectionmode.h"
+#include "virtualkeyboard.h"
 
 #if WRSCOMPOSITOR_DIGITALCLUSTER
 #include "digitalcluster.h"
 #endif
 #if WRSCOMPOSITOR_REARDISPLAY
 #include "reardisplay.h"
-#endif
-
-#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
-#include "virtualkeyboard.h"
 #endif
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
@@ -359,9 +356,7 @@ int main(int argc, char *argv[])
     //qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
-#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
     qmlRegisterType<VirtualKeyboard>("com.windriver.automotive", 1, 0, "VirtualKeyboard");
-#endif
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
     qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");

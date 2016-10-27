@@ -49,7 +49,7 @@ bool VirtualKeyboardPrivate::keyboardVisible() {
 
 VirtualKeyboard::VirtualKeyboard(QObject *parent) :
 	QObject(parent) {
-
+#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
 	mVKPrivate = new VirtualKeyboardPrivate(this);
 	connect(mVKPrivate, SIGNAL(showKeyboardCalled()), this, SLOT(slotShowKeyboardRequested()));
 	connect(mVKPrivate, SIGNAL(hideKeyboardCalled()), this, SLOT(slotHideKeyboardRequested()));
@@ -73,6 +73,7 @@ VirtualKeyboard::VirtualKeyboard(QObject *parent) :
     }
 
     mActive = false;
+#endif
 }
 
 VirtualKeyboard::~VirtualKeyboard() {
