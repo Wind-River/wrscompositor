@@ -6,3 +6,7 @@ LOCAL_HEADERS =
 SOURCES += $$LOCAL_SOURCES
 HEADERS += $$LOCAL_HEADERS
 RESOURCES += html.qrc
+
+output.files = skobblernavi
+output.path = $$PREFIX/bin
+INSTALLS += output

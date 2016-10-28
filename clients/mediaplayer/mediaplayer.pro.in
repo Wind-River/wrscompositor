@@ -7,4 +7,6 @@ SOURCES += $$LOCAL_SOURCES
 HEADERS += $$LOCAL_HEADERS
 RESOURCES += mediaplayer.qrc
 
-
+output.files = mediaplayer
+output.path = $$PREFIX/bin
+INSTALLS += output

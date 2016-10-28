@@ -420,6 +420,16 @@ echo "PREFIX=$PREFIX" > vt-handler/vt-handler.pro
 cat vt-handler/vt-handler.pro.in >> vt-handler/vt-handler.pro
 echo $'\r'"Generating vt-handler.pro .................................... Done"
 
+printf "Generating mediaplayer.pro ..."
+echo "PREFIX=$PREFIX" > clients/mediaplayer/mediaplayer.pro
+cat clients/mediaplayer/mediaplayer.pro.in >> clients/mediaplayer/mediaplayer.pro
+echo $'\r'"Generating mediaplayer.pro .................................... Done"
+
+printf "Generating skobblernavi.pro ..."
+echo "PREFIX=$PREFIX" > clients/skobblernavi/skobblernavi.pro
+cat clients/skobblernavi/skobblernavi.pro.in >> clients/skobblernavi/skobblernavi.pro
+echo $'\r'"Generating skobblernavi.pro .................................... Done"
+
 if [ "$MANUAL_QMAKE" = "0" ]; then
     $QMAKEPATH $OPTARGS && echo "Makefile generated"
 else
