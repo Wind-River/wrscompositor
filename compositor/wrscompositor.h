@@ -50,15 +50,13 @@
 #include "reardisplay.h"
 #endif
 
+class WrsIviController;
+class WrsIviApplication;
+class WrsIviSurface;
+
 class WrsCompositor : public QQuickView
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
                       , public QWaylandQuickCompositor
-                      , public QtWaylandServer::ivi_surface
-                      , public QtWaylandServer::ivi_application
-                      , public QtWaylandServer::ivi_controller_surface
-                      , public QtWaylandServer::ivi_controller_layer
-                      , public QtWaylandServer::ivi_controller_screen
-                      , public QtWaylandServer::ivi_controller
 #endif
 {
     Q_OBJECT
@@ -69,6 +67,11 @@ class WrsCompositor : public QQuickView
 public:
     WrsCompositor(const QString &display=QString::null, const QString &program=QString::null);
     ~WrsCompositor();
+
+    QWaylandQuickOutput * getMainOutput() { return mMainOutput;}
+    QWaylandQuickSurface *getFullscreenSurface() { return m_fullscreenSurface;}
+    GeniviWaylandIVIExtension::IVIScene * getGeniviExt() {return mGeniviExt;}
+    GeniviWaylandIVIExtension::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     QWaylandQuickSurface *fullscreenSurface() const;
@@ -107,6 +110,8 @@ private slots:
     void surfaceMapped();
     void surfaceUnmapped();
     void surfaceDestroyed();
+    void windowPropertyChanged(const QString &property, const QVariant &value);
+    void sizeChanged();
     void sendCallbacks();
 
 protected:
@@ -116,68 +121,22 @@ protected:
 
 private:
 #if WRSCOMPOSITOR_REARDISPLAY
-    RearDisplay *mRearDisplay;
-    QWaylandQuickOutput *mRearOutput;
+    RearDisplay                             *mRearDisplay;
+    QWaylandQuickOutput                     *mRearOutput;
 #endif
-    QWaylandQuickOutput *mMainOutput;
-    QWaylandQuickSurface *m_fullscreenSurface;
-    GeniviWaylandIVIExtension::IVIScene *mGeniviExt;
-    QString mProgram;
+    QWaylandQuickOutput                     *mMainOutput;
+    QWaylandQuickSurface                    *m_fullscreenSurface;
+    GeniviWaylandIVIExtension::IVIScene     *mGeniviExt;
+    QString                                 mProgram;
+
+    WrsIviController                        *mIviController;
+    WrsIviApplication                       *mIviApplication;
+    WrsIviSurface                           *mIviSurface;
 #endif
 
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
-protected:
-    void ivi_controller_surface_bind_resource(QtWaylandServer::ivi_controller_surface::Resource *resource);
-    void ivi_controller_surface_destroy_resource(QtWaylandServer::ivi_controller_surface::Resource *resource);
-    void ivi_controller_surface_set_visibility(QtWaylandServer::ivi_controller_surface::Resource *resource, uint32_t visibility);
-    void ivi_controller_surface_set_opacity(QtWaylandServer::ivi_controller_surface::Resource *resource, wl_fixed_t opacity);
-    void ivi_controller_surface_set_source_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    void ivi_controller_surface_set_destination_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    void ivi_controller_surface_set_configuration(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t width, int32_t height);
-    void ivi_controller_surface_set_orientation(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t orientation);
-    void ivi_controller_surface_screenshot(QtWaylandServer::ivi_controller_surface::Resource *resource, const QString &filename);
-    void ivi_controller_surface_dosend_stats(QtWaylandServer::ivi_controller_surface::Resource *resource);
-    void ivi_controller_surface_destroy(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t destroy_scene_object);
 
-    void ivi_controller_layer_bind_resource(QtWaylandServer::ivi_controller_layer::Resource *resource);
-    void ivi_controller_layer_destroy_resource(QtWaylandServer::ivi_controller_layer::Resource *resource);
-    void ivi_controller_layer_set_visibility(QtWaylandServer::ivi_controller_layer::Resource *resource, uint32_t visibility);
-    void ivi_controller_layer_set_opacity(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_fixed_t opacity);
-    void ivi_controller_layer_set_source_rectangle(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    void ivi_controller_layer_set_destination_rectangle(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height);
-    void ivi_controller_layer_set_configuration(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t width, int32_t height);
-    void ivi_controller_layer_set_orientation(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t orientation);
-    void ivi_controller_layer_screenshot(QtWaylandServer::ivi_controller_layer::Resource *resource, const QString &filename);
-    void ivi_controller_layer_clear_surfaces(QtWaylandServer::ivi_controller_layer::Resource *resource);
-    void ivi_controller_layer_add_surface(QtWaylandServer::ivi_controller_layer::Resource *resource, struct ::wl_resource *surface);
-    void ivi_controller_layer_remove_surface(QtWaylandServer::ivi_controller_layer::Resource *resource, struct ::wl_resource *surface);
-    void ivi_controller_layer_set_render_order(QtWaylandServer::ivi_controller_layer::Resource *resource, wl_array *id_surfaces);
-    void ivi_controller_layer_destroy(QtWaylandServer::ivi_controller_layer::Resource *resource, int32_t destroy_scene_object);
-
-    void ivi_controller_screen_bind_resource(QtWaylandServer::ivi_controller_screen::Resource *resource);
-    void ivi_controller_screen_destroy_resource(QtWaylandServer::ivi_controller_screen::Resource *resource);
-    void ivi_controller_screen_destroy(QtWaylandServer::ivi_controller_screen::Resource *resource);
-    void ivi_controller_screen_clear(QtWaylandServer::ivi_controller_screen::Resource *resource);
-    void ivi_controller_screen_add_layer(QtWaylandServer::ivi_controller_screen::Resource *resource, struct ::wl_resource *layer);
-    void ivi_controller_screen_screenshot(QtWaylandServer::ivi_controller_screen::Resource *resource, const QString &filename);
-    void ivi_controller_screen_set_render_order(QtWaylandServer::ivi_controller_screen::Resource *resource, wl_array *id_layers);
-
-    void ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource);
-    void ivi_controller_destroy_resource(QtWaylandServer::ivi_controller::Resource *resource);
-    void ivi_controller_commit_changes(QtWaylandServer::ivi_controller::Resource *resource);
-    void ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id);
-    void ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id);
-
-    void ivi_surface_bind_resource(QtWaylandServer::ivi_surface::Resource *resource);
-    void ivi_surface_destroy_resource(QtWaylandServer::ivi_surface::Resource *resource);
-    void ivi_surface_destroy(QtWaylandServer::ivi_surface::Resource *resource);
-
-    void ivi_application_bind_resource(QtWaylandServer::ivi_application::Resource *);
-    void ivi_application_destroy_resource(QtWaylandServer::ivi_application::Resource *);
-    void ivi_application_surface_create(QtWaylandServer::ivi_application::Resource *, uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id);
-private:
-    GeniviWaylandIVIExtension::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
 #endif
 };
 #endif

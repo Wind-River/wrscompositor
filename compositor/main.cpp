@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-
+#include "util.h"
 #include <QGuiApplication>
 #include <QScreen>
 #include <QSettings>
@@ -425,6 +425,8 @@ int main(int argc, char *argv[])
 #if WRSCOMPOSITOR_REARDISPLAY
     rd.show();
 #endif
+    Util util;
+    compositor.rootContext()->setContextProperty("util", &util);
     compositor.show();
     //WrsCompositor rearcompositor("cluster.qml", "wayland-1");
     //rearcompositor.show();
