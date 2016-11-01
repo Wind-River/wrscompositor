@@ -36,7 +36,7 @@
 #include "qwayland-server-ivi-controller.h"
 #include "qwayland-server-ivi-application.h"
 
-#include "GeniviWaylandIVIExtension.h"
+#include "wrsivimodel.h"
 #endif
 
 #include <QSurfaceFormat>
@@ -69,9 +69,8 @@ public:
     ~WrsCompositor();
 
     QWaylandQuickOutput * getMainOutput() { return mMainOutput;}
-    QWaylandQuickSurface *getFullscreenSurface() { return m_fullscreenSurface;}
-    GeniviWaylandIVIExtension::IVIScene * getGeniviExt() {return mGeniviExt;}
-    GeniviWaylandIVIExtension::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
+    QWaylandQuickSurface * getFullscreenSurface() { return m_fullscreenSurface;}
+    WrsIVIModel::IVIScene * getIviScene() { return mIviScene;}
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     QWaylandQuickSurface *fullscreenSurface() const;
@@ -126,7 +125,7 @@ private:
 #endif
     QWaylandQuickOutput                     *mMainOutput;
     QWaylandQuickSurface                    *m_fullscreenSurface;
-    GeniviWaylandIVIExtension::IVIScene     *mGeniviExt;
+    WrsIVIModel::IVIScene     *mIviScene;
     QString                                 mProgram;
 
     WrsIviController                        *mIviController;

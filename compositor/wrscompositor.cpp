@@ -25,6 +25,7 @@
 #include "wrsivicontroller.h"
 #include "wrsiviapplication.h"
 #include "wrsivisurface.h"
+#include "wrslogging.h"
 
 #include <QProcess>
 #include <sys/signal.h>
@@ -32,7 +33,7 @@
 WrsCompositor::WrsCompositor(const QString &display, const QString &program)
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
         : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension)
-              , m_fullscreenSurface(0), mGeniviExt(0), mProgram(program)
+              , m_fullscreenSurface(0), mIviScene(0), mProgram(program)
 
 #endif
 {
@@ -210,6 +211,7 @@ void WrsCompositor::sendCallbacks() {
         sendFrameCallbacks(surfaces());
 }
 
+
 void WrsCompositor::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << __func__ << event << event->nativeScanCode() << event->nativeVirtualKey();
@@ -242,15 +244,24 @@ void WrsCompositor::resizeEvent(QResizeEvent *event)
 
     loadQmlComponent(event->size());
 
-    if(!mGeniviExt && width() > 0 && height() > 0) {
+    if(!mIviScene && width() > 0 && height() > 0) {
         // this should be after 'wl_output' created, So this is right place
-        mGeniviExt = new GeniviWaylandIVIExtension::IVIScene(this, width(), height(), this);
-        rootContext()->setContextProperty("geniviExt", mGeniviExt);
+        mIviScene = new WrsIVIModel::IVIScene(this, width(), height(), this);
+        rootContext()->setContextProperty("geniviExt", mIviScene);
     }
 }
 
 
 void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
+    TRACE() << "[BEGIN]";
+
+    // create a new IVIsurface model
+    WrsIVIModel::IVISurface *newIviSurface = new WrsIVIModel::IVISurface(this);
+    // link the IVISurface model to wl_surface(or QWaylandSurface)
+    newIviSurface->setQWaylandSurface(surface);
+    // add the surface to the scene model
+    mIviScene->addIVISurface(newIviSurface);
+
     // On surface create add listener for surface events
     connect(surface, SIGNAL(surfaceDestroyed()),
             this, SLOT(surfaceDestroyed()));
@@ -262,6 +273,7 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
             this, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)));
     connect(surface, SIGNAL(sizeChanged()),
             this, SLOT(sizeChanged()));
+    TRACE() << "[END]";
 }
 
 
@@ -270,11 +282,14 @@ void WrsCompositor::surfaceMapped() {
 
     emit windowAdded(QVariant::fromValue(surface));
 }
+
+
 void WrsCompositor::surfaceUnmapped() {
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
     if (surface == m_fullscreenSurface)
         m_fullscreenSurface = 0;
 }
+
 
 void WrsCompositor::surfaceDestroyed() {
     QWaylandQuickSurface *surface = static_cast<QWaylandQuickSurface *>(sender());
@@ -290,27 +305,9 @@ void WrsCompositor::windowPropertyChanged(const QString &property, const QVarian
     qDebug() << "Surface:" << surface << " property:" << property << " value:" << value;
 }
 
-void WrsCompositor::sizeChanged() {
-    qDebug() << "(---------D  Surface: size changed";
-    mIviApplication->resourceMap();
-}
 
-GeniviWaylandIVIExtension::IVISurface* WrsCompositor::findSurfaceByResource(struct ::wl_resource *rsc) {
-    GeniviWaylandIVIExtension::IVISurface *surface = NULL;
-    for(int i=0; i<mGeniviExt->screenCount(); i++) {
-        GeniviWaylandIVIExtension::IVIScreen *screen = mGeniviExt->screen(i);
-        for(int j=0; j<screen->layerCount(); j++) {
-            GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
-            for(int k=0; k<layer->surfaceCount(); k++) {
-                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(k);
-                if(_surface->waylandResource() == rsc) {
-                    surface = _surface;
-                    break;
-                }
-            }
-        }
-    }
-    return surface;
+void WrsCompositor::sizeChanged() {
+    //TODO: do we need to do something here?
 }
 
 #endif

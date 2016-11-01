@@ -31,7 +31,9 @@ void WrsIviController::ivi_controller_surface_set_visibility(QtWaylandServer::iv
     (void) resource;
 
     TRACE() << "[BEGIN]";
-    GeniviWaylandIVIExtension::IVISurface *surface = mCompositor->findSurfaceByResource(resource->handle);
+    WrsIVIModel::IVISurface *surface = mCompositor->
+            getIviScene()->
+            findSurfaceByResource(resource->handle);
     if(!surface) {
         TRACE() << "[END]";
         return;
@@ -47,7 +49,9 @@ void WrsIviController::ivi_controller_surface_set_opacity(QtWaylandServer::ivi_c
     (void) resource;
 
     TRACE() << "[BEGIN]";
-    GeniviWaylandIVIExtension::IVISurface *surface = mCompositor->findSurfaceByResource(resource->handle);
+    WrsIVIModel::IVISurface *surface = mCompositor->
+            getIviScene()->
+            findSurfaceByResource(resource->handle);
     if(!surface) {
         TRACE() << "[END]";
         return;
@@ -69,7 +73,9 @@ void WrsIviController::ivi_controller_surface_set_source_rectangle(QtWaylandServ
 void WrsIviController::ivi_controller_surface_set_destination_rectangle(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
     (void) resource;
     TRACE() << "[BEGIN";
-    GeniviWaylandIVIExtension::IVISurface *surface = mCompositor->findSurfaceByResource(resource->handle);
+    WrsIVIModel::IVISurface *surface = mCompositor->
+            getIviScene()->
+            findSurfaceByResource(resource->handle);
     if(!surface) {
         TRACE() << "[END]";
         return;
@@ -92,7 +98,9 @@ void WrsIviController::ivi_controller_surface_set_destination_rectangle(QtWaylan
 void WrsIviController::ivi_controller_surface_set_configuration(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t width, int32_t height) {
     (void) resource;
     TRACE() << "[BEGIN]";
-    GeniviWaylandIVIExtension::IVISurface *surface = mCompositor->findSurfaceByResource(resource->handle);
+    WrsIVIModel::IVISurface *surface = mCompositor->
+            getIviScene()->
+            findSurfaceByResource(resource->handle);
     if (!surface) {
         TRACE() << "[END]";
         return;
@@ -109,7 +117,9 @@ void WrsIviController::ivi_controller_surface_set_configuration(QtWaylandServer:
 void WrsIviController::ivi_controller_surface_set_orientation(QtWaylandServer::ivi_controller_surface::Resource *resource, int32_t orientation) {
     (void) resource;
     TRACE() << "[BEGIN]";
-    GeniviWaylandIVIExtension::IVISurface *surface = mCompositor->findSurfaceByResource(resource->handle);
+    WrsIVIModel::IVISurface *surface = mCompositor->
+            getIviScene()->
+            findSurfaceByResource(resource->handle);
     if (!surface) {
         TRACE() << "[END]";
         return;
@@ -308,8 +318,8 @@ void WrsIviController::ivi_controller_screen_set_render_order(QtWaylandServer::i
 
 void WrsIviController::ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource) {
     TRACE() << "[BEGIN]";
-    for(int i=0; i<mCompositor->getGeniviExt()->screenCount(); i++) {
-        GeniviWaylandIVIExtension::IVIScreen *screen = mCompositor->getGeniviExt()->screen(i);
+    for(int i=0; i<mCompositor->getIviScene()->screenCount(); i++) {
+        WrsIVIModel::IVIScreen *screen = mCompositor->getIviScene()->screen(i);
         QtWayland::Output *output = screen->waylandOutput()->handle();
         // find wl_output for client
         if(output->resourceMap().contains(resource->client())) {
@@ -324,16 +334,16 @@ void WrsIviController::ivi_controller_bind_resource(QtWaylandServer::ivi_control
     }
 
     // XXX should reverse ???
-    for(int i=0; i<mCompositor->getGeniviExt()->screenCount(); i++) {
-        GeniviWaylandIVIExtension::IVIScreen *screen = mCompositor->getGeniviExt()->screen(i);
+    for(int i=0; i<mCompositor->getIviScene()->screenCount(); i++) {
+        WrsIVIModel::IVIScreen *screen = mCompositor->getIviScene()->screen(i);
         for(int j=0; j<screen->layerCount(); j++) {
-            GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
+            WrsIVIModel::IVILayer *layer = screen->layer(j);
             DEBUG() << "send layer id" << layer->id();
 
             // send layer
             QtWaylandServer::ivi_controller::send_layer(resource->handle, layer->id());
             for(int k=0; k<layer->surfaceCount(); k++) {
-                GeniviWaylandIVIExtension::IVISurface *surface = layer->surface(k);
+                WrsIVIModel::IVISurface *surface = layer->surface(k);
                 DEBUG() << "send surface id" << surface->id();
 
                 // send layer
@@ -363,8 +373,8 @@ void WrsIviController::ivi_controller_layer_create(QtWaylandServer::ivi_controll
     TRACE() << "[BEGIN]";
     QtWaylandServer::ivi_controller_layer::init(resource->handle->client, id, 1);
     struct wl_resource *resource_ctrllayer = QtWaylandServer::ivi_controller_layer::resource()->handle;
-    for(int i=0; i<mCompositor->getGeniviExt()->mainScreen()->layerCount(); i++) {
-        GeniviWaylandIVIExtension::IVILayer *layer = mCompositor->getGeniviExt()->mainScreen()->layer(i);
+    for(int i=0; i<mCompositor->getIviScene()->mainScreen()->layerCount(); i++) {
+        WrsIVIModel::IVILayer *layer = mCompositor->getIviScene()->mainScreen()->layer(i);
         if(layer->id() == (int)id_layer) {
             layer->setWaylandResource(resource_ctrllayer);
             DEBUG() << "send layer" << id_layer;
@@ -393,14 +403,14 @@ void WrsIviController::ivi_controller_layer_create(QtWaylandServer::ivi_controll
 void WrsIviController::ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id) {
     (void) resource;
     TRACE() << "[BEGIN]";
-    GeniviWaylandIVIExtension::IVISurface *surface = NULL;
-    GeniviWaylandIVIExtension::IVILayer *parentLayer = NULL;
-    for(int i=0; i<mCompositor->getGeniviExt()->screenCount(); i++) {
-        GeniviWaylandIVIExtension::IVIScreen *screen = mCompositor->getGeniviExt()->screen(i);
+    WrsIVIModel::IVISurface *surface = NULL;
+    WrsIVIModel::IVILayer *parentLayer = NULL;
+    for(int i=0; i<mCompositor->getIviScene()->screenCount(); i++) {
+        WrsIVIModel::IVIScreen *screen = mCompositor->getIviScene()->screen(i);
         for(int j=0; j<screen->layerCount(); j++) {
-            GeniviWaylandIVIExtension::IVILayer *layer = screen->layer(j);
+            WrsIVIModel::IVILayer *layer = screen->layer(j);
             for(int k=0; k<layer->surfaceCount(); k++) {
-                GeniviWaylandIVIExtension::IVISurface *_surface = layer->surface(k);
+                WrsIVIModel::IVISurface *_surface = layer->surface(k);
                 if(_surface->id() == (int)id_surface) {
                     surface = _surface;
                     parentLayer = layer;

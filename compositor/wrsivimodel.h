@@ -42,7 +42,7 @@
 #include <QFile>
 
 
-namespace GeniviWaylandIVIExtension {
+namespace WrsIVIModel {
     class IVIScene;
     class IVIScreen;
     class IVILayer;
@@ -104,17 +104,27 @@ namespace GeniviWaylandIVIExtension {
         QObject *qmlWindowFrame() { return mQmlWindowFrame; };
         void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; };
 
+        //ivi-controller-surface resource
         struct wl_resource* waylandResource() { return mWaylandResource; }
         void setWaylandResource(struct wl_resource *r) { mWaylandResource = r; }
+
+        struct wl_resource* iviSurfaceWaylandResource() { return mIviSurfaceWaylandResource; }
+        void setIviSurfaceWaylandResource(struct wl_resource *r) { mIviSurfaceWaylandResource = r; }
+
+        QWaylandSurface *qWaylandSurface() { return mQWaylandSurface; }
+        void setQWaylandSurface(QWaylandSurface *qWaylandSurface) { mQWaylandSurface = qWaylandSurface; }
+
     signals:
         void propertyChanged();
     private:
-        IVILayer *mLayer;
-        double mOpacity;
-        int mOrientation;
-        int mVisibility;
-        struct wl_resource *mWaylandResource;
-        QObject *mQmlWindowFrame;
+        IVILayer            *mLayer;
+        double              mOpacity;
+        int                 mOrientation;
+        int                 mVisibility;
+        struct wl_resource  *mWaylandResource;
+        struct wl_resource  *mIviSurfaceWaylandResource;
+        QWaylandSurface     *mQWaylandSurface;
+        QObject             *mQmlWindowFrame;
     };
 
     class IVILayer : public IVIRectangle
@@ -204,10 +214,21 @@ namespace GeniviWaylandIVIExtension {
         }
         Q_INVOKABLE int screenCount() const { return mScreens.count(); }
         Q_INVOKABLE IVIScreen *screen(int i) const { return mScreens.at(i); }
+
+        Q_INVOKABLE void addIVIScreen(IVIScreen *);
+        Q_INVOKABLE void addIVILayer(IVILayer *);
+        Q_INVOKABLE void addIVISurface(IVISurface *);
+
+        IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
+
+        IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
+
     private:
-        QList<IVIScreen*> mScreens;
-        IVIScreen *mMainScreen;
-        QWaylandCompositor *mCompositor;
+        QList<IVIScreen*>   mScreens;
+        IVIScreen           *mMainScreen;
+        QWaylandCompositor  *mCompositor;
+        QList<IVILayer*>    mIviLayesr;
+        QList<IVISurface*>  mIviSurfaces;
     };
 
 }

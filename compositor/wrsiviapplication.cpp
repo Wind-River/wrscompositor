@@ -58,14 +58,20 @@ void WrsIviApplication::ivi_application_surface_create(QtWaylandServer::ivi_appl
     DEBUG() << "ivi_id:" << ivi_id << " id:" << id << "resource:" << resource;
     QWaylandSurface *qWlsurface = QWaylandSurface::fromResource(surface);
 
+    //TODO: store the link beteen WrsIviSurface -> wl_surface in  GeniviWaylandIVIExtenssion
+
     WrsIviSurface *iviSurface = new WrsIviSurface(
                 this->mCompositor,
                 surface->client,
                 id,
                 1);
 
-    //Store the link between QWaylandSurface for resoucre surface and new ivi surface
-    WrsIviSurface::addQWaylandSurfaceToIviSurface(qWlsurface, iviSurface);
+    WrsIVIModel::IVISurface *iviSurfaceModel = this->
+            mCompositor->
+            getIviScene()->\
+            findIVISurfaceByQWaylandSurface(qWlsurface);
+
+    iviSurfaceModel->setIviSurfaceWaylandResource(iviSurface->resource()->handle);
 
     connect(qWlsurface, SIGNAL(sizeChanged()),
             this, SLOT(sizeChanged()));
@@ -77,10 +83,17 @@ void WrsIviApplication::sizeChanged() {
     TRACE() << "[BEGIN]";
     QWaylandSurface *qWlsurface = qobject_cast<QWaylandSurface *>(sender());
 
-    //Get IVI surface for QWaylandSurface
-    WrsIviSurface *iviSurface = WrsIviSurface::fromQWaylandSurface(qWlsurface);
+    WrsIVIModel::IVISurface *iviSurfaceModel = this->
+            mCompositor->
+            getIviScene()->\
+            findIVISurfaceByQWaylandSurface(qWlsurface);
 
-    iviSurface->send_configure(qWlsurface->size().width(), qWlsurface->size().height());
+    //Get IVI surface for QWaylandSurface
+    QtWaylandServer::ivi_surface::Resource::fromResource(
+                iviSurfaceModel->iviSurfaceWaylandResource()
+        )->ivi_surface_object->send_configure(
+                qWlsurface->size().width(), qWlsurface->size().height());
+
     DEBUG() << "Ivi app surface size changed";
     TRACE() << "[END]";
 }

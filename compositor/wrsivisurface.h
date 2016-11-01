@@ -25,19 +25,8 @@ protected:
     void ivi_surface_destroy(QtWaylandServer::ivi_surface::Resource *resource);
 
 private:
-    /**
-     * @brief QWAYLANSURFACE_TO_IVI_SURFACE store the link between IVI surfaces to WL surfaces
-     */
-    static QMap<QWaylandSurface *, WrsIviSurface *> QWAYLANSURFACE_TO_IVI_SURFACE;
 
 public:
-    static void addQWaylandSurfaceToIviSurface(QWaylandSurface *qWaylandSurface, WrsIviSurface *iviSurface) {
-        QWAYLANSURFACE_TO_IVI_SURFACE[qWaylandSurface] = iviSurface;
-    }
-
-    static WrsIviSurface* fromQWaylandSurface(QWaylandSurface *qWaylandSurface) {
-        return QWAYLANSURFACE_TO_IVI_SURFACE[qWaylandSurface];
-    }
 };
 
 #endif // WRSIVISURFACE_H

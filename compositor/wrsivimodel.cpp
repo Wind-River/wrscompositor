@@ -20,13 +20,17 @@
  * THE SOFTWARE.
  */
 
-#include "GeniviWaylandIVIExtension.h"
+#include "wrsivimodel.h"
 
-using namespace GeniviWaylandIVIExtension;
+using namespace WrsIVIModel;
 
 Q_DECLARE_METATYPE(IVIScreen*)
 Q_DECLARE_METATYPE(IVILayer*)
 Q_DECLARE_METATYPE(IVISurface*)
+
+////////////////////////////////////////////////////////////////////////////////
+/// IVIScene
+////////////////////////////////////////////////////////////////////////////////
 
 IVIScene::IVIScene(QObject* parent) :
     IVIRectangle(-1, 0, 0, parent), mMainScreen(0), mCompositor(0)
@@ -56,6 +60,59 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
     mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
     mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
 }
+
+
+IVISurface* IVIScene::findSurfaceByResource(struct ::wl_resource *rsc) {
+    WrsIVIModel::IVISurface *surface = NULL;
+    for (int i = 0; i < this->screenCount(); i++) {
+        WrsIVIModel::IVIScreen *screen = this->screen(i);
+        for (int j = 0; j < screen->layerCount(); j++) {
+            WrsIVIModel::IVILayer *layer = screen->layer(j);
+            for (int k = 0; k < layer->surfaceCount(); k++) {
+                WrsIVIModel::IVISurface *_surface = layer->surface(k);
+                if (_surface->waylandResource() == rsc) {
+                    surface = _surface;
+                    break;
+                }
+            }
+        }
+    }
+    return surface;
+}
+
+
+IVISurface* IVIScene::findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface) {
+    qDebug() << ">>> IVIScene::findIVISurfaceByQWaylandSurface 1<<<" << qWlSurface;
+    for (int i = 0; i < this->mIviSurfaces.count(); i++) {
+        if (((IVISurface* ) (this->mIviSurfaces[i]))->qWaylandSurface() == qWlSurface) {
+            qDebug() << ">>> IVIScene::findIVISurfaceByQWaylandSurface 2<<<" << qWlSurface;
+            return ((IVISurface* ) (this->mIviSurfaces[i]));
+        }
+    }
+    return NULL;
+}
+
+
+void IVIScene::addIVIScreen(IVIScreen *screen) {
+    this->mScreens.append(screen);
+}
+
+
+void IVIScene::addIVILayer(IVILayer *layer) {
+    this->mIviLayesr.append(layer);
+}
+
+
+void IVIScene::addIVISurface(IVISurface *surface) {
+    qDebug() << ">>> IVIScene::addIVISurface <<<" << surface;
+    this->mIviSurfaces.append(surface);
+    //Add logic to associate the surface to a specific layer (even a default one)
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// IVIScreen
+////////////////////////////////////////////////////////////////////////////////
 
 IVIScreen::IVIScreen(QObject* parent) : IVIRectangle(-1, 0, 0, parent), mScene(0)
 {

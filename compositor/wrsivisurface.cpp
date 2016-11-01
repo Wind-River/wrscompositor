@@ -24,7 +24,6 @@
 #include "wrscompositor.h"
 #include "wrslogging.h"
 
-QMap<QWaylandSurface *, WrsIviSurface *> WrsIviSurface::QWAYLANSURFACE_TO_IVI_SURFACE;
 
 /**
  * @brief WrsIviSurface::WrsIviSurface - constructor for ivi_surface interface
