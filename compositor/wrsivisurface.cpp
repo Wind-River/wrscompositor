@@ -19,7 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+/*
+ * Author: ionut.popa@windriver.com
+ */
 #include "wrsivisurface.h"
 #include "wrscompositor.h"
 #include "wrslogging.h"
