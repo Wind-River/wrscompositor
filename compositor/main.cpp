@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-
+#include "util.h"
 #include <QGuiApplication>
 #include <QScreen>
 #include <QSettings>
@@ -48,7 +48,7 @@
 #endif
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
-#include "GeniviWaylandIVIExtension.h"
+#include "wrsivimodel.h"
 #endif
 
 #include <unistd.h>
@@ -358,14 +358,14 @@ int main(int argc, char *argv[])
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
     qmlRegisterType<VirtualKeyboard>("com.windriver.automotive", 1, 0, "VirtualKeyboard");
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
-    qmlRegisterType<GeniviWaylandIVIExtension::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
-    qmlRegisterType<GeniviWaylandIVIExtension::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
-    qmlRegisterType<GeniviWaylandIVIExtension::IVILayer>("com.windriver.genivi", 1, 0, "IVILayer");
-    qmlRegisterType<GeniviWaylandIVIExtension::IVISurface>("com.windriver.genivi", 1, 0, "IVISurface");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVILayer* >("IVILayer*");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVISurface* >("IVISurface*");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScreen* >("IVIScreen*");
-    qRegisterMetaType<GeniviWaylandIVIExtension::IVIScene* >("IVIScene*");
+    qmlRegisterType<WrsIVIModel::IVIScene>("com.windriver.genivi", 1, 0, "IVIScene");
+    qmlRegisterType<WrsIVIModel::IVIScreen>("com.windriver.genivi", 1, 0, "IVIScreen");
+    qmlRegisterType<WrsIVIModel::IVILayer>("com.windriver.genivi", 1, 0, "IVILayer");
+    qmlRegisterType<WrsIVIModel::IVISurface>("com.windriver.genivi", 1, 0, "IVISurface");
+    qRegisterMetaType<WrsIVIModel::IVILayer* >("IVILayer*");
+    qRegisterMetaType<WrsIVIModel::IVISurface* >("IVISurface*");
+    qRegisterMetaType<WrsIVIModel::IVIScreen* >("IVIScreen*");
+    qRegisterMetaType<WrsIVIModel::IVIScene* >("IVIScene*");
 #endif
 
 #if WRSCOMPOSITOR_WEBENGINE
@@ -425,6 +425,8 @@ int main(int argc, char *argv[])
 #if WRSCOMPOSITOR_REARDISPLAY
     rd.show();
 #endif
+    Util util;
+    compositor.rootContext()->setContextProperty("util", &util);
     compositor.show();
     //WrsCompositor rearcompositor("cluster.qml", "wayland-1");
     //rearcompositor.show();
