@@ -311,8 +311,8 @@ if [ "$SUPPORT_WLCOMPOSITOR" = "1" ]; then
     echo "WAYLANDSERVERSOURCES += protocols/ivi-application.xml" >> $WRSCOMPOSITOR_PRO
     echo "CONFIG += link_pkgconfig" >> $WRSCOMPOSITOR_PRO
     echo "PKGCONFIG += wayland-server gbm" >> $WRSCOMPOSITOR_PRO
-    echo "HEADERS += GeniviWaylandIVIExtension.h" >> $WRSCOMPOSITOR_PRO
-    echo "SOURCES += GeniviWaylandIVIExtension.cpp" >> $WRSCOMPOSITOR_PRO
+    echo "HEADERS += wrsivimodel.h wrsivisurface.h wrsivicontroller.h wrsiviapplication.h" >> $WRSCOMPOSITOR_PRO
+    echo "SOURCES += wrsivimodel.cpp wrsivisurface.cpp wrsivicontroller.cpp wrsiviapplication.cpp" >> $WRSCOMPOSITOR_PRO
 
 fi
 
