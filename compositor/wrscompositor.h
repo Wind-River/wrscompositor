@@ -76,7 +76,6 @@ public:
     QWaylandQuickSurface *fullscreenSurface() const;
     void loadQmlComponent(const QSize &size);
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
-    Q_INVOKABLE QString getProcessPathByPid(int pid);
 #endif
 #if WRSCOMPOSITOR_REARDISPLAY
     void setRearDisplay(QQuickView *);

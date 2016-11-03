@@ -173,25 +173,6 @@ Q_INVOKABLE QWaylandSurfaceItem* WrsCompositor::item(QWaylandSurface *surf)
     return static_cast<QWaylandSurfaceItem *>(surf->views().first());
 }
 
-Q_INVOKABLE QString WrsCompositor::getProcessPathByPid(int pid) {
-#define MAX_PROCESS_NAME 512
-    char name[MAX_PROCESS_NAME] = {0,};
-
-    sprintf(name, "/proc/%d/cmdline", pid);
-    FILE* fp = fopen(name, "r");
-    if (!fp)
-        return QString::null;
-
-    int size = fread(name, sizeof(char), MAX_PROCESS_NAME, fp);
-    if (size < 0 || size == 0)
-        return QString::null;
-
-    name[size] = '\0';
-    QString processName(name);
-
-    return processName;
-}
-
 //void WrsCompositor::destroyWindow(QVariant window) {
 //    qvariant_cast<QObject *>(window)->deleteLater();
 //}

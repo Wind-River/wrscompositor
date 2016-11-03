@@ -264,15 +264,14 @@ Item {
             root.currentWindow = null;
 
         if (surface.title == 'OpenGL Renderer' && windowFrame.projectionConnectivityStatus) {
-            var name = windowFrame.clientPath;      
-            if (name.indexOf('gal_media') != -1) {
+            if (windowFrame.projectionName == Conf.aapName) {
                 console.log("android-auto is disconnected");
                 projectionMode.androidAutoStatus = "disconnected";
-            } else if (name.indexOf('DiO-WrDemo') != -1) { 
+            } else if (windowFrame.projectionName == Conf.carplayName) {
                 console.log("apple-carplay is disconnected");
                 projectionMode.appleCarPlayStatus = "disconnected";
             } else {
-                 console.log('cannot get valid client by pid for projectionMode, name = ' + name);
+                console.log('cannot get valid projection name for disconnecting projectionMode');
                 return;
             }
         }
@@ -305,21 +304,21 @@ Item {
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
         if (surface.title == 'OpenGL Renderer') { 
-            var processPath = compositor.getProcessPathByPid(surface.client.processId);
+            var projectionName = util.getCmdForPid(surface.client.processId);
              // gstreamer-0.1: gsteglgles
-            if (processPath == Conf.aapPath) {
-                console.log('wayland android auto');
+            if (projectionName == Conf.aapName) {
+                console.log("android-auto is connected");
                 projectionMode.androidAutoStatus = "connected";
                 windowFrame = windowContainerComponent.createObject(projectionMode.androidAutoProjectionContainer);
-            } else if (processPath == Conf.carplayPath) {
-                console.log('wayland apple carplay');
+            } else if (projectionName == Conf.carplayName) {
+                console.log("apple-carplay is connected");
                 projectionMode.appleCarPlayStatus = "connected";
                 windowFrame = windowContainerComponent.createObject(projectionMode.appleCarPlayProjectionContainer);   
             } else {
-                console.log('cannot get valid client by pid for projectionMode, name = ' + name);
+                console.log('cannot get valid projection name for connecting projectionMode');
                 return;
             }
-            windowFrame.clientPath = name;
+            windowFrame.projectionName = projectionName;
             windowFrame.projectionConnectivityStatus = true;
             windowFrame.z = -1;
             windowFrame.scaledWidth = Conf.displayWidth/surface.size.width;

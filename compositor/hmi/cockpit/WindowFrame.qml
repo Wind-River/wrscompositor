@@ -43,7 +43,7 @@ Item {
     property real targetHeight
     property int index
     property int processId: 0
-    property string clientPath: "none"
+    property string projectionName: "none"
 
     property real scaledWidth: 1.0
     property real scaledHeight: 1.0
