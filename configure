@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 SUPPOTED_TARGETDEVICES=( x11 minnowmax mrb)
-SUPPOTED_HMIPROFILES=( classic cockpit new )
+SUPPOTED_HMIPROFILES=( cockpit new )
 SUPPORTED_APPSMODEL=( genivi native)
 WRSCOMPOSITOR_PRO=compositor/compositor.pro
 
