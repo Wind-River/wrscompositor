@@ -33,7 +33,7 @@ var useMultiWaylandDisplayFeature = false;
 var densityAdjust = 1.0;
 var useWebEngine = 0;
 var appsModel = 'native';
-var aapPath = 'none';
-var carplayPath = 'none';
+var aapName = 'none';
+var carplayName = 'none';
 
 // XXX OVERWRITE DEFAULT CONFIGs FROM HERE

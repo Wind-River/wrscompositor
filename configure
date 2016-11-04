@@ -44,8 +44,8 @@ show_help() {
     echo "  --overwrite                 overwrite existing config.js by new target/hmi config"
     echo "  --without-qmake             don't execute qmake in configure"
     echo "  --with-qmake=path           set qmake path (e.g - /usr/bin/qmake)"
-    echo "  --with-carplay=path         set carplay path"
-    echo "  --with-aap=path             set aap path"
+    echo "  --with-carplay=NAME         set carplay name"
+    echo "  --with-aap=NAME             set aap name"
     echo ""
     echo "Supported target devices:"
     for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -99,8 +99,8 @@ APPS_MODEL=native
 HMI_PROFILE=cockpit
 OVERWRITE=0
 QMAKEPATH=
-CARPLAY_PATH=none
-AAP_PATH=none
+CARPLAY_NAME=none
+AAP_NAME=none
 OPTARGS=""
 PREFIX=/usr
 
@@ -136,10 +136,10 @@ for opt do
             QMAKEPATH=$optval
             ;;
         --with-carplay=*)
-            CARPLAY_PATH=$optval
+            CARPLAY_NAME=$optval
             ;;
         --with-aap=*)
-            AAP_PATH=$optval
+            AAP_NAME=$optval
             ;;
         --prefix=*)
             PREFIX=$optval
@@ -235,8 +235,8 @@ echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
 echo "  TARGET_DEVICE=$TARGET_DEVICE"
 echo "  HMI_PROFILE=$HMI_PROFILE"
 echo "  APPS_MODEL=$APPS_MODEL"
-echo "  CARPLAY_PATH=$CARPLAY_PATH"
-echo "  AAP_PATH=$AAP_PATH"
+echo "  CARPLAY_NAME=$CARPLAY_NAME"
+echo "  AAP_NAME=$AAP_NAME"
 echo "  OPTARGS: $OPTARGS"
 echo "  PREFIX: $PREFIX"
 echo
@@ -380,11 +380,11 @@ if [ -d "$TARGETDIR" ]; then
     if [ "$APPS_MODEL" = "genivi" ]; then
         echo "appsModel = '$APPS_MODEL';" >> $CONFIGJS
     fi
-    if [ "$CARPLAY_PATH" != "none" ]; then
-        echo "carplayPath = '$CARPLAY_PATH';" >> $CONFIGJS
+    if [ "$CARPLAY_NAME" != "none" ]; then
+        echo "carplayName = '$CARPLAY_NAME';" >> $CONFIGJS
     fi
-    if [ "$AAP_PATH" != "none" ]; then
-        echo "aapPath = '$AAP_PATH';" >> $CONFIGJS
+    if [ "$AAP_NAME" != "none" ]; then
+        echo "aapNAME = '$AAP_NAME';" >> $CONFIGJS
     fi
     if [ "$OVERWRITTEN" = "1" ]; then
         echo $'\r'"                    overwritten at $CONFIGJS"
