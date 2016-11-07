@@ -107,7 +107,7 @@ Item {
                         scale: (shift.buttonPressed ? 0.95 : 1.0)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: sourceSize.width * 0.4
+                        width: sourceSize.width
                         height: width
                         smooth: true
                     }
@@ -139,7 +139,7 @@ Item {
                         scale: (backspace.buttonPressed ? 0.95 : 1.0)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: sourceSize.width * 0.4
+                        width: sourceSize.width * 0.1
                         height: width
                         smooth: true
                     }
@@ -160,7 +160,7 @@ Item {
                         scale: (hide.buttonPressed ? 0.95 : 1.0)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: sourceSize.width * 0.3
+                        width: sourceSize.width * 0.1
                         height: width
                         smooth: true
                     }
@@ -181,7 +181,7 @@ Item {
                         scale: (language.buttonPressed ? 0.95 : 1.0)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: sourceSize.width * 0.3
+                        width: sourceSize.width * 0.1
                         height: width
                         smooth: true
                     }
@@ -227,7 +227,7 @@ Item {
                         scale: (enter.buttonPressed ? 0.95 : 1.0)
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
-                        width: sourceSize.width * 0.3
+                        width: sourceSize.width * 0.1
                         height: width
                         smooth: true
                     }

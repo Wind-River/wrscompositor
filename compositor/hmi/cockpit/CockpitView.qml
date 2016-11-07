@@ -149,7 +149,7 @@ Item {
         width: parent.width - sidePanel.width
         height: parent.height - statusBar.height - dockBar.height
 
-        source: "resources/helix-cockpit.jpg"
+        source: "resources/background.png"
         Item {
             id: currentApp
             anchors.fill: parent
