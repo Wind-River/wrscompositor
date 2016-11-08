@@ -61,7 +61,7 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
     QObject *object = rootObject();
 
     if (object == NULL) {
-        qDebug() << "Try to load QML Component";
+        DEBUG() << "Try to load QML Component";
         QUrl programUrl = QUrl("qrc:///main.qml");
         if(qApp->arguments().contains("--debug"))
             programUrl = QUrl("hmi/" WRSCOMPOSITOR_HMI_PROFILE "/main.qml");
@@ -109,14 +109,14 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
         QObject::connect(this, SIGNAL(swappedWindowRestored(QVariant)), rootObject(), SLOT(swappedWindowRestored(QVariant)));
 #endif
     } else {
-        qDebug() << "Try to update window size in QML Component";
+        DEBUG() << "Try to update window size in QML Component";
         QQuickItem *item = qobject_cast<QQuickItem*>(object);
         item->setWidth(size.width());
         item->setHeight(size.height());
     }
 
-    qDebug() << "Resized window's width = " << size.width();
-    qDebug() << "Resized window's height = " << size.height();
+    DEBUG() << "Resized window's width = " << size.width();
+    DEBUG() << "Resized window's height = " << size.height();
 }
 
 #if WRSCOMPOSITOR_REARDISPLAY
@@ -124,8 +124,8 @@ void WrsCompositor::setRearDisplay(QQuickView *v) {
     mRearDisplay = qobject_cast<RearDisplay*>(v);
     mRearOutput = qobject_cast<QWaylandQuickOutput*>(createOutput(v, WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME));
     // XXX if do not set geometry to last output, main display will be abnormaly rendered, need to investigation
-    qDebug() << mRearOutput->window()->minimumSize();
-    qDebug() << mRearOutput->window()->maximumSize();
+    DEBUG() << mRearOutput->window()->minimumSize();
+    DEBUG() << mRearOutput->window()->maximumSize();
     mRearOutput->setGeometry(QRect(0, 0, 1280, 720));
     //mRearOutput->window()->setMinimumSize(QSize(0, 0));
     //mRearOutput->window()->setMaximumSize(QSize(16777215, 16777215));
@@ -200,13 +200,13 @@ void WrsCompositor::sendCallbacks() {
 
 void WrsCompositor::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << __func__ << event << event->nativeScanCode() << event->nativeVirtualKey();
+    DEBUG() << event << event->nativeScanCode() << event->nativeVirtualKey();
     Qt::KeyboardModifiers m = event->modifiers();
     if(((m&Qt::ControlModifier)==Qt::ControlModifier)) {
         int key = event->key();
         for(int _key = Qt::Key_F1; _key < Qt::Key_F9; _key++) {
             if(key == _key) {
-                qDebug() << QString("Ctrl+(Alt)+F%1").arg(_key-Qt::Key_F1+1);
+                DEBUG() << QString("Ctrl+(Alt)+F%1").arg(_key-Qt::Key_F1+1);
                 //QProcess::execute(QString("bash -c \"kill -%1 `pidof wrscompositor-vt-handler`\"").arg(SIGRTMIN+_key-Qt::Key_F1));
                 QProcess::execute(QString("dbus-send --system --dest=org.freedesktop.login1 --type=method_call --print-reply /org/freedesktop/login1/seat/seat0  org.freedesktop.login1.Seat.SwitchTo uint32:%1").arg(_key-Qt::Key_F1+1));
                 event->ignore();
@@ -244,7 +244,7 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
     // create a new IVIsurface model
     WrsIVIModel::IVISurface *newIviSurface = new WrsIVIModel::IVISurface(this);
     // link the IVISurface model to wl_surface(or QWaylandSurface)
-    newIviSurface->setId(wl_resource_get_id(surface->handle()->resource()->handle));
+
     newIviSurface->setQWaylandSurface(surface);
     // add the surface to the scene model
     mIviScene->addIVISurface(newIviSurface);
@@ -288,13 +288,18 @@ void WrsCompositor::surfaceDestroyed() {
 
 
 void WrsCompositor::windowPropertyChanged(const QString &property, const QVariant &value) {
+    TRACE() << "[BEGIN]";
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
-    qDebug() << "Surface:" << surface << " property:" << property << " value:" << value;
+    DEBUG() << "Surface:" << surface << " property:" << property << " value:" << value;
+    TRACE() << "[END]";
 }
 
 
 void WrsCompositor::sizeChanged() {
-    //TODO: do we need to do something here?
+    TRACE() << "[BEGIN]";
+    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
+    this->mIviScene->findIVISurfaceByQWaylandSurface(surface)->copyQWaylandSurfaceProperties(surface);
+    TRACE() << "[END]";
 }
 
 #endif

@@ -21,6 +21,7 @@
  */
 
 #include "wrsivimodel.h"
+#include "wrslogging.h"
 
 using namespace WrsIVIModel;
 
@@ -82,10 +83,10 @@ IVISurface* IVIScene::findSurfaceByResource(struct ::wl_resource *rsc) {
 
 
 IVISurface* IVIScene::findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface) {
-    qDebug() << ">>> IVIScene::findIVISurfaceByQWaylandSurface 1<<<" << qWlSurface;
+    DEBUG() << "search:" << qWlSurface;
     for (int i = 0; i < this->mIviSurfaces.count(); i++) {
         if (((IVISurface* ) (this->mIviSurfaces[i]))->qWaylandSurface() == qWlSurface) {
-            qDebug() << ">>> IVIScene::findIVISurfaceByQWaylandSurface 2<<<" << qWlSurface;
+            DEBUG() << "found:" << ((IVISurface* ) (this->mIviSurfaces[i]));
             return ((IVISurface* ) (this->mIviSurfaces[i]));
         }
     }
@@ -104,7 +105,7 @@ void IVIScene::addIVILayer(IVILayer *layer) {
 
 
 void IVIScene::addIVISurface(IVISurface *surface) {
-    qDebug() << ">>> IVIScene::addIVISurface <<<" << surface;
+    DEBUG() << "ivi-surface:" << surface;
     this->mIviSurfaces.append(surface);
     //TODO: Add logic to associate the surface to a specific layer (even a default one)
     //      This is wrong :)
@@ -158,6 +159,7 @@ IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
 
 
 IVISurface* IVILayer::addSurface(IVISurface* surface) {
+    DEBUG() << "ivi-surface <<<" << surface;
     mSurfaces << surface;
     return surface;
 }
@@ -165,9 +167,9 @@ IVISurface* IVILayer::addSurface(IVISurface* surface) {
 
 IVISurface* IVILayer::addSurface_(int x, int y, int width, int height, QObject *qmlWindowFrame) {
     IVISurface* surface = new IVISurface(-1, width, height, this);
+    DEBUG() << "qmlWindowFrame" << qmlWindowFrame;
     surface->setX(x);
     surface->setY(y);
-    qDebug() << "setsetQmlWindowFrame" << qmlWindowFrame;
     surface->setQmlWindowFrame(qmlWindowFrame);
     mSurfaces << surface;
     return surface;

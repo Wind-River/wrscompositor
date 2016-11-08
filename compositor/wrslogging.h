@@ -25,8 +25,8 @@
 #ifndef WRSLOGGING_H
 #define WRSLOGGING_H
 
-#define INFO()   qInfo()  << "[INFO]  (" << __func__ << ":" << __LINE__ << ")"
-#define TRACE()  qDebug() << "[TRACE] (" << __func__ << ":" << __LINE__ << ")"
-#define DEBUG()  qDebug() << "[DEBUG] (" << __func__ << ":" << __LINE__ << ")"
+#define INFO()   qInfo()  << "[INFO] " << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")"
+#define TRACE()  qDebug() << "[TRACE]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")"
+#define DEBUG()  qDebug() << "[DEBUG]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")"
 
 #endif // WRSLOGGING_H

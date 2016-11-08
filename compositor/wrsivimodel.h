@@ -41,6 +41,13 @@
 #include <QtDBus/QDBusReply>
 #include <QFile>
 
+//Compositor requires access to private classes on QtCompositor framework
+#include <QtCompositor/private/qwlcompositor_p.h>
+#include <QtCompositor/private/qwloutput_p.h>
+#include <QtCompositor/private/qwlsubsurface_p.h>
+#include <QtCompositor/private/qwlinputdevice_p.h>
+#include <QtCompositor/private/qwayland-server-wayland.h>
+
 
 namespace WrsIVIModel {
     class IVIScene;
@@ -56,18 +63,29 @@ namespace WrsIVIModel {
         Q_PROPERTY(int x READ x WRITE setX NOTIFY xChanged)
         Q_PROPERTY(int y READ y WRITE setY NOTIFY yChanged)
         public:
-            IVIRectangle(int id, int w, int h, QObject *p=0) : QObject(p), mId(id), mX(0), mY(0), mWidth(w), mHeight(h) {};
-            IVIRectangle(int id, int x, int y, int w, int h, QObject *p=0) : QObject(p), mId(id), mX(x), mY(y), mWidth(w), mHeight(h) {};
-            int id() { return mId; };
-            void setId(int id) { mId = id; emit idChanged(); };
-            int width() { return mWidth; };
-            void setWidth(int width) { mWidth = width; emit widthChanged(); };
-            int height() { return mHeight; };
-            void setHeight(int height) { mHeight = height; emit heightChanged(); };
-            int x() { return mX; };
-            void setX(int x) { mX = x; emit xChanged(); };
-            int y() { return mY; };
-            void setY(int y) { mY = y; emit yChanged(); };
+            IVIRectangle(int id, int w, int h, QObject *p=0) : QObject(p), mId(id), mX(0), mY(0), mWidth(w), mHeight(h) {}
+            IVIRectangle(int id, int x, int y, int w, int h, QObject *p=0) : QObject(p), mId(id), mX(x), mY(y), mWidth(w), mHeight(h) {}
+            int id() { return mId; }
+            void setId(int id) { mId = id; emit idChanged(); }
+            int width() { return mWidth; }
+            void setWidth(int width) { mWidth = width; emit widthChanged(); }
+            int height() { return mHeight; }
+            void setHeight(int height) { mHeight = height; emit heightChanged(); }
+            int x() { return mX; }
+            void setX(int x) { mX = x; emit xChanged(); }
+            int y() { return mY; }
+            void setY(int y) { mY = y; emit yChanged(); }
+
+            void addResourceForClient(struct wl_client* client, struct wl_resource * resource) {
+                //TODO: check if another resource was already attached to this client?
+                this->mClientToIviResource[client] = resource;
+            }
+
+            struct wl_resource * getResourceForClient(struct wl_client* client) {
+                //TODO: check if no resource for this client
+                return this->mClientToIviResource[client];
+            }
+
         signals:
             void idChanged();
             void widthChanged();
@@ -80,6 +98,7 @@ namespace WrsIVIModel {
             int mY;
             int mWidth;
             int mHeight;
+            QMap<struct wl_client*, struct wl_resource *> mClientToIviResource; //for each client - a wayland resource is used to communicate with individual clients
     };
 
     class IVISurface : public IVIRectangle
@@ -95,24 +114,27 @@ namespace WrsIVIModel {
         IVISurface(int id, int x, int y, int w, int h, IVILayer* parent=0);
 
         double opacity() const { return mOpacity; }
-        void setOpacity(double o) { mOpacity = o; emit propertyChanged(); };
+        void setOpacity(double o) { mOpacity = o; emit propertyChanged(); }
         int orientation() const { return mOrientation; }
-        void setOrientation(int o) { mOrientation = o; emit propertyChanged(); };
+        void setOrientation(int o) { mOrientation = o; emit propertyChanged(); }
         int visibility() const { return mVisibility; }
-        void setVisibility(int o) { mVisibility = o; emit propertyChanged(); };
+        void setVisibility(int o) { mVisibility = o; emit propertyChanged(); }
 
-        QObject *qmlWindowFrame() { return mQmlWindowFrame; };
-        void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; };
+        QObject *qmlWindowFrame() { return mQmlWindowFrame; }
+        void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
 
-        //ivi-controller-surface resource
-        struct wl_resource* waylandResource() { return mWaylandResource; }
-        void setWaylandResource(struct wl_resource *r) { mWaylandResource = r; }
-
-        struct wl_resource* iviSurfaceWaylandResource() { return mIviSurfaceWaylandResource; }
-        void setIviSurfaceWaylandResource(struct wl_resource *r) { mIviSurfaceWaylandResource = r; }
+        void copyQWaylandSurfaceProperties(QWaylandSurface *qWaylandSurface) {
+            this->setWidth(qWaylandSurface->size().width());
+            this->setHeight(qWaylandSurface->size().height());
+            //posiztion - is to be updated by the layout manager from QML
+        }
 
         QWaylandSurface *qWaylandSurface() { return mQWaylandSurface; }
-        void setQWaylandSurface(QWaylandSurface *qWaylandSurface) { mQWaylandSurface = qWaylandSurface; }
+        void setQWaylandSurface(QWaylandSurface *qWaylandSurface) {
+            mQWaylandSurface = qWaylandSurface;
+            setId(wl_resource_get_id(qWaylandSurface->handle()->resource()->handle));
+            copyQWaylandSurfaceProperties(mQWaylandSurface);
+        }
 
     signals:
         void propertyChanged();
@@ -140,7 +162,8 @@ namespace WrsIVIModel {
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
-        Q_INVOKABLE IVISurface* addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame);
+        Q_INVOKABLE IVISurface* addSurface_(int x, int y, int width, int height, QObject *qmlWindowFrame);
+        Q_INVOKABLE IVISurface* addSurface(IVISurface* surface);
         Q_INVOKABLE void removeSurface(IVISurface*);
 
         QQmlListProperty<IVISurface> surfaces() {
@@ -150,15 +173,13 @@ namespace WrsIVIModel {
         Q_INVOKABLE IVISurface *surface(int i) const { return mSurfaces.at(i); }
 
         double opacity() const { return mOpacity; }
-        void setOpacity(double o) { mOpacity = o; emit propertyChanged(); };
+        void setOpacity(double o) { mOpacity = o; emit propertyChanged(); }
         int orientation() const { return mOrientation; }
-        void setOrientation(int o) { mOrientation = o; emit propertyChanged(); };
+        void setOrientation(int o) { mOrientation = o; emit propertyChanged(); }
         int visibility() const { return mVisibility; }
-        void setVisibility(int o) { mVisibility = o; emit propertyChanged(); };
+        void setVisibility(int o) { mVisibility = o; emit propertyChanged(); }
 
-        IVIScreen* screen() {return mScreen;};
-        void setWaylandResource(struct wl_resource *r) { mWaylandResource = r; }
-        struct wl_resource* waylandResource() { return mWaylandResource; }
+        IVIScreen* screen() { return mScreen; }
 
     signals:
         void propertyChanged();
@@ -182,8 +203,8 @@ namespace WrsIVIModel {
         Q_INVOKABLE void addLayer(int id);
         Q_INVOKABLE void addLayer(int id, int width, int height);
 
-        QWaylandOutput * waylandOutput() { return mWaylandOutput; };
-        void setWaylandOutput(QWaylandOutput *output) { mWaylandOutput = output; };
+        QWaylandOutput * waylandOutput() { return mWaylandOutput; }
+        void setWaylandOutput(QWaylandOutput *output) { mWaylandOutput = output; }
 
         QQmlListProperty<IVILayer> layers() {
             return QQmlListProperty<IVILayer>(this, mLayers);
@@ -193,9 +214,10 @@ namespace WrsIVIModel {
         Q_INVOKABLE IVILayer *layerById(int id);
 
     private:
-        QList<IVILayer*> mLayers;
-        IVIScene  *mScene;
-        QWaylandOutput *mWaylandOutput;
+        QList<IVILayer*>    mLayers; //children
+        IVIScene            *mScene; //parent
+
+        QWaylandOutput *    mWaylandOutput; //wayland output associated to this IVI screen
     };
 
     class IVIScene : public IVIRectangle
@@ -207,7 +229,7 @@ namespace WrsIVIModel {
     public:
         IVIScene(QObject *p=0);
         IVIScene(QWaylandCompositor *compositor, int w, int h, QObject *p=0);
-        IVIScreen* mainScreen() { return mMainScreen; };
+        IVIScreen* mainScreen() { return mMainScreen; }
 
         QQmlListProperty<IVIScreen> screens() {
             return QQmlListProperty<IVIScreen>(this, mScreens);
