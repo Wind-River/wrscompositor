@@ -294,6 +294,7 @@ void WrsIviController::ivi_controller_layer_destroy(QtWaylandServer::ivi_control
 void WrsIviController::ivi_controller_screen_bind_resource(QtWaylandServer::ivi_controller_screen::Resource *resource) {
     (void) resource;
     TRACE() << "[BEGIN]";
+    DEBUG() << "Resource:" << wl_resource_get_id(resource->handle);
     TRACE() << "[END]";
 }
 
@@ -342,18 +343,25 @@ void WrsIviController::ivi_controller_screen_set_render_order(QtWaylandServer::i
 
 void WrsIviController::ivi_controller_bind_resource(QtWaylandServer::ivi_controller::Resource *resource) {
     TRACE() << "[BEGIN]";
+    struct wl_client *client = resource->client();
     for(int i=0; i<mCompositor->getIviScene()->screenCount(); i++) {
         WrsIVIModel::IVIScreen *screen = mCompositor->getIviScene()->screen(i);
         QtWayland::Output *output = screen->waylandOutput()->handle();
-        // find wl_output for client
-        if(output->resourceMap().contains(resource->client())) {
+        // find wl_output for the same client
+        if(output->resourceMap().contains(client)) {
             // get wl_resource of wl_output for client
-            QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
-
+            QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(client);
+            int screen_id = wl_resource_get_id(output_resource->handle);
+            DEBUG() << "send screen ID:" << screen_id;
             // init screen interface for client
-            QtWaylandServer::ivi_controller_screen::init(resource->handle->client, 0, 1);
+            QtWaylandServer::ivi_controller_screen *ivi_controller_screen = new QtWaylandServer::ivi_controller_screen(client, 0, 1);
+            // bind ivi_controller_screen -> ivi_screen
+            screen->addResourceForClient(client, ivi_controller_screen->resource()->handle);
             // send screen(client, r-id of output for screen, screen)
-            QtWaylandServer::ivi_controller::send_screen(resource->handle, wl_resource_get_id(output_resource->handle), QtWaylandServer::ivi_controller_screen::resource()->handle);
+            QtWaylandServer::ivi_controller::send_screen(
+                        resource->handle,
+                        screen_id,
+                        ivi_controller_screen->resource()->handle);
         }
     }
 
@@ -362,13 +370,14 @@ void WrsIviController::ivi_controller_bind_resource(QtWaylandServer::ivi_control
         WrsIVIModel::IVIScreen *screen = mCompositor->getIviScene()->screen(i);
         for(int j=0; j<screen->layerCount(); j++) {
             WrsIVIModel::IVILayer *layer = screen->layer(j);
-            DEBUG() << "send layer id" << layer->id();
+            DEBUG() << "send layer ID:" << layer->id();
 
             // send layer
             QtWaylandServer::ivi_controller::send_layer(resource->handle, layer->id());
-            for(int k=0; k<layer->surfaceCount(); k++) {
+            //TODO: send screen for each layer QtWaylandServer::ivi_controller_layer::send_screen(resource->handle, QtWaylandServer::ivi_controller_screen::resource()->handle);
+            for(int k=0; k < layer->surfaceCount(); k++) {
                 WrsIVIModel::IVISurface *surface = layer->surface(k);
-                DEBUG() << "send surface id" << surface->id();
+                DEBUG() << "send surface ID:" << surface->id();
 
                 // send layer
                 QtWaylandServer::ivi_controller::send_surface(resource->handle, surface->id());
@@ -395,69 +404,75 @@ void WrsIviController::ivi_controller_commit_changes(QtWaylandServer::ivi_contro
 
 void WrsIviController::ivi_controller_layer_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_layer, int32_t width, int32_t height, uint32_t id) {
     TRACE() << "[BEGIN]";
-    QtWaylandServer::ivi_controller_layer::init(resource->handle->client, id, 1);
-    struct wl_resource *resource_ctrllayer = QtWaylandServer::ivi_controller_layer::resource()->handle;
-    for(int i=0; i<mCompositor->getIviScene()->mainScreen()->layerCount(); i++) {
+    struct wl_client *client = resource->client();
+
+    QtWaylandServer::ivi_controller_layer *ivi_controller_layer = new QtWaylandServer::ivi_controller_layer(client, id, 1);
+
+    //TODO: iterate all screens
+    for(int i = 0; i < mCompositor->getIviScene()->mainScreen()->layerCount(); i++) {
         WrsIVIModel::IVILayer *layer = mCompositor->getIviScene()->mainScreen()->layer(i);
-        if(layer->id() == (int)id_layer) {
-            layer->setWaylandResource(resource_ctrllayer);
+        if(layer->id() == (int) id_layer) {
+            layer->addResourceForClient(client, ivi_controller_layer->resource()->handle);
             DEBUG() << "send layer" << id_layer;
-            ivi_controller_layer::send_opacity(resource_ctrllayer, wl_fixed_from_double(layer->opacity()));
-            ivi_controller_layer::send_source_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
-            ivi_controller_layer::send_destination_rectangle(resource_ctrllayer, layer->x(), layer->y(), layer->width(), layer->height());
-            ivi_controller_layer::send_orientation(resource_ctrllayer, layer->orientation());
-            ivi_controller_layer::send_visibility(resource_ctrllayer, layer->visibility());
-            // XXX REMOVE layer from specific screen why ??
-            // send_layer_event of ivi-controller-impl.c
-            QtWaylandServer::ivi_controller_layer::send_screen(resource_ctrllayer, NULL);
-
+            ivi_controller_layer->send_opacity(wl_fixed_from_double(layer->opacity()));
+            ivi_controller_layer->send_source_rectangle(layer->x(), layer->y(), layer->width(), layer->height());
+            ivi_controller_layer->send_destination_rectangle(layer->x(), layer->y(), layer->width(), layer->height());
+            ivi_controller_layer->send_orientation(layer->orientation());
+            ivi_controller_layer->send_visibility(layer->visibility());
+            // send parent screen ! NOTE: !this is wl_output not ivi_screen? why?
             QtWayland::Output *output = layer->screen()->waylandOutput()->handle();
-            // get wl_resource of wl_output for client
-            QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(resource->client());
-
-            // send parent screen
-            QtWaylandServer::ivi_controller_layer::send_screen(resource_ctrllayer, output_resource->handle);
+            if (output->resourceMap().contains(client)) {
+                DEBUG() << "SEND SCREEN FOR LAYER ******************";
+                QtWaylandServer::wl_output::Resource *output_resource = output->resourceMap().value(client);
+                ivi_controller_layer->send_screen(output_resource->handle);
+            }
             break;
         }
     }
+
+    //TODO: what if surface not found ? Add it ?
+
     TRACE() << "[END]";
 }
 
 
 void WrsIviController::ivi_controller_surface_create(QtWaylandServer::ivi_controller::Resource *resource, uint32_t id_surface, uint32_t id) {
-    (void) resource;
     TRACE() << "[BEGIN]";
+
+    struct wl_client *client = resource->client();
+
     WrsIVIModel::IVISurface *surface = NULL;
     WrsIVIModel::IVILayer *parentLayer = NULL;
-    for(int i=0; i<mCompositor->getIviScene()->screenCount(); i++) {
+    for (int i = 0; i < mCompositor->getIviScene()->screenCount(); i++) {
         WrsIVIModel::IVIScreen *screen = mCompositor->getIviScene()->screen(i);
-        for(int j=0; j<screen->layerCount(); j++) {
+        for (int j=0; j < screen->layerCount(); j++) {
             WrsIVIModel::IVILayer *layer = screen->layer(j);
-            for(int k=0; k<layer->surfaceCount(); k++) {
+            for (int k = 0; k < layer->surfaceCount(); k++) {
                 WrsIVIModel::IVISurface *_surface = layer->surface(k);
-                if(_surface->id() == (int)id_surface) {
+                if(_surface->id() == (int) id_surface) {
                     surface = _surface;
+                    //TODO: add layer as a reference in IVISurface class
                     parentLayer = layer;
                     DEBUG() << "found surface " << id << surface;
+
+                    QtWaylandServer::ivi_controller_surface *ivi_controller_surface = new QtWaylandServer::ivi_controller_surface(client, id, 1);
+                    surface->addResourceForClient(client, ivi_controller_surface->resource()->handle);
+
+                    ivi_controller_surface->send_opacity(wl_fixed_from_double(surface->opacity()));
+                    ivi_controller_surface->send_source_rectangle(surface->x(), surface->y(), surface->width(), surface->height());
+                    ivi_controller_surface->send_destination_rectangle(surface->x(), surface->y(), surface->width(), surface->height());
+                    ivi_controller_surface->send_orientation(surface->orientation());
+                    ivi_controller_surface->send_visibility(surface->visibility());
+                    // send parent layer
+                    ivi_controller_surface->send_layer(parentLayer->getResourceForClient(client));
+                    ivi_controller_surface->send_configuration(surface->width(), surface->height());
+
                     break;
                 }
             }
         }
     }
-    QtWaylandServer::ivi_controller_surface::init(resource->handle->client, id, 1);
-    struct wl_resource *resource_ctrlsurface = QtWaylandServer::ivi_controller_surface::resource()->handle;
-    surface->setWaylandResource(resource_ctrlsurface);
+    //TODO: what if surface not found ? Add it ?
 
-    ivi_controller_surface::send_opacity(resource_ctrlsurface, wl_fixed_from_double(surface->opacity()));
-    ivi_controller_surface::send_source_rectangle(resource_ctrlsurface, surface->x(), surface->y(), surface->width(), surface->height());
-    ivi_controller_surface::send_destination_rectangle(resource_ctrlsurface, surface->x(), surface->y(), surface->width(), surface->height());
-    ivi_controller_surface::send_orientation(resource_ctrlsurface, surface->orientation());
-    ivi_controller_surface::send_visibility(resource_ctrlsurface, surface->visibility());
-    // XXX REMOVE surface from specific screen why ??
-    QtWaylandServer::ivi_controller_surface::send_layer(resource_ctrlsurface, NULL);
-    // send parent layer
-    QtWaylandServer::ivi_controller_surface::send_layer(resource_ctrlsurface, parentLayer->waylandResource());
-
-    ivi_controller_surface::send_configuration(resource_ctrlsurface, surface->width(), surface->height());
     TRACE() << "[END]";
 }
