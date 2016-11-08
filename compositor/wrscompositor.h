@@ -26,15 +26,19 @@
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
 #include <QtCompositor/qwaylandsurfaceitem.h>
 #include <QtCompositor/qwaylandoutput.h>
+#include <QtCompositor/qwaylandclient.h>
 #include <QtCompositor/qwaylandquickcompositor.h>
 #include <QtCompositor/qwaylandquicksurface.h>
 #include <QtCompositor/qwaylandquickoutput.h>
-#include <QtCompositor/private/qwlcompositor_p.h>
-#include <QtCompositor/private/qwloutput_p.h>
-#include <QtCompositor/private/qwlinputdevice_p.h>
-#include <QtCompositor/private/qwayland-server-wayland.h>
 #include "qwayland-server-ivi-controller.h"
 #include "qwayland-server-ivi-application.h"
+
+//Compositor requires access to private classes on QtCompositor framework
+#include <QtCompositor/private/qwlcompositor_p.h>
+#include <QtCompositor/private/qwloutput_p.h>
+#include <QtCompositor/private/qwlsubsurface_p.h>
+#include <QtCompositor/private/qwlinputdevice_p.h>
+#include <QtCompositor/private/qwayland-server-wayland.h>
 
 #include "wrsivimodel.h"
 #endif

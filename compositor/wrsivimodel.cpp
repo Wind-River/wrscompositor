@@ -70,7 +70,7 @@ IVISurface* IVIScene::findSurfaceByResource(struct ::wl_resource *rsc) {
             WrsIVIModel::IVILayer *layer = screen->layer(j);
             for (int k = 0; k < layer->surfaceCount(); k++) {
                 WrsIVIModel::IVISurface *_surface = layer->surface(k);
-                if (_surface->waylandResource() == rsc) {
+                if (_surface->getResourceForClient(rsc->client) == rsc) {
                     surface = _surface;
                     break;
                 }
@@ -106,7 +106,9 @@ void IVIScene::addIVILayer(IVILayer *layer) {
 void IVIScene::addIVISurface(IVISurface *surface) {
     qDebug() << ">>> IVIScene::addIVISurface <<<" << surface;
     this->mIviSurfaces.append(surface);
-    //Add logic to associate the surface to a specific layer (even a default one)
+    //TODO: Add logic to associate the surface to a specific layer (even a default one)
+    //      This is wrong :)
+    this->mainScreen()->layer(0)->addSurface(surface);
 }
 
 
@@ -154,7 +156,14 @@ IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
 {
 }
 
-IVISurface* IVILayer::addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
+
+IVISurface* IVILayer::addSurface(IVISurface* surface) {
+    mSurfaces << surface;
+    return surface;
+}
+
+
+IVISurface* IVILayer::addSurface_(int x, int y, int width, int height, QObject *qmlWindowFrame) {
     IVISurface* surface = new IVISurface(-1, width, height, this);
     surface->setX(x);
     surface->setY(y);

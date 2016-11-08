@@ -46,10 +46,6 @@ WrsCompositor::WrsCompositor(const QString &display, const QString &program)
     addDefaultShell();
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
-
-    mIviController  = new WrsIviController(QWaylandCompositor::handle()->wl_display(), this);
-    mIviApplication = new WrsIviApplication(QWaylandCompositor::handle()->wl_display(), this);
-    mIviSurface     = new WrsIviSurface(QWaylandCompositor::handle()->wl_display(), this);
 #endif
 #if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
     defaultInputDevice()->handle()->setCapabilities(QWaylandInputDevice::Touch | QWaylandInputDevice::Pointer | QWaylandInputDevice::Keyboard);
@@ -92,6 +88,15 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
         mMainOutput->window()->setFlags(Qt::FramelessWindowHint); //Set a frameless window
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
+        // initialize IVI extension interfaces after wl_output is created
+        // this will ensure the client will first get a reference to wl_output interface
+        // then a reference to ivi_screen
+        // otherwise the client might call ivi_screen methods without a connection to a specific output
+
+        mIviController  = new WrsIviController(QWaylandCompositor::handle()->wl_display(), this);
+        mIviApplication = new WrsIviApplication(QWaylandCompositor::handle()->wl_display(), this);
+        mIviSurface     = new WrsIviSurface(QWaylandCompositor::handle()->wl_display(), this);
+
         QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
         QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
 #endif
@@ -239,6 +244,7 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
     // create a new IVIsurface model
     WrsIVIModel::IVISurface *newIviSurface = new WrsIVIModel::IVISurface(this);
     // link the IVISurface model to wl_surface(or QWaylandSurface)
+    newIviSurface->setId(wl_resource_get_id(surface->handle()->resource()->handle));
     newIviSurface->setQWaylandSurface(surface);
     // add the surface to the scene model
     mIviScene->addIVISurface(newIviSurface);
