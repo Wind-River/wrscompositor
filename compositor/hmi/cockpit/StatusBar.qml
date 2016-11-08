@@ -65,68 +65,43 @@ Item {
     }
 
     Image {
-        id: windriver_log
-        source: "images/wr-red.png"
+        id: fullscreen
+        source: statusBar.fullscreenViewed ? "resources/full-screen-collapse.png" : "resources/full-screen-expand.png"
         anchors.left: parent.left
         anchors.leftMargin: parent.width * 0.01
         anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.6
+        height: parent.height * 0.7
+        width: height
         smooth: true
-        MultiPointTouchArea {
-            id: cockpitTouchArea
+        MouseArea {
+            id: fullscreenButtonArea
             anchors.fill: parent
-            minimumTouchPoints: 1
-            maximumTouchPoints: 2
-            property int touchAction: touchNoAction
-            property int touchNoAction: 1
-            property int touchSwitchedWindowAction: 2
-            property int touchResizedWindowAction: 3
-            property bool started: false
-            touchPoints: [
-                TouchPoint { id: touch1; objectName: "touch 1"; },
-                TouchPoint { id: touch2; objectName: "touch 2"; }
-            ]
-
-            onPressed: {
-                if (cockpitTouchArea.started)
-                    return;
-
-                console.log("onPressed[cockpitTouch]");
-                cockpitTouchArea.started = true;
-                if (touch1.pressed || touch2.pressed)
-                    touchAction = touchResizedWindowAction
-            }
-            onReleased: {
-                if (!cockpitTouchArea.started)
-                    return;
-
-                if (touchAction == touchSwitchedWindowAction) {
-                    console.log("onReleased[cockpitTouch], try to switch next window");
-                    switchNextWindow();
-                } else if (touchAction == touchResizedWindowAction) {
-                    console.log("onReleased[cockpitTouch], try to resize window");
-                    resizeCurrentWindow();
-                } else {
-                    console.log("onReleased[cockpitTouch], Nohting to do for touch");
-                }
-                cockpitTouchArea.started = false;
-                touchAction = touchNoAction;
-            }
-            onTouchUpdated: {
-                if (!cockpitTouchArea.started)
-                    return;
-
-                if (touch1.pressed && touch2.pressed)
-                    touchAction = touchSwitchedWindowAction
-            }
-            onCanceled: {
-                console.log("onCanceled[cockpitTouch]");
-                cockpitTouchArea.started = false;
-                touchAction = touchNoAction;
+            onClicked: {
+                console.log("Clicked, try to resize window");
+                resizeCurrentWindow();
             }
         }
-        scale: (cockpitTouchArea.started ? 0.9 : 1.0)
+        scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
+    }
+
+    Image {
+        id: nextWindow
+        source: "resources/next-window.png"
+        anchors.left: fullscreen.right
+        anchors.leftMargin: parent.width * 0.01
+        anchors.verticalCenter: parent.verticalCenter
+        height: parent.height * 0.7
+        width: height
+        smooth: true
+        MouseArea {
+            id: nextWindowButtonArea
+            anchors.fill: parent
+            onClicked: {
+                console.log("Clicked, try to switch next window");
+                switchNextWindow();
+            }
+        }
+        scale: (nextWindowButtonArea.pressed? 0.9 : 1.0)
     }
 
     /*
@@ -185,7 +160,7 @@ Item {
     */
     Text {
         id: dateTime1
-        anchors.left: windriver_log.right
+        anchors.left: nextWindow.right
         anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
         //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
@@ -222,7 +197,7 @@ Item {
 
     Image {
         id: wifi
-        source: "resources/wifi-symbol.svg"
+        source: "resources/wifi-symbol.png"
         anchors.left: dateTime2.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
@@ -232,7 +207,7 @@ Item {
     }
     Image {
         id: rssi
-        source: "resources/signal-symbol.svg"
+        source: "resources/signal-symbol.png"
         anchors.left: wifi.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
@@ -242,7 +217,7 @@ Item {
     }
     Image {
         id: androidAuto
-        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-auto.png" : "icons/android-auto-grey.png"
+        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-phone-green.png" : "icons/android-phone-gray.png"
         anchors.left: rssi.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
@@ -264,7 +239,7 @@ Item {
     }
     Image {
         id: appleCarPlay
-        source: (projectionMode.appleCarPlayStatus == "connected") ? "icons/apple-carplay.png" : "icons/apple-carplay-grey.png"
+        source: (projectionMode.appleCarPlayStatus == "connected") ? "icons/apple-phone-green.png" : "icons/apple-phone-gray.png"
         anchors.left: androidAuto.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter

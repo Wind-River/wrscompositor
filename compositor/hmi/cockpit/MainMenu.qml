@@ -269,7 +269,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.horizontalCenterOffset: parent.width*0.4
                     anchors.verticalCenterOffset: -parent.width*0.4
-                    source: "images/close.png"
+                    source: "icons/close.png"
                     smooth: true
                     width: height
                     height: quitArea.pressed?((parent.height/4.5)|0):((parent.height/4)|0)

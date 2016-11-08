@@ -157,7 +157,7 @@ Item {
 
         RingIcon {
             id: playbutton
-            icon: mediaplayer.playbackState==MediaPlayer.PlayingState?"resources/pause.svg":"resources/play.svg"
+            icon: mediaplayer.playbackState==MediaPlayer.PlayingState?"resources/pause.png":"resources/play.png"
             width: playArea.pressed?root.width/7:root.width / 8
             height: width
             anchors.verticalCenter: playbuttonpanel.verticalCenter
@@ -175,7 +175,7 @@ Item {
         }
         Image {
             id: backward
-            source: "resources/backward.svg"
+            source: "resources/backward.png"
             width: backwardArea.pressed?root.width/14:root.width/16
             height: width
             anchors.left: playbuttonpanel.left
@@ -193,7 +193,7 @@ Item {
         }
         Image {
             id: forward
-            source: "resources/forward.svg"
+            source: "resources/forward.png"
             width: forwardArea.pressed?root.width/14:root.width/16
             height: width
             anchors.right: playbuttonpanel.right
@@ -401,7 +401,7 @@ Item {
 
             Image {
                 id: volumeLabel
-                source: "resources/volume-up.svg"
+                source: "resources/volume-up.png"
                 width: root.width/15
                 height: width
                 anchors.verticalCenter: parent.verticalCenter

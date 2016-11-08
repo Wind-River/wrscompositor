@@ -44,7 +44,7 @@ Item {
             label: "Navigation"
             appid: "mocknavi"
             apptype: "native"
-            iconPath: "resources/navi.svg"
+            iconPath: "resources/navi.png"
         }
         ListElement {
             label: "Climate"
@@ -57,33 +57,33 @@ Item {
             label: "Media"
             appid: "media"
             apptype: "widget"
-            iconPath: "resources/mobile.svg"
+            iconPath: "resources/mobile.png"
             iconScale: 0.9
         }
         ListElement {
             label: "Phone"
             appid: "dialer"
             apptype: "widget"
-            iconPath: "resources/phone.svg"
+            iconPath: "resources/phone.png"
             iconScale: 0.6
         }
         ListElement {
             label: "Applications"
             appid: "menu"
             apptype: "widget"
-            iconPath: "resources/apps.svg"
+            iconPath: "resources/apps.png"
         }
         ListElement {
             label: "Diagnostics"
             appid: "diagnostics"
             apptype: "widget"
-            iconPath: "resources/diagnotics.svg"
+            iconPath: "resources/diagnotics.png"
         }
         ListElement {
             label: "Settings"
             appid: "settings"
             apptype: "widget"
-            iconPath: "resources/settings.svg"
+            iconPath: "resources/settings.png"
         }
     }
     ListView {
