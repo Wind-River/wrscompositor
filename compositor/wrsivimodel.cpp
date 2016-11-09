@@ -165,13 +165,12 @@ IVISurface* IVILayer::addSurface(IVISurface* surface) {
 }
 
 
-IVISurface* IVILayer::addSurface_(int x, int y, int width, int height, QObject *qmlWindowFrame) {
+IVISurface* IVILayer::createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
     IVISurface* surface = new IVISurface(-1, width, height, this);
     DEBUG() << "qmlWindowFrame" << qmlWindowFrame;
     surface->setX(x);
     surface->setY(y);
     surface->setQmlWindowFrame(qmlWindowFrame);
-    mSurfaces << surface;
     return surface;
 }
 
