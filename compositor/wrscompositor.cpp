@@ -233,7 +233,7 @@ void WrsCompositor::resizeEvent(QResizeEvent *event)
     if(!mIviScene && width() > 0 && height() > 0) {
         // this should be after 'wl_output' created, So this is right place
         mIviScene = new WrsIVIModel::IVIScene(this, width(), height(), this);
-        rootContext()->setContextProperty("geniviExt", mIviScene);
+        rootContext()->setContextProperty("iviScene", mIviScene);
     }
 }
 

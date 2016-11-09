@@ -276,7 +276,7 @@ Item {
             }
         }
 
-        var layer = geniviExt.mainScreen.layerById(1000); // application layer
+        var layer = iviScene.mainScreen.layerById(1000); // application layer
         layer.removeSurface(windowFrame.ivi_surface);
         console.log('position '+windowFrame.position);
         if(Conf.useMultiWaylandDisplayFeature && (windowFrame.cloned || windowFrame.position != 'main')) {
@@ -295,12 +295,14 @@ Item {
         console.log('surface added className:'+surface.className);
         console.log('surface added client: '+surface.client);
         console.log('surface added pid: '+surface.client.processId);
-        console.log(geniviExt.mainScreen);
-        console.log(geniviExt.mainScreen.layerCount());
-        console.log(geniviExt.mainScreen.layer(0));
-        console.log(geniviExt.mainScreen.layer(0).visibility);
+        console.log(iviScene.mainScreen);
+        console.log(iviScene.mainScreen.layerCount());
+        console.log(iviScene.mainScreen.layer(0));
+        console.log(iviScene.mainScreen.layer(0).visibility);
 
-        var layer = geniviExt.mainScreen.layerById(1000); // application layer
+        //TODO - get surface Role using iviScene.getSurfaceRole() - this should return a generic role based on cmd-line, UID, GID, ivi-surface3-id
+
+        var layer = iviScene.mainScreen.layerById(1000); // application layer
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame;
         if (surface.title == 'OpenGL Renderer') { 

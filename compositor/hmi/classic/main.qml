@@ -162,12 +162,13 @@ Item {
         console.log('surface added client: ' + surface.client);
         console.log('surface added pid: ' + surface.client.processId);
         console.log('surface added cmd: ' + util.getCmdForPid(surface.client.processId));
-        console.log(geniviExt.mainScreen);
-        console.log(geniviExt.mainScreen.layerCount());
-        console.log(geniviExt.mainScreen.layer(0));
-        console.log(geniviExt.mainScreen.layer(0).visibility);
+        console.log(iviScene.mainScreen);
+        console.log(iviScene.mainScreen.layerCount());
+        console.log(iviScene.mainScreen.layer(0));
+        console.log(iviScene.mainScreen.layer(0).visibility);
+        var role = util.getCmdForPid(surface.client.processId);//iviScene.getSurfaceRole(surface);
 
-        createWestonSurfaceToCompositorElement(surface, util.getCmdForPid(surface.client.processId));
+        createWestonSurfaceToCompositorElement(surface, role);
     }
 
 
