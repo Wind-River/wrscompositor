@@ -338,13 +338,14 @@ Item {
         windowFrame.surfaceItem = compositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
         windowFrame.surfaceItem.touchEventsEnabled = true;
-        windowFrame.ivi_surface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
         windowFrame.processId = surface.client.processId;
-        windowFrame.ivi_surface.id = surface.client.processId;
         windowFrame.targetX = 0;
         windowFrame.targetY = 0;
         windowFrame.targetWidth = surface.size.width;
         windowFrame.targetHeight = surface.size.height;
+        windowFrame.ivi_surface = layer.createSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
+        windowFrame.ivi_surface.id = surface.client.processId;
+        layer.addSurface(windowFrame.ivi_surface);
 
         if (root.waitProcess && root.waitProcess.pid == surface.client.processId) {
             root.waitProcess.setWindow(windowFrame);
