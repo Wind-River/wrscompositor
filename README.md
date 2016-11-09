@@ -16,8 +16,24 @@ In order place wrscompositor on target board based on Yocto, You will need to bu
 
 The license for this project is the MIT-Clause. Text of MIT-Clause license can be found in the COPYING.MIT file in the top level directory. Each source files should include a license notice that designates the licensing terms for the respective file.
 
+### Software Dependencies
 
-### Prerequisite
+- qtbase  5.5.99+5.6.0 (https://github.com/qt/qtbase/tree/5.6)
+- qtwayland  5.5.99+5.6.0 (https://github.com/qt/qtwayland/tree/5.6)
+- qtdeclarative  5.5.99+5.6.0 (https://github.com/qt/qtdeclarative/tree/5.6)
+- qtwebkit  5.5.99+5.6.0 (https://github.com/qt/qtwebkit/tree/5.6)
+- qtmultimedia  5.5.99+5.6.0 (https://github.com/qt/qtmultimedia/tree/5.6)
+- qtquick1  5.5.99+5.6.0 (https://github.com/qt/qtquick1/tree/5.6)
+- qtsvg  5.5.99+5.6.0 (https://github.com/qt/qtsvg/tree/5.6)
+- qtgraphicaleffects  5.5.99+5.6.0 (https://github.com/qt/qtgraphicaleffects/tree/5.6)
+- libpam  1.2.1 (http://linux-pam.org/library/Linux-PAM-1.2.1.tar.bz2)
+- gstreamer1.0-plugins-bad  1.6.1 (https://github.com/GStreamer/gst-plugins-bad)
+- gstreamer1.0-plugins-ugly  1.6.1 (https://github.com/GStreamer/gst-plugins-ugly)
+- wayland  1.7.0 (https://wayland.freedesktop.org/releases/1.7.0.tar.xz)
+- mesa  11.1.2 (https://cgit.freedesktop.org/mesa/mesa/log/?h=11.1)
+- libdrm  2.4.66 (https://dri.freedesktop.org/libdrm/libdrm/ibdrm-2.4.66.tar.bz2)
+
+### Prerequisites
 
 Before install WRSCompositor, please prepare your development environment and install qt/wayland library.
 1. Setup setup environment for local install  
