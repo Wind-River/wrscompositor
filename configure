@@ -398,6 +398,12 @@ else
 fi
 echo
 
+if [ "$TARGET_DEVICE" = "x11" ]; then
+    sudo mkdir -p /usr/share/wrscompositor
+    sudo cp clients/mediaplayer/video/*.ogv /usr/share/wrscompositor
+    sudo cp compositor/targets/common/etc/dbus-1/system.d/wrscompositor.conf  /etc/dbus-1/system.d/
+fi
+
 printf "Generating hmi-xxx.qrc ..."
 HMI_RC="hmi-$HMI_PROFILE.qrc"
 RCPATH="../../$HMI_RC"

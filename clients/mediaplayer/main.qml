@@ -34,7 +34,7 @@ Item {
 
         fm: FolderListModel {
             id: fm
-            folder: "file:///home/windriver/Videos"
+            folder: "file:///usr/share/wrscompositor"
             showDirs: false
             showDotAndDotDot: false
             nameFilters: ["*.ogv"]

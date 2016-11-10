@@ -150,16 +150,16 @@ Item {
         ListElement {
             label: "Navigation"
             description: "Navigation"
-            exec: "skobblernavi"
+            exec: "/usr/bin/skobblernavi"
             multiple: false
-            systemd: true
+            systemd: false
             iconPath: "icons/native-map-location.png"
             unitFile: "skobblernavi.service"
         }
         ListElement {
             label: "Video"
             description: "Video"
-            exec: "mediaplayer"
+            exec: "/usr/bin/mediaplayer"
             multiple: false
             systemd: false
             iconPath: "icons/native-video.png"
