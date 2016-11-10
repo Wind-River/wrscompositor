@@ -166,7 +166,7 @@ Item {
         console.log(iviScene.mainScreen.layerCount());
         console.log(iviScene.mainScreen.layer(0));
         console.log(iviScene.mainScreen.layer(0).visibility);
-        var role = util.getCmdForPid(surface.client.processId);//iviScene.getSurfaceRole(surface);
+        var role = iviScene.getSurfaceRole(surface);
 
         createWestonSurfaceToCompositorElement(surface, role);
     }

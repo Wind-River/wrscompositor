@@ -48,6 +48,7 @@
 #include <QtCompositor/private/qwlinputdevice_p.h>
 #include <QtCompositor/private/qwayland-server-wayland.h>
 
+#include "wrsiviplatformconstants.h"
 
 namespace WrsIVIModel {
     class IVIScene;
@@ -136,6 +137,9 @@ namespace WrsIVIModel {
             copyQWaylandSurfaceProperties(mQWaylandSurface);
         }
 
+        void setIviId(uint32_t ivi_id) { mIviId = ivi_id; }
+        uint32_t iviId() { return mIviId; }
+
     signals:
         void propertyChanged();
     private:
@@ -143,10 +147,9 @@ namespace WrsIVIModel {
         double              mOpacity;
         int                 mOrientation;
         int                 mVisibility;
-        struct wl_resource  *mWaylandResource;
-        struct wl_resource  *mIviSurfaceWaylandResource;
         QWaylandSurface     *mQWaylandSurface;
         QObject             *mQmlWindowFrame;
+        uint32_t            mIviId;
     };
 
     class IVILayer : public IVIRectangle
@@ -188,8 +191,7 @@ namespace WrsIVIModel {
         IVIScreen  *mScreen;
         double mOpacity;
         int mOrientation;
-        int mVisibility;
-        struct wl_resource *mWaylandResource;
+        int mVisibility;        
     };
 
     class IVIScreen : public IVIRectangle
@@ -240,6 +242,7 @@ namespace WrsIVIModel {
         Q_INVOKABLE void addIVIScreen(IVIScreen *);
         Q_INVOKABLE void addIVILayer(IVILayer *);
         Q_INVOKABLE void addIVISurface(IVISurface *);
+        Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface);        ///< Get a plaform-wise generic role name for this surface like MAP, PHONE, DIALOG, CAMERA, etc...
 
         IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
 

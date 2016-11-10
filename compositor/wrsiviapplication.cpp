@@ -74,6 +74,7 @@ void WrsIviApplication::ivi_application_surface_create(QtWaylandServer::ivi_appl
             findIVISurfaceByQWaylandSurface(qWlsurface);
 
     iviSurfaceModel->addResourceForClient(surface->client, iviSurface->resource()->handle);
+    iviSurfaceModel->setIviId(ivi_id);
 
     connect(qWlsurface, SIGNAL(sizeChanged()),
             this, SLOT(sizeChanged()));
