@@ -28,19 +28,26 @@
 #include "qiviwindow.h"
 #include "qtwaylandiviapplication.h"
 
-#define IVI_ID 5
+
 
 int main(int argc, char **argv)
 {
+    int ivi_id = 0;
     QApplication app (argc, argv);
     QtWaylandClient::QtWaylandIviApplication iviApp(&app);
 
-    QIVIWindow iviWindow(&iviApp, IVI_ID);
+    if (argc > 1) {
+        ivi_id = atoi(argv[1]);
+    }
 
-    QPushButton button ("! Hello world !", &iviWindow);
+    QIVIWindow iviWindow(&iviApp, ivi_id);
+    if (ivi_id == 6) {//CAMERA
+        iviWindow.setStyleSheet("background-image: url(./camera.jpg); background-repeat:no-repeat; background-position: center; background-color: black;");
+    }
+    if (ivi_id == 4) {//PHONE
+        iviWindow.setStyleSheet("background-image: url(./phone.jpg); background-repeat:no-repeat; background-position: center; background-color: black;");
+    }
 
-    //button.show();
-    button.connect(&button, SIGNAL(pressed()), &iviApp, SLOT(pressed()));
     iviWindow.show();
 
     return app.exec();

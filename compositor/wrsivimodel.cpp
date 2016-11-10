@@ -20,8 +20,12 @@
  * THE SOFTWARE.
  */
 
+#include <QtCompositor/qwaylandquicksurface.h>
+#include <QtCompositor/qwaylandclient.h>
+
 #include "wrsivimodel.h"
 #include "wrslogging.h"
+#include "util.h"
 
 using namespace WrsIVIModel;
 
@@ -79,6 +83,25 @@ IVISurface* IVIScene::findSurfaceByResource(struct ::wl_resource *rsc) {
         }
     }
     return surface;
+}
+
+
+QString IVIScene::getSurfaceRole(QWaylandSurface *qWlSurface) {
+    IVISurface* iviSurface = findIVISurfaceByQWaylandSurface(qWlSurface);
+    if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_CAMERA) {
+        return "Camera";
+    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_DIALOG) {
+        return "Dialog";
+    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_NAVIGATION) {
+        return "Navigation";
+    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_PHONE) {
+        return "Phone";
+    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_PROJECTION) {
+        return "Projection";
+    } else {
+        Util u;
+        return u.getCmdForPid(qWlSurface->client()->processId());
+    }
 }
 
 
@@ -179,16 +202,16 @@ void IVILayer::removeSurface(IVISurface* surface) {
 }
 
 IVISurface::IVISurface(QObject *parent) :
-    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL)
+    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL), mIviId(WRS_IVI_ID_SURFACE_DEFAULT)
 {
 }
 
 IVISurface::IVISurface(int id, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent)
+    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT)
 {
 }
 
 IVISurface::IVISurface(int id, int x, int y, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, x, y, w, h, parent), mLayer(parent)
+    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT)
 {
 }

@@ -34,7 +34,7 @@ Util::Util(QObject *parent) :
 }
 
 
-Q_INVOKABLE QString Util::getCmdForPid(int pid) const {
+Q_INVOKABLE QString Util::getCmdForPid(qint64 pid) const {
    char buffer[1024] = {0};
    sprintf(buffer, "/proc/%d/comm", pid);
    QFile        file(buffer);

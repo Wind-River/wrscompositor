@@ -32,7 +32,7 @@ class Util : public QObject
     Q_OBJECT
 public:
     explicit Util(QObject *parent = 0);
-    Q_INVOKABLE QString getCmdForPid(int pid) const;
+    Q_INVOKABLE QString getCmdForPid(qint64 pid) const;
 
 };
 
