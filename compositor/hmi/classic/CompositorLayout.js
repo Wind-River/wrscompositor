@@ -52,6 +52,12 @@ compositorRules["other"] = "100";
 
 var compositorElements = new Array();
 
+var iviScene = null;
+
+function setIviScene(_iviScene) {
+    iviScene = _iviScene;
+}
+
 /**
  * To be called by compositor root output when a new compositor element is added
  * Layout is recalculated
@@ -155,6 +161,35 @@ function isCompositorRuleApplicable(compositorElement, elementsList, rule) {
  * Internal priorities roules
  */
 function compositorReLayout() {
+
+    var screenCount = iviScene.screenCount();
+    for (var i = 0; i < screenCount; i++) {
+        console.log("[DEBUG] >>>>>> SCREEN:" + i);
+        var screen = iviScene.screen(i);
+        var layerCount = screen.layerCount();
+        for (var j = 0; j < layerCount; j++) {
+            console.log("[DEBUG] >>>>>>     LAYER:" + j);
+            var layer = screen.layer(j);
+            var surfaceCount = layer.surfaceCount();
+            var other = new Array();
+            //TODO in QML render all layers individually
+            for (var k = 0; k < surfaceCount; k++) {
+                var surface = layer.surface(k);
+                if (surface != null && surface.qmlWindowFrame() != null) {
+                    console.log("[DEBUG] >>>>>>         SURFACE:" + k + " surface:" + surface + " />> " + surface.qmlWindowFrame());
+                    other.push(surface.qmlWindowFrame());
+                }
+            }
+            compositorReLayoutPerLayer(other);
+        }
+    }
+}
+
+/**
+ * other - the list of surfaces remaining to be rendered
+ */
+function compositorReLayoutPerLayer(other) {
+
     var topSpace        = 0;
     var bottomSpace     = 0;
     var middleElements  = 0;
@@ -174,10 +209,7 @@ function compositorReLayout() {
     var targetW;
     var targetH;
 
-    var other = new Array();
-    for (var i = 0; i < compositorElements.length; i++) {
-        other.push(compositorElements[i]);
-    }
+
 
     console.log("[DEBUG] LAYOUT BEGIN ===================================================================")
     for (var ruleKey in compositorRules) {

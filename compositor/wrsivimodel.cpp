@@ -123,6 +123,8 @@ void IVIScene::addIVIScreen(IVIScreen *screen) {
 
 
 void IVIScene::addIVILayer(IVILayer *layer) {
+    //TODO: Add logic to associate the layers to specific screens
+    //this->mainScreen()->layers().append(layer);
     this->mIviLayesr.append(layer);
 }
 
@@ -133,6 +135,16 @@ void IVIScene::addIVISurface(IVISurface *surface) {
     //TODO: Add logic to associate the surface to a specific layer (even a default one)
     //      This is wrong :)
     this->mainScreen()->layer(0)->addSurface(surface);
+}
+
+
+IVISurface* IVIScene::createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
+    IVISurface* surface = new IVISurface(-1 - this->mIviSurfaces.count(), width, height, this->mainScreen()->layer(0));
+    DEBUG() << "qmlWindowFrame" << qmlWindowFrame;
+    surface->setX(x);
+    surface->setY(y);
+    surface->setQmlWindowFrame(qmlWindowFrame);
+    return surface;
 }
 
 
@@ -188,30 +200,21 @@ IVISurface* IVILayer::addSurface(IVISurface* surface) {
 }
 
 
-IVISurface* IVILayer::createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
-    IVISurface* surface = new IVISurface(-1, width, height, this);
-    DEBUG() << "qmlWindowFrame" << qmlWindowFrame;
-    surface->setX(x);
-    surface->setY(y);
-    surface->setQmlWindowFrame(qmlWindowFrame);
-    return surface;
-}
-
 void IVILayer::removeSurface(IVISurface* surface) {
     mSurfaces.removeAll(surface);
 }
 
 IVISurface::IVISurface(QObject *parent) :
-    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL), mIviId(WRS_IVI_ID_SURFACE_DEFAULT)
+    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
 {
 }
 
 IVISurface::IVISurface(int id, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT)
+    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
 {
 }
 
 IVISurface::IVISurface(int id, int x, int y, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT)
+    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
 {
 }
