@@ -5,11 +5,6 @@ import "CompositorLayout.js" as CompositorLayout
 import QtGraphicalEffects 1.0;
 
 Item {
-//    Image {
-//        width: parent.width
-//        height: parent.height
-//        source: "bg_header.jpg"
-//    }
     LinearGradient {
         anchors.fill: parent
         start: Qt.point(parent.width, 0)
@@ -37,7 +32,7 @@ Item {
     height: 1056
 
     onCompositorWindowAdded: {
-        console.log("[DEBUG] Window Added!\n" + compositorElement);
+        console.log("[DEBUG] Window Added!:" + compositorElement);
         CompositorLayout.onWindowAdded(compositorElement);
     }
 
@@ -57,7 +52,8 @@ Item {
         item.subItemSurface                 = surface;
         subItem.anchors.horizontalCenter    = item.horizontalCenter;
         subItem.anchors.verticalCenter      = item.verticalCenter;
-
+        iviScene.findIVISurfaceByQWaylandSurface(surface).setQmlWindowFrame(item);
+        console.log("[DEBUG] XXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         compositorWindowAdded(item);
     }
 
@@ -73,7 +69,9 @@ Item {
         webview.url = url;
         item.subItem = webview;
         item.subItemName = name;
-        compositorWindowAdded(item);
+        var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
+        iviScene.addIVISurface(iviSurface);
+        compositorWindowAdded(item);        
     }
 
 
@@ -82,7 +80,9 @@ Item {
         var subComponent        = Qt.createComponent(qmlFile);
         var item                = component.createObject(output);
         var subItem             = subComponent.createObject(item);
-        item.subItemName        = name;
+        item.subItemName        = name;        
+        var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
+        iviScene.addIVISurface(iviSurface);
         compositorWindowAdded(item);
     }
 
@@ -113,6 +113,8 @@ Item {
             var item1                = component1.createObject(output);
             var subItem1             = subComponent1.createObject(item1);
             item1.subItemName        = "StatusBar";
+            var iviSurface1 = iviScene.createSurface(item1.x, item1.y, item1.width, item1.height, item1);
+            iviScene.addIVISurface(iviSurface1);
             compositorWindowAdded(item1);
         }
         {
@@ -121,8 +123,11 @@ Item {
             var item2                = component2.createObject(output);
             var subItem2             = subComponent2.createObject(item2);
             item2.subItemName        = "LauncherBar";
+            var iviSurface2 = iviScene.createSurface(item2.x, item2.y, item2.width, item2.height, item2);
+            iviScene.addIVISurface(iviSurface2);
             compositorWindowAdded(item2);
         }
+        CompositorLayout.setIviScene(iviScene);
         CompositorLayout.compositorReLayout();
     }
 

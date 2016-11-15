@@ -50,6 +50,26 @@
 
 #include "wrsiviplatformconstants.h"
 
+/**
+ * IVIModel structure:
+ * IVISCene
+ *  -> (1..n) IVIScreen
+ *      -> (1..n) IVILayer
+ *          -> (1..n) IVISurface
+ *
+ * externam methods:
+ * IVIScene::addScreen()
+ * IVIScene::addLayer() //use internal logic to associate layers to screens
+ * IVIScene::addSurface() //use internal logic to associate surfaces to layers)
+ *           addSurface(IVISurface) -> based on QWaylandSurface
+ *           addSurface(QMLWindowFrame) -> based on internally created QML element
+ *
+ * QML rendering engine
+ * -> iterate screens
+ *      -> iterate layers
+ *          -> iterate surfaces
+ *              compute dynamic rendering rules - upodate back compositor with new size and visibility
+ */
 namespace WrsIVIModel {
     class IVIScene;
     class IVIScreen;
@@ -121,8 +141,8 @@ namespace WrsIVIModel {
         int visibility() const { return mVisibility; }
         void setVisibility(int o) { mVisibility = o; emit propertyChanged(); }
 
-        QObject *qmlWindowFrame() { return mQmlWindowFrame; }
-        void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
+        Q_INVOKABLE QObject *qmlWindowFrame() { return mQmlWindowFrame; }
+        Q_INVOKABLE void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
 
         void copyQWaylandSurfaceProperties(QWaylandSurface *qWaylandSurface) {
             this->setWidth(qWaylandSurface->size().width());
@@ -165,7 +185,6 @@ namespace WrsIVIModel {
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
-        Q_INVOKABLE IVISurface* createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame);
         Q_INVOKABLE IVISurface* addSurface(IVISurface* surface);
         Q_INVOKABLE void removeSurface(IVISurface*);
 
@@ -242,11 +261,12 @@ namespace WrsIVIModel {
         Q_INVOKABLE void addIVIScreen(IVIScreen *);
         Q_INVOKABLE void addIVILayer(IVILayer *);
         Q_INVOKABLE void addIVISurface(IVISurface *);
+        Q_INVOKABLE IVISurface* createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame); ///< used by QML rendering engine to add built-in surfaces to IVIModel
         Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface);        ///< Get a plaform-wise generic role name for this surface like MAP, PHONE, DIALOG, CAMERA, etc...
 
-        IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
+        Q_INVOKABLE IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
 
-        IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
+        Q_INVOKABLE IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
 
     private:
         QList<IVIScreen*>   mScreens;

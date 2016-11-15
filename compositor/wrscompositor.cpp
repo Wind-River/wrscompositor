@@ -75,8 +75,6 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
         rootContext()->setContextProperty("windowHeight", height);
         rootContext()->setContextProperty("windowWidth", width);
 
-        setSource(programUrl);
-
         mMainOutput = static_cast<QWaylandQuickOutput*>(createOutput(this, WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME));
         setPrimaryOutput(mMainOutput);
         //mMainOutput->setGeometry(QRect(0, 0, 1280, 720));
@@ -87,6 +85,13 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
         mMainOutput->window()->setFlags(Qt::CustomizeWindowHint); //Set window with no title bar
         mMainOutput->window()->setFlags(Qt::FramelessWindowHint); //Set a frameless window
 
+        if((mIviScene == NULL) && size.width() > 0 && size.height() > 0) {
+            // this should be after 'wl_output' created, So this is right place
+            mIviScene = new WrsIVIModel::IVIScene(this, size.width(), size.height(), object);
+            rootContext()->setContextProperty("iviScene", mIviScene);
+        }
+
+        setSource(programUrl);
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
         // initialize IVI extension interfaces after wl_output is created
         // this will ensure the client will first get a reference to wl_output interface
@@ -229,12 +234,6 @@ void WrsCompositor::resizeEvent(QResizeEvent *event)
     QWaylandCompositor::setOutputGeometry(QRect(0, 0, width(), height()));
 
     loadQmlComponent(event->size());
-
-    if(!mIviScene && width() > 0 && height() > 0) {
-        // this should be after 'wl_output' created, So this is right place
-        mIviScene = new WrsIVIModel::IVIScene(this, width(), height(), this);
-        rootContext()->setContextProperty("iviScene", mIviScene);
-    }
 }
 
 

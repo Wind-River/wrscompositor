@@ -345,7 +345,7 @@ Item {
         windowFrame.targetY = 0;
         windowFrame.targetWidth = surface.size.width;
         windowFrame.targetHeight = surface.size.height;
-        windowFrame.ivi_surface = layer.createSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
+        windowFrame.ivi_surface = iviScene.createSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
         windowFrame.ivi_surface.id = surface.client.processId;
         layer.addSurface(windowFrame.ivi_surface);
 
