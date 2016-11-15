@@ -261,6 +261,7 @@ namespace WrsIVIModel {
         Q_INVOKABLE void addIVIScreen(IVIScreen *);
         Q_INVOKABLE void addIVILayer(IVILayer *);
         Q_INVOKABLE void addIVISurface(IVISurface *);
+        Q_INVOKABLE void removeIVISurface(IVISurface *surface);
         Q_INVOKABLE IVISurface* createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame); ///< used by QML rendering engine to add built-in surfaces to IVIModel
         Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface);        ///< Get a plaform-wise generic role name for this surface like MAP, PHONE, DIALOG, CAMERA, etc...
 

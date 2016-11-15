@@ -20,14 +20,14 @@ Rectangle {
             icon: "icons/navigation.png"
             name: "Maps"
             status: "off"
-            url: "http://korona.geog.uni-heidelberg.de/"
+            url: "https://www.google.ro/maps/@45.4386315,28.0529669,15z"
             type: "web"
         }
         ListElement {
             icon: "icons/media.png"
             name: "Music"
             status: "off"
-            url: "http://localhost:3000/"
+            url: "http://www.iheart.com/"
             type: "web"
         }
         ListElement {
