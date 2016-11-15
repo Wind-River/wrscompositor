@@ -53,6 +53,21 @@ QIVIWindow::QIVIWindow(QtWaylandClient::QtWaylandIviApplication *iviApp, int ivi
 }
 
 
+void QIVIWindow::iviSurfaceConfigure(int w, int h) {
+    printf("iviSurfaceConfigure>>>>>>>>>>>>>>>>>>!!>: %d %d, this->mIviID: %d\n", w, h, this->mIviID);
+    //TODO: emit a signal
+    if (this->mIviID == 4) {//PHONE
+        if (w < 500 || h < 500) {
+            printf(">>>>>>>>>>>>>> SMALL!!!\n");
+            this->setStyleSheet("background-image: url(./phone_small.jpg); background-repeat:no-repeat; background-position: center; background-color: black;");
+
+        } else {
+            this->setStyleSheet("background-image: url(./phone.jpg); background-repeat:no-repeat; background-position: center; background-color: black;");
+        }
+    }
+}
+
+
 bool QIVIWindow::event(QEvent *event) {
     bool ret = QMainWindow::event(event);
     qDebug() << "Event:" << event;
@@ -69,6 +84,7 @@ bool QIVIWindow::event(QEvent *event) {
                                     this->mIviApp->surface_create(
                                             this->mIviID,
                                             w->object()));
+                            this->mIviSurfaceInst->setParent(this);
                         }
                     } else {
                         if (w->display() != NULL) {
