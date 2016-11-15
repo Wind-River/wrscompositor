@@ -14,7 +14,7 @@ In order place wrscompositor on target board based on Yocto, You will need to bu
 
 ### Project License
 
-The license for this project is the MIT-Clause. Text of MIT-Clause license can be found in the COPYING.MIT file in the top level directory. Each source files should include a license notice that designates the licensing terms for the respective file.
+The license for this project is the MIT license. Text of MIT license can be found in the LICENSE-NOTICES.txt file in the top level directory. Each source files should include a license notice that designates the licensing terms for the respective file.
 
 ### Software Dependencies
 
