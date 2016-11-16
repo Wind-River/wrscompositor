@@ -60,7 +60,7 @@ $ make && make install
    this website explain how to install various packages that are dependent on qt library.  
 ```
 $ git clone git://code.qt.io/qt/qt5.git.  
-$ cd qt5 && git checkout 5.5  
+$ cd qt5 && git checkout 5.6
 $ git submodule update --init **# updating each submodule to match the supermodule.**  
 $ cd qt5/qtwebengine && git submodule update --init **# updating qtwebengine module to get 3rdparty's chromium**  
 $ cd qt5  
