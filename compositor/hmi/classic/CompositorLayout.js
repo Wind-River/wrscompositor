@@ -35,14 +35,6 @@ function elementInspect(o, i) {
     return r.join(i+'\n');
 }
 
-var compositorElementsPreferredPossition = new Array();
-compositorElementsPreferredPossition["StatusBar"]       = "top";
-compositorElementsPreferredPossition["LaunchBar"]       = "bottom";
-compositorElementsPreferredPossition["LaunchWindow"]    = "middle-full";
-compositorElementsPreferredPossition["ProjectionMode"]  = "full";
-compositorElementsPreferredPossition["Maps"]            = "middle";
-compositorElementsPreferredPossition["Email"]           = "middle";
-compositorElementsPreferredPossition["Music"]           = "middle";
 
 var compositorRules = new Array();
 
@@ -140,10 +132,9 @@ function compositorElementPositionToString(compositorElement) {
 
 function isCompositorRuleApplicable(compositorElement, elementsList, rule) {
     var rules = rule.split("+");
-    console.log(">>> IS COMPOSITOR RULE APPLICABLE?: >>>>>>>>" + rules[0] + " " + rules[1] + "====>" + compositorElement.subItemName);
+    console.log("[DEBUG] Is compositor rule:" + rules[0] + " " + rules[1] + "====> applicable to? " + compositorElement.subItemName);
     if (rules.length == 1) {
         if (rules[0] == compositorElement.subItemName) {
-            console.log(">>>>>>>> YES-case 1:")
             return true;
         } else if (rules[0] == "other") {
             return false;//return false, this "other" case is treated separately
@@ -156,15 +147,11 @@ function isCompositorRuleApplicable(compositorElement, elementsList, rule) {
                 if (elementsList.length == 1) {
                     return false;
                 } else {
-                    for (var j = 0; j < elementsList.length; j++) {
-                        console.log(">>>>>>>> YES-case 2:" + elementsList[j].subItemName);
-                    }
                     return true;
                 }
             } else {
                 for (var i = 0; i < elementsList.length; i++) {
                     if (rules[1] == elementsList[i].subItemName) {
-                        console.log(">>>>>>>> YES-case 3:")
                         return true;
                     }
                 }
@@ -222,6 +209,8 @@ function compositorReLayoutPerLayer(other) {
     //Available rectangle for surfaces (0,0 -> 100%, 100% of output)
     var y= 0;
     var x = 0;
+
+    //TODO: get layer width/height
     var width = output.width;
     var height = output.height;
 
@@ -236,7 +225,7 @@ function compositorReLayoutPerLayer(other) {
     for (var ruleKey in compositorRules) {
         var ruleValue = compositorRules[ruleKey];
         var otherNew = new Array();
-        //console.log("[DEBUG] Compositor rule: " + ruleKey + " -> " + ruleValue);
+        console.log("[DEBUG] Compositor rule: " + ruleKey + " -> " + ruleValue);
         for (var i = 0; i < other.length; i++) {
             console.log("[DEBUG]    Check if rule apply to:" + other[i].subItemName + " :index of other:" + ruleKey.indexOf("other") + "other lenght:" + other.length);
             if (isCompositorRuleApplicable(other[i], other, ruleKey)) {
@@ -246,8 +235,7 @@ function compositorReLayoutPerLayer(other) {
                     targetH = height * percent / 100;
                     targetW = width;
                     targetX = x;
-                    targetY = y;
-                    //console.log("[DEBUG]        Align top:" + other[i].subItemName + compositorElementPositionToString(other[i]));
+                    targetY = y;                    
                     //calculate remaining rectangle
                     x = x;
                     y = y + targetH;
@@ -255,12 +243,12 @@ function compositorReLayoutPerLayer(other) {
                     height = height - targetH;
                     //resize
                     other[i].newSize(targetX, targetY, targetW, targetH);
+                    console.log("[DEBUG]        Align top:" + other[i].subItemName + compositorElementPositionToString(other[i]));
                 } else if (ruleValue.indexOf("bottom") > -1) {
                     targetH = height * percent / 100;
                     targetW = width;
                     targetX = x;
-                    targetY = y + height - targetH;
-                    //console.log("[DEBUG]        Align bottom:" + other[i].subItemName + compositorElementPositionToString(other[i]));
+                    targetY = y + height - targetH;                    
                     //calculate remaining rectangle
                     x = x;
                     y = y;
@@ -268,6 +256,7 @@ function compositorReLayoutPerLayer(other) {
                     height = height - targetH;
                     //resize
                     other[i].newSize(targetX, targetY, targetW, targetH);
+                    console.log("[DEBUG]        Align bottom:" + other[i].subItemName + compositorElementPositionToString(other[i]));
                 } else {
                     targetX = x;
                     targetY = y;
@@ -319,11 +308,14 @@ function compositorReLayoutPerLayer(other) {
                 }
                 //resize
                 other[i].newSize(targetX, targetY, targetW, targetH);
-                console.log("[DEBUG]    ---->    Align other:" + other[i].subItemName + compositorElementPositionToString(other[i]));
+                console.log("[DEBUG]        Align other:" + other[i].subItemName + compositorElementPositionToString(other[i]));
             } else {
                 otherNew.push(other[i]);
             }
         }
+
+        console.log("[DEBUG]        >>>>>>>>>>>>>>>>>>>>>>>> w/h:" + width + "/" + height);
+
         other = new Array();
         for (var i = 0; i < otherNew.length; i++) {
             console.log("[DEBUG] -----> other[" + i + "]->" + otherNew[i].subItemName);

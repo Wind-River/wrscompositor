@@ -38,7 +38,7 @@ Item {
 
 
     onCompositorwindowRemoved: {
-        console.log("[DEBUG] Window Removed!\n" + compositorElement);
+        console.log("[DEBUG] Window Removed!:" + compositorElement);
         CompositorLayout.onWindowRemoved(compositorElement);
     }
 
@@ -50,10 +50,10 @@ Item {
         subItem.parent                      = item;
         item.subItemName                    = name;
         item.subItemSurface                 = surface;
+        item.subItemIVISurface              = iviScene.findIVISurfaceByQWaylandSurface(surface);
         subItem.anchors.horizontalCenter    = item.horizontalCenter;
         subItem.anchors.verticalCenter      = item.verticalCenter;
-        iviScene.findIVISurfaceByQWaylandSurface(surface).setQmlWindowFrame(item);
-        console.log("[DEBUG] XXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        item.subItemIVISurface.setQmlWindowFrame(item);
         compositorWindowAdded(item);
     }
 
@@ -70,6 +70,7 @@ Item {
         item.subItem = webview;
         item.subItemName = name;
         var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
+        item.subItemIVISurface = iviSurface;
         iviScene.addIVISurface(iviSurface);
         compositorWindowAdded(item);        
     }
@@ -82,6 +83,7 @@ Item {
         var subItem             = subComponent.createObject(item);
         item.subItemName        = name;        
         var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
+        item.subItemIVISurface = iviSurface;
         iviScene.addIVISurface(iviSurface);
         compositorWindowAdded(item);
     }
@@ -89,6 +91,7 @@ Item {
 
     onDestoryCompositorElement: {
         var compositorElement = CompositorLayout.getCompositorElementByName(name);
+        iviScene.removeIVISurface(compositorElement.subItemIVISurface);
         CompositorLayout.onWindowRemoved(compositorElement);
         compositorElement.destroy();
     }

@@ -15,7 +15,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             id: timerText;
             color: "white"
-            text: Qt.formatTime(new Date(),"hh:mm:ss")
+            text: Qt.formatDateTime(new Date(),"dd, dddd, MMMM  hh:mm:ss")
         }
         Image {
             id: logo
@@ -33,7 +33,7 @@ Rectangle {
         repeat: true
         running: true
         onTriggered: {
-            timerText.text =  Qt.formatTime(new Date(),"hh:mm:ss")
+            timerText.text =  Qt.formatDateTime(new Date(),"dd, dddd, MMMM  hh:mm:ss")
         }
     }
 }

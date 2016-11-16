@@ -21,7 +21,7 @@
  */
 
 #include "qtwaylandivisurface.h"
-
+#include "qiviwindow.h"
 
 namespace QtWaylandClient {
 
@@ -32,6 +32,6 @@ namespace QtWaylandClient {
 
 
     void QtWaylandIviSurface::ivi_surface_configure(int32_t width, int32_t height) {
-        qDebug("<<< configure <<< %d/%d", width, height);
+        ((QIVIWindow *) parent())->iviSurfaceConfigure(width, height);
     }
 }

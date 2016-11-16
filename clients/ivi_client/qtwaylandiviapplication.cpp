@@ -33,9 +33,4 @@ namespace QtWaylandClient {
     QtWaylandIviApplication::~QtWaylandIviApplication() {
 
     }
-
-
-    void QtWaylandIviApplication::pressed() {
-        qDebug() << "Button pressed";
-    }
 }

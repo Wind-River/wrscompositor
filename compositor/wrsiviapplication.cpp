@@ -97,6 +97,6 @@ void WrsIviApplication::sizeChanged() {
         )->ivi_surface_object->send_configure(
                 qWlsurface->size().width(), qWlsurface->size().height());
 
-    DEBUG() << "Ivi app surface size changed";
+    DEBUG() << "Ivi app surface size changed: send_configure" << qWlsurface->size().width() << "," << qWlsurface->size().height();
     TRACE() << "[END]";
 }

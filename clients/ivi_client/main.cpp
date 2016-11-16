@@ -40,6 +40,7 @@ int main(int argc, char **argv)
         ivi_id = atoi(argv[1]);
     }
 
+    printf("IVI_ID: %d\n", ivi_id);
     QIVIWindow iviWindow(&iviApp, ivi_id);
     if (ivi_id == 6) {//CAMERA
         iviWindow.setStyleSheet("background-image: url(./camera.jpg); background-repeat:no-repeat; background-position: center; background-color: black;");

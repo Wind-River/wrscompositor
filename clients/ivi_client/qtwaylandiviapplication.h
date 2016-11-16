@@ -44,7 +44,6 @@ namespace QtWaylandClient {
         ~QtWaylandIviApplication();
 
     public slots:
-        void pressed();
     };
 }
 

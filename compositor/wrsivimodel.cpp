@@ -138,6 +138,16 @@ void IVIScene::addIVISurface(IVISurface *surface) {
 }
 
 
+void IVIScene::removeIVISurface(IVISurface *surface) {
+    this->mIviSurfaces.removeAll(surface);
+    for (int i = 0; i < this->screenCount(); i++) {
+        for (int j = 0; j < this->screen(i)->layerCount(); j++) {
+            this->mScreens[i]->layer(j)->removeSurface(surface);
+        }
+    }
+}
+
+
 IVISurface* IVIScene::createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
     IVISurface* surface = new IVISurface(-1 - this->mIviSurfaces.count(), width, height, this->mainScreen()->layer(0));
     DEBUG() << "qmlWindowFrame" << qmlWindowFrame;

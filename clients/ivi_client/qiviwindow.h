@@ -38,6 +38,7 @@ public:
 
     explicit QIVIWindow(QtWaylandClient::QtWaylandIviApplication *iviApp, int iviId);
     void repaint();
+    void iviSurfaceConfigure(int w, int h);
 
 signals:
 
