@@ -141,6 +141,13 @@ $ skobblernavi
 - Map free icon (wrscompositor-master/compositor/hmi/cockpit/icons/native-map-location.png), © 2016 Madebyoliver (http://www.flaticon.com/authors/madebyoliver) from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf  
 - Play button free icon (wrscompositor-master/compositor/hmi/cockpit/icons/native-video.png), © 2016 Madebyoliver (http://www.flaticon.com/authors/madebyoliver) from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf  
 - Worldwide free icon (wrscompositor-master/compositor/hmi/cockpit/icons/native-web.png), © 2016 Gregor Cresnar (http://www.flaticon.com/authors/gregor-cresnar) from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf  
+- Play free icon (wrscompositor-master/compositor/hmi/cockpit/resources/play.png), © 2016 Freepik (http://www.freepik.com)  from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
+- Stop free icon (wrscompositor-master/compositor/hmi/cockpit/resources/stop.png), © 2016 Freepik (http://www.freepik.com)  from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
+- Backward free icon (wrscompositor-master/compositor/hmi/cockpit/resources/backward.svg), © 2016 Freepik (http://www.freepik.com)  from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
+- Pause free icon (wrscompositor-master/compositor/hmi/cockpit/resources/pause.svg), © 2016 Freepik (http://www.freepik.com)  from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
+- Forward free icon (wrscompositor-master/compositor/hmi/cockpit/resources/forward.svg), © 2016 Freepik (http://www.freepik.com)  from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
+- Speaker free icon (wrscompositor-master/compositor/hmi/cockpit/resources/volume-up.svg), © 2016 Madebyoliver (http://www.flaticon.com/authors/madebyoliver)  from www.flaticon.com used under a Flaticon Basic License: http://file000.flaticon.com/downloads/license/license.pdf
+
 
 ### Legal Notices
 

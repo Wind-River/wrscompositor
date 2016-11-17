@@ -19,138 +19,79 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 import QtQuick 2.1
 
-import QtQuick.Window 2.0
-import "config.js" as Conf
-
 Item {
-    id: container
-    property variant surfaceItem: null
-    property variant surface: null
+    id: container;
 
-    x: targetX
-    y: targetY
+    property variant subItem: null;
+    property string subItemName: "";
+    property variant subItemSurface: null;
+    property variant subItemIVISurface: null;
 
-    property bool projectionConnectivityStatus: false
-    property variant rootBackground: null
-    property variant ivi_surface: null
-    property variant chrome: null
-    property real targetX
-    property real targetY
-    property real targetWidth
-    property real targetHeight
-    property int index
-    property int processId: 0
-    property string projectionName: "none"
+    signal positionChanged(int x, int y)
+    signal sizedChanged(int width, int height)
+    signal positionAligned(string align, variant anchors)
 
-    property real scaledWidth: 1.0
-    property real scaledHeight: 1.0
-    property string position: "main"
-    property bool cloned: false
-
-    transformOrigin: Item.Center
-    transform: Scale {
-        xScale: container.scaledWidth
-        yScale: container.scaledHeight
-    }
-
-    function hide() {
-        container.state = 'hide';
-    }
-
-    function show() {
-        container.state = 'show';
-    }
-
-    states: [
-        State {
-            name: "show"
-            PropertyChanges { target: container; opacity: 1}
-        },
-        State {
-            name: "hide"
-            PropertyChanges { target: container; opacity: 0}
+    onPositionAligned: {
+        switch (align) {
+            case 'top':
+                container.anchors.top = anchors;
+                break;
+            case 'bottom':
+                container.anchors.bottom = anchors;
+                break;
+            case 'left':
+                container.anchors.left = anchors;
+                break;
+            case 'right':
+                container.anchors.right = anchors;
+                break;
+            case 'horizontalCenter':
+                container.anchors.horizontalCenter = anchors;
+                break;
+            case 'verticalCenter':
+                container.anchors.verticalCenter = anchors
+                break;
+            default:
+                console.log("onPositionAligned, Invalid align");
         }
-    ]
+        console.log("onPositionAligned, align = ", align);
+        console.log("onPositionAligned, container name:" + container.subItemName);
 
-    transitions: [
-        Transition {
-            from: "show"
-            to: "hide"
-            ParallelAnimation {
-                NumberAnimation {
-                    target: container 
-                    properties: "x" 
-                    easing.type: Easing.InCubic
-                    to: -100000
-                    duration: 3000
-                }
-                NumberAnimation {
-                    target: container 
-                    properties: "opacity" 
-                    duration: 3000
-                }
-            }
-            onRunningChanged: {
-                if ((state == "hide") && (!running)) {
-                    console.log("onRunningChanged, finish hiding window");
-                    container.visible = false;
-                }
-            }
-        },
-        Transition {
-            from: "hide"
-            to: "show"
-            ParallelAnimation {
-                NumberAnimation {
-                    target: container 
-                    properties: "x" 
-                    easing.type: Easing.InCubic
-                    to: 0
-                    duration: 1000
-                }
-                NumberAnimation {
-                    target: container 
-                    properties: "opacity" 
-                    duration: 1000
-                }
-            }
-            onRunningChanged: {
-                if ((state == "show") && (running)) {
-                    console.log("onRunningChanged, starting showing window");
-                    container.x = 1000; // swipe in from left to right
-                    container.visible = true;
-                }
-            }
-        }
-    ] 
+    }
 
-    /*
-    Connections {
-        target: container.surfaceItem ? container.surfaceItem : null
-        onSurfaceDestroyed: {
-            console.log("onSurfaceDestroyed");
-            container.rootBackground.removeWindow(container);
+    onPositionChanged: {
+        console.log("onPositionChanged:" + x + "/" + y);
+        console.log("onPositionChanged, container name:" + container.subItemName);
+        container.x = x;
+        container.y = y;
+    }
+
+    onSizedChanged: {
+        console.log("onSizedChange, size:" + width + "/" + height);
+        console.log("onSizedChange, container name:" + container.subItemName);
+        container.width = width
+        container.height = height
+        if (subItemSurface != null) {
+            subItemSurface.requestSize(Qt.size(width, height));
         }
     }
-    */
+
     Behavior on x {
-        enabled: Conf.useMultiWindowFeature
-        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on y {
-        enabled: Conf.useMultiWindowFeature
-        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
-    Behavior on scaledWidth {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
+    Behavior on width {
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
-    Behavior on scaledHeight {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 300; }
+    Behavior on height {
+        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 }

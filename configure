@@ -22,7 +22,6 @@
 
 SUPPOTED_TARGETDEVICES=( x11 minnowmax mrb)
 SUPPOTED_HMIPROFILES=( cockpit classic )
-SUPPORTED_APPSMODEL=( genivi native)
 WRSCOMPOSITOR_PRO=compositor/compositor.pro
 
 show_help() {
@@ -38,14 +37,11 @@ show_help() {
     echo "  --enable-webengine          Use WebEngine instead of WebKit for WebRuntime"
     echo "  --enable-vthandler          Use VT Handler to switch Virtual Terminal"
     echo "  --enable-virtualkeyboard    Use VirtualKebyaord to send key code to application"
-    echo "  --apps-model=NAME           Set application model"
     echo "  --target-device=NAME        Set JS configuration for specific target device"
     echo "  --hmi-profile=NAME          Set HMI Profile"
     echo "  --overwrite                 overwrite existing config.js by new target/hmi config"
     echo "  --without-qmake             don't execute qmake in configure"
     echo "  --with-qmake=path           set qmake path (e.g - /usr/bin/qmake)"
-    echo "  --with-carplay=NAME         set carplay name"
-    echo "  --with-aap=NAME             set aap name"
     echo ""
     echo "Supported target devices:"
     for name in "${SUPPOTED_TARGETDEVICES[@]}"
@@ -67,16 +63,6 @@ show_help() {
         fi
     done
     echo ""
-    echo "Supported Apps Model:"
-    for name in "${SUPPORTED_APPSMODEL[@]}"
-    do
-        if [ "$name" = "genivi" ]; then
-            echo "  $name (default for demo)"
-        else
-            echo "  $name"
-        fi
-    done
-    echo
 }
 
 if [ "$1" = -h -o "$1" = -help -o "$1" = --help ]
@@ -99,8 +85,6 @@ APPS_MODEL=native
 HMI_PROFILE=cockpit
 OVERWRITE=0
 QMAKEPATH=
-CARPLAY_NAME=none
-AAP_NAME=none
 OPTARGS=""
 PREFIX=/usr
 
@@ -135,12 +119,6 @@ for opt do
             fi
             QMAKEPATH=$optval
             ;;
-        --with-carplay=*)
-            CARPLAY_NAME=$optval
-            ;;
-        --with-aap=*)
-            AAP_NAME=$optval
-            ;;
         --prefix=*)
             PREFIX=$optval
             ;;
@@ -171,21 +149,6 @@ for opt do
                 show_help
                 echo
                 echo "\"$optval\" is not supported HMI Profile"
-                exit
-            fi
-            ;;
-        --apps-model=*)
-            for name in "${SUPPORTED_APPSMODEL[@]}"
-            do
-                if [ $name = $optval ]; then
-                    APPS_MODEL=$optval
-                    break
-                fi
-            done
-            if [ $optval != $APPS_MODEL ]; then
-                show_help
-                echo
-                echo "\"$optval\" is not supported Apps model"
                 exit
             fi
             ;;
@@ -235,8 +198,6 @@ echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
 echo "  TARGET_DEVICE=$TARGET_DEVICE"
 echo "  HMI_PROFILE=$HMI_PROFILE"
 echo "  APPS_MODEL=$APPS_MODEL"
-echo "  CARPLAY_NAME=$CARPLAY_NAME"
-echo "  AAP_NAME=$AAP_NAME"
 echo "  OPTARGS: $OPTARGS"
 echo "  PREFIX: $PREFIX"
 echo
@@ -379,12 +340,6 @@ if [ -d "$TARGETDIR" ]; then
     fi
     if [ "$APPS_MODEL" = "genivi" ]; then
         echo "appsModel = '$APPS_MODEL';" >> $CONFIGJS
-    fi
-    if [ "$CARPLAY_NAME" != "none" ]; then
-        echo "carplayName = '$CARPLAY_NAME';" >> $CONFIGJS
-    fi
-    if [ "$AAP_NAME" != "none" ]; then
-        echo "aapNAME = '$AAP_NAME';" >> $CONFIGJS
     fi
     if [ "$OVERWRITTEN" = "1" ]; then
         echo $'\r'"                    overwritten at $CONFIGJS"
