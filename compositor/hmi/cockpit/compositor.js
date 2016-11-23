@@ -20,6 +20,15 @@
  * THE SOFTWARE.
  */
 
+var compositorLogic = null;
+function getCompositorInstance() {
+    if (compositorLogic == null) {
+        compositorLogic = new Compositor();
+    }
+
+    return compositorLogic;
+}
+
 var Compositor = function() {
     this.topWindow = null;
     this.bottomWindow = null;
@@ -31,16 +40,43 @@ var Compositor = function() {
     this.displayHeight = 0;
 
     this.iviScene = null;
-   
+ 
     this.windowList = new Array();
     this.compositorRules = new Array();
 
-    this.loadCompositionRules = function() {
-        // widthScale(percent) : heightScale(percent) : align
-        this.compositorRules["StatusBar"] = "100:10:top"; 
-        this.compositorRules["DockBar"] = "100:20:bottom";
-        this.compositorRules["SidePanel"] = "40:40:middleRight";
-        this.compositorRules["MainMenu"] = "50:50:middleLeft";
+    this.createQmlComponent = function(name) {
+        return this.root.createQmlComponent(name);
+    }
+
+    this.loadCompositorRule = function(key, value) {
+        console.log("loadCompositionRule, key = ", key, " value = ", value);
+        this.compositorRules[key] = value;
+    }
+
+    this.init = function() {
+        var request = new XMLHttpRequest();
+
+        request.onreadystatechange = function() {
+            if (request.readyState == request.DONE) {
+                console.log("onreadystatechange, Done");
+                if (request.status == 200) {
+                    var compositor = getCompositorInstance();
+                    var jsonObject = JSON.parse(request.responseText);
+                    var ruleData = jsonObject.Rule;
+                    for (var ruleKey in ruleData) {
+                        var layerId = parseInt(ruleData[ruleKey].split(":")[2]);
+                        compositor.loadCompositorRule(ruleKey, ruleData[ruleKey]);
+                        var windowFrame = compositor.createQmlComponent(ruleKey);
+                        compositor.addWindow(windowFrame, layerId);
+                    }
+
+                    compositor.relayoutWindows();
+                }
+            }
+        }
+
+        request.open("GET", "file:///usr/share/wrscompositor/config.json", true);
+        request.send();
     }
 
     this.setRootObject = function(root) {
@@ -56,15 +92,6 @@ var Compositor = function() {
         this.currentWidth = this.displayWidth = width; 
     }
 
-    this.windowPositionToString = function(window) {
-        return "[" +
-        window.x + ", " +
-        window.y + ", " +
-        window.width + ", " +
-        window.height +
-        "]";
-    }
-
     this.addLayer = function(id) {
         if (this.iviScene.mainScreen.layerById(id) != null) {
             console.log("Layer has already be created. Layer = ", id);
@@ -75,54 +102,45 @@ var Compositor = function() {
         this.iviScene.mainScreen.layer(iviScene.mainScreen.layerCount()-1).opacity = 1;
     }
 
-    this.addSurfacePerLayer = function(id, item) {
-        var iviSurface = this.iviScene.createSurface(item.x, item.y, item.width, item.height, item);
+    this.addSurfacePerLayer = function(id, window) {
+        var iviSurface = this.iviScene.createSurface(window.x, window.y, window.width, window.height, window);
         this.iviScene.mainScreen.layerById(id).addSurface(iviSurface);
         this.iviScene.addIVISurface(iviSurface);
+
+        window.iviSurface = iviSurface;
+        window.layerId = id;
+        this.windowList.push(window);
     }
 
-    this.windowPositionToString = function (window) {
-        return "[" +
-            window.x + ", " +
-            window.y + ", " +
-            window.width + ", " +
-            window.height +
-        "]";
-    }
-
-    /*
-     * To be called by compositor root output when an existing compositor element is removed
-     * Layout is recalculated
-     */
-    this.windowRemoved = function(window) {
-        /*
+    this.removeWindow = function(window) {
         for (var i = 0; i < this.windowList.length; i++) {
             if (this.windowList[i] == window) {
                 this.windowList.splice(i, 1);
                 break;
             }
         }
-        */
     }
 
-    /*
-     * To be called by compositor root output when a new compositor element is added
-     * Layout is recalculated
-     */
-    this.windowAdded = function(window) {
-        /*
-        console.log("[DEBUG] Add window:" + window.subItemName);
+    this.addWindow = function(window, id) {
+        this.addLayer(id);
+        this.addSurfacePerLayer(id, window);
         this.windowList.push(window);
-        */
+
+        console.log("addWindow, name = " + window.surfaceName, " layerId = " + window.layerId);
     }
 
-    this.updateWindowSize = function (window, ruleValue) {
-        var widthScale = parseInt(ruleValue.split(":")[0]);
-        var heightScale = parseInt(ruleValue.split(":")[1]);
-        var align = ruleValue.split(":")[2];
+    this.updateWindow = function (window, ruleValue) {
+        var sizes = ruleValue.split(":")[0];
+        var align = ruleValue.split(":")[1];
 
-        var targetHeight = this.currentHeight * heightScale / 100;
-        var targetWidth = this.currentWidth * widthScale / 100;
+        var widthSize = parseInt(sizes.split("x")[0]);
+        var heightSize = parseInt(sizes.split("x")[1]);
+
+        var targetWidth = this.currentWidth * widthSize / 100;
+        var targetHeight = this.currentHeight * heightSize / 100;
+
+        console.log("updateWindowSize, name = " + window.surfaceName);
+        console.log("updateWindowSize, align = " + align, " widthSize =", widthSize, " heightSize =", heightSize);
 
         switch (align) {
             case 'top': {
@@ -153,65 +171,21 @@ var Compositor = function() {
             }
         }
 
-        window.sizedChanged(targetWidth, targetHeight);
+        window.sizeChanged(targetWidth, targetHeight);
     }
 
-    this.checkCompositorRule = function(window, windowList, rule) {
-        var rules = rule.split("+");
-
-        if (rules.length == 1)  {
-            //return false, this "other" case is treated separately
-            if ((rules[0] == window.subItemName))
-            return (rules[0] == window.subItemName) ? true : false;
-        }
-
-        if (rules.length == 2)  {
-            if (rules[0] == window.subItemName) {
-                if (rules[1] == "other") {
-                    return (windowList.length == 1) ? false : true;
-                }
-                for (var i = 0; i < windowList.length; i++) {
-                   if (rules[1] == windowList[i].subItemName)
-                        return true;
-                }
-            }
-        }
-
-        return false;
+    this.checkCompositorRule = function(window, rule) {
+        return (rule == window.surfaceName) ? true : false;
     }
 
-    /*
-     * Apply layout algorightm based on:
-     * Surfaces preffered size
-     * Surfaces preffered position
-     * Internal priorities roules
-     */
-     this.relayoutWindows = function() {
-        for (var i = 0; i < this.iviScene.screenCount(); i++) {
-            var screen = this.iviScene.screen(i);
-            for (var j = 0; j < screen.layerCount(); j++) {
-                var layer = screen.layer(j);
-                for (var k = 0; k < layer.surfaceCount(); k++) {
-                    var surface = layer.surface(k);
-                    if (surface != null && surface.qmlWindowFrame() != null) {
-                        console.log("surface = ", k, "layer = ", j);
-                        this.windowList.push(surface.qmlWindowFrame());
-                    }
-                }
-                this.relayoutWindowPerLayer(this.windowList);
-            }
-        }
-    }
-
-    this.relayoutWindowPerLayer = function(windowList) {
+    this.relayoutWindows = function() {
         for (var ruleKey in this.compositorRules) {
             var ruleValue = this.compositorRules[ruleKey];
-            console.log("Compositor rule: " + ruleKey + " -> " + ruleValue);
-            for (var i = 0; i < windowList.length; i++) {
-                var isRuleAccpeted = this.checkCompositorRule(windowList[i], windowList, ruleKey);
+            for (var i = 0; i < this.windowList.length; i++) {
+                var isRuleAccpeted = this.checkCompositorRule(this.windowList[i], ruleKey);
                 if (isRuleAccpeted)
-                    this.updateWindowSize(windowList[i], ruleValue);
+                    this.updateWindow(this.windowList[i], ruleValue);
             }
         }
-    } 
+    }
  }

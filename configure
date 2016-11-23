@@ -81,7 +81,6 @@ SUPPORT_VIRTUAL_KEYBOARD=0
 SUPPORT_DBUS=1
 MANUAL_QMAKE=0
 TARGET_DEVICE=x11
-APPS_MODEL=native
 HMI_PROFILE=cockpit
 OVERWRITE=0
 QMAKEPATH=
@@ -197,7 +196,6 @@ echo "  SUPPORT_VTHANDLER=$SUPPORT_VTHANDLER"
 echo "  SUPPORT_DBUS=$SUPPORT_DBUS"
 echo "  TARGET_DEVICE=$TARGET_DEVICE"
 echo "  HMI_PROFILE=$HMI_PROFILE"
-echo "  APPS_MODEL=$APPS_MODEL"
 echo "  OPTARGS: $OPTARGS"
 echo "  PREFIX: $PREFIX"
 echo
@@ -338,9 +336,6 @@ if [ -d "$TARGETDIR" ]; then
     if [ "$SUPPORT_WEBENGINE" = "1" ]; then
         echo "useWebEngine = $SUPPORT_WEBENGINE;" >> $CONFIGJS
     fi
-    if [ "$APPS_MODEL" = "genivi" ]; then
-        echo "appsModel = '$APPS_MODEL';" >> $CONFIGJS
-    fi
     if [ "$OVERWRITTEN" = "1" ]; then
         echo $'\r'"                    overwritten at $CONFIGJS"
     else
@@ -354,8 +349,9 @@ fi
 echo
 
 if [ "$TARGET_DEVICE" = "x11" ]; then
-    sudo mkdir -p /usr/share/wrscompositor
+    mkdir -p /usr/share/wrscompositor
     sudo cp clients/mediaplayer/video/*.ogv /usr/share/wrscompositor
+    sudo cp compositor/hmi/$HMI_PROFILE/config.json /usr/share/wrscompositor
     sudo cp compositor/targets/common/etc/dbus-1/system.d/wrscompositor.conf  /etc/dbus-1/system.d/
 fi
 

@@ -1,0 +1,18 @@
+{
+    "Rule": {
+        "StatusBar": "100x10:top:1000",
+        "DockBar": "100x20:bottom:1000",
+        "SidePanel": "40x40:middleRight:1000",
+        "MainMenu" : "50x50:middleLeft:1000"
+    },
+    "Identity": {
+        "CommandLine": "xyz",
+        "UID": "1000",
+        "IVI_ID_DEFAULT": "0",
+        "IVI_ID_NAVIGATION": "1",
+        "IVI_ID_DIALOG": "3",
+        "IVI_ID_PHONE": "4",
+        "IVI_ID_PROJECTION": "5",
+        "IVI_ID_CAMERA": "6"
+    }
+}

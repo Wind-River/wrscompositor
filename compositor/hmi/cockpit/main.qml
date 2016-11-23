@@ -49,19 +49,13 @@ Item {
     }
 
     Component.onCompleted: {
-        compositorLogic = new Logic.Compositor();
-        compositorLogic.loadCompositionRules();
-        compositorLogic.setRootObject(root);
-        compositorLogic.setIviScene(iviScene);
-        compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);
-
-        createItemComponent("StatusBar", 1000); // top
-        createItemComponent("DockBar", 1000); // bottom
-        createItemComponent("SidePanel", 1000); // middle
-        createItemComponent("MainMenu", 1000); // middle
-
-        compositorLogic.relayoutWindows();
-
+        compositorLogic = Logic.getCompositorInstance();
+        if (compositorLogic) {
+            compositorLogic.setRootObject(root);
+            compositorLogic.setIviScene(iviScene);
+            compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);
+            compositorLogic.init();
+        }
     }
 
     onWidthChanged: {
@@ -71,26 +65,18 @@ Item {
         Conf.displayHeight = height;
     }
 
-    function windowDestroyed(surface) {
-        // TODO
-    }
-
-    function windowAdded(surface) {
-        // TODO
-
-    }
-
-    function createItemComponent(name, id) {
+    function createQmlComponent(name) {
         var qmlName = name.concat(".qml");
 
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml", Component.PreferSynchronous);
         var component = Qt.createComponent(qmlName, Component.PreferSynchronous);
 
-        var item = windowContainerComponent.createObject(root);
-        var subItem = component.createObject(item);
-        item.subItemName = name
+        var windowFrame = windowContainerComponent.createObject(root);
+        var surface = component.createObject(windowFrame);
 
-        compositorLogic.addLayer(id);
-        compositorLogic.addSurfacePerLayer(id, item)
+        windowFrame.surface = surface;
+        windowFrame.surfaceName = name;
+
+        return windowFrame;
     }
 }

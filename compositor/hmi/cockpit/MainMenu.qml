@@ -36,7 +36,6 @@ Image {
         width: parent.width
         height: parent.height
         anchors.fill: parent
-        visible: true
 
         property variant root: null
 
