@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 import QtQuick 2.1
 import "config.js" as Conf
 import QtGraphicalEffects 1.0
@@ -27,25 +26,10 @@ import QtGraphicalEffects 1.0
 
 Item {
     id: statusBar
-    anchors.top: parent.top
     width: parent.width
-    height: parent.height/10
-    z: 50000
-    property string wmi: ""
-    property bool currentWindowExposed: false
-    property bool cloneAvailable: true
-    property bool fullscreenViewed: false
-    property bool mainMenuActivated: false
-
-    signal closeWindow
-    signal swapWindow
-    signal cloneWindow
-    signal resizeCurrentWindow
-    signal switchNextWindow
+    height: parent.height
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
-
-
     Rectangle {
         id: statusbarBackground
         color: "black"
@@ -64,103 +48,9 @@ Item {
         }
     }
 
-    Image {
-        id: fullscreen
-        source: statusBar.fullscreenViewed ? "resources/full-screen-collapse.png" : "resources/full-screen-expand.png"
-        anchors.left: parent.left
-        anchors.leftMargin: parent.width * 0.01
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height * 0.7
-        width: height
-        smooth: true
-        MouseArea {
-            id: fullscreenButtonArea
-            anchors.fill: parent
-            onClicked: {
-                console.log("Clicked, try to resize window");
-                resizeCurrentWindow();
-            }
-        }
-        scale: (fullscreenButtonArea.pressed? 0.9 : 1.0)
-    }
-
-    Image {
-        id: nextWindow
-        source: "resources/next-window.png"
-        anchors.left: fullscreen.right
-        anchors.leftMargin: parent.width * 0.01
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height * 0.7
-        width: height
-        smooth: true
-        MouseArea {
-            id: nextWindowButtonArea
-            anchors.fill: parent
-            onClicked: {
-                console.log("Clicked, try to switch next window");
-                switchNextWindow();
-            }
-        }
-        scale: (nextWindowButtonArea.pressed? 0.9 : 1.0)
-    }
-
-    /*
-    Text {
-        id: wmi_title
-        anchors.left: logo_title.right
-        anchors.verticalCenter: parent.verticalCenter
-        text: statusBar.wmi
-        visible: statusBar.wmi != ""
-        font.pointSize: ((statusBar.height*0.4/Conf.densityAdjust)|0)
-        color: "white"
-        smooth: true
-        font.bold: true
-    }
-    Image {
-        id: cloneWindowButton
-        source: statusBar.cloneAvailable?"icons/clone-window.svg":"icons/restore-cloned-window.svg"
-        anchors.right: androidAuto.left
-        anchors.rightMargin: width/10
-        anchors.verticalCenter: parent.verticalCenter
-        visible: Conf.useMultiWaylandDisplayFeature && statusBar.currentWindowExposed
-        width: height
-        height: parent.height * 3 / 5
-        MouseArea {
-            id: cloneButtonArea
-            anchors.fill: parent
-            onClicked: {
-                cloneWindow();
-            }
-        }
-        opacity: (cloneButtonArea.pressed?0.8:1.0)
-        scale: (cloneButtonArea.pressed?0.9:1.0)
-        smooth: true
-    }
-
-    Image {
-        id: swapWindowButton
-        source: "icons/swap-window.svg"
-        anchors.right: cloneWindowButton.left
-        anchors.rightMargin: width/10
-        anchors.verticalCenter: parent.verticalCenter
-        visible: Conf.useMultiWaylandDisplayFeature && statusBar.currentWindowExposed && statusBar.cloneAvailable
-        width: height
-        height: parent.height * 3 / 5
-        MouseArea {
-            id: swapButtonArea
-            anchors.fill: parent
-            onClicked: {
-                swapWindow();
-            }
-        }
-        opacity: (swapButtonArea.pressed?0.8:1.0)
-        scale: (swapButtonArea.pressed?0.9:1.0)
-        smooth: true
-    }
-    */
     Text {
         id: dateTime1
-        anchors.left: nextWindow.right
+        anchors.left: parent.left
         anchors.leftMargin: parent.width/60
         anchors.verticalCenter: parent.verticalCenter
         //text: Qt.formatDateTime(new Date(), "yyyy/MM/dd hh:mm:ss")
@@ -215,49 +105,8 @@ Item {
         height: statusBar.height * 0.3
         smooth: true
     }
-    Image {
-        id: androidAuto
-        source: (projectionMode.androidAutoStatus == "connected") ? "icons/android-phone-green.png" : "icons/android-phone-gray.png"
-        anchors.left: rssi.right
-        anchors.leftMargin: parent.width/70
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.6
-        smooth: true
-        MouseArea {
-            id: aapButtonArea
-            anchors.fill: parent
-            onClicked: {
-                if (projectionMode.androidAutoStatus == "connected" && !projectionMode.androidAutoProjected) {
-                    console.log('AndroidAutoStatus is connected, try to flip projectionView');
-                    projectionMode.flipProjectionViewSurface(projectionMode.androidAuto);
-                }
-            }
-        }
-        // opacity: (aapButtonArea.pressed? 0.8 : 1.0)
-        scale: (aapButtonArea.pressed? 0.9 : 1.0)
-    }
-    Image {
-        id: appleCarPlay
-        source: (projectionMode.appleCarPlayStatus == "connected") ? "icons/apple-phone-green.png" : "icons/apple-phone-gray.png"
-        anchors.left: androidAuto.right
-        anchors.leftMargin: parent.width/70
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.6
-        smooth: true
-        MouseArea {
-            id: carPlayButtonArea
-            anchors.fill: parent
-            onClicked: {
-                if (projectionMode.appleCarPlayStatus == "connected" && !projectionMode.appleCarPlayProjected) {
-                    console.log('appleCarPlay is connected, try to flip projectionView');
-                    projectionMode.flipProjectionViewSurface(projectionMode.appleCarPlay);
-                } 
-            }
-        }
-        scale: (carPlayButtonArea.pressed? 0.9 : 1.0)
-    }
+
+
     Image {
         id: weather
         source: "tango/error.svg"
@@ -282,13 +131,6 @@ Item {
         smooth: true
     }
 
-    function notifyMainMenuStatus(flag) {
-        mainMenuActivated = flag;
-    }
-
-    function setWMI(wmi) {
-        statusBar.wmi = wmi
-    }
     Timer {
         id: weatherCrawler
         interval: 2000; running: true; repeat: true
@@ -334,3 +176,4 @@ Item {
     }
 
 }
+

@@ -33,7 +33,7 @@ Item {
     property bool widgetMode: true
 
     width : parent.width
-    height : root.widgetMode?(artwork.height+root.width / 15):parent.height
+    height : root.widgetMode ? (artwork.height + root.width / 15):parent.height
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
     /*
@@ -44,12 +44,6 @@ Item {
         border.color: "red"
     }
     */
-    function show() {
-        addonPanel.show();
-    }
-    function hide() {
-        addonPanel.hide();
-    }
     Component.onCompleted: {
         var doc = new XMLHttpRequest();
         doc.onreadystatechange = function() {
@@ -155,9 +149,9 @@ Item {
         width: waveformbg.width
         height: (artwork.height - waveformbg.height)/2
 
-        RingIcon {
+        Image {
             id: playbutton
-            icon: mediaplayer.playbackState==MediaPlayer.PlayingState?"resources/pause.png":"resources/play.png"
+            source: mediaplayer.playbackState==MediaPlayer.PlayingState?"resources/pause.svg":"resources/play.svg"
             width: playArea.pressed?root.width/7:root.width / 8
             height: width
             anchors.verticalCenter: playbuttonpanel.verticalCenter
@@ -175,7 +169,7 @@ Item {
         }
         Image {
             id: backward
-            source: "resources/backward.png"
+            source: "resources/backward.svg"
             width: backwardArea.pressed?root.width/14:root.width/16
             height: width
             anchors.left: playbuttonpanel.left
@@ -193,7 +187,7 @@ Item {
         }
         Image {
             id: forward
-            source: "resources/forward.png"
+            source: "resources/forward.svg"
             width: forwardArea.pressed?root.width/14:root.width/16
             height: width
             anchors.right: playbuttonpanel.right
@@ -386,7 +380,7 @@ Item {
 
     Item {
         id: addonPanel
-        visible: false
+        visible: !root.widgetMode
         anchors.bottom: root.bottom
         width: root.width
         height: parent.height - (artwork.height+root.width/15)
@@ -401,7 +395,7 @@ Item {
 
             Image {
                 id: volumeLabel
-                source: "resources/volume-up.png"
+                source: "resources/volume-up.svg"
                 width: root.width/15
                 height: width
                 anchors.verticalCenter: parent.verticalCenter
@@ -505,75 +499,6 @@ Item {
                     }
                 }
             }
-        }
-
-        function hide() {
-            addonPanel.state = 'hide';
-        }
-
-        function show() {
-            addonPanel.state = 'show';
-        }
-
-        states: [
-            State {
-                name: "show"
-                PropertyChanges { target: addonPanel; opacity: 1}
-            },
-            State {
-                name: "hide"
-                PropertyChanges { target: addonPanel; opacity: 0}
-            }
-        ]
-
-        transitions: [
-            Transition {
-                from: "show"
-                to: "hide"
-                ParallelAnimation {
-                    NumberAnimation {
-                        target: addonPanel
-                        properties: "opacity"
-                        easing.type: Easing.InCubic
-                        duration: 300
-                    }
-                }
-                onRunningChanged: {
-                    if (!running) {
-                        console.log("onRunningChanged, finish hiding media's widget");
-                        addonPanel.visible = false;
-                    }
-                }
-            },
-            Transition {
-                from: "hide"
-                to: "show"
-                ParallelAnimation {
-                    NumberAnimation {
-                        target: addonPanel
-                        properties: "x"
-                        easing.type: Easing.InCubic
-                        to: 0
-                        duration: 500
-                    }
-                    NumberAnimation {
-                        target: addonPanel
-                        properties: "opacity"
-                        easing.type: Easing.InCubic
-                        duration: 500
-                    }
-                }
-                onRunningChanged: {
-                    if (running) {
-                        console.log("onRunningChanged, starting showing media's widget");
-                        addonPanel.x = 700; // swipe in from right to left
-                        addonPanel.visible = true;
-                    }
-                }
-            }
-        ]
-        Component.onCompleted: {
-            addonPanel.hide();
         }
     }
 }

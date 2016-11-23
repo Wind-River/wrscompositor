@@ -54,16 +54,7 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
             mMainScreen = screen;
     }
     Q_ASSERT(mMainScreen);
-    // default layer
-    mMainScreen->addLayer(1000); // for application
-    mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
-    mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
-    mMainScreen->addLayer(2000); // for main menu
-    mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
-    mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
-    mMainScreen->addLayer(3000); // for status bar
-    mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
-    mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
+
 }
 
 
@@ -132,9 +123,6 @@ void IVIScene::addIVILayer(IVILayer *layer) {
 void IVIScene::addIVISurface(IVISurface *surface) {
     DEBUG() << "ivi-surface:" << surface;
     this->mIviSurfaces.append(surface);
-    //TODO: Add logic to associate the surface to a specific layer (even a default one)
-    //      This is wrong :)
-    this->mainScreen()->layer(0)->addSurface(surface);
 }
 
 
