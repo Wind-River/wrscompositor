@@ -151,7 +151,7 @@ namespace WrsIVIModel {
         }
 
         QWaylandSurface *qWaylandSurface() { return mQWaylandSurface; }
-        void setQWaylandSurface(QWaylandSurface *qWaylandSurface) {
+        Q_INVOKABLE void setQWaylandSurface(QWaylandSurface *qWaylandSurface) {
             mQWaylandSurface = qWaylandSurface;
             setId(wl_resource_get_id(qWaylandSurface->handle()->resource()->handle));
             copyQWaylandSurfaceProperties(mQWaylandSurface);
