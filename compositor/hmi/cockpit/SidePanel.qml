@@ -21,12 +21,26 @@
  */
  
 import QtQuick 2.1
+import "config.js" as Conf
 
 Item {
     id: sidePanel
-    width: parent.width*0.34
-    height: parent.height*0.7
-    z: 50000
+    width: parent.width
+    height: parent.height
+
+    signal launchWidget(string widgetid);
+
+    onLaunchWidget: {
+        media.widgetMode = !(widgetid=='media');
+        hvac.visible = (widgetid == 'hvac');
+        dialer.visible = (widgetid == 'dialer');
+
+        if(widgetid == 'media' ||
+            widgetid == 'hvac' ||
+            widgetid == 'dialer')
+            return true;
+        return false;
+    }
 
     Rectangle {
         id: panelBackground
@@ -51,73 +65,7 @@ Item {
         anchors.top: media.bottom
     }
 
-    function launchWidget(widgetid) {
-        media.widgetMode = !(widgetid=='media');
-        console.log("launchWidget, widgetid = " + widgetid);
-
-        switch (widgetid) {
-            case 'media':
-                media.show();
-                hvac.hide();
-                dialer.hide();
-                break;
-            case 'hvac':
-                hvac.show();
-                media.hide();
-                dialer.hide();
-                break;
-            case 'dialer':
-                dialer.show();
-                media.hide();
-                hvac.hide();
-                break;
-            default:
-                return false;
-        }
-
-        return true;
-    }
-
-    function hide() {
-        sidePanel.state = 'hide';
-    }
-
-    function show() {
-        sidePanel.state = 'show';
-    }
-
-    states: [
-        State {
-            name: "show"
-            PropertyChanges { target: sidePanel; opacity: 1; z: 50000 }
-        },
-        State {
-            name: "hide"
-            PropertyChanges { target: sidePanel; opacity: 0; z: -1 }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            from: "show"
-            to: "hide"
-            ParallelAnimation {
-                NumberAnimation { target: sidePanel; properties: "z"; duration: 300 }
-                NumberAnimation { target: sidePanel; properties: "opacity"; duration: 300 }
-            }
-        },
-        Transition {
-            from: "hide"
-            to: "show"
-            ParallelAnimation {
-                NumberAnimation { target: sidePanel; properties: "z"; duration: 500 }
-                NumberAnimation { target: sidePanel; properties: "opacity"; duration: 500 }
-            }
-        }
-    ]
-
     Component.onCompleted: {
-        console.log("Set show state when creating sidePanel at first-time");
-        sidePanel.show();
+        Conf.registerObjectItem("SidePanel", sidePanel);
     }
 }
