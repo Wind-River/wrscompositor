@@ -27,13 +27,28 @@ config-YOURTARGETDEVICE.js IN CONFIGURATION TIME */
 // DEFAULT CONFIG VARIABLES
 var displayWidth = 0;
 var displayHeight = 0;
-var statusBarHeight = 0;
-var useMultiWindowFeature = false;
-var useMultiWaylandDisplayFeature = false;
 var densityAdjust = 1.0;
 var useWebEngine = 0;
-var appsModel = 'native';
-var aapName = 'none';
-var carplayName = 'none';
+
+var objectList = new Array();
+var object = function (name, id) {
+    this.name = name;
+    this.id = id;
+}
+
+function registerObjectItem(name, id) {
+    var newObject = new object(name, id);
+    objectList.push(newObject);
+}
+
+function findObjectIdByName(name) {
+    for (var index = 0; index < objectList.length; index++) {
+        var object = objectList[index];
+        if (object.name == name) {
+            return object.id;
+        }
+    }
+    return null;
+}
 
 // XXX OVERWRITE DEFAULT CONFIGs FROM HERE

@@ -22,16 +22,20 @@
 
 import QtQuick 2.1
 
+import QtQuick.Window 2.0
+import "config.js" as Conf
+
 Item {
     id: container;
 
-    property variant subItem: null;
-    property string subItemName: "";
-    property variant subItemSurface: null;
-    property variant subItemIVISurface: null;
+    property variant surfaceItem: null
+    property variant surface: null
+    property variant iviSurface: null
+    property int layerId : -1
+    property string surfaceName: ""
 
     signal positionChanged(int x, int y)
-    signal sizedChanged(int width, int height)
+    signal sizeChanged(int width, int height)
     signal positionAligned(string align, variant anchors)
 
     onPositionAligned: {
@@ -58,25 +62,22 @@ Item {
                 console.log("onPositionAligned, Invalid align");
         }
         console.log("onPositionAligned, align = ", align);
-        console.log("onPositionAligned, container name:" + container.subItemName);
+        console.log("onPositionAligned, container name:" + container.surfaceName);
 
     }
 
     onPositionChanged: {
         console.log("onPositionChanged:" + x + "/" + y);
-        console.log("onPositionChanged, container name:" + container.subItemName);
+        console.log("onPositionChanged, container name:" + container.surfaceName);
         container.x = x;
         container.y = y;
     }
 
-    onSizedChanged: {
+    onSizeChanged: {
         console.log("onSizedChange, size:" + width + "/" + height);
-        console.log("onSizedChange, container name:" + container.subItemName);
+        console.log("onSizedChange, container name:" + container.surfaceName);
         container.width = width
         container.height = height
-        if (subItemSurface != null) {
-            subItemSurface.requestSize(Qt.size(width, height));
-        }
     }
 
     Behavior on x {

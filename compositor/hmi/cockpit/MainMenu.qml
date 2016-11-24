@@ -31,12 +31,21 @@ Image {
 
     source: "resources/wallpaper.svg"
 
+    function show() {
+        mainMenu.visible = true
+        mainMenu.focus = true
+    }
+
+    function hide() {
+        mainMenu.visible = false
+        mainMenu.focus = true
+    }
+
     Item {
         id: mainMenu
         width: parent.width
         height: parent.height
         anchors.fill: parent
-        visible: true
 
         property variant root: null
 
@@ -52,16 +61,6 @@ Image {
 
         Behavior on opacity {
             NumberAnimation { easing.type: Easing.InCubic; duration: 400; }
-        }
-
-        function show() {
-            mainMenu.visible = true
-            mainMenu.focus = true
-        }
-
-        function hide() {
-            mainMenu.visible = false
-            mainMenu.focus = true
         }
 
         function launchNative(appid) {
@@ -173,8 +172,6 @@ Image {
                 Process {
                     id: process
                     property variant window: null
-                    windowDefaultWidth: mainMenu.windowDefaultWidth
-                    windowDefaultHeight: mainMenu.windowDefaultHeight
                     onPidChanged: {
                         console.log('program launched');
                         root.waitProcess = process
@@ -239,7 +236,7 @@ Image {
         }
 
         Component.onCompleted: {
-            Conf.registerObjectItem("MainMenu", mainMenu);
+            Conf.registerObjectItem("MainMenu", background);
         }
 
         Keys.onLeftPressed: { grid.moveCurrentIndexLeft(); event.accepted = true}
