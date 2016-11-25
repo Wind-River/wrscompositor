@@ -240,13 +240,20 @@ void WrsCompositor::resizeEvent(QResizeEvent *event)
 void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
     TRACE() << "[BEGIN]";
 
-    // create a new IVIsurface model
-    WrsIVIModel::IVISurface *newIviSurface = new WrsIVIModel::IVISurface(this);
-    // link the IVISurface model to wl_surface(or QWaylandSurface)
+    if (!strcmp(WRSCOMPOSITOR_HMI_PROFILE, "classic")) {
+         // create a new IVIsurface model
+        WrsIVIModel::IVISurface *newIviSurface = new WrsIVIModel::IVISurface(this);
+        // link the IVISurface model to wl_surface(or QWaylandSurface)
 
-    newIviSurface->setQWaylandSurface(surface);
-    // add the surface to the scene model
-    mIviScene->addIVISurface(newIviSurface);
+        newIviSurface->setQWaylandSurface(surface);
+        // add the surface to the scene model
+        mIviScene->addIVISurface(newIviSurface);
+
+        connect(surface, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)),
+            this, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)));
+        connect(surface, SIGNAL(sizeChanged()),
+            this, SLOT(sizeChanged()));
+    }
 
     // On surface create add listener for surface events
     connect(surface, SIGNAL(surfaceDestroyed()),
@@ -255,10 +262,6 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
             this, SLOT(surfaceMapped()));
     connect(surface, SIGNAL(unmapped()),
             this, SLOT(surfaceUnmapped()));
-    connect(surface, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)),
-            this, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)));
-    connect(surface, SIGNAL(sizeChanged()),
-            this, SLOT(sizeChanged()));
     TRACE() << "[END]";
 }
 

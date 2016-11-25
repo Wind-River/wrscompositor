@@ -21,15 +21,13 @@
  */
 
 import QtQuick 2.1
+import "config.js" as Conf
 import com.windriver.wrscompositor 1.0
 
 Item {
     id: dockbar
-    anchors.bottom: parent.bottom
     width: parent.width
-    height: (parent.height*2)/12
-    z:  50000
-    signal launched(string apptype, string appid);
+    height: parent.height
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
 
@@ -44,20 +42,20 @@ Item {
             label: "Navigation"
             appid: "mocknavi"
             apptype: "native"
-            iconPath: "resources/navi.png"
+            iconPath: "resources/navigation.png"
         }
         ListElement {
             label: "Climate"
             appid: "hvac"
             apptype: "widget"
-            iconPath: "resources/hvac.svg"
+            iconPath: "resources/climate.png"
             iconScale: 0.6
         }
         ListElement {
             label: "Media"
             appid: "media"
             apptype: "widget"
-            iconPath: "resources/mobile.png"
+            iconPath: "resources/media.png"
             iconScale: 0.9
         }
         ListElement {
@@ -69,15 +67,15 @@ Item {
         }
         ListElement {
             label: "Applications"
-            appid: "menu"
+            appid: "mainmenu"
             apptype: "widget"
-            iconPath: "resources/apps.png"
+            iconPath: "resources/applications.png"
         }
         ListElement {
             label: "Diagnostics"
             appid: "diagnostics"
             apptype: "widget"
-            iconPath: "resources/diagnotics.png"
+            iconPath: "resources/diagnostics.png"
         }
         ListElement {
             label: "Settings"
@@ -98,25 +96,16 @@ Item {
             Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                height: icon.height+iconLabel.height
-                RingIcon {
+                height: icon.height
+                Image {
                     id: icon
-                    icon: iconPath
-                    innerScale: iconScale?iconScale:0.5
-                    width: buttonArea.pressed?dockIcon.height*3/5:dockIcon.height/2
+                    source: iconPath
+                    width: dockIcon.height * 0.8
                     height: width
                     anchors.horizontalCenter: parent.horizontalCenter
-                }
-                Text {
-                    id: iconLabel
-                    text: label.toUpperCase()
-                    anchors.top: icon.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    font.pointSize: buttonArea.pressed?dockIcon.height/7:dockIcon.height/8
-                    font.family: tungsten.name
-                    font.bold: true
-                    color: "white"
-                    smooth: true
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true;
+                    scale: (buttonArea.pressed? 0.9 : 1.0)
                 }
             }
             MouseArea {
@@ -124,52 +113,28 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     console.log("clicked: " + label);
-                    dockbar.launched(apptype, appid);
+                    if (apptype == "widget") {
+                        if (appid == 'mainmenu') {
+                            var mainmenu = Conf.findObjectIdByName("MainMenu");
+                            if (mainmenu) {
+                                if(mainmenu.visible)
+                                    mainmenu.hide()
+                                else
+                                    mainmenu.show()
+                            }
+                        } else {
+                            var sidePanel = Conf.findObjectIdByName("SidePanel");
+                            if (sidePanel) {
+                                sidePanel.launchWidget(appid)
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    function hide() {
-        dockbar.state = 'hide';
-    }
-
-    function show() {
-        dockbar.state = 'show';
-    }
-
-    states: [
-        State {
-            name: "show"
-            PropertyChanges { target: dockbar; opacity: 1; z: 50000 }
-        },
-        State {
-            name: "hide"
-            PropertyChanges { target: dockbar; opacity: 0; z: -1 }
-        }
-    ]
-
-    transitions: [
-        Transition {
-            from: "show"
-            to: "hide"
-            ParallelAnimation {
-                NumberAnimation { target: dockbar; properties: "z"; duration: 300 }
-                NumberAnimation { target: dockbar; properties: "opacity"; duration: 300 }
-            }
-        },
-        Transition {
-            from: "hide"
-            to: "show"
-            ParallelAnimation {
-                NumberAnimation { target: dockbar; properties: "z"; duration: 500 }
-                NumberAnimation { target: dockbar; properties: "opacity"; duration: 500 }
-            }
-        }
-    ]
-
     Component.onCompleted: {
-        console.log("Set show state when creating dockbar at first-time");
-        dockbar.show();
+        Conf.registerObjectItem("DockBar", dockbar);
     }
 }
