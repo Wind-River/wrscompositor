@@ -48,8 +48,6 @@
 #include <QtCompositor/private/qwlinputdevice_p.h>
 #include <QtCompositor/private/qwayland-server-wayland.h>
 
-#include "wrsiviplatformconstants.h"
-
 /**
  * IVIModel structure:
  * IVISCene
@@ -141,7 +139,7 @@ namespace WrsIVIModel {
         int visibility() const { return mVisibility; }
         void setVisibility(int o) { mVisibility = o; emit propertyChanged(); }
 
-        Q_INVOKABLE QObject *qmlWindowFrame() { return mQmlWindowFrame; }
+        Q_INVOKABLE QObject *qmlWindowFrame() { if (mQmlWindowFrame != NULL) return mQmlWindowFrame; }
         Q_INVOKABLE void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
 
         void copyQWaylandSurfaceProperties(QWaylandSurface *qWaylandSurface) {
@@ -156,10 +154,6 @@ namespace WrsIVIModel {
             setId(wl_resource_get_id(qWaylandSurface->handle()->resource()->handle));
             copyQWaylandSurfaceProperties(mQWaylandSurface);
         }
-
-        void setIviId(uint32_t ivi_id) { mIviId = ivi_id; }
-        uint32_t iviId() { return mIviId; }
-
     signals:
         void propertyChanged();
     private:
@@ -185,7 +179,7 @@ namespace WrsIVIModel {
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
-        Q_INVOKABLE IVISurface* addSurface(IVISurface* surface);
+        Q_INVOKABLE IVISurface* addSurface(int x = 0, int y = 0, int width = 0, int height = 0, QObject *qmlWindowFrame = NULL);
         Q_INVOKABLE void removeSurface(IVISurface*);
 
         QQmlListProperty<IVISurface> surfaces() {
@@ -221,8 +215,8 @@ namespace WrsIVIModel {
     public:
         IVIScreen(QObject* parent=0);
         IVIScreen(int id, int w, int h, IVIScene* parent=0);
-        Q_INVOKABLE void addLayer(int id);
-        Q_INVOKABLE void addLayer(int id, int width, int height);
+        Q_INVOKABLE IVILayer* addLayer(int id);
+        Q_INVOKABLE IVILayer* addLayer(int id, int width, int height);
 
         QWaylandOutput * waylandOutput() { return mWaylandOutput; }
         void setWaylandOutput(QWaylandOutput *output) { mWaylandOutput = output; }
@@ -233,12 +227,14 @@ namespace WrsIVIModel {
         Q_INVOKABLE int layerCount() const { return mLayers.count(); }
         Q_INVOKABLE IVILayer *layer(int i) const { return mLayers.at(i); }
         Q_INVOKABLE IVILayer *layerById(int id);
+        Q_INVOKABLE IVILayer *getAppLayer() const { return mAppLayer; }
+        Q_INVOKABLE void setAppLayer(IVILayer* layer) { mAppLayer = layer; }
 
     private:
         QList<IVILayer*>    mLayers; //children
         IVIScene            *mScene; //parent
-
         QWaylandOutput *    mWaylandOutput; //wayland output associated to this IVI screen
+        IVILayer*           mAppLayer; // application layer
     };
 
     class IVIScene : public IVIRectangle
@@ -257,24 +253,10 @@ namespace WrsIVIModel {
         }
         Q_INVOKABLE int screenCount() const { return mScreens.count(); }
         Q_INVOKABLE IVIScreen *screen(int i) const { return mScreens.at(i); }
-
-        Q_INVOKABLE void addIVIScreen(IVIScreen *);
-        Q_INVOKABLE void addIVILayer(IVILayer *);
-        Q_INVOKABLE void addIVISurface(IVISurface *);
-        Q_INVOKABLE void removeIVISurface(IVISurface *surface);
-        Q_INVOKABLE IVISurface* createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame); ///< used by QML rendering engine to add built-in surfaces to IVIModel
-        Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface);        ///< Get a plaform-wise generic role name for this surface like MAP, PHONE, DIALOG, CAMERA, etc...
-
-        Q_INVOKABLE IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
-
-        Q_INVOKABLE IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
-
     private:
         QList<IVIScreen*>   mScreens;
         IVIScreen           *mMainScreen;
         QWaylandCompositor  *mCompositor;
-        QList<IVILayer*>    mIviLayesr;
-        QList<IVISurface*>  mIviSurfaces;
     };
 
 }

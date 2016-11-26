@@ -50,10 +50,11 @@ Item {
         subItem.parent                      = item;
         item.subItemName                    = name;
         item.subItemSurface                 = surface;
-        item.subItemIVISurface              = iviScene.findIVISurfaceByQWaylandSurface(surface);
+        item.subItemIVISurface              = compositor.findIVISurfaceByQWaylandSurface(surface);
         subItem.anchors.horizontalCenter    = item.horizontalCenter;
         subItem.anchors.verticalCenter      = item.verticalCenter;
         item.subItemIVISurface.setQmlWindowFrame(item);
+
         compositorWindowAdded(item);
     }
 
@@ -61,6 +62,7 @@ Item {
     onCreateWebViewToCompositorElement: {
         var component = Qt.createComponent("CompositorElement.qml");
         var item = component.createObject(output);
+        var layer = iviScene.mainScreen.layerById(1000);
         var webview = Qt.createQmlObject(
             "import QtQuick 2.1; " +
             "import QtWebEngine 1.2; " +
@@ -69,9 +71,8 @@ Item {
         webview.url = url;
         item.subItem = webview;
         item.subItemName = name;
-        var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
+        var iviSurface = layer.addSurface(item.x, item.y, item.width, item.height, item);
         item.subItemIVISurface = iviSurface;
-        iviScene.addIVISurface(iviSurface);
         compositorWindowAdded(item);        
     }
 
@@ -80,18 +81,19 @@ Item {
         var component           = Qt.createComponent("CompositorElement.qml");
         var subComponent        = Qt.createComponent(qmlFile);
         var item                = component.createObject(output);
+        var layer               = iviScene.mainScreen.layerById(1000);
         var subItem             = subComponent.createObject(item);
-        item.subItemName        = name;        
-        var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
-        item.subItemIVISurface = iviSurface;
-        iviScene.addIVISurface(iviSurface);
+        item.subItemName        = name;
+        var iviSurface          = layer.addSurface(item.x, item.y, item.width, item.height, item);
+        item.subItemIVISurface  = iviSurface;
         compositorWindowAdded(item);
     }
 
 
     onDestoryCompositorElement: {
+        var layer = iviScene.mainScreen.layerById(1000);
         var compositorElement = CompositorLayout.getCompositorElementByName(name);
-        iviScene.removeIVISurface(compositorElement.subItemIVISurface);
+        layer.removeSurface(compositorElement.subItemIVISurface);
         CompositorLayout.onWindowRemoved(compositorElement);
         compositorElement.destroy();
     }
@@ -115,19 +117,19 @@ Item {
             var subComponent1        = Qt.createComponent("StatusBar.qml", Component.PreferSynchronous);
             var item1                = component1.createObject(output);
             var subItem1             = subComponent1.createObject(item1);
+            var layer                = iviScene.mainScreen.layerById(1000);
             item1.subItemName        = "StatusBar";
-            var iviSurface1 = iviScene.createSurface(item1.x, item1.y, item1.width, item1.height, item1);
-            iviScene.addIVISurface(iviSurface1);
+            layer.addSurface(item1.x, item1.y, item1.width, item1.height, item1);
             compositorWindowAdded(item1);
         }
         {
             var component2           = Qt.createComponent("CompositorElement.qml", Component.PreferSynchronous);
             var subComponent2        = Qt.createComponent("LauncherBar.qml", Component.PreferSynchronous);
             var item2                = component2.createObject(output);
+            var layer                = iviScene.mainScreen.layerById(1000);
             var subItem2             = subComponent2.createObject(item2);
             item2.subItemName        = "LauncherBar";
-            var iviSurface2 = iviScene.createSurface(item2.x, item2.y, item2.width, item2.height, item2);
-            iviScene.addIVISurface(iviSurface2);
+            layer.addSurface(item2.x, item2.y, item2.width, item2.height, item2);
             compositorWindowAdded(item2);
         }
         CompositorLayout.setIviScene(iviScene);
@@ -174,8 +176,8 @@ Item {
         console.log(iviScene.mainScreen.layerCount());
         console.log(iviScene.mainScreen.layer(0));
         console.log(iviScene.mainScreen.layer(0).visibility);
-        var role = iviScene.getSurfaceRole(surface);
-
+        var role = compositor.getSurfaceRole(surface);
+        console.log("role = ", role);
         createWestonSurfaceToCompositorElement(surface, role);
     }
 
