@@ -75,6 +75,9 @@ public:
     QWaylandQuickOutput * getMainOutput() { return mMainOutput;}
     QWaylandQuickSurface * getFullscreenSurface() { return m_fullscreenSurface;}
     WrsIVIModel::IVIScene * getIviScene() { return mIviScene;}
+    WrsIVIModel::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
+    Q_INVOKABLE WrsIVIModel::IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
+    Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface); 
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     QWaylandQuickSurface *fullscreenSurface() const;

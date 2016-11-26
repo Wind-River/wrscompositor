@@ -25,7 +25,7 @@
 
 #include "wrsivimodel.h"
 #include "wrslogging.h"
-#include "util.h"
+#include "wrsiviplatformconstants.h"
 #include "config.h"
 
 using namespace WrsIVIModel;
@@ -57,130 +57,33 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
     Q_ASSERT(mMainScreen);
     if (!strcmp(WRSCOMPOSITOR_HMI_PROFILE, "classic")) {
         // default layer
-        mMainScreen->addLayer(1000); // for application
-        mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
-        mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
-        mMainScreen->addLayer(2000); // for main menu
-        mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
-        mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
-        mMainScreen->addLayer(3000); // for status bar
+        IVILayer* layer = mMainScreen->addLayer(1000); // layer for classic HMI
+        mMainScreen->setAppLayer(layer);
         mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
         mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
     }
 }
-
-
-IVISurface* IVIScene::findSurfaceByResource(struct ::wl_resource *rsc) {
-    WrsIVIModel::IVISurface *surface = NULL;
-    for (int i = 0; i < this->screenCount(); i++) {
-        WrsIVIModel::IVIScreen *screen = this->screen(i);
-        for (int j = 0; j < screen->layerCount(); j++) {
-            WrsIVIModel::IVILayer *layer = screen->layer(j);
-            for (int k = 0; k < layer->surfaceCount(); k++) {
-                WrsIVIModel::IVISurface *_surface = layer->surface(k);
-                if (_surface->getResourceForClient(rsc->client) == rsc) {
-                    surface = _surface;
-                    break;
-                }
-            }
-        }
-    }
-    return surface;
-}
-
-
-QString IVIScene::getSurfaceRole(QWaylandSurface *qWlSurface) {
-    IVISurface* iviSurface = findIVISurfaceByQWaylandSurface(qWlSurface);
-    if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_CAMERA) {
-        return "Camera";
-    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_DIALOG) {
-        return "Dialog";
-    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_NAVIGATION) {
-        return "Navigation";
-    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_PHONE) {
-        return "Phone";
-    } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_PROJECTION) {
-        return "Projection";
-    } else {
-        Util u;
-        return u.getCmdForPid(qWlSurface->client()->processId());
-    }
-}
-
-
-IVISurface* IVIScene::findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface) {
-    DEBUG() << "search:" << qWlSurface;
-    for (int i = 0; i < this->mIviSurfaces.count(); i++) {
-        if (((IVISurface* ) (this->mIviSurfaces[i]))->qWaylandSurface() == qWlSurface) {
-            DEBUG() << "found:" << ((IVISurface* ) (this->mIviSurfaces[i]));
-            return ((IVISurface* ) (this->mIviSurfaces[i]));
-        }
-    }
-    return NULL;
-}
-
-
-void IVIScene::addIVIScreen(IVIScreen *screen) {
-    this->mScreens.append(screen);
-}
-
-
-void IVIScene::addIVILayer(IVILayer *layer) {
-    //TODO: Add logic to associate the layers to specific screens
-    //this->mainScreen()->layers().append(layer);
-    this->mIviLayesr.append(layer);
-}
-
-
-void IVIScene::addIVISurface(IVISurface *surface) {
-    DEBUG() << "ivi-surface:" << surface;
-    this->mIviSurfaces.append(surface);
-    if (!strcmp(WRSCOMPOSITOR_HMI_PROFILE, "classic")) {
-        // TODO: Add logic to associate the surface to a specific layer (even a default one)
-        // This is wrong :)
-        this->mainScreen()->layer(0)->addSurface(surface);
-    }
-}
-
-
-void IVIScene::removeIVISurface(IVISurface *surface) {
-    this->mIviSurfaces.removeAll(surface);
-    for (int i = 0; i < this->screenCount(); i++) {
-        for (int j = 0; j < this->screen(i)->layerCount(); j++) {
-            this->mScreens[i]->layer(j)->removeSurface(surface);
-        }
-    }
-}
-
-
-IVISurface* IVIScene::createSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
-    IVISurface* surface = new IVISurface(-1 - this->mIviSurfaces.count(), width, height, this->mainScreen()->layer(0));
-    DEBUG() << "qmlWindowFrame" << qmlWindowFrame;
-    surface->setX(x);
-    surface->setY(y);
-    surface->setQmlWindowFrame(qmlWindowFrame);
-    return surface;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /// IVIScreen
 ////////////////////////////////////////////////////////////////////////////////
 
-IVIScreen::IVIScreen(QObject* parent) : IVIRectangle(-1, 0, 0, parent), mScene(0)
+IVIScreen::IVIScreen(QObject* parent) : IVIRectangle(-1, 0, 0, parent), mScene(0), mAppLayer(NULL)
 {
 }
 
-IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) : IVIRectangle(id, w, h, parent), mScene(parent)
+IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) : IVIRectangle(id, w, h, parent), mScene(parent), mAppLayer(NULL)
 {
 }
 
-void IVIScreen::addLayer(int id) {
-    addLayer(id, mScene->width(), mScene->height());
+IVILayer* IVIScreen::addLayer(int id) {
+    return addLayer(id, mScene->width(), mScene->height());
 }
 
-void IVIScreen::addLayer(int id, int width, int height) {
-    mLayers << new IVILayer(id, width, height, this);
+IVILayer* IVIScreen::addLayer(int id, int width, int height) {
+    IVILayer* layer = new IVILayer(id, width, height, this);
+    mLayers << layer;
+    return layer;
 }
 
 IVILayer* IVIScreen::layerById(int id) {
@@ -207,29 +110,30 @@ IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
 {
 }
 
-
-IVISurface* IVILayer::addSurface(IVISurface* surface) {
-    DEBUG() << "ivi-surface <<<" << surface;
+IVISurface* IVILayer::addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
+    IVISurface* surface = new IVISurface(WRS_IVI_ID_SURFACE_DEFAULT, width, height, this);
+    surface->setX(x);
+    surface->setY(y);
+    surface->setQmlWindowFrame(qmlWindowFrame);
     mSurfaces << surface;
     return surface;
 }
-
 
 void IVILayer::removeSurface(IVISurface* surface) {
     mSurfaces.removeAll(surface);
 }
 
 IVISurface::IVISurface(QObject *parent) :
-    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
+    IVIRectangle(WRS_IVI_ID_SURFACE_DEFAULT, 0, 0, 0, 0, parent), mLayer(NULL), mQWaylandSurface(NULL)
 {
 }
 
 IVISurface::IVISurface(int id, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
+    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mQWaylandSurface(NULL)
 {
 }
 
 IVISurface::IVISurface(int id, int x, int y, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
+    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mQWaylandSurface(NULL)
 {
 }

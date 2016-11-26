@@ -70,11 +70,10 @@ void WrsIviApplication::ivi_application_surface_create(QtWaylandServer::ivi_appl
 
     WrsIVIModel::IVISurface *iviSurfaceModel = this->
             mCompositor->
-            getIviScene()->\
             findIVISurfaceByQWaylandSurface(qWlsurface);
 
     iviSurfaceModel->addResourceForClient(surface->client, iviSurface->resource()->handle);
-    iviSurfaceModel->setIviId(ivi_id);
+    iviSurfaceModel->setId(ivi_id);
 
     connect(qWlsurface, SIGNAL(sizeChanged()),
             this, SLOT(sizeChanged()));
@@ -88,7 +87,6 @@ void WrsIviApplication::sizeChanged() {
 
     WrsIVIModel::IVISurface *iviSurfaceModel = this->
             mCompositor->
-            getIviScene()->\
             findIVISurfaceByQWaylandSurface(qWlsurface);
 
     //Get IVI surface for QWaylandSurface

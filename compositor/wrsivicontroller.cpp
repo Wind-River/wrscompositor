@@ -56,7 +56,6 @@ void WrsIviController::ivi_controller_surface_set_visibility(QtWaylandServer::iv
 
     TRACE() << "[BEGIN]";
     WrsIVIModel::IVISurface *surface = mCompositor->
-            getIviScene()->
             findSurfaceByResource(resource->handle);
     if(!surface) {
         TRACE() << "[END]";
@@ -74,7 +73,6 @@ void WrsIviController::ivi_controller_surface_set_opacity(QtWaylandServer::ivi_c
 
     TRACE() << "[BEGIN]";
     WrsIVIModel::IVISurface *surface = mCompositor->
-            getIviScene()->
             findSurfaceByResource(resource->handle);
     if(!surface) {
         TRACE() << "[END]";
@@ -98,7 +96,6 @@ void WrsIviController::ivi_controller_surface_set_destination_rectangle(QtWaylan
     (void) resource;
     TRACE() << "[BEGIN";
     WrsIVIModel::IVISurface *surface = mCompositor->
-            getIviScene()->
             findSurfaceByResource(resource->handle);
     if(!surface) {
         TRACE() << "[END]";
@@ -123,7 +120,6 @@ void WrsIviController::ivi_controller_surface_set_configuration(QtWaylandServer:
     (void) resource;
     TRACE() << "[BEGIN]";
     WrsIVIModel::IVISurface *surface = mCompositor->
-            getIviScene()->
             findSurfaceByResource(resource->handle);
     if (!surface) {
         TRACE() << "[END]";
@@ -142,7 +138,6 @@ void WrsIviController::ivi_controller_surface_set_orientation(QtWaylandServer::i
     (void) resource;
     TRACE() << "[BEGIN]";
     WrsIVIModel::IVISurface *surface = mCompositor->
-            getIviScene()->
             findSurfaceByResource(resource->handle);
     if (!surface) {
         TRACE() << "[END]";
