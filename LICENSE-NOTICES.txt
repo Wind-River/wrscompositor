@@ -118,7 +118,43 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-----------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+song playlist free icon (wrscompositor-master/compositor/hmi/cockpit/resources/album-cover.png), 
+© 2013 Appzgear (http://appzgear.com) from www.flaticon.com used under a Creative Commons 
+Attribution 3.0 Unported License: https://creativecommons.org/licenses/by/3.0/ 
+
+-----------------------------------------------------------------------------------------------
+
+Backspace arrow free icon (wrscompositor-master/compositor/hmi/cockpit/resources/backspace.svg), 
+© 2014 Google (http://www.google.com) from www.flaticon.com used under a Creative Commons 
+Attribution 3.0 Unported License: https://creativecommons.org/licenses/by/3.0/  
+
+-----------------------------------------------------------------------------------------------
+
+Enter arrow free icon (wrscompositor-master/compositor/hmi/cockpit/resources/enter.svg), 
+© 2014 Google ( http://www.google.com) from www.flaticon.com used under a Creative Commons 
+Attribution 3.0 Unported License: https://creativecommons.org/licenses/by/3.0/ 
+
+-----------------------------------------------------------------------------------------------
+
+Hide keyboard button free icon (wrscompositor-master/compositor/hmi/cockpit/resources/hidekeyboard.svg), 
+© 2014 Google (http://www.google.com) from www.flaticon.com used under a Creative Commons 
+Attribution 3.0 Unported License: https://creativecommons.org/licenses/by/3.0/  
+
+-----------------------------------------------------------------------------------------------
+
+Baseline shift free icon (wrscompositor-master/compositor/hmi/cockpit/resources/shift-gray.svg), 
+© 2016 Dario Ferrando (http://dario.io) from www.flaticon.com used under a Creative Commons 
+Attribution 3.0 Unported License: https://creativecommons.org/licenses/by/3.0/  
+
+-----------------------------------------------------------------------------------------------
+
+Baseline shift free icon (wrscompositor-master/compositor/hmi/cockpit/resources/shift-green.svg), 
+© 2016 Dario Ferrando (http://dario.io) from www.flaticon.com used under a Creative Commons 
+Attribution 3.0 Unported License: https://creativecommons.org/licenses/by/3.0/  
+
+-----------------------------------------------------------------------------------------------
 
 Warranty Disclaimer & Limitation of Liability 
 
