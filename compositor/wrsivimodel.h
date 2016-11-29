@@ -84,8 +84,22 @@ namespace WrsIVIModel {
         Q_PROPERTY(int x READ x WRITE setX NOTIFY xChanged)
         Q_PROPERTY(int y READ y WRITE setY NOTIFY yChanged)
         public:
-            IVIRectangle(int id, int w, int h, QObject *p=0) : QObject(p), mId(id), mX(0), mY(0), mWidth(w), mHeight(h) {}
-            IVIRectangle(int id, int x, int y, int w, int h, QObject *p=0) : QObject(p), mId(id), mX(x), mY(y), mWidth(w), mHeight(h) {}
+            IVIRectangle(int id, int w, int h, QObject *p=0) :
+                QObject(p),
+                mId(id),
+                mX(0),
+                mY(0),
+                mWidth(w),
+                mHeight(h),
+                mQmlWindowFrame(NULL) {}
+            IVIRectangle(int id, int x, int y, int w, int h, QObject *p=0) :
+                QObject(p),
+                mId(id),
+                mX(x),
+                mY(y),
+                mWidth(w),
+                mHeight(h),
+                mQmlWindowFrame(NULL) {}
             int id() { return mId; }
             void setId(int id) { mId = id; emit idChanged(); }
             int width() { return mWidth; }
@@ -107,6 +121,10 @@ namespace WrsIVIModel {
                 return this->mClientToIviResource[client];
             }
 
+            Q_INVOKABLE QObject *qmlWindowFrame() { return mQmlWindowFrame; }
+            Q_INVOKABLE void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
+
+
         signals:
             void idChanged();
             void widthChanged();
@@ -114,12 +132,14 @@ namespace WrsIVIModel {
             void xChanged();
             void yChanged();
         private:
-            int mId;
-            int mX;
-            int mY;
-            int mWidth;
-            int mHeight;
-            QMap<struct wl_client*, struct wl_resource *> mClientToIviResource; //for each client - a wayland resource is used to communicate with individual clients
+            int                                             mId;
+            int                                             mX;
+            int                                             mY;
+            int                                             mWidth;
+            int                                             mHeight;
+            QMap<struct wl_client*, struct wl_resource *>   mClientToIviResource; ///< for each client - a wayland resource is used to communicate with individual clients
+        public:
+            QObject                                         *mQmlWindowFrame;
     };
 
     class IVISurface : public IVIRectangle
@@ -141,8 +161,8 @@ namespace WrsIVIModel {
         int visibility() const { return mVisibility; }
         void setVisibility(int o) { mVisibility = o; emit propertyChanged(); }
 
-        Q_INVOKABLE QObject *qmlWindowFrame() { return mQmlWindowFrame; }
-        Q_INVOKABLE void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
+        Q_INVOKABLE IVILayer * layer() { return mLayer;}
+        Q_INVOKABLE void setLayer(IVILayer * layer) { mLayer = layer;}
 
         void copyQWaylandSurfaceProperties(QWaylandSurface *qWaylandSurface) {
             this->setWidth(qWaylandSurface->size().width());
@@ -157,8 +177,8 @@ namespace WrsIVIModel {
             copyQWaylandSurfaceProperties(mQWaylandSurface);
         }
 
-        void setIviId(uint32_t ivi_id) { mIviId = ivi_id; }
         uint32_t iviId() { return mIviId; }
+        void setIviId(uint32_t ivi_id) { mIviId = ivi_id; }
 
     signals:
         void propertyChanged();
@@ -167,9 +187,8 @@ namespace WrsIVIModel {
         double              mOpacity;
         int                 mOrientation;
         int                 mVisibility;
-        QWaylandSurface     *mQWaylandSurface;
-        QObject             *mQmlWindowFrame;
         uint32_t            mIviId;
+        QWaylandSurface     *mQWaylandSurface;
     };
 
     class IVILayer : public IVIRectangle

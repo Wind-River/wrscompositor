@@ -88,20 +88,31 @@ IVISurface* IVIScene::findSurfaceByResource(struct ::wl_resource *rsc) {
 
 QString IVIScene::getSurfaceRole(QWaylandSurface *qWlSurface) {
     IVISurface* iviSurface = findIVISurfaceByQWaylandSurface(qWlSurface);
+    QString surfaceRole = "undefined";
     if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_CAMERA) {
-        return "Camera";
+        surfaceRole = "Camera";
     } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_DIALOG) {
-        return "Dialog";
+        surfaceRole = "Dialog";
     } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_NAVIGATION) {
-        return "Navigation";
+        surfaceRole = "Navigation";
     } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_PHONE) {
-        return "Phone";
+        surfaceRole = "Phone";
     } else if (iviSurface->iviId() == WRS_IVI_ID_SURFACE_PROJECTION) {
-        return "Projection";
+        surfaceRole = "Projection";
     } else {
         Util u;
-        return u.getCmdForPid(qWlSurface->client()->processId());
+        surfaceRole = u.getCmdForPid(qWlSurface->client()->processId());
     }
+
+    //TODO: based on surfaceRole - attach the surface to a different layers based on composition rules
+    //      hardcoded for now
+    if (surfaceRole == "Dialog") {
+        if (1000 == iviSurface->layer()->id()) {
+            iviSurface->layer()->removeSurface(iviSurface);
+            this->mainScreen()->layerById(2000)->addSurface(iviSurface);
+        }
+    }
+    return surfaceRole;
 }
 
 
@@ -188,22 +199,35 @@ IVILayer* IVIScreen::layerById(int id) {
 }
 
 IVILayer::IVILayer(QObject* parent) :
-    IVIRectangle(-1, 0, 0, 0, 0, parent), mScreen(0), mOpacity(0), mOrientation(0), mVisibility(0)
+    IVIRectangle(-1, 0, 0, 0, 0, parent),
+    mScreen(0),
+    mOpacity(0),
+    mOrientation(0),
+    mVisibility(0)
 {
 }
 
 IVILayer::IVILayer(int id, int w, int h, IVIScreen* parent) :
-    IVIRectangle(id, 0, 0, w, h, parent), mScreen(parent), mOpacity(0), mOrientation(0), mVisibility(0)
+    IVIRectangle(id, 0, 0, w, h, parent),
+    mScreen(parent),
+    mOpacity(0),
+    mOrientation(0),
+    mVisibility(0)
 {
 }
 
 IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
-    IVIRectangle(id, x, y, w, h, parent), mScreen(parent), mOpacity(0), mOrientation(0), mVisibility(0)
+    IVIRectangle(id, x, y, w, h, parent),
+    mScreen(parent),
+    mOpacity(0),
+    mOrientation(0),
+    mVisibility(0)
 {
 }
 
 
 IVISurface* IVILayer::addSurface(IVISurface* surface) {
+    surface->setLayer(this);
     DEBUG() << "ivi-surface <<<" << surface;
     mSurfaces << surface;
     return surface;
@@ -215,16 +239,25 @@ void IVILayer::removeSurface(IVISurface* surface) {
 }
 
 IVISurface::IVISurface(QObject *parent) :
-    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
+    IVIRectangle(-1, 0, 0, 0, 0, parent),
+    mLayer(NULL),
+    mIviId(WRS_IVI_ID_SURFACE_DEFAULT),
+    mQWaylandSurface(NULL)
 {
 }
 
 IVISurface::IVISurface(int id, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
+    IVIRectangle(id, 0, 0, w, h, parent),
+    mLayer(parent),
+    mIviId(WRS_IVI_ID_SURFACE_DEFAULT),
+    mQWaylandSurface(NULL)
 {
 }
 
 IVISurface::IVISurface(int id, int x, int y, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mIviId(WRS_IVI_ID_SURFACE_DEFAULT), mQWaylandSurface(NULL), mQmlWindowFrame(NULL)
+    IVIRectangle(id, x, y, w, h, parent),
+    mLayer(parent),
+    mIviId(WRS_IVI_ID_SURFACE_DEFAULT),
+    mQWaylandSurface(NULL)
 {
 }

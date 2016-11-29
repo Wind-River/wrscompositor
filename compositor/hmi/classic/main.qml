@@ -1,3 +1,25 @@
+/*
+ * Copyright © 2016 Wind River Systems, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 import QtQuick 2.1
 import com.windriver.automotive 1.0
 import com.windriver.genivi 1.0
@@ -44,13 +66,16 @@ Item {
 
 
     onCreateWestonSurfaceToCompositorElement: {
+        var iviSurface                      = iviScene.findIVISurfaceByQWaylandSurface(surface);
         var component                       = Qt.createComponent("CompositorElement.qml");
-        var item                            = component.createObject(output);
+        var item                            = component.createObject(iviSurface.layer().qmlWindowFrame());
         var subItem                         = compositor.item(surface);
         subItem.parent                      = item;
         item.subItemName                    = name;
         item.subItemSurface                 = surface;
-        item.subItemIVISurface              = iviScene.findIVISurfaceByQWaylandSurface(surface);
+        item.width                          = subItem.width;
+        item.height                         = subItem.height;
+        item.subItemIVISurface              = iviSurface;
         subItem.anchors.horizontalCenter    = item.horizontalCenter;
         subItem.anchors.verticalCenter      = item.verticalCenter;
         item.subItemIVISurface.setQmlWindowFrame(item);
@@ -72,6 +97,7 @@ Item {
         var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
         item.subItemIVISurface = iviSurface;
         iviScene.addIVISurface(iviSurface);
+        item.parent = iviSurface.layer().qmlWindowFrame();
         compositorWindowAdded(item);        
     }
 
@@ -85,6 +111,7 @@ Item {
         var iviSurface = iviScene.createSurface(item.x, item.y, item.width, item.height, item);
         item.subItemIVISurface = iviSurface;
         iviScene.addIVISurface(iviSurface);
+        item.parent = iviSurface.layer().qmlWindowFrame();
         compositorWindowAdded(item);
     }
 
@@ -110,26 +137,27 @@ Item {
 
 
     Component.onCompleted: {
-        {
-            var component1           = Qt.createComponent("CompositorElement.qml", Component.PreferSynchronous);
-            var subComponent1        = Qt.createComponent("StatusBar.qml", Component.PreferSynchronous);
-            var item1                = component1.createObject(output);
-            var subItem1             = subComponent1.createObject(item1);
-            item1.subItemName        = "StatusBar";
-            var iviSurface1 = iviScene.createSurface(item1.x, item1.y, item1.width, item1.height, item1);
-            iviScene.addIVISurface(iviSurface1);
-            compositorWindowAdded(item1);
+        //Create compositor layers
+
+        var screenCount = iviScene.screenCount();
+        for (var i = 0; i < screenCount; i++) {
+            var screen = iviScene.screen(i);
+            var layerCount = screen.layerCount();
+            for (var j = 0; j < layerCount; j++) {
+                var layer = screen.layer(j);
+                var component        = Qt.createComponent("CompositorLayer.qml");
+                var item             = component.createObject(output);
+                item.z               = layer.id;
+                item.subItemIVILayer = layer;
+                item.subItemIVILayer.setQmlWindowFrame(item);
+            }
         }
-        {
-            var component2           = Qt.createComponent("CompositorElement.qml", Component.PreferSynchronous);
-            var subComponent2        = Qt.createComponent("LauncherBar.qml", Component.PreferSynchronous);
-            var item2                = component2.createObject(output);
-            var subItem2             = subComponent2.createObject(item2);
-            item2.subItemName        = "LauncherBar";
-            var iviSurface2 = iviScene.createSurface(item2.x, item2.y, item2.width, item2.height, item2);
-            iviScene.addIVISurface(iviSurface2);
-            compositorWindowAdded(item2);
-        }
+
+
+        //Create buiuld in surfaces (optional)
+        createQmlComponentToCompositorElement("StatusBar.qml", "StatusBar");
+        createQmlComponentToCompositorElement("LauncherBar.qml", "LauncherBar");
+
         CompositorLayout.setIviScene(iviScene);
         CompositorLayout.compositorReLayout();
     }

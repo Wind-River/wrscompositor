@@ -48,6 +48,11 @@ int main(int argc, char **argv)
     if (ivi_id == 4) {//PHONE
         iviWindow.setStyleSheet("background-image: url(./phone.jpg); background-repeat:no-repeat; background-position: center; background-color: black;");
     }
+    if (ivi_id == 3) {//DIALOG
+        iviWindow.setGeometry(0, 0, 640, 480);
+        QPushButton *button = new QPushButton("! This is a popup dialog !", &iviWindow);
+        button->setGeometry(220, 100, 200, 50);
+    }
 
     iviWindow.show();
 

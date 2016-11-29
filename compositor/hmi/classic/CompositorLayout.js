@@ -44,12 +44,14 @@ compositorRules["Camera"] = "100";
 //Rules for Projection Mode
 compositorRules["gal_media"] = "100";
 compositorRules["DiO-WrDemo"] = "100";
+//Other apps
 compositorRules["StatusBar"] = "10;top";
 compositorRules["LauncherBar"] = "20;bottom";
 compositorRules["LauncherWindow+other"] = "75";
 compositorRules["Maps+Phone"] = "50";
 compositorRules["Maps+other"] = "75";
 compositorRules["Phone+other"] = "75";
+compositorRules["Dialog"] = ";center";
 compositorRules["other"] = "100";
 
 
@@ -187,8 +189,22 @@ function compositorReLayout() {
                     console.log("[DEBUG] >>>>>>         SURFACE:" + k + " surface:" + surface + " />> " + surface.qmlWindowFrame());
                     other.push(surface.qmlWindowFrame());
                 }
+            }            
+            if (other.length == 0) {
+                //if no surfaces in the current layer, just hide it
+                layer.qmlWindowFrame().visible = false;
+            } else {
+                //TODO: layers opacity to be also configurable
+                if (layer.id == 1000) {
+                    layer.qmlWindowFrame().transparencyMode(0);
+                } else {
+                    layer.qmlWindowFrame().transparencyMode(2);
+                }
+                layer.qmlWindowFrame().visible = true;
             }
+
             compositorReLayoutPerLayer(other);
+
         }
     }
 }
@@ -230,6 +246,22 @@ function compositorReLayoutPerLayer(other) {
             console.log("[DEBUG]    Check if rule apply to:" + other[i].subItemName + " :index of other:" + ruleKey.indexOf("other") + "other lenght:" + other.length);
             if (isCompositorRuleApplicable(other[i], other, ruleKey)) {
                 console.log("[DEBUG] --> is applicable");
+                if (ruleValue.split(";")[0] == "" && ruleValue.indexOf("center") ) {
+                    targetH = other[i].height;
+                    targetW = other[i].width;
+                    targetX = (width - targetW) / 2;
+                    targetY = (height - targetH) / 2;
+                    //calculate remaining rectangle
+                    x = x;
+                    y = y + targetH;
+                    width = width;
+                    height = height - targetH;
+                    //resize
+                    other[i].newSize(targetX, targetY, targetW, targetH);
+                    console.log("[DEBUG]        Align center:" + other[i].subItemName + compositorElementPositionToString(other[i]));
+                    continue;
+                }
+
                 var percent = parseInt(ruleValue.split(";")[0]);
                 if (ruleValue.indexOf("top") > -1) {
                     targetH = height * percent / 100;
