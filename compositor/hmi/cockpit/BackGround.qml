@@ -19,53 +19,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-import QtQuick 2.1
-import "config.js" as Conf
 
-Item {
-    id: sidePanel
+import QtQuick 2.1
+import com.windriver.wrscompositor 1.0
+import "compositor.js" as Logic
+
+Image {
+    id: background
     width: parent.width
     height: parent.height
 
-    signal launchWidget(string widgetid);
-
-    onLaunchWidget: {
-        media.widgetMode = !(widgetid=='media');
-        hvac.visible = (widgetid == 'hvac');
-        dialer.visible = (widgetid == 'dialer');
-
-        if(widgetid == 'media' ||
-            widgetid == 'hvac' ||
-            widgetid == 'dialer')
-            return true;
-        return false;
-    }
-
-    Rectangle {
-        id: panelBackground
-        color: "black"
-        anchors.fill: parent
-    }
-
-    SidePanelMedia {
-        id: media
-        visible: true;
-    }
-
-    SidePanelHVAC {
-        id: hvac
-        visible: true;
-        anchors.top: media.bottom
-    }
-
-    SidePanelDialer {
-        id: dialer
-        visible: false;
-        anchors.top: media.bottom
-    }
+    source: "resources/wallpaper.svg"
 
     Component.onCompleted: {
-        Conf.registerObjectItem("SidePanel", sidePanel);
+    	Logic.registerObjectItem("BackGround", background);
     }
 }

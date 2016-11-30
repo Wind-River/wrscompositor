@@ -152,8 +152,10 @@ namespace WrsIVIModel {
         QWaylandSurface *qWaylandSurface() { return mQWaylandSurface; }
         Q_INVOKABLE void setQWaylandSurface(QWaylandSurface *qWaylandSurface) {
             mQWaylandSurface = qWaylandSurface;
+#if WRSCOMPOSITOR_HMI_CLASSIC
             setId(wl_resource_get_id(qWaylandSurface->handle()->resource()->handle));
             copyQWaylandSurfaceProperties(mQWaylandSurface);
+#endif
         }
     signals:
         void propertyChanged();
@@ -164,7 +166,6 @@ namespace WrsIVIModel {
         int                 mVisibility;
         QWaylandSurface     *mQWaylandSurface;
         QObject             *mQmlWindowFrame;
-        uint32_t            mIviId;
     };
 
     class IVILayer : public IVIRectangle

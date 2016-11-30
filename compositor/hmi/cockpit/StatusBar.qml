@@ -20,14 +20,18 @@
  * THE SOFTWARE.
  */
 import QtQuick 2.1
-import "config.js" as Conf
 import QtGraphicalEffects 1.0
-
+import "config.js" as Conf
+import "compositor.js" as Logic
 
 Item {
     id: statusBar
     width: parent.width
     height: parent.height
+
+    Component.onCompleted: {
+        Logic.registerObjectItem("StatusBar", statusBar);
+    }
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
     Rectangle {
@@ -176,4 +180,3 @@ Item {
     }
 
 }
-

@@ -21,7 +21,7 @@
  */
 
 import QtQuick 2.1
-import "config.js" as Conf
+import "compositor.js" as Logic
 import com.windriver.wrscompositor 1.0
 
 Item {
@@ -115,7 +115,7 @@ Item {
                     console.log("clicked: " + label);
                     if (apptype == "widget") {
                         if (appid == 'mainmenu') {
-                            var mainmenu = Conf.findObjectIdByName("MainMenu");
+                            var mainmenu =  Logic.findObjectIdByName("MainMenu");
                             if (mainmenu) {
                                 if(mainmenu.visible)
                                     mainmenu.hide()
@@ -123,7 +123,7 @@ Item {
                                     mainmenu.show()
                             }
                         } else {
-                            var sidePanel = Conf.findObjectIdByName("SidePanel");
+                            var sidePanel = Logic.findObjectIdByName("SidePanel");
                             if (sidePanel) {
                                 sidePanel.launchWidget(appid)
                             }
@@ -135,6 +135,6 @@ Item {
     }
 
     Component.onCompleted: {
-        Conf.registerObjectItem("DockBar", dockbar);
+        Logic.registerObjectItem("DockBar", dockbar);
     }
 }

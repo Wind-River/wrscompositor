@@ -238,29 +238,57 @@ void WrsCompositor::resizeEvent(QResizeEvent *event)
     loadQmlComponent(event->size());
 }
 
+#if WRSCOMPOSITOR_HMI_COCKPIT
+void WrsCompositor::createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource, 
+                                uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id) {
+    TRACE() << "[BEGIN]";
+
+    QWaylandSurface *qWlsurface = QWaylandSurface::fromResource(surface);
+    WrsIviSurface *iviApplicationSurface = new WrsIviSurface(this, surface->client, id, 1);
+
+    QVariant returnedValue;
+    QMetaObject::invokeMethod(rootObject(), "waylandIviSurfaceCreated",
+        Q_RETURN_ARG(QVariant, returnedValue),
+        Q_ARG(QVariant, QVariant::fromValue(qWlsurface)),
+        Q_ARG(QVariant, QVariant::fromValue(ivi_id)));
+
+    QObject *parentObject = qvariant_cast<QObject *>(returnedValue);
+    if (parentObject == NULL)
+        return;
+
+    QVariant parentWidth = parentObject->property("width");
+    QVariant parentHeight = parentObject->property("height");
+
+    WrsIVIModel::IVISurface *iviSurface = this->findIVISurfaceByQWaylandSurface(qWlsurface);
+    iviSurface->setId(ivi_id);
+    iviSurface->setWidth(parentWidth.toInt());
+    iviSurface->setHeight(parentHeight.toInt());
+    iviSurface->addResourceForClient(surface->client, iviApplicationSurface->resource()->handle);
+
+    connect(qWlsurface, SIGNAL(sizeChanged()), 
+        this, SLOT(sizeChanged()));
+
+    TRACE() << "[END]";
+}
+#endif
 
 void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
     TRACE() << "[BEGIN]";
 
-    if (!strcmp(WRSCOMPOSITOR_HMI_PROFILE, "classic")) {
-        WrsIVIModel::IVILayer* layer = mIviScene->mainScreen()->getAppLayer();
-        if (layer == NULL)
-            return;
+#if WRSCOMPOSITOR_HMI_CLASSIC
+    WrsIVIModel::IVILayer* layer = mIviScene->mainScreen()->getAppLayer();
+    if (layer == NULL)
+        return;
 
-        // create a new IVIsurface model
-        WrsIVIModel::IVISurface *newIviSurface = layer->addSurface();
-        newIviSurface->setQWaylandSurface(surface);
-    } else { // cockpit
-        QVariant returnedValue;
-        QMetaObject::invokeMethod(rootObject(), "surfaceCreated",
-            Q_RETURN_ARG(QVariant, returnedValue),
-            Q_ARG(QVariant, QVariant::fromValue(surface)));
-    }
+    // create a new IVIsurface model
+    WrsIVIModel::IVISurface *newIviSurface = layer->addSurface();
+    newIviSurface->setQWaylandSurface(surface);
 
     connect(surface, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)),
-        this, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)));
+            this, SIGNAL(windowPropertyChanged(const QString &, const QVariant &)));
     connect(surface, SIGNAL(sizeChanged()),
-        this, SLOT(sizeChanged()));
+            this, SLOT(sizeChanged()));
+#endif // WRSCOMPOSITOR_HMI_CLASSIC
 
     // On surface create add listener for surface events
     connect(surface, SIGNAL(surfaceDestroyed()),
@@ -269,6 +297,7 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
             this, SLOT(surfaceMapped()));
     connect(surface, SIGNAL(unmapped()),
             this, SLOT(surfaceUnmapped()));
+
     TRACE() << "[END]";
 }
 
@@ -313,11 +342,20 @@ void WrsCompositor::windowPropertyChanged(const QString &property, const QVarian
     TRACE() << "[END]";
 }
 
-
 void WrsCompositor::sizeChanged() {
     TRACE() << "[BEGIN]";
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
+#if WRSCOMPOSITOR_HMI_CLASSIC
     findIVISurfaceByQWaylandSurface(surface)->copyQWaylandSurfaceProperties(surface);
+#elif WRSCOMPOSITOR_HMI_COCKPIT
+    WrsIVIModel::IVISurface *iviSurface = this->findIVISurfaceByQWaylandSurface(surface);
+    DEBUG() << "iviSurface's width = " << iviSurface->width() << " iviSurface's height = " << iviSurface->height();
+    //Get IVI surface for QWaylandSurface
+    QtWaylandServer::ivi_surface::Resource::fromResource(
+        iviSurface->getResourceForClient(surface->client()->client())
+        )->ivi_surface_object->send_configure(
+        iviSurface->width(), iviSurface->height());
+#endif
     TRACE() << "[END]";
 }
 
@@ -360,6 +398,12 @@ WrsIVIModel::IVISurface* WrsCompositor::findIVISurfaceByQWaylandSurface(QWayland
 
 QString WrsCompositor::getSurfaceRole(QWaylandSurface *qWlSurface) {
     WrsIVIModel::IVISurface* iviSurface = findIVISurfaceByQWaylandSurface(qWlSurface);
+
+    if (!iviSurface)  {
+        DEBUG() << "There isn't IVI Surface mapped to Wayland Surface";
+        return "NotIviSurface";
+    }
+
     if (iviSurface->id() == WRS_IVI_ID_SURFACE_CAMERA) {
         return "Camera";
     } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_DIALOG) {
