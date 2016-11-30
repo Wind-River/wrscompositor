@@ -30,20 +30,13 @@ Item {
     property variant playlist: null
     property int track_index: -1
     property string soundcast_clientid: "c21ebb25eb644205d93434032620af47"
-    property bool widgetMode: true
+    property bool widgetMode: false
 
     width : parent.width
     height : root.widgetMode ? (artwork.height + root.width / 15):parent.height
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
-    /*
-    Rectangle {
-        color: "blue";
-        anchors.fill: parent
-        border.width: width/20
-        border.color: "red"
-    }
-    */
+
     Component.onCompleted: {
         var doc = new XMLHttpRequest();
         doc.onreadystatechange = function() {

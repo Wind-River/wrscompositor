@@ -20,6 +20,30 @@
  * THE SOFTWARE.
  */
 
+.pragma library
+
+var object = function (name, id) {
+    this.name = name;
+    this.id = id;
+}
+
+var objectList = new Array();
+
+function registerObjectItem (name, id) {
+    var newObject = new object(name, id);
+    objectList.push(newObject);
+}
+
+function findObjectIdByName(name) {
+    for (var index = 0; index < objectList.length; index++) {
+        var object = objectList[index];
+        if (object.name == name) {
+            return object.id;
+        }
+    }
+    return null;
+}
+
 var compositorLogic = null;
 function getCompositorInstance() {
     if (compositorLogic == null) {
@@ -30,20 +54,19 @@ function getCompositorInstance() {
 }
 
 var Compositor = function() {
+    this.wrscompositor = null;
     this.topWindow = null;
     this.bottomWindow = null;
-
     this.root = 0;
 
-    this.currentWidth = 0;
-    this.currentHeight = 0;
     this.displayWidth = 0;
     this.displayHeight = 0;
 
     this.iviScene = null;
- 
+
     this.windowList = new Array();
-    this.compositorRules = new Array();
+    this.compositorRule = new Array();
+    this.compositorRole = new Array();
 
     this.init = function() {
         var request = new XMLHttpRequest();
@@ -51,16 +74,18 @@ var Compositor = function() {
         request.onreadystatechange = function() {
             if (request.readyState == request.DONE) {
                 console.log("onreadystatechange, Done");
+
                 if (request.status == 200) {
                     var compositor = getCompositorInstance();
                     var jsonObject = JSON.parse(request.responseText);
+
                     var ruleData = jsonObject.Rule;
-                    for (var ruleKey in ruleData) {
-                        var layerId = parseInt(ruleData[ruleKey].split(":")[2]);
+                    for (var ruleKey in ruleData)
                         compositor.loadCompositorRule(ruleKey, ruleData[ruleKey]);
-                        var windowFrame = compositor.createQmlComponent(ruleKey);
-                        compositor.addWindow(windowFrame, layerId, false);
-                    }
+
+                    var roleData = jsonObject.Role;
+                    for (var roleKey in roleData)
+                        compositor.loadCompositorRole(roleKey, roleData[roleKey]);
 
                     compositor.relayoutWindows();
                 }
@@ -71,26 +96,22 @@ var Compositor = function() {
         request.send();
     }
 
-    this.createQmlComponent = function(name) {
-        return this.root.createQmlComponent(name);
+    this.loadCompositorRole = function (key, value) {
+        console.log("loadCompositorRole, key = ", key, " value = ", value);
+        this.compositorRole[key] = value;
     }
 
     this.loadCompositorRule = function(key, value) {
         console.log("loadCompositionRule, key = ", key, " value = ", value);
-        this.compositorRules[key] = value;
-    }
-
-    this.getLayerIdForWaylandSurface = function(name) {
-        for (var i = 0; i < this.windowList.length; i++) {
-            if (this.windowList[i].surfaceName == name) {
-                return this.windowList[i].layerId;
-            }
-        }
-        return -1;
+        this.compositorRule[key] = value;
     }
 
     this.setRootObject = function(root) {
         this.root = root;
+    }
+
+    this.setWrsCompositor = function (compositor) {
+        this.wrscompositor = compositor;
     }
 
     this.setIviScene = function(iviScene) {
@@ -98,27 +119,52 @@ var Compositor = function() {
     }
 
     this.setDisplaySize = function(width, height) {
-        this.currentHeight = this.displayHeight = height; 
-        this.currentWidth = this.displayWidth = width; 
+        this.displayHeight = height; 
+        this.displayWidth = width; 
+    }
+
+    this.getLayerIdIByRole = function(role) {
+        var roleValue = this.compositorRole[role];
+        var ruleValue = this.compositorRule[roleValue];
+        return parseInt(ruleValue.split(":")[2]);
+    }
+
+    this.getParentWindowByRole = function(role) {
+        var parentName;
+
+        switch (role) {
+            case 'Camera':
+            case 'Dialog':
+            case 'Navigation':
+            case 'Phone':
+            case 'Projection': 
+                parentName = this.compositorRole[role];
+                break;
+            default: {
+                parentName = this.compositorRole["Default"];
+            }
+        }
+
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i].name == parentName)
+                return this.windowList[i];
+        }
+
+        return null;
     }
 
     this.addLayer = function(id) {
-        if (this.iviScene.mainScreen.layerById(id) != null) {
+        var layer = this.iviScene.mainScreen.layerById(id);
+        if (layer != null) {
             console.log("Layer has already be created. Layer = ", id);
-            return;
+            return layer;
         }
-        this.iviScene.mainScreen.addLayer(id);
-        this.iviScene.mainScreen.layer(iviScene.mainScreen.layerCount()-1).visibility = 1;
-        this.iviScene.mainScreen.layer(iviScene.mainScreen.layerCount()-1).opacity = 1;
-    }
 
-    this.addSurfacePerLayer = function(id, window) {
-        var iviSurface = this.iviScene.createSurface(window.x, window.y, window.width, window.height, window);
-        this.iviScene.mainScreen.layerById(id).addSurface(iviSurface);
-        this.iviScene.addIVISurface(iviSurface);
+        layer = this.iviScene.mainScreen.addLayer(id);
+        layer.visibility = 1;
+        layer.opacity = 1;
 
-        window.iviSurface = iviSurface;
-        window.layerId = id;
+        return layer;
     }
 
     this.removeWindow = function(window) {
@@ -130,75 +176,269 @@ var Compositor = function() {
         }
     }
 
-    this.addWindow = function(window, id, wayland) {
-        this.addLayer(id);
-        this.addSurfacePerLayer(id, window);
-        if (wayland) {
-            window.iviSurface.setQWaylandSurface(window.surface); 
-            window.surfaceName = iviScene.getSurfaceRole(window.surface);
-        }
+    this.addWindow = function(window) {
         this.windowList.push(window);
-
-        console.log("addWindow, name = " + window.surfaceName, " layerId = " + window.layerId);
     }
 
-    this.updateWindow = function (window, ruleValue) {
+    this.createWaylandSurface = function(surface) {
+        var id = this.getLayerIdIByRole("Default");
+        var layer = this.iviScene.mainScreen.layerById(id);
+        if (layer == null)
+            return;
+
+        var iviSurface = layer.addSurface();
+        iviSurface.setQWaylandSurface(surface);
+        var role = this.wrscompositor.getSurfaceRole(surface);
+
+        switch (role) {
+            case 'Camera':
+            case 'Dialog':
+            case 'Navigation':
+            case 'Phone':
+            case 'Projection': {
+                layer.removeSurface(iviSurface);
+                id = this.getLayerIdIByRole(role);
+                layer = this.iviScene.mainScreen.layerById(id);
+                iviSurface = layer.addSurface();
+                iviSurface.setQWaylandSurface(surface);
+                break;
+            }
+        }
+
+        this.iviScene.mainScreen.setAppLayer(layer);
+    }
+
+    this.addWaylandSurface = function(surface) {
+        var role = this.wrscompositor.getSurfaceRole(surface);
+        var parentItem = this.getParentWindowByRole(role);
+
+        if (parentItem == null) {
+            console.log("windowAdded, cannot get parent item");
+            return;
+        }
+        
+        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
+        var windowFrame = windowContainerComponent.createObject(parentItem);
+
+        windowFrame.surface = surface;
+        windowFrame.iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
+        windowFrame.name = role;
+        windowFrame.surfaceItem = this.wrscompositor.item(surface);
+        windowFrame.surfaceItem.parent = windowFrame;
+        windowFrame.surfaceItem.touchEventsEnabled = true;
+
+        windowFrame.iviSurface.x = 0;
+        windowFrame.iviSurface.y = 0;
+        windowFrame.iviSurface.width = surface.size.width;
+        windowFrame.iviSurface.height = surface.size.height;
+        windowFrame.iviSurface.setQmlWindowFrame(windowFrame);
+
+        windowFrame.width = surface.size.width;
+        windowFrame.height = surface.size.height;
+        windowFrame.animationsEnabled = true;
+        windowFrame.targetX = 0;
+        windowFrame.targetY = 0;
+        windowFrame.targetWidth = parentItem.width;
+        windowFrame.targetHeight = parentItem.height;
+        windowFrame.scaledWidth = parentItem.width / this.displayWidth;
+        windowFrame.scaledHeight = parentItem.height / this.displayHeight;
+
+        this.addWindow(windowFrame);
+    }
+
+    this.destroyWaylandSurface = function(surface) {
+       var windowFrame = this.findBySurface(surface);
+       if (!windowFrame) {
+            console.log("windowDestroyed, cannot find surface in windowList");
+            return;
+        }
+
+        console.log('window destroyed '+ surface);
+        windowFrame.destroy();
+
+        this.removeWindow(windowFrame);
+    }
+
+    this.initWindow = function (ruleKey, ruleValue) {
         var sizes = ruleValue.split(":")[0];
-        var align = ruleValue.split(":")[1];
+        var position = ruleValue.split(":")[1];
+        var order = parseInt(ruleValue.split(":")[2]);
 
-        var widthSize = parseInt(sizes.split("x")[0]);
-        var heightSize = parseInt(sizes.split("x")[1]);
+        var widthScale = parseInt(sizes.split("x")[0]);
+        var heightScale = parseInt(sizes.split("x")[1]);
 
-        var targetWidth = this.currentWidth * widthSize / 100;
-        var targetHeight = this.currentHeight * heightSize / 100;
+        var targetWidth = this.displayWidth * widthScale / 100;
+        var targetHeight = this.displayHeight * heightScale / 100;
 
-        console.log("updateWindowSize, name = " + window.surfaceName);
-        console.log("updateWindowSize, align = " + align, " widthSize =", widthSize, " heightSize =", heightSize);
+        console.log("initWindow, ruleKey = ", ruleKey);
+        console.log("initWindow, position = " + position, " widthScale =", widthScale, " heightScale =", heightScale);
+        console.log("initWindow, targetWidth = ", targetWidth, " targetHeight = ", targetHeight);
 
-        switch (align) {
-            case 'top': {
+        var layer = this.addLayer(order);
+        var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, order);
+        var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window);
+        window.iviSurface = iviSurface;
+
+        switch (position) {
+            case 'topCenter': 
+            {
                 this.topWindow = window;
-                window.positionAligned('top', this.root.top);
+                window.anchors.top = this.root.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
                 break;
             }
 
-            case 'bottom': {
+            case 'topLeft': 
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'topRight': 
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'bottomCenter': 
+            {
                 this.bottomWindow = window;
-                window.positionAligned('bottom', this.root.bottom);
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'bottomLeft': 
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'bottomRight':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleCenter':
+            {
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                break;
+            }
+
+            case 'middleCenterTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?  
+                                      this.root.anchors.top : this.topWindow.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleCenterBottom': 
+            {
+                window.anchors.bottom = (this.bottomWindow == null) ?  
+                                         this.root.bottom : this.bottomWindow.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleLeft':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?  
+                                      this.root.top : this.topWindow.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftBottom':
+            {
+                window.anchors.left = this.root.left;
+                window.anchors.bottom = (this.bottomWindow == null) ?  
+                                         this.root.bottom : this.bottomWindow.top;
                 break;
             }
 
             case 'middleRight':
-            case 'middleLeft': {
-                window.positionAligned(
-                    (align == 'middleRight') ?  'right' : 'light',
-                    (align == 'middleRight') ?   this.root.right : this.root.left
-                    );
-
-                if (this.topWindow)
-                    window.positionAligned('top', this.topWindow.bottom);
-                else if (this.bottomWindow)
-                    window.positionAligned('bottom', this.bottomWindow.top);
-                
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.right = this.root.right;
                 break;
+            }
+
+            case 'middleRightTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?  
+                                     this.root.top : this.topWindow.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightBottom':
+            {
+                window.anchors.right = this.root.right;
+                window.anchors.bottom = (this.bottomWindow == null) ?  
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            default: {
+                console.log("onPositionAligned, Invalid align");
+                return;
             }
         }
 
-        window.sizeChanged(targetWidth, targetHeight);
-    }
+        this.addWindow(window);
 
-    this.checkCompositorRule = function(window, rule) {
-        return (rule == window.surfaceName) ? true : false;
     }
 
     this.relayoutWindows = function() {
-        for (var ruleKey in this.compositorRules) {
-            var ruleValue = this.compositorRules[ruleKey];
-            for (var i = 0; i < this.windowList.length; i++) {
-                var isRuleAccpeted = this.checkCompositorRule(this.windowList[i], ruleKey);
-                if (isRuleAccpeted)
-                    this.updateWindow(this.windowList[i], ruleValue);
-            }
+        for (var ruleKey in this.compositorRule) {
+            var ruleValue = this.compositorRule[ruleKey];
+            this.initWindow(ruleKey, ruleValue)
         }
+    }
+
+    this.findBySurface = function(surface) {
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i].surface == surface)
+                return this.windowList[i];
+        }
+        return null;
+    }
+
+    this.createQmlComponent = function(name, x, y, width, height, order) {
+        var qmlName = name.concat(".qml");
+
+        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
+        var component = Qt.createComponent(qmlName);
+
+        var windowFrame = windowContainerComponent.createObject(this.root, {"x": x, "y": y, "width": width, "height": height, "z": order});
+
+        var surface = component.createObject(windowFrame);
+        windowFrame.surface = surface;
+        windowFrame.name = name;
+
+        return windowFrame;
+    }
+
+    this.createDynamicItemObject = function(parentItem, width, height, order) {
+        var newObject = Qt.createQmlObject('import QtQuick 2.0; Rectangle { width: ('+width+'); height: ('+height+'); z: ('+order+'); color: "#00FFFFFF"}', parentItem, "");
+        return newObject;
     }
  }

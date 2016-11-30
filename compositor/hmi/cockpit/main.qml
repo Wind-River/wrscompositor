@@ -41,8 +41,6 @@ Item {
     property variant waitProcess: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
-    signal addedWaylandSurfaceWindow(variant surface);
-
     onHasFullscreenWindowChanged: {
         console.log("has fullscreen window: " + hasFullscreenWindow);
     }
@@ -52,28 +50,10 @@ Item {
         if (compositorLogic) {
             compositorLogic.setRootObject(root);
             compositorLogic.setIviScene(iviScene);
+            compositorLogic.setWrsCompositor(compositor);
             compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);
             compositorLogic.init();
         }
-    }
-
-    onAddedWaylandSurfaceWindow: {
-        var background = Conf.findObjectIdByName("MainMenu");
-        var id = compositorLogic.getLayerIdForWaylandSurface("MainMenu");
-
-        if (background == null) {
-            console.log("Cannot get background id");
-            return;
-        }
-
-        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowFrame = windowContainerComponent.createObject(background);
-
-        windowFrame.surface = surface;
-        windowFrame.surfaceItem = compositor.item(surface);
-        windowFrame.surfaceItem.parent = windowFrame;
-        windowFrame.surfaceItem.touchEventsEnabled = true;
-        compositorLogic.addWindow(windowFrame, id, true);
     }
 
     onWidthChanged: {
@@ -83,35 +63,26 @@ Item {
         Conf.displayHeight = height;
     }
 
-    function windowDestroyed(surface) {
+    function surfaceCreated(surface) {
+        console.log("surface created ", surface); 
+        compositorLogic.createWaylandSurface(surface);
+        return true;
+    }
 
+    function windowDestroyed(surface) {
+        console.log("surface destroyed ", surface);
+        compositorLogic.destroyWaylandSurface(surface);
     }
 
     function windowAdded(surface) {
         console.log('surface added ' + surface);
         console.log('surface added title:' + surface.title);
         console.log('surface added className:' + surface.className);
-        console.log('surface added client: ' + surface.client);
-        console.log('surface added pid: ' + surface.client.processId);
-        console.log('surface added cmd: ' + util.getCmdForPid(surface.client.processId));
+        console.log('surface added width: ' + surface.size.width);
+        console.log('surface added height: ' + surface.size.height);
         console.log(iviScene.mainScreen);
         console.log(iviScene.mainScreen.layerCount());
 
-        addedWaylandSurfaceWindow(surface);
-    }
-
-    function createQmlComponent(name) {
-        var qmlName = name.concat(".qml");
-
-        var windowContainerComponent = Qt.createComponent("WindowFrame.qml", Component.PreferSynchronous);
-        var component = Qt.createComponent(qmlName, Component.PreferSynchronous);
-
-        var windowFrame = windowContainerComponent.createObject(root);
-        var surface = component.createObject(windowFrame);
-
-        windowFrame.surface = surface;
-        windowFrame.surfaceName = name;
-
-        return windowFrame;
+        compositorLogic.addWaylandSurface(surface);
     }
 }
