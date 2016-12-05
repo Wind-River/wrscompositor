@@ -20,14 +20,35 @@
  * THE SOFTWARE.
  */
 
-#include "skobblernavi.h"
+#include "qwaylandivisurface.h"
 
-int main(int argc, char * argv[])
+namespace QtWaylandClient {
+
+QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface, QWaylandWindow *window)
+    : QtWayland::ivi_surface(ivi_surface)
+    , mWindow(window)
 {
-    QApplication app(argc, argv);
+}
 
-    SkobblerNavi w;
-    w.show();
+QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface, QWaylandWindow *window,
+                                       struct ::ivi_controller_surface *iviControllerSurface)
+    : QtWayland::ivi_surface(ivi_surface)
+    , QtWayland::ivi_controller_surface(iviControllerSurface)
+    , mWindow(window)
+{
+}
 
-    return app.exec();
+QWaylandIviSurface::~QWaylandIviSurface()
+{
+    ivi_surface::destroy();
+    if (QtWayland::ivi_controller_surface::object())
+        QtWayland::ivi_controller_surface::destroy(0);
+}
+
+void QWaylandIviSurface::ivi_surface_configure(int32_t width, int32_t height)
+{
+    qDebug() << " QWaylandIviSurface::ivi_surface_configure, width = " << width << " height = " << height;
+    this->mWindow->configure(0, width, height);
+}
+
 }

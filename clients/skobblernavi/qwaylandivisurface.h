@@ -20,14 +20,33 @@
  * THE SOFTWARE.
  */
 
-#include "skobblernavi.h"
+#ifndef QWAYLANDIVISURFACE_H
+#define QWAYLANDIVISURFACE_H
 
-int main(int argc, char * argv[])
+#include <QDebug>
+#include <QtWaylandClient/private/qwaylandwindow_p.h>
+#include "qwayland-ivi-application.h"
+#include "qwayland-ivi-controller.h"
+
+namespace QtWaylandClient {
+
+class QWaylandWindow;
+class QWindow;
+
+class QWaylandIviSurface : public QtWayland::ivi_surface
+        , public QtWayland::ivi_controller_surface
 {
-    QApplication app(argc, argv);
+public:
+    QWaylandIviSurface(struct ::ivi_surface *ivi_surface, QWaylandWindow *window);
+    QWaylandIviSurface(struct ::ivi_surface *ivi_surface, QWaylandWindow *window,
+                       struct ::ivi_controller_surface *iviControllerSurface);
+    virtual ~QWaylandIviSurface();
+private:
+    virtual void ivi_surface_configure(int32_t width, int32_t height) Q_DECL_OVERRIDE;
 
-    SkobblerNavi w;
-    w.show();
+    QWaylandWindow *mWindow;
+};
 
-    return app.exec();
 }
+
+#endif // QWAYLANDIVISURFACE_H
