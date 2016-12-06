@@ -36,7 +36,6 @@ show_help() {
     echo "  --without-maindisplay       build without main display"
     echo "  --enable-webengine          Use WebEngine instead of WebKit for WebRuntime"
     echo "  --enable-vthandler          Use VT Handler to switch Virtual Terminal"
-    echo "  --enable-virtualkeyboard    Use VirtualKebyaord to send key code to application"
     echo "  --target-device=NAME        Set JS configuration for specific target device"
     echo "  --hmi-profile=NAME          Set HMI Profile"
     echo "  --overwrite                 overwrite existing config.js by new target/hmi config"
@@ -77,7 +76,6 @@ SUPPORT_REARDISPLAY=0
 SUPPORT_WLCOMPOSITOR=1
 SUPPORT_WEBENGINE=0
 SUPPORT_VTHANDLER=0
-SUPPORT_VIRTUAL_KEYBOARD=0
 SUPPORT_DBUS=1
 MANUAL_QMAKE=0
 TARGET_DEVICE=x11
@@ -98,9 +96,6 @@ for opt do
             ;;
         --enable-vthandler)
             SUPPORT_VTHANDLER=1
-            ;;
-        --enable-virtualkeyboard)
-            SUPPORT_VIRTUAL_KEYBOARD=1
             ;;
         --with-digitalcluster)
             SUPPORT_DCLUSTER=1
@@ -308,7 +303,6 @@ cat compositor/config.h.in | sed \
     -e "s/WRSCOMPOSITOR_WAYLAND_COMPOSITOR 0/WRSCOMPOSITOR_WAYLAND_COMPOSITOR $SUPPORT_WLCOMPOSITOR/" \
     -e "s/WRSCOMPOSITOR_WEBENGINE 0/WRSCOMPOSITOR_WEBENGINE $SUPPORT_WEBENGINE/" \
     -e "s/WRSCOMPOSITOR_VTHANDLER 0/WRSCOMPOSITOR_VTHANDLER $SUPPORT_VTHANDLER/" \
-    -e "s/WRSCOMPOSITOR_VIRTUAL_KEYBOARD 0/WRSCOMPOSITOR_VIRTUAL_KEYBOARD $SUPPORT_VIRTUAL_KEYBOARD/" \
     -e "s/WRSCOMPOSITOR_DBUS 0/WRSCOMPOSITOR_DBUS $SUPPORT_DBUS/" \
     -e "s/DEFAULT_TARGET_DEVICE/$TARGET_DEVICE/" \
     -e "s/DEFAULT_HMI_PROFILE/$HMI_PROFILE/" \
