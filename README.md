@@ -1,9 +1,9 @@
 # ##########################################################
 #
-# Windriver WRSCompoistor based on QtWayland and compatible with GENIVI Wayland Extenstion Protocol
+# Wind River WRSCompoistor based on QtWayland and compatible with GENIVI Wayland Extenstion Protocol
 # Supported Platform
 # 1. GENIVI/AGL platform
-# 2. Windriver Helix Cockpit platform
+# 2. Wind River Helix Cockpit platform
 #
 # ##########################################################
 
@@ -150,5 +150,6 @@ $ skobblernavi
 
 
 ### Legal Notices
+All product names, logos, and brands are property of their respective owners. All company, product and service names used in this software are for identification purposes only. Wind River is a registered trademarks of Wind River Systems.  Linux is the registered trademark of Linus Torvalds. GENIVI is registered trademarks of the GENIVI Alliance.
 
 Disclaimer of Warranty / No Support: Wind River does not provide support and maintenance services for this software, under Wind River’s standard Software Support and Maintenance Agreement or otherwise. Unless required by applicable law, Wind River provides the software (and each contributor provides its contribution) on an “AS IS” BASIS, WITHOUT WARRANTIES OF ANY KIND, either express or implied, including, without limitation, any warranties of TITLE, NONINFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR PURPOSE. You are solely responsible for determining the appropriateness of using or redistributing the software and assume any risks associated with your exercise of permissions under the license.
