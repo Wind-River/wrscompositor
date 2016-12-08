@@ -392,6 +392,11 @@ echo "PREFIX=$PREFIX" > clients/skobblernavi/skobblernavi.pro
 cat clients/skobblernavi/skobblernavi.pro.in >> clients/skobblernavi/skobblernavi.pro
 echo $'\r'"Generating skobblernavi.pro .................................... Done"
 
+printf "Generating phone.pro ..."
+echo "PREFIX=$PREFIX" > clients/phone/phone.pro
+cat clients/phone/phone.pro.in >> clients/phone/phone.pro
+echo $'\r'"Generating phone.pro .................................... Done"
+
 if [ "$MANUAL_QMAKE" = "0" ]; then
     $QMAKEPATH $OPTARGS && echo "Makefile generated"
 else

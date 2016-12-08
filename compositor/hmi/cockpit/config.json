@@ -13,7 +13,7 @@
         "Default": "BackGround",
         "Navigation": "SidePanelHVAC",
         "Dialog": "Popup",
-        "Phone": "SidePanelHVAC",
+        "Phone": "SidePanelMedia",
         "Projection": "FullScreen",
         "Camera": "FullScreen"
     }

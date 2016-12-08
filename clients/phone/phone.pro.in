@@ -1,0 +1,25 @@
+QT += quickwidgets widgets quick
+QT += waylandclient-private
+CONFIG += wayland-scanner
+
+!contains(QT_CONFIG, no-pkg-config) {
+    PKGCONFIG += wayland-client wayland-cursor
+    CONFIG += link_pkgconfig
+} else {
+    LIBS += -lwayland-client -lwayland-cursor
+}
+
+WAYLANDCLIENTSOURCES += \
+    ../protocol/ivi-application.xml \
+    ../protocol/ivi-controller.xml
+
+LOCAL_SOURCES = main.cpp phone.cpp qwaylandivisurface.cpp
+LOCAL_HEADERS = phone.h qwaylandivisurface.h
+
+SOURCES += $$LOCAL_SOURCES
+HEADERS += $$LOCAL_HEADERS
+RESOURCES += phone.qrc
+
+output.files = phone
+output.path = $$PREFIX/bin
+INSTALLS += output
