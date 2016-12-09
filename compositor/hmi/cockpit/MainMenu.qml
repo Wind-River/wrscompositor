@@ -56,17 +56,13 @@ Item {
     }
 
     function launchNative(appid) {
-        var unitFile = appid + ".service"
-        var pid = systemd_dbusClient.getPidByUnitFile(unitFile);
-        if (pid < 0)
-            return;
-
-        if (pid == 0) {
-            console.log("launchNative, native app is launched by systemd. native app = " + appid);
-            systemd_dbusClient.startUnit(unitFile);
-        } else {
-            console.log("launchNative, native app has already launched by systemd. native app = " + appid);
-            root.raiseWindowByProcessId(pid);
+        for (var i = 0; i < nativeAppsView.count; i++) {
+            var app = nativeAppsView.model.get(i);
+            if (appid == app.description) {
+                console.log("launchNative, app = ", appid);
+                var delegateItem = nativeAppsView.getDelegateInstanceAt(i);
+                delegateItem.launch();
+            }
         }
     }
 
@@ -90,8 +86,8 @@ Item {
             unitFile: "skobblernavi.service"
         }
         ListElement {
-            label: "Video"
-            description: "Video"
+            label: "Media"
+            description: "Media"
             exec: "/usr/bin/mediaplayer"
             multiple: false
             systemd: false
@@ -109,20 +105,15 @@ Item {
         }
     }
 
-    GridView {
-        id: grid
-        model: nativeApps
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        width: parent.width*0.8
-        height: parent.height*0.8
-        cellWidth: ((width/4.0)|0)
-        cellHeight: cellWidth
-        delegate:  Item {
+    Component {
+        id: nativeAppsDelegate
+        Item {
+            id: delegateItem
             property variant window: null
             property bool pressed: false
-            width: ((grid.cellWidth * 0.8) | 0)
-            height: ((grid.cellHeight * 0.8) | 0)
+            width: ((nativeAppsView.cellWidth * 0.8) | 0)
+            height: ((nativeAppsView.cellHeight * 0.8) | 0)
+
             function launch() {
                 var pid = systemd ? systemd_unit.pid : process.pid;
                 window = systemd ? systemd_unit.window : process.window;
@@ -189,7 +180,7 @@ Item {
                     id: iconMouseArea
                     anchors.fill: parent
                     onClicked: {
-                        grid.currentIndex = index;
+                        nativeAppsView.currentIndex = index;
                         launch();
                     }
                 }
@@ -228,9 +219,35 @@ Item {
                 smooth: true
             }
         }
+    }
+
+    GridView {
+        id: nativeAppsView
+        model: nativeApps
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        width: parent.width*0.8
+        height: parent.height*0.8
+        cellWidth: ((width/4.0)|0)
+        cellHeight: cellWidth
+        delegate: nativeAppsDelegate
         highlight: Rectangle {
             color: "lightsteelblue";
             radius: 5
+        }
+
+        function getDelegateInstanceAt(index) {
+            console.log("getDelegateInstanceAt[" + index + "]");
+
+            var len = contentItem.children.length;
+            console.log("getDelegateInstanceAt: len[" + len + "]");
+
+            if (len > 0 && index > -1 && index < len) {
+                return contentItem.children[index];
+            } else {
+                console.log("getDelegateInstanceAt: index[" + index + "] is invalid for len[" + len + "]");
+                return undefined;
+            }
         }
     }
 
@@ -238,10 +255,10 @@ Item {
         Logic.registerObjectItem("MainMenu", mainMenu);
     }
 
-    Keys.onLeftPressed: { grid.moveCurrentIndexLeft(); event.accepted = true}
-    Keys.onRightPressed: { grid.moveCurrentIndexRight(); event.accepted = true}
-    Keys.onUpPressed: { grid.moveCurrentIndexUp(); event.accepted = true}
-    Keys.onDownPressed: { grid.moveCurrentIndexDown(); event.accepted = true}
-    Keys.onReturnPressed: { grid.currentItem.pressed = true; grid.currentItem.launch(); event.accepted = true}
-    Keys.onReleased: { grid.currentItem.pressed = false; if(event.key == Qt.Key_F2) { grid.currentItem.quit(); event.accepted = true }}
+    Keys.onLeftPressed: { nativeAppsView.moveCurrentIndexLeft(); event.accepted = true}
+    Keys.onRightPressed: { nativeAppsView.moveCurrentIndexRight(); event.accepted = true}
+    Keys.onUpPressed: { nativeAppsView.moveCurrentIndexUp(); event.accepted = true}
+    Keys.onDownPressed: { nativeAppsView.moveCurrentIndexDown(); event.accepted = true}
+    Keys.onReturnPressed: { nativeAppsView.currentItem.pressed = true; nativeAppsView.currentItem.launch(); event.accepted = true}
+    Keys.onReleased: { nativeAppsView.currentItem.pressed = false; if(event.key == Qt.Key_F2) { nativeAppsView.currentItem.quit(); event.accepted = true }}
 }
