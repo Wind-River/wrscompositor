@@ -98,6 +98,15 @@ Item {
             iconPath: "icons/native-video.png"
             unitFile: "mediaplayer.service"
         }
+        ListElement {
+            label: "Phone"
+            description: "Phone"
+            exec: "/usr/bin/phone"
+            multiple: false
+            systemd: false
+            iconPath: "icons/native-phone.png"
+            unitFile: "phone.service"
+        }
     }
 
     GridView {
