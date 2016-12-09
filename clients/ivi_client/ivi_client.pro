@@ -19,8 +19,8 @@ config_xkbcommon {
 }
 
 WAYLANDCLIENTSOURCES += \
-    protocols/ivi-application.xml \
-    protocols/ivi-controller.xml
+    ../protocol/ivi-application.xml \
+    ../protocol/ivi-controller.xml
 
 HEADERS += \
     qtwaylandivisurface.h \
