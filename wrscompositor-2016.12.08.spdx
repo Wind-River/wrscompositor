@@ -1,0 +1,2099 @@
+SPDXVersion: SPDX-2.1 
+
+##------------------------------------------------------ 
+##			   SPDX 2.1 by Wind River 
+##------------------------------------------------------ 
+ 
+ 
+##------------------------- 
+## Document Information 
+##------------------------- 
+
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: wrscompositor-master.zip
+DocumentNamespace:  http://spdx.windriver.com/Reports2.0/38134768015d8705e420f8566630036dae76daca
+DocumentComment: <text>This file contains computer automated SPDX data. Computer automated data is created by using only computer automation analysis on the source code files contained in the package. That is, no human experts participated in the source code analysis. Although we continuously work to improve the quality by adding and/or improving various heuristics, and accessing different databases and rule-based systems, the quality is bounded by what can be achieved by way of computer automation. Please send your feedback to: spdx@WindRiver.com.  DISCLAIMER: This document is provided "as is" without any warranty whatsoever. This documentation may not be referenced or relied upon for its accuracy or comprehensiveness, or to determine legal obligations with respect to open source code contained in the software package it represents. Such determinations should be based upon recipient's independent legal analysis and by reference to the notices and licenses contained within the open source code itself. Wind River may change the contents of this document at any time at its sole discretion, and Wind River shall have no liability whatsoever arising from recipient's use of this information. </text>
+LicenseListVersion: 2.0
+
+
+##-------------------------
+## Creation Information
+##-------------------------
+Creator: Tool: The Duke of Highlander
+Created: 2016-12-08T11:07:21Z
+CreatorComment: <text> DISCLAIMER: This document is provided "as is" without any warranty whatsoever. This documentation may not be referenced or relied upon for its accuracy or comprehensiveness, or to determine legal obligations with respect to open source code contained in the software package it represents. Such determinations should be based upon recipient's independent legal analysis and by reference to the notices and licenses contained within the open source code itself. Wind River may change the contents of this document at any time at its sole discretion, and Wind River shall have no liability whatsoever arising from recipient's use of this information.</text>
+
+
+
+##-------------------------
+## Package Information
+##-------------------------
+
+PackageName: wrscompositor-master.zip
+SPDXID: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca
+PackageFileName: wrscompositor-master.zip
+PackageDownloadLocation: NOASSERTION
+FilesAnalyzed: true
+PackageChecksum: SHA1: 38134768015d8705e420f8566630036dae76daca
+## -------------- Package Licensing --------------
+PackageLicenseConcluded: CC-BY-3.0
+PackageLicenseDeclared: CC-BY-3.0
+PackageLicenseInfoFromFiles: MIT
+PackageLicenseInfoFromFiles: GPL-1.0+
+PackageLicenseInfoFromFiles: Beerware
+PackageLicenseInfoFromFiles: BSD-2-Clause
+PackageLicenseInfoFromFiles: CC-BY-3.0
+PackageCopyrightText: NOASSERTION
+
+
+##--------------------------
+## File Information
+##--------------------------
+
+FileName: ./wrscompositor-master/.gitignore
+SPDXID: SPDXRef-01-File-.gitignore-cb4b007a455e744e6d3dfd392acabd701917eae2
+FileType: OTHER
+FileChecksum: SHA1: cb4b007a455e744e6d3dfd392acabd701917eae2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/01d.svg
+SPDXID: SPDXRef-11-File-01d.svg-8dcf3e839b364838783a7732856a65a3fce181e5
+FileType: IMAGE
+FileChecksum: SHA1: 8dcf3e839b364838783a7732856a65a3fce181e5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/01n.svg
+SPDXID: SPDXRef-21-File-01n.svg-6c1082a346eac03f64ee9a3b791b5bda530c4e31
+FileType: IMAGE
+FileChecksum: SHA1: 6c1082a346eac03f64ee9a3b791b5bda530c4e31
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/02d.svg
+SPDXID: SPDXRef-31-File-02d.svg-030191b33f057ba14779f64ec1589d347d2d5a2d
+FileType: IMAGE
+FileChecksum: SHA1: 030191b33f057ba14779f64ec1589d347d2d5a2d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/03d.svg
+SPDXID: SPDXRef-41-File-03d.svg-b2685b9998aff4335d720e108a8df7339e50236c
+FileType: IMAGE
+FileChecksum: SHA1: b2685b9998aff4335d720e108a8df7339e50236c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/09d.svg
+SPDXID: SPDXRef-51-File-09d.svg-1f7f731f07768ebe5b75173eb4a6975862c3bf35
+FileType: IMAGE
+FileChecksum: SHA1: 1f7f731f07768ebe5b75173eb4a6975862c3bf35
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/10d.svg
+SPDXID: SPDXRef-61-File-10d.svg-a98ed7fa66048d1127128b98c2746b45d02c78de
+FileType: IMAGE
+FileChecksum: SHA1: a98ed7fa66048d1127128b98c2746b45d02c78de
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/11d.svg
+SPDXID: SPDXRef-71-File-11d.svg-59df7684fb7de2d31af47d3f5d67d6f17ce1ca03
+FileType: IMAGE
+FileChecksum: SHA1: 59df7684fb7de2d31af47d3f5d67d6f17ce1ca03
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/13d.svg
+SPDXID: SPDXRef-81-File-13d.svg-3554d2ead7737475547610fd49701504c3109560
+FileType: IMAGE
+FileChecksum: SHA1: 3554d2ead7737475547610fd49701504c3109560
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/CompositorElement.qml
+SPDXID: SPDXRef-91-File-CompositorElement.qml-de578f144bf75e126e666529aa32e78f36825749
+FileType: OTHER
+FileChecksum: SHA1: de578f144bf75e126e666529aa32e78f36825749
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/CompositorLayout.js
+SPDXID: SPDXRef-101-File-CompositorLayout.js-16426a2343b4cdc66349980478f2be764a9dad89
+FileType: SOURCE
+FileChecksum: SHA1: 16426a2343b4cdc66349980478f2be764a9dad89
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/DockBar.qml
+SPDXID: SPDXRef-111-File-DockBar.qml-912128326708c4ad451b832ad0e56a7432146a34
+FileType: OTHER
+FileChecksum: SHA1: 912128326708c4ad451b832ad0e56a7432146a34
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/video/Drive_Tomorrow_1.ogv
+SPDXID: SPDXRef-121-File-Drive_Tomorrow_1.ogv-193cc64d1b93086adf9bc905760726f4ab573cb0
+FileType: VIDEO
+FileChecksum: SHA1: 193cc64d1b93086adf9bc905760726f4ab573cb0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/video/Drive_Tomorrow_2.ogv
+SPDXID: SPDXRef-131-File-Drive_Tomorrow_2.ogv-88525dd0e3bb76149f69dd82360a95a680c69ed5
+FileType: VIDEO
+FileChecksum: SHA1: 88525dd0e3bb76149f69dd82360a95a680c69ed5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/video/Drive_Tomorrow_3.ogv
+SPDXID: SPDXRef-141-File-Drive_Tomorrow_3.ogv-1cb58d061a692db4a85b66bf88b1e23045a2741c
+FileType: VIDEO
+FileChecksum: SHA1: 1cb58d061a692db4a85b66bf88b1e23045a2741c
+LicenseConcluded: GPL-1.0+
+LicenseInfoInFile: GPL-1.0+
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/InputPanel.qml
+SPDXID: SPDXRef-151-File-InputPanel.qml-9b8a264e6f5e57ef0307020261e5b4b144907d40
+FileType: OTHER
+FileChecksum: SHA1: 9b8a264e6f5e57ef0307020261e5b4b144907d40
+LicenseConcluded: Beerware
+LicenseInfoInFile: Beerware
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/KeyButton.qml
+SPDXID: SPDXRef-161-File-KeyButton.qml-a31dc28e6281ee12469a0b9f116f15ef0c0db5c9
+FileType: OTHER
+FileChecksum: SHA1: a31dc28e6281ee12469a0b9f116f15ef0c0db5c9
+LicenseConcluded: Beerware
+LicenseInfoInFile: Beerware
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/KeyModel.qml
+SPDXID: SPDXRef-171-File-KeyModel.qml-234888cc3fab4635194422b563d7d88ef3142734
+FileType: OTHER
+FileChecksum: SHA1: 234888cc3fab4635194422b563d7d88ef3142734
+LicenseConcluded: Beerware
+LicenseInfoInFile: Beerware
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/html5/LICENSE
+SPDXID: SPDXRef-181-File-LICENSE-1f6ae307581d6a6ef10d0d0ee958a283e1dfbd33
+FileType: OTHER
+FileChecksum: SHA1: 1f6ae307581d6a6ef10d0d0ee958a283e1dfbd33
+LicenseConcluded: BSD-2-Clause
+LicenseInfoInFile: BSD-2-Clause
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/LICENSE-NOTICES.txt
+SPDXID: SPDXRef-191-File-LICENSE-NOTICES.txt-8d07172238971001b18a73190a601aaccc069f31
+FileType: DOCUMENTATION
+FileType: TEXT
+FileChecksum: SHA1: 8d07172238971001b18a73190a601aaccc069f31
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/LauncherBar.qml
+SPDXID: SPDXRef-201-File-LauncherBar.qml-154eb3d9d54b942ac2c48fc92da7ac26a79573d0
+FileType: OTHER
+FileChecksum: SHA1: 154eb3d9d54b942ac2c48fc92da7ac26a79573d0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/LauncherWindow.qml
+SPDXID: SPDXRef-211-File-LauncherWindow.qml-7a9cfb1927a7a83062ee71bec258bdac536f1cbd
+FileType: OTHER
+FileChecksum: SHA1: 7a9cfb1927a7a83062ee71bec258bdac536f1cbd
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.gmail.com"</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/MainMenu.qml
+SPDXID: SPDXRef-221-File-MainMenu.qml-c0459c0dca61d4121fc2ba752528f410c6c319d5
+FileType: OTHER
+FileChecksum: SHA1: c0459c0dca61d4121fc2ba752528f410c6c319d5
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/Playlist.qml
+SPDXID: SPDXRef-231-File-Playlist.qml-37e926a01b897d345f04769dab6089262fb0324d
+FileType: OTHER
+FileChecksum: SHA1: 37e926a01b897d345f04769dab6089262fb0324d
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/Process.cpp
+SPDXID: SPDXRef-241-File-Process.cpp-210dba79dd9a4da600b5ec7f29c9d62f445bd6da
+FileType: SOURCE
+FileChecksum: SHA1: 210dba79dd9a4da600b5ec7f29c9d62f445bd6da
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/Process.h
+SPDXID: SPDXRef-251-File-Process.h-9e935cfcf6e7a820596dae48f3397fe6431dc2ef
+FileType: SOURCE
+FileChecksum: SHA1: 9e935cfcf6e7a820596dae48f3397fe6431dc2ef
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/README.md
+SPDXID: SPDXRef-261-File-README.md-b68037b6c46c9d31d9dc980ae48d59c9471c88a6
+FileType: OTHER
+FileChecksum: SHA1: b68037b6c46c9d31d9dc980ae48d59c9471c88a6
+LicenseConcluded: CC-BY-3.0
+LicenseInfoInFile: CC-BY-3.0
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/RingIcon.qml
+SPDXID: SPDXRef-271-File-RingIcon.qml-5fdc89a3a484e985c828ba38ce2f2edc5fadbae5
+FileType: OTHER
+FileChecksum: SHA1: 5fdc89a3a484e985c828ba38ce2f2edc5fadbae5
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/SidePanel.qml
+SPDXID: SPDXRef-281-File-SidePanel.qml-8329cd2cf19ad4c918b28803dcddd44c19a1811c
+FileType: OTHER
+FileChecksum: SHA1: 8329cd2cf19ad4c918b28803dcddd44c19a1811c
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/SidePanelDialer.qml
+SPDXID: SPDXRef-291-File-SidePanelDialer.qml-5e1c3eef2c95b493184858b29c56649337a2f274
+FileType: OTHER
+FileChecksum: SHA1: 5e1c3eef2c95b493184858b29c56649337a2f274
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/SidePanelHVAC.qml
+SPDXID: SPDXRef-301-File-SidePanelHVAC.qml-587c6da7b8731487527f12e842391e5a232938db
+FileType: OTHER
+FileChecksum: SHA1: 587c6da7b8731487527f12e842391e5a232938db
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/SidePanelMedia.qml
+SPDXID: SPDXRef-311-File-SidePanelMedia.qml-ee725b160f7b82005356dbcfcb83634ba550decd
+FileType: OTHER
+FileChecksum: SHA1: ee725b160f7b82005356dbcfcb83634ba550decd
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/StatusBar.qml
+SPDXID: SPDXRef-321-File-StatusBar.qml-f7497c7bd6c60c596c7f13a5accef7499ea58b3f
+FileType: OTHER
+FileChecksum: SHA1: f7497c7bd6c60c596c7f13a5accef7499ea58b3f
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/StatusBar.qml
+SPDXID: SPDXRef-331-File-StatusBar.qml-fe8f573b99d97661f5904b2362c315cd679f9c49
+FileType: OTHER
+FileChecksum: SHA1: fe8f573b99d97661f5904b2362c315cd679f9c49
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/fonts/Tungsten-Book.otf
+SPDXID: SPDXRef-341-File-Tungsten-Book.otf-fd66f2358eb7cb452cf2bbf0716c10d175601b3f
+FileType: OTHER
+FileChecksum: SHA1: fd66f2358eb7cb452cf2bbf0716c10d175601b3f
+LicenseConcluded: null
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/fonts/Tungsten-Light.otf
+SPDXID: SPDXRef-351-File-Tungsten-Light.otf-5b6d8e934fe81154c6eb7b4fe5d8e8ff89f616ae
+FileType: OTHER
+FileChecksum: SHA1: 5b6d8e934fe81154c6eb7b4fe5d8e8ff89f616ae
+LicenseConcluded: null
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/fonts/Tungsten-Medium.otf
+SPDXID: SPDXRef-361-File-Tungsten-Medium.otf-f196d59ab5642293cf8036fb562314b1a201f001
+FileType: OTHER
+FileChecksum: SHA1: f196d59ab5642293cf8036fb562314b1a201f001
+LicenseConcluded: null
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/fonts/Tungsten-Thin.otf
+SPDXID: SPDXRef-371-File-Tungsten-Thin.otf-ab5f05a3c9ded0cbaefc9ceb7bed8d7260536de0
+FileType: OTHER
+FileChecksum: SHA1: ab5f05a3c9ded0cbaefc9ceb7bed8d7260536de0
+LicenseConcluded: null
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/WindowFrame.qml
+SPDXID: SPDXRef-381-File-WindowFrame.qml-d5a1d0fb3b77ad90d9f36af02c61ab1a87634008
+FileType: OTHER
+FileChecksum: SHA1: d5a1d0fb3b77ad90d9f36af02c61ab1a87634008
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/album-cover.png
+SPDXID: SPDXRef-391-File-album-cover.png-3a999d5dacede1de195886c262c7267dd30ff002
+FileType: IMAGE
+FileChecksum: SHA1: 3a999d5dacede1de195886c262c7267dd30ff002
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/applications.png
+SPDXID: SPDXRef-401-File-applications.png-80ab3db788d1ea162efdcf97f5d9c383d22fac8b
+FileType: IMAGE
+FileChecksum: SHA1: 80ab3db788d1ea162efdcf97f5d9c383d22fac8b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/backspace.svg
+SPDXID: SPDXRef-411-File-backspace.svg-780d65e55e219a2fc50aa089ddd70a55298da75d
+FileType: IMAGE
+FileChecksum: SHA1: 780d65e55e219a2fc50aa089ddd70a55298da75d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/backward.svg
+SPDXID: SPDXRef-421-File-backward.svg-6732e48669920a890ec2f5ac4fce2ef8c99900cb
+FileType: IMAGE
+FileChecksum: SHA1: 6732e48669920a890ec2f5ac4fce2ef8c99900cb
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/camera.jpg
+SPDXID: SPDXRef-431-File-camera.jpg-9ba6a086d4cd7a31a7303819fc8a86930a5f4675
+FileType: IMAGE
+FileChecksum: SHA1: 9ba6a086d4cd7a31a7303819fc8a86930a5f4675
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/clients.pro
+SPDXID: SPDXRef-441-File-clients.pro-af1fa0f0e94a6f743202a57b2495009833db3230
+FileType: OTHER
+FileChecksum: SHA1: af1fa0f0e94a6f743202a57b2495009833db3230
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/climate.png
+SPDXID: SPDXRef-451-File-climate.png-3696ce4603a9f2f152c1ae9bd10ed881232389fc
+FileType: IMAGE
+FileChecksum: SHA1: 3696ce4603a9f2f152c1ae9bd10ed881232389fc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/icons/close.png
+SPDXID: SPDXRef-461-File-close.png-5f616c746653a3422689bb610190ed1fa7dcb97f
+FileType: IMAGE
+FileChecksum: SHA1: 5f616c746653a3422689bb610190ed1fa7dcb97f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/clusterview.cpp
+SPDXID: SPDXRef-471-File-clusterview.cpp-5e70147e7f9f2e8615d500e7f5318ae994a720f9
+FileType: SOURCE
+FileChecksum: SHA1: 5e70147e7f9f2e8615d500e7f5318ae994a720f9
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/clusterview.h
+SPDXID: SPDXRef-481-File-clusterview.h-1bad91ec9759d2873e8782b118cb0a2ad410b813
+FileType: SOURCE
+FileChecksum: SHA1: 1bad91ec9759d2873e8782b118cb0a2ad410b813
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/compositor.js
+SPDXID: SPDXRef-491-File-compositor.js-4d3b5207df9ba27accf8c52d9135d40a9ab975f2
+FileType: SOURCE
+FileChecksum: SHA1: 4d3b5207df9ba27accf8c52d9135d40a9ab975f2
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/compositor.pro.in
+SPDXID: SPDXRef-501-File-compositor.pro.in-abcdc92599d6aa4e6d3d830877fd6299af3052de
+FileType: OTHER
+FileChecksum: SHA1: abcdc92599d6aa4e6d3d830877fd6299af3052de
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/config-default.js
+SPDXID: SPDXRef-511-File-config-default.js-3d4ea89a20305c81aafbee7216d9beffa3594851
+FileType: SOURCE
+FileChecksum: SHA1: 3d4ea89a20305c81aafbee7216d9beffa3594851
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/targets/minnowmax/config-opt.js
+SPDXID: SPDXRef-521-File-config-opt.js-873602658492af00130492d3be61ad9f8661d4e8
+FileType: SOURCE
+FileChecksum: SHA1: 873602658492af00130492d3be61ad9f8661d4e8
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/config.h.in
+SPDXID: SPDXRef-531-File-config.h.in-548610a0dd801f949f2fb7e65876a11488775449
+FileType: OTHER
+FileChecksum: SHA1: 548610a0dd801f949f2fb7e65876a11488775449
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/config.json
+SPDXID: SPDXRef-541-File-config.json-7762008b739d1d20548c11fa267f3fded2acf787
+FileType: OTHER
+FileChecksum: SHA1: 7762008b739d1d20548c11fa267f3fded2acf787
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/config.json
+SPDXID: SPDXRef-551-File-config.json-a7fbbd507628adabbd1e8c70aa607a38d3523aa3
+FileType: OTHER
+FileChecksum: SHA1: a7fbbd507628adabbd1e8c70aa607a38d3523aa3
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/configure
+SPDXID: SPDXRef-561-File-configure-6994be3304cc90e5c590d89d333c42ae58357eaf
+FileType: OTHER
+FileChecksum: SHA1: 6994be3304cc90e5c590d89d333c42ae58357eaf
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/diagnostics.png
+SPDXID: SPDXRef-571-File-diagnostics.png-92b0ff855221a6c0379487b9a91a8dcad105028c
+FileType: IMAGE
+FileChecksum: SHA1: 92b0ff855221a6c0379487b9a91a8dcad105028c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/digitalcluster.cpp
+SPDXID: SPDXRef-581-File-digitalcluster.cpp-e464ec3b870189968368ac36631d457a797be01c
+FileType: SOURCE
+FileChecksum: SHA1: e464ec3b870189968368ac36631d457a797be01c
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/digitalcluster.h
+SPDXID: SPDXRef-591-File-digitalcluster.h-36ce22a2504da793b90b9b5a7012804f065ad7b6
+FileType: SOURCE
+FileChecksum: SHA1: 36ce22a2504da793b90b9b5a7012804f065ad7b6
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/targets/mrb/config-opt.js
+SPDXID: SPDXRef-601-File-en_GB.po-da39a3ee5e6b4b0d3255bfef95601890afd80709
+FileType: OTHER
+FileChecksum: SHA1: da39a3ee5e6b4b0d3255bfef95601890afd80709
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/enter.svg
+SPDXID: SPDXRef-611-File-enter.svg-1611e4130bcbbd6ff669f6a2abdcae025fcdfc9c
+FileType: IMAGE
+FileChecksum: SHA1: 1611e4130bcbbd6ff669f6a2abdcae025fcdfc9c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/tango/error.svg
+SPDXID: SPDXRef-621-File-error.svg-0e39f0e5ab9bc3d9a322f78034373be8ba1f8748
+FileType: IMAGE
+FileChecksum: SHA1: 0e39f0e5ab9bc3d9a322f78034373be8ba1f8748
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/forward.svg
+SPDXID: SPDXRef-631-File-forward.svg-065e96af212beae742ea7ac223b8222ca6a7bcaf
+FileType: IMAGE
+FileChecksum: SHA1: 065e96af212beae742ea7ac223b8222ca6a7bcaf
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/global.svg
+SPDXID: SPDXRef-641-File-global.svg-6d00c70abc62d5c60980f2a61b966c4b89dd1392
+FileType: IMAGE
+FileChecksum: SHA1: 6d00c70abc62d5c60980f2a61b966c4b89dd1392
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/2000/svg"</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/hidekeyboard.svg
+SPDXID: SPDXRef-651-File-hidekeyboard.svg-d4015206ae58655917eeb4f652fa6cd4b75a05db
+FileType: IMAGE
+FileChecksum: SHA1: d4015206ae58655917eeb4f652fa6cd4b75a05db
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/html.qrc
+SPDXID: SPDXRef-661-File-html.qrc-c7e09e9da101b87fcd87a9386c47bae60f22b87f
+FileType: OTHER
+FileChecksum: SHA1: c7e09e9da101b87fcd87a9386c47bae60f22b87f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/html5/index.html
+SPDXID: SPDXRef-671-File-index.html-3b84c3b978bd8cfeede2c71d73d997b87bbbeb0d
+FileType: SOURCE
+FileType: DOCUMENTATION
+FileType: TEXT
+FileChecksum: SHA1: 3b84c3b978bd8cfeede2c71d73d997b87bbbeb0d
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/protocols/ivi-application.xml
+SPDXID: SPDXRef-681-File-ivi-application.xml-456938d98de8fa096ed2c591ecab3339579993fa
+FileType: OTHER
+FileChecksum: SHA1: 456938d98de8fa096ed2c591ecab3339579993fa
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright (C) 2013 DENSO CORPORATION</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/protocols/ivi-controller.xml
+SPDXID: SPDXRef-691-File-ivi-controller.xml-3ac602121a7cf250cced8acff141d81e60c41068
+FileType: OTHER
+FileChecksum: SHA1: 3ac602121a7cf250cced8acff141d81e60c41068
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright (C) 2013 DENSO CORPORATION</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/protocols/ivi-input.xml
+SPDXID: SPDXRef-701-File-ivi-input.xml-c95db60c7838980a08de88dfc7dbfe92ea345282
+FileType: OTHER
+FileChecksum: SHA1: c95db60c7838980a08de88dfc7dbfe92ea345282
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright (c) 2015 Codethink Ltd</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/ivi_client.pro
+SPDXID: SPDXRef-711-File-ivi_client.pro-c127169af8486355b14617d8b5c916cdd067bf60
+FileType: OTHER
+FileChecksum: SHA1: c127169af8486355b14617d8b5c916cdd067bf60
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/html5/leaflet.css
+SPDXID: SPDXRef-721-File-leaflet.css-702dcef669773e90bf13795692361c15e70b4820
+FileType: SOURCE
+FileType: TEXT
+FileChecksum: SHA1: 702dcef669773e90bf13795692361c15e70b4820
+LicenseConcluded: BSD-2-Clause
+LicenseInfoInFile: BSD-2-Clause
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/html5/leaflet.js
+SPDXID: SPDXRef-731-File-leaflet.js-2ea19fe25856ff12b66dabad60559b883958fcb8
+FileType: SOURCE
+FileChecksum: SHA1: 2ea19fe25856ff12b66dabad60559b883958fcb8
+LicenseConcluded: BSD-2-Clause
+LicenseInfoInFile: BSD-2-Clause
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/vt-handler/logind-client.cpp
+SPDXID: SPDXRef-741-File-logind-client.cpp-8ff2ebd062fd17274b35c0b6117d0df04d782760
+FileType: SOURCE
+FileChecksum: SHA1: 8ff2ebd062fd17274b35c0b6117d0df04d782760
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/vt-handler/logind-client.h
+SPDXID: SPDXRef-751-File-logind-client.h-e3979895772b1d2c326ce4e6c326cceac71b39dc
+FileType: SOURCE
+FileChecksum: SHA1: e3979895772b1d2c326ce4e6c326cceac71b39dc
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/main.cpp
+SPDXID: SPDXRef-761-File-main.cpp-3827ffff2e443b1c57620c06bc08d37fe10ca6fe
+FileType: SOURCE
+FileChecksum: SHA1: 3827ffff2e443b1c57620c06bc08d37fe10ca6fe
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/main.cpp
+SPDXID: SPDXRef-771-File-main.cpp-7605e5b5af67e896d2d30efe1d666b4ab7bb8798
+FileType: SOURCE
+FileChecksum: SHA1: 7605e5b5af67e896d2d30efe1d666b4ab7bb8798
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/main.cpp
+SPDXID: SPDXRef-781-File-main.cpp-a5a6ef9ddd9bfdaa81841693c04433fcc5d70fef
+FileType: SOURCE
+FileChecksum: SHA1: a5a6ef9ddd9bfdaa81841693c04433fcc5d70fef
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/vt-handler/main.cpp
+SPDXID: SPDXRef-791-File-main.cpp-aec162507be6a8c7a9c6c4771219441fa817d24c
+FileType: SOURCE
+FileChecksum: SHA1: aec162507be6a8c7a9c6c4771219441fa817d24c
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/main.cpp
+SPDXID: SPDXRef-801-File-main.cpp-f2f27d9971956b39ad674e72cb3838fcdccf5866
+FileType: SOURCE
+FileChecksum: SHA1: f2f27d9971956b39ad674e72cb3838fcdccf5866
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/main.qml
+SPDXID: SPDXRef-811-File-main.qml-7ab7bca56890af82d5bc486576d1177be2729c67
+FileType: OTHER
+FileChecksum: SHA1: 7ab7bca56890af82d5bc486576d1177be2729c67
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/main.qml
+SPDXID: SPDXRef-821-File-main.qml-dfaf4469cb9137474de991252c443b85e8a09d82
+FileType: OTHER
+FileChecksum: SHA1: dfaf4469cb9137474de991252c443b85e8a09d82
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/main.qml
+SPDXID: SPDXRef-831-File-main.qml-f47eb190dc508b7e4f6e2a748a0fe7403404f6ee
+FileType: OTHER
+FileChecksum: SHA1: f47eb190dc508b7e4f6e2a748a0fe7403404f6ee
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/media.png
+SPDXID: SPDXRef-841-File-media.png-fd911622e363d5a15173b2afa41960b1813b74c5
+FileType: IMAGE
+FileChecksum: SHA1: fd911622e363d5a15173b2afa41960b1813b74c5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/mediaplayer.pro.in
+SPDXID: SPDXRef-851-File-mediaplayer.pro.in-d96f42a17b63f1ebbef9f811e01f4986b165a03d
+FileType: OTHER
+FileChecksum: SHA1: d96f42a17b63f1ebbef9f811e01f4986b165a03d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/mediaplayer/mediaplayer.qrc
+SPDXID: SPDXRef-861-File-mediaplayer.qrc-d5a2136231670a90fe7350e4aa37c2f446befff1
+FileType: OTHER
+FileChecksum: SHA1: d5a2136231670a90fe7350e4aa37c2f446befff1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/icons/native-map-location.png
+SPDXID: SPDXRef-871-File-native-map-location.png-97c80246125fc32f3bbcfb39faa4e713b8b7c2fc
+FileType: IMAGE
+FileChecksum: SHA1: 97c80246125fc32f3bbcfb39faa4e713b8b7c2fc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/icons/native-video.png
+SPDXID: SPDXRef-881-File-native-video.png-89ff626493cb9068361deacb61f282402855fc02
+FileType: IMAGE
+FileChecksum: SHA1: 89ff626493cb9068361deacb61f282402855fc02
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/icons/native-web.png
+SPDXID: SPDXRef-891-File-native-web.png-5da280f95b3aea2635999197369b46265af27b0d
+FileType: IMAGE
+FileChecksum: SHA1: 5da280f95b3aea2635999197369b46265af27b0d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/navigation.png
+SPDXID: SPDXRef-901-File-navigation-logo.png-f603f451bcb0dff8ac2d582e3ea5ff0ddb735ce4
+FileType: IMAGE
+FileChecksum: SHA1: f603f451bcb0dff8ac2d582e3ea5ff0ddb735ce4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/pause.svg
+SPDXID: SPDXRef-911-File-pause.svg-185a526a0a718795ec21a451eacd4afbe1599aee
+FileType: IMAGE
+FileChecksum: SHA1: 185a526a0a718795ec21a451eacd4afbe1599aee
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/phone.jpg
+SPDXID: SPDXRef-921-File-phone.jpg-a58b2df62c081fc26f681a210b7635b02a7363f1
+FileType: IMAGE
+FileChecksum: SHA1: a58b2df62c081fc26f681a210b7635b02a7363f1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/phone.png
+SPDXID: SPDXRef-931-File-phone.png-76ac7a9b9bdd39bc0ae2b778d0bf56a99c42c5d9
+FileType: IMAGE
+FileChecksum: SHA1: 76ac7a9b9bdd39bc0ae2b778d0bf56a99c42c5d9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/phone_small.jpg
+SPDXID: SPDXRef-941-File-phone_small.jpg-67bec85ae79085352b41566bea2d0ce5b86b5cb7
+FileType: IMAGE
+FileChecksum: SHA1: 67bec85ae79085352b41566bea2d0ce5b86b5cb7
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/play.svg
+SPDXID: SPDXRef-951-File-play.svg-3c7f81ccaea1a9cb6aa0e14146e35abfbe5836c0
+FileType: IMAGE
+FileChecksum: SHA1: 3c7f81ccaea1a9cb6aa0e14146e35abfbe5836c0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/projectionmode.cpp
+SPDXID: SPDXRef-961-File-projectionmode.cpp-433eb0398c7cee010d079d229711a10e0818e740
+FileType: SOURCE
+FileChecksum: SHA1: 433eb0398c7cee010d079d229711a10e0818e740
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/projectionmode.h
+SPDXID: SPDXRef-971-File-projectionmode.h-f0119e7b0f78ba037eb8c52bf5f1cb26fc6b4c43
+FileType: SOURCE
+FileChecksum: SHA1: f0119e7b0f78ba037eb8c52bf5f1cb26fc6b4c43
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/projectionmode.xml
+SPDXID: SPDXRef-981-File-projectionmode.xml-41a5277d75f16c20fbe0b00c9efee4053d17b126
+FileType: OTHER
+FileChecksum: SHA1: 41a5277d75f16c20fbe0b00c9efee4053d17b126
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/qiviwindow.cpp
+SPDXID: SPDXRef-991-File-qiviwindow.cpp-a7a9620eb258da1c1d2d92d2fd636eff7abf7ffa
+FileType: SOURCE
+FileChecksum: SHA1: a7a9620eb258da1c1d2d92d2fd636eff7abf7ffa
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/qiviwindow.h
+SPDXID: SPDXRef-1001-File-qiviwindow.h-07e3c530f4feacc2b7d7ee2284d47fdc34cb7073
+FileType: SOURCE
+FileChecksum: SHA1: 07e3c530f4feacc2b7d7ee2284d47fdc34cb7073
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/qtwaylandiviapplication.cpp
+SPDXID: SPDXRef-1011-File-qtwaylandiviapplication.cpp-b13b24dd9dc1aaf4fcdf214c25ab69897e19c7b1
+FileType: SOURCE
+FileChecksum: SHA1: b13b24dd9dc1aaf4fcdf214c25ab69897e19c7b1
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/qtwaylandiviapplication.h
+SPDXID: SPDXRef-1021-File-qtwaylandiviapplication.h-6830dec40575ca54322e19734670cbf115131de3
+FileType: SOURCE
+FileChecksum: SHA1: 6830dec40575ca54322e19734670cbf115131de3
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/qtwaylandivisurface.cpp
+SPDXID: SPDXRef-1031-File-qtwaylandivisurface.cpp-48e6543ddc35c0ac43443e917071524af06dd3d0
+FileType: SOURCE
+FileChecksum: SHA1: 48e6543ddc35c0ac43443e917071524af06dd3d0
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/ivi_client/qtwaylandivisurface.h
+SPDXID: SPDXRef-1041-File-qtwaylandivisurface.h-2c677ab0b0eb964c6b70cd231d010a5eec1231a8
+FileType: SOURCE
+FileChecksum: SHA1: 2c677ab0b0eb964c6b70cd231d010a5eec1231a8
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/reardisplay.cpp
+SPDXID: SPDXRef-1051-File-reardisplay.cpp-d9cdd5b039865714d14a085a942a5eaefa64bcf7
+FileType: SOURCE
+FileChecksum: SHA1: d9cdd5b039865714d14a085a942a5eaefa64bcf7
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/reardisplay.h
+SPDXID: SPDXRef-1061-File-reardisplay.h-289754fe6fb525b2f238fe161da108b6adbb23b2
+FileType: SOURCE
+FileChecksum: SHA1: 289754fe6fb525b2f238fe161da108b6adbb23b2
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/ring.svg
+SPDXID: SPDXRef-1071-File-ring.svg-24a75d3e5be2b0a7da51756b1fa625c7a8697884
+FileType: IMAGE
+FileChecksum: SHA1: 24a75d3e5be2b0a7da51756b1fa625c7a8697884
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/seat-heat.svg
+SPDXID: SPDXRef-1081-File-seat-heat.svg-8857f2fc74f80e343191d378e28a33a74ba833b1
+FileType: IMAGE
+FileChecksum: SHA1: 8857f2fc74f80e343191d378e28a33a74ba833b1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/seat-normal.svg
+SPDXID: SPDXRef-1091-File-seat-normal.svg-85d86efe5418b8751ccd843ecf1c1bf726cb999f
+FileType: IMAGE
+FileChecksum: SHA1: 85d86efe5418b8751ccd843ecf1c1bf726cb999f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/settings.png
+SPDXID: SPDXRef-1101-File-settings.png-60c4a8ca4621f0588eb14fe9e81a475a41e08d9f
+FileType: IMAGE
+FileChecksum: SHA1: 60c4a8ca4621f0588eb14fe9e81a475a41e08d9f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/1999/02/22-rdf-syntax-ns#"></text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/shift-gray.svg
+SPDXID: SPDXRef-1111-File-shift-gray.svg-320b8221d6168bdd277436064314120d051eea80
+FileType: IMAGE
+FileChecksum: SHA1: 320b8221d6168bdd277436064314120d051eea80
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/2000/svg"</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/shift-green.svg
+SPDXID: SPDXRef-1121-File-shift-green.svg-0491243321133f4fec1fe34aa7b92666f1680fb8
+FileType: IMAGE
+FileChecksum: SHA1: 0491243321133f4fec1fe34aa7b92666f1680fb8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.w3.org/2000/svg"</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/html5/skobbler-2.0.js
+SPDXID: SPDXRef-1131-File-skobbler-2.0.js-e0d88faa886fd9e581a1697f38a48814fc9af454
+FileType: SOURCE
+FileChecksum: SHA1: e0d88faa886fd9e581a1697f38a48814fc9af454
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright 2014, skobbler.com - dev@skobbler.com Licensed under the MIT license.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/clients/skobblernavi/skobblernavi.pro.in
+SPDXID: SPDXRef-1141-File-skobblernavi.pro.in-74714ca2497b54904ebd48907bf66301cd6ae097
+FileType: OTHER
+FileChecksum: SHA1: 74714ca2497b54904ebd48907bf66301cd6ae097
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/sprintf.js
+SPDXID: SPDXRef-1151-File-sprintf.js-3e091a87f005736ad0bf3851a15e071ddd915355
+FileType: SOURCE
+FileChecksum: SHA1: 3e091a87f005736ad0bf3851a15e071ddd915355
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://perldoc.perl.org/functions/sprintf.html</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/stop.svg
+SPDXID: SPDXRef-1161-File-stop.svg-bfcd0948fc6b5caf3218ff1c977942b209f201f2
+FileType: IMAGE
+FileChecksum: SHA1: bfcd0948fc6b5caf3218ff1c977942b209f201f2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/systemd-util.cpp
+SPDXID: SPDXRef-1171-File-systemd-util.cpp-3930ce2d2a91a707d84762282b5ef281268d7f1c
+FileType: SOURCE
+FileChecksum: SHA1: 3930ce2d2a91a707d84762282b5ef281268d7f1c
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/systemd-util.h
+SPDXID: SPDXRef-1181-File-systemd-util.h-17fbf9f5357b371c10e93c0de5bce149e99234fb
+FileType: SOURCE
+FileChecksum: SHA1: 17fbf9f5357b371c10e93c0de5bce149e99234fb
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/tools/update-qt-eglfs-kms-conf
+SPDXID: SPDXRef-1191-File-update-qt-eglfs-kms-conf-6bdea3b53a704dac5de593ded57e2273f1f57b27
+FileType: OTHER
+FileChecksum: SHA1: 6bdea3b53a704dac5de593ded57e2273f1f57b27
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/util.cpp
+SPDXID: SPDXRef-1201-File-util.cpp-1512ce057e1e4e3ad765fe5a4eaf6adfe4f3ecb8
+FileType: SOURCE
+FileChecksum: SHA1: 1512ce057e1e4e3ad765fe5a4eaf6adfe4f3ecb8
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/util.h
+SPDXID: SPDXRef-1211-File-util.h-4cf62353156750b4765928d503a4787b30816941
+FileType: SOURCE
+FileChecksum: SHA1: 4cf62353156750b4765928d503a4787b30816941
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/vna_dbusclient.cpp
+SPDXID: SPDXRef-1221-File-vna_dbusclient.cpp-22d0e9f1d2b43bf607f75d8b5d60a9791d509fe7
+FileType: SOURCE
+FileChecksum: SHA1: 22d0e9f1d2b43bf607f75d8b5d60a9791d509fe7
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/vna_dbusclient.h
+SPDXID: SPDXRef-1231-File-vna_dbusclient.h-e7b498c1c17f153abbd8ff17b94f08e191efb890
+FileType: SOURCE
+FileChecksum: SHA1: e7b498c1c17f153abbd8ff17b94f08e191efb890
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/volume-up.svg
+SPDXID: SPDXRef-1241-File-volume-up.svg-8f86bab0d15da88d2be5ab90172ad82db86e8064
+FileType: IMAGE
+FileChecksum: SHA1: 8f86bab0d15da88d2be5ab90172ad82db86e8064
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/vt-handler/vt-handler.pro.in
+SPDXID: SPDXRef-1251-File-vt-handler.pro.in-47c9ed87c9969069c8151da5ab4b8f1cd60dc19d
+FileType: OTHER
+FileChecksum: SHA1: 47c9ed87c9969069c8151da5ab4b8f1cd60dc19d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/cockpit/resources/wallpaper.svg
+SPDXID: SPDXRef-1261-File-wallpaper.svg-566efa60debc9335346e964a4df9c21da4c41438
+FileType: IMAGE
+FileChecksum: SHA1: 566efa60debc9335346e964a4df9c21da4c41438
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: <text> http://www.inkscape.org/)</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/hmi/classic/icons/wr-red.png
+SPDXID: SPDXRef-1271-File-wr-red.png-e161a57bf4e63a08e68674412ad7414d7bb0c001
+FileType: IMAGE
+FileChecksum: SHA1: e161a57bf4e63a08e68674412ad7414d7bb0c001
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wr_dbusclient.cpp
+SPDXID: SPDXRef-1281-File-wr_dbusclient.cpp-14f4b8774ad15842c9a7b922734d22337fc85e01
+FileType: SOURCE
+FileChecksum: SHA1: 14f4b8774ad15842c9a7b922734d22337fc85e01
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wr_dbusclient.h
+SPDXID: SPDXRef-1291-File-wr_dbusclient.h-7947bc8529f5c9cb5a269045ac3495729aab3bb9
+FileType: SOURCE
+FileChecksum: SHA1: 7947bc8529f5c9cb5a269045ac3495729aab3bb9
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/vt-handler/wrscompositor-vt-handler-dbg
+SPDXID: SPDXRef-1301-File-wrscompositor-vt-handler-dbg-58f05d9f98f6ee619a74996638c8038bdd63fbec
+FileType: OTHER
+FileChecksum: SHA1: 58f05d9f98f6ee619a74996638c8038bdd63fbec
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/targets/common/etc/dbus-1/system.d/wrscompositor.conf
+SPDXID: SPDXRef-1311-File-wrscompositor.conf-73950da0a33dd29a3dedcecfb535c41681af6b73
+FileType: OTHER
+FileChecksum: SHA1: 73950da0a33dd29a3dedcecfb535c41681af6b73
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrscompositor.cpp
+SPDXID: SPDXRef-1321-File-wrscompositor.cpp-a3283f5919cf60b2f1cf3e7c6b29b196990c44dd
+FileType: SOURCE
+FileChecksum: SHA1: a3283f5919cf60b2f1cf3e7c6b29b196990c44dd
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrscompositor.h
+SPDXID: SPDXRef-1331-File-wrscompositor.h-4015f003951e0e7a92069195ec89c37ffc9d9a8d
+FileType: SOURCE
+FileChecksum: SHA1: 4015f003951e0e7a92069195ec89c37ffc9d9a8d
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/wrscompositor.pro
+SPDXID: SPDXRef-1341-File-wrscompositor.pro-18917b7087e217bfd4d5a5d4ddaec2c1e876109d
+FileType: OTHER
+FileChecksum: SHA1: 18917b7087e217bfd4d5a5d4ddaec2c1e876109d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsiviapplication.cpp
+SPDXID: SPDXRef-1351-File-wrsiviapplication.cpp-f0fe47a3ff8d718c21e65b26b2d67f8f6575cf8e
+FileType: SOURCE
+FileChecksum: SHA1: f0fe47a3ff8d718c21e65b26b2d67f8f6575cf8e
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsiviapplication.h
+SPDXID: SPDXRef-1361-File-wrsiviapplication.h-312cd8b9398c3f830ad9f273664611989be90783
+FileType: SOURCE
+FileChecksum: SHA1: 312cd8b9398c3f830ad9f273664611989be90783
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsivicontroller.cpp
+SPDXID: SPDXRef-1371-File-wrsivicontroller.cpp-799fb5ebb8b6a71a4f8d1c77c0922747c1f08f47
+FileType: SOURCE
+FileChecksum: SHA1: 799fb5ebb8b6a71a4f8d1c77c0922747c1f08f47
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsivicontroller.h
+SPDXID: SPDXRef-1381-File-wrsivicontroller.h-fe1c0cc3c1382625df300e3e83b247267c63b599
+FileType: SOURCE
+FileChecksum: SHA1: fe1c0cc3c1382625df300e3e83b247267c63b599
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsivimodel.cpp
+SPDXID: SPDXRef-1391-File-wrsivimodel.cpp-b11d9062e9b48105c85e00b53acbe28421b3dbc2
+FileType: SOURCE
+FileChecksum: SHA1: b11d9062e9b48105c85e00b53acbe28421b3dbc2
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsivimodel.h
+SPDXID: SPDXRef-1401-File-wrsivimodel.h-72463918bf73aab793d94dc0140565a8468e1e66
+FileType: SOURCE
+FileChecksum: SHA1: 72463918bf73aab793d94dc0140565a8468e1e66
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsiviplatformconstants.h
+SPDXID: SPDXRef-1411-File-wrsiviplatformconstants.h-5ab29b860310677de285763d9ce7fcdc5c985307
+FileType: SOURCE
+FileChecksum: SHA1: 5ab29b860310677de285763d9ce7fcdc5c985307
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: NOASSERTION
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsivisurface.cpp
+SPDXID: SPDXRef-1421-File-wrsivisurface.cpp-84a132c47e9cc3ada6df5dc9c2ea9c9c7b195226
+FileType: SOURCE
+FileChecksum: SHA1: 84a132c47e9cc3ada6df5dc9c2ea9c9c7b195226
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrsivisurface.h
+SPDXID: SPDXRef-1431-File-wrsivisurface.h-18c428397bab52231669639339b5171eedd0de9c
+FileType: SOURCE
+FileChecksum: SHA1: 18c428397bab52231669639339b5171eedd0de9c
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+## ----------------------- File -----------------------
+##
+FileName: ./wrscompositor-master/compositor/wrslogging.h
+SPDXID: SPDXRef-1441-File-wrslogging.h-667a5e1987c2617317ae026df577087f186cfb11
+FileType: SOURCE
+FileChecksum: SHA1: 667a5e1987c2617317ae026df577087f186cfb11
+LicenseConcluded: MIT
+LicenseInfoInFile: MIT
+FileCopyrightText: <text> Copyright ? 2016 Wind River Systems, Inc.</text>
+
+
+##-----------------------------
+##Relationship Information
+##-----------------------------
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca DESCRIBED_BY SPDXRef-DOCUMENT
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-.gitignore-cb4b007a455e744e6d3dfd392acabd701917eae2
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-01d.svg-8dcf3e839b364838783a7732856a65a3fce181e5
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-01n.svg-6c1082a346eac03f64ee9a3b791b5bda530c4e31
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-02d.svg-030191b33f057ba14779f64ec1589d347d2d5a2d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-03d.svg-b2685b9998aff4335d720e108a8df7339e50236c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-09d.svg-1f7f731f07768ebe5b75173eb4a6975862c3bf35
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-10d.svg-a98ed7fa66048d1127128b98c2746b45d02c78de
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-11d.svg-59df7684fb7de2d31af47d3f5d67d6f17ce1ca03
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-13d.svg-3554d2ead7737475547610fd49701504c3109560
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-CompositorElement.qml-de578f144bf75e126e666529aa32e78f36825749
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-CompositorLayout.js-16426a2343b4cdc66349980478f2be764a9dad89
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-DockBar.qml-912128326708c4ad451b832ad0e56a7432146a34
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Drive_Tomorrow_1.ogv-193cc64d1b93086adf9bc905760726f4ab573cb0
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Drive_Tomorrow_2.ogv-88525dd0e3bb76149f69dd82360a95a680c69ed5
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Drive_Tomorrow_3.ogv-1cb58d061a692db4a85b66bf88b1e23045a2741c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-InputPanel.qml-9b8a264e6f5e57ef0307020261e5b4b144907d40
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-KeyButton.qml-a31dc28e6281ee12469a0b9f116f15ef0c0db5c9
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-KeyModel.qml-234888cc3fab4635194422b563d7d88ef3142734
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-LICENSE-1f6ae307581d6a6ef10d0d0ee958a283e1dfbd33
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-LICENSE-NOTICES.txt-8d07172238971001b18a73190a601aaccc069f31
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-LauncherBar.qml-154eb3d9d54b942ac2c48fc92da7ac26a79573d0
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-LauncherWindow.qml-7a9cfb1927a7a83062ee71bec258bdac536f1cbd
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-MainMenu.qml-c0459c0dca61d4121fc2ba752528f410c6c319d5
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Playlist.qml-37e926a01b897d345f04769dab6089262fb0324d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Process.cpp-210dba79dd9a4da600b5ec7f29c9d62f445bd6da
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Process.h-9e935cfcf6e7a820596dae48f3397fe6431dc2ef
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-README.md-b68037b6c46c9d31d9dc980ae48d59c9471c88a6
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-RingIcon.qml-5fdc89a3a484e985c828ba38ce2f2edc5fadbae5
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-SidePanel.qml-8329cd2cf19ad4c918b28803dcddd44c19a1811c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-SidePanelDialer.qml-5e1c3eef2c95b493184858b29c56649337a2f274
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-SidePanelHVAC.qml-587c6da7b8731487527f12e842391e5a232938db
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-SidePanelMedia.qml-ee725b160f7b82005356dbcfcb83634ba550decd
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-StatusBar.qml-f7497c7bd6c60c596c7f13a5accef7499ea58b3f
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-StatusBar.qml-fe8f573b99d97661f5904b2362c315cd679f9c49
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Tungsten-Book.otf-fd66f2358eb7cb452cf2bbf0716c10d175601b3f
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Tungsten-Light.otf-5b6d8e934fe81154c6eb7b4fe5d8e8ff89f616ae
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Tungsten-Medium.otf-f196d59ab5642293cf8036fb562314b1a201f001
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-Tungsten-Thin.otf-ab5f05a3c9ded0cbaefc9ceb7bed8d7260536de0
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-WindowFrame.qml-d5a1d0fb3b77ad90d9f36af02c61ab1a87634008
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-album-cover.png-3a999d5dacede1de195886c262c7267dd30ff002
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-applications.png-80ab3db788d1ea162efdcf97f5d9c383d22fac8b
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-backspace.svg-780d65e55e219a2fc50aa089ddd70a55298da75d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-backward.svg-6732e48669920a890ec2f5ac4fce2ef8c99900cb
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-camera.jpg-9ba6a086d4cd7a31a7303819fc8a86930a5f4675
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-clients.pro-af1fa0f0e94a6f743202a57b2495009833db3230
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-climate.png-3696ce4603a9f2f152c1ae9bd10ed881232389fc
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-close.png-5f616c746653a3422689bb610190ed1fa7dcb97f
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-clusterview.cpp-5e70147e7f9f2e8615d500e7f5318ae994a720f9
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-clusterview.h-1bad91ec9759d2873e8782b118cb0a2ad410b813
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-compositor.js-4d3b5207df9ba27accf8c52d9135d40a9ab975f2
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-compositor.pro.in-abcdc92599d6aa4e6d3d830877fd6299af3052de
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-config-default.js-3d4ea89a20305c81aafbee7216d9beffa3594851
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-config-opt.js-873602658492af00130492d3be61ad9f8661d4e8
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-config.h.in-548610a0dd801f949f2fb7e65876a11488775449
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-config.json-7762008b739d1d20548c11fa267f3fded2acf787
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-config.json-a7fbbd507628adabbd1e8c70aa607a38d3523aa3
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-configure-6994be3304cc90e5c590d89d333c42ae58357eaf
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-diagnostics.png-92b0ff855221a6c0379487b9a91a8dcad105028c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-digitalcluster.cpp-e464ec3b870189968368ac36631d457a797be01c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-digitalcluster.h-36ce22a2504da793b90b9b5a7012804f065ad7b6
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-en_GB.po-da39a3ee5e6b4b0d3255bfef95601890afd80709
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-enter.svg-1611e4130bcbbd6ff669f6a2abdcae025fcdfc9c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-error.svg-0e39f0e5ab9bc3d9a322f78034373be8ba1f8748
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-forward.svg-065e96af212beae742ea7ac223b8222ca6a7bcaf
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-global.svg-6d00c70abc62d5c60980f2a61b966c4b89dd1392
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-hidekeyboard.svg-d4015206ae58655917eeb4f652fa6cd4b75a05db
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-html.qrc-c7e09e9da101b87fcd87a9386c47bae60f22b87f
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-index.html-3b84c3b978bd8cfeede2c71d73d997b87bbbeb0d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-ivi-application.xml-456938d98de8fa096ed2c591ecab3339579993fa
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-ivi-controller.xml-3ac602121a7cf250cced8acff141d81e60c41068
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-ivi-input.xml-c95db60c7838980a08de88dfc7dbfe92ea345282
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-ivi_client.pro-c127169af8486355b14617d8b5c916cdd067bf60
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-leaflet.css-702dcef669773e90bf13795692361c15e70b4820
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-leaflet.js-2ea19fe25856ff12b66dabad60559b883958fcb8
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-logind-client.cpp-8ff2ebd062fd17274b35c0b6117d0df04d782760
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-logind-client.h-e3979895772b1d2c326ce4e6c326cceac71b39dc
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.cpp-3827ffff2e443b1c57620c06bc08d37fe10ca6fe
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.cpp-7605e5b5af67e896d2d30efe1d666b4ab7bb8798
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.cpp-a5a6ef9ddd9bfdaa81841693c04433fcc5d70fef
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.cpp-aec162507be6a8c7a9c6c4771219441fa817d24c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.cpp-f2f27d9971956b39ad674e72cb3838fcdccf5866
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.qml-7ab7bca56890af82d5bc486576d1177be2729c67
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.qml-dfaf4469cb9137474de991252c443b85e8a09d82
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-main.qml-f47eb190dc508b7e4f6e2a748a0fe7403404f6ee
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-media.png-fd911622e363d5a15173b2afa41960b1813b74c5
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-mediaplayer.pro.in-d96f42a17b63f1ebbef9f811e01f4986b165a03d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-mediaplayer.qrc-d5a2136231670a90fe7350e4aa37c2f446befff1
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-native-map-location.png-97c80246125fc32f3bbcfb39faa4e713b8b7c2fc
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-native-video.png-89ff626493cb9068361deacb61f282402855fc02
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-native-web.png-5da280f95b3aea2635999197369b46265af27b0d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-navigation-logo.png-f603f451bcb0dff8ac2d582e3ea5ff0ddb735ce4
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-pause.svg-185a526a0a718795ec21a451eacd4afbe1599aee
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-phone.jpg-a58b2df62c081fc26f681a210b7635b02a7363f1
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-phone.png-76ac7a9b9bdd39bc0ae2b778d0bf56a99c42c5d9
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-phone_small.jpg-67bec85ae79085352b41566bea2d0ce5b86b5cb7
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-play.svg-3c7f81ccaea1a9cb6aa0e14146e35abfbe5836c0
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-projectionmode.cpp-433eb0398c7cee010d079d229711a10e0818e740
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-projectionmode.h-f0119e7b0f78ba037eb8c52bf5f1cb26fc6b4c43
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-projectionmode.xml-41a5277d75f16c20fbe0b00c9efee4053d17b126
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-qiviwindow.cpp-a7a9620eb258da1c1d2d92d2fd636eff7abf7ffa
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-qiviwindow.h-07e3c530f4feacc2b7d7ee2284d47fdc34cb7073
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-qtwaylandiviapplication.cpp-b13b24dd9dc1aaf4fcdf214c25ab69897e19c7b1
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-qtwaylandiviapplication.h-6830dec40575ca54322e19734670cbf115131de3
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-qtwaylandivisurface.cpp-48e6543ddc35c0ac43443e917071524af06dd3d0
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-qtwaylandivisurface.h-2c677ab0b0eb964c6b70cd231d010a5eec1231a8
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-reardisplay.cpp-d9cdd5b039865714d14a085a942a5eaefa64bcf7
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-reardisplay.h-289754fe6fb525b2f238fe161da108b6adbb23b2
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-ring.svg-24a75d3e5be2b0a7da51756b1fa625c7a8697884
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-seat-heat.svg-8857f2fc74f80e343191d378e28a33a74ba833b1
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-seat-normal.svg-85d86efe5418b8751ccd843ecf1c1bf726cb999f
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-settings.png-60c4a8ca4621f0588eb14fe9e81a475a41e08d9f
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-shift-gray.svg-320b8221d6168bdd277436064314120d051eea80
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-shift-green.svg-0491243321133f4fec1fe34aa7b92666f1680fb8
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-skobbler-2.0.js-e0d88faa886fd9e581a1697f38a48814fc9af454
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-skobblernavi.pro.in-74714ca2497b54904ebd48907bf66301cd6ae097
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-sprintf.js-3e091a87f005736ad0bf3851a15e071ddd915355
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-stop.svg-bfcd0948fc6b5caf3218ff1c977942b209f201f2
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-systemd-util.cpp-3930ce2d2a91a707d84762282b5ef281268d7f1c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-systemd-util.h-17fbf9f5357b371c10e93c0de5bce149e99234fb
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-update-qt-eglfs-kms-conf-6bdea3b53a704dac5de593ded57e2273f1f57b27
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-util.cpp-1512ce057e1e4e3ad765fe5a4eaf6adfe4f3ecb8
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-util.h-4cf62353156750b4765928d503a4787b30816941
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-vna_dbusclient.cpp-22d0e9f1d2b43bf607f75d8b5d60a9791d509fe7
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-vna_dbusclient.h-e7b498c1c17f153abbd8ff17b94f08e191efb890
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-volume-up.svg-8f86bab0d15da88d2be5ab90172ad82db86e8064
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-vt-handler.pro.in-47c9ed87c9969069c8151da5ab4b8f1cd60dc19d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wallpaper.svg-566efa60debc9335346e964a4df9c21da4c41438
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wr-red.png-e161a57bf4e63a08e68674412ad7414d7bb0c001
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wr_dbusclient.cpp-14f4b8774ad15842c9a7b922734d22337fc85e01
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wr_dbusclient.h-7947bc8529f5c9cb5a269045ac3495729aab3bb9
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrscompositor-vt-handler-dbg-58f05d9f98f6ee619a74996638c8038bdd63fbec
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrscompositor.conf-73950da0a33dd29a3dedcecfb535c41681af6b73
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrscompositor.cpp-a3283f5919cf60b2f1cf3e7c6b29b196990c44dd
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrscompositor.h-4015f003951e0e7a92069195ec89c37ffc9d9a8d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrscompositor.pro-18917b7087e217bfd4d5a5d4ddaec2c1e876109d
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsiviapplication.cpp-f0fe47a3ff8d718c21e65b26b2d67f8f6575cf8e
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsiviapplication.h-312cd8b9398c3f830ad9f273664611989be90783
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsivicontroller.cpp-799fb5ebb8b6a71a4f8d1c77c0922747c1f08f47
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsivicontroller.h-fe1c0cc3c1382625df300e3e83b247267c63b599
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsivimodel.cpp-b11d9062e9b48105c85e00b53acbe28421b3dbc2
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsivimodel.h-72463918bf73aab793d94dc0140565a8468e1e66
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsiviplatformconstants.h-5ab29b860310677de285763d9ce7fcdc5c985307
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsivisurface.cpp-84a132c47e9cc3ada6df5dc9c2ea9c9c7b195226
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrsivisurface.h-18c428397bab52231669639339b5171eedd0de9c
+
+## --------------- Relationship ---------------
+Relationship: SPDXRef-Pkg-wrscompositor-master.zip-38134768015d8705e420f8566630036dae76daca CONTAINS SPDXRef--File-wrslogging.h-667a5e1987c2617317ae026df577087f186cfb11
+
+##--------------------
+## Annotation Information
+##--------------------
+Annotator: Tool: The Duke of Highlander
+AnnotationDate: 2016-12-08T11:07:21Z
+AnnotationType: REVIEW
+SPDXREF: SPDXRef-DOCUMENT
+AnnotationComment: <text> The analysis has been completely performed by an automated tool.  [---Q:CG,H:2.0,SV:2.1---]</text> 
