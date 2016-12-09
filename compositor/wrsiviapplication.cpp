@@ -22,6 +22,8 @@
 /*
  * Author: ionut.popa@windriver.com
  */
+
+#include "config.h"
 #include "wrsiviapplication.h"
 #include "wrsivisurface.h"
 #include "wrscompositor.h"
@@ -58,26 +60,24 @@ void WrsIviApplication::ivi_application_surface_create(QtWaylandServer::ivi_appl
 
     TRACE() << "[BEGIN]";
     DEBUG() << "ivi_id:" << ivi_id << " id:" << id << "resource:" << resource;
+
+#if WRSCOMPOSITOR_HMI_CLASSIC
     QWaylandSurface *qWlsurface = QWaylandSurface::fromResource(surface);
 
     //TODO: store the link beteen WrsIviSurface -> wl_surface in  GeniviWaylandIVIExtenssion
-
-    WrsIviSurface *iviSurface = new WrsIviSurface(
-                this->mCompositor,
-                surface->client,
-                id,
-                1);
-
+    WrsIviSurface *iviSurface = new WrsIviSurface(this->mCompositor, surface->client, id, 1);
     WrsIVIModel::IVISurface *iviSurfaceModel = this->
-            mCompositor->
-            getIviScene()->\
-            findIVISurfaceByQWaylandSurface(qWlsurface);
+                                               mCompositor->
+                                               findIVISurfaceByQWaylandSurface(qWlsurface);
 
     iviSurfaceModel->addResourceForClient(surface->client, iviSurface->resource()->handle);
-    iviSurfaceModel->setIviId(ivi_id);
-
-    connect(qWlsurface, SIGNAL(sizeChanged()),
+    iviSurfaceModel->setId(ivi_id);
+    connect(qWlsurface, SIGNAL(sizeChanged()), 
             this, SLOT(sizeChanged()));
+#elif WRSCOMPOSITOR_HMI_COCKPIT
+    this->mCompositor->createIviApplicationSurface(resource, ivi_id, surface, id);
+#endif
+
     TRACE() << "[END]";
 }
 
@@ -88,7 +88,6 @@ void WrsIviApplication::sizeChanged() {
 
     WrsIVIModel::IVISurface *iviSurfaceModel = this->
             mCompositor->
-            getIviScene()->\
             findIVISurfaceByQWaylandSurface(qWlsurface);
 
     //Get IVI surface for QWaylandSurface

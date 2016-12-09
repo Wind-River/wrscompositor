@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = mediaplayer skobblernavi ivi_client
+SUBDIRS = mediaplayer skobblernavi phone ivi_client 

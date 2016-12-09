@@ -20,25 +20,14 @@
  * THE SOFTWARE.
  */
 
-#include <QtWidgets>
-#include <QtNetwork>
-#include <QtWebKitWidgets>
-
+#include "skobblernavi.h"
 
 int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
 
-    QUrl url = QUrl("qrc:///html5/index.html");
-
-    QWebView w;
-    w.load(url);
-    if(getenv("WRSCOMPOSITOR_WINDOW_DEFAULT_WIDTH")!=NULL) {
-        w.resize(atoi(getenv("WRSCOMPOSITOR_WINDOW_DEFAULT_WIDTH")),
-                atoi(getenv("WRSCOMPOSITOR_WINDOW_DEFAULT_HEIGHT")));
-        w.show();
-    } else
-        w.showFullScreen();
+    SkobblerNavi w;
+    w.show();
 
     return app.exec();
 }

@@ -26,73 +26,59 @@ import QtQuick.Window 2.0
 import "config.js" as Conf
 
 Item {
-    id: container;
+    id: container
 
-    property variant surfaceItem: null
+    x: targetX
+    y: targetY
+
+    property real targetX
+    property real targetY
+    property real targetWidth
+    property real targetHeight
+
+    property real scaledWidth: 1.0
+    property real scaledHeight: 1.0
+
     property variant surface: null
+    property variant surfaceItem: null
     property variant iviSurface: null
-    property int layerId : -1
-    property string surfaceName: ""
+    property string name: ""
 
-    signal positionChanged(int x, int y)
-    signal sizeChanged(int width, int height)
-    signal positionAligned(string align, variant anchors)
+    property bool animationsEnabled: false
 
-    onPositionAligned: {
-        switch (align) {
-            case 'top':
-                container.anchors.top = anchors;
-                break;
-            case 'bottom':
-                container.anchors.bottom = anchors;
-                break;
-            case 'left':
-                container.anchors.left = anchors;
-                break;
-            case 'right':
-                container.anchors.right = anchors;
-                break;
-            case 'horizontalCenter':
-                container.anchors.horizontalCenter = anchors;
-                break;
-            case 'verticalCenter':
-                container.anchors.verticalCenter = anchors
-                break;
-            default:
-                console.log("onPositionAligned, Invalid align");
-        }
-        console.log("onPositionAligned, align = ", align);
-        console.log("onPositionAligned, container name:" + container.surfaceName);
-
-    }
-
-    onPositionChanged: {
-        console.log("onPositionChanged:" + x + "/" + y);
-        console.log("onPositionChanged, container name:" + container.surfaceName);
-        container.x = x;
-        container.y = y;
-    }
-
-    onSizeChanged: {
-        console.log("onSizedChange, size:" + width + "/" + height);
-        console.log("onSizedChange, container name:" + container.surfaceName);
-        container.width = width
-        container.height = height
+    transformOrigin: Item.Center
+    transform: Scale {
+        xScale: container.scaledWidth
+        yScale: container.scaledHeight
     }
 
     Behavior on x {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+       enabled: container.animationsEnabled;
+       NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on y {
+        enabled: container.animationsEnabled;
         NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on width {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+       enabled: container.animationsEnabled;
+       NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
 
     Behavior on height {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+       enabled: container.animationsEnabled;
+       NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
     }
+
+    Behavior on scaledWidth {
+       enabled: container.animationsEnabled;
+       NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+   }
+
+   Behavior on scaledHeight {
+       enabled: container.animationsEnabled;
+       NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
+   }
 }

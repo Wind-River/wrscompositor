@@ -21,7 +21,7 @@
  */
 
 import QtQuick 2.1
-import "config.js" as Conf
+import "compositor.js" as Logic
 import com.windriver.wrscompositor 1.0
 
 Item {
@@ -40,47 +40,40 @@ Item {
         id: apps
         ListElement {
             label: "Navigation"
-            appid: "mocknavi"
-            apptype: "native"
+            appid: "Navigation"
             iconPath: "resources/navigation.png"
         }
         ListElement {
             label: "Climate"
-            appid: "hvac"
-            apptype: "widget"
+            appid: "Climate"
             iconPath: "resources/climate.png"
             iconScale: 0.6
         }
         ListElement {
             label: "Media"
-            appid: "media"
-            apptype: "widget"
+            appid: "Media"
             iconPath: "resources/media.png"
             iconScale: 0.9
         }
         ListElement {
             label: "Phone"
-            appid: "dialer"
-            apptype: "widget"
+            appid: "Phone"
             iconPath: "resources/phone.png"
             iconScale: 0.6
         }
         ListElement {
             label: "Applications"
-            appid: "mainmenu"
-            apptype: "widget"
+            appid: "Applications"
             iconPath: "resources/applications.png"
         }
         ListElement {
             label: "Diagnostics"
-            appid: "diagnostics"
-            apptype: "widget"
+            appid: "Diagnostics"
             iconPath: "resources/diagnostics.png"
         }
         ListElement {
             label: "Settings"
             appid: "settings"
-            apptype: "widget"
             iconPath: "resources/settings.png"
         }
     }
@@ -113,21 +106,13 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     console.log("clicked: " + label);
-                    if (apptype == "widget") {
-                        if (appid == 'mainmenu') {
-                            var mainmenu = Conf.findObjectIdByName("MainMenu");
-                            if (mainmenu) {
-                                if(mainmenu.visible)
-                                    mainmenu.hide()
-                                else
-                                    mainmenu.show()
-                            }
-                        } else {
-                            var sidePanel = Conf.findObjectIdByName("SidePanel");
-                            if (sidePanel) {
-                                sidePanel.launchWidget(appid)
-                            }
-                        }
+                    var mainmenu =  Logic.findObjectIdByName("MainMenu");
+
+                    if (appid == 'Applications') {
+                        if (mainmenu.visible) mainmenu.hide()
+                        else mainmenu.show()
+                    } else {
+                        mainmenu.launchNative(appid);
                     }
                 }
             }
@@ -135,6 +120,6 @@ Item {
     }
 
     Component.onCompleted: {
-        Conf.registerObjectItem("DockBar", dockbar);
+        Logic.registerObjectItem("DockBar", dockbar);
     }
 }

@@ -21,32 +21,19 @@
  */
 
 import QtQuick 2.1
-import QtMultimedia 5.0
-import QtGraphicalEffects 1.0
-import "sprintf.js" as SPrintf
 
 Item {
     id: root
-    width : parent.width
-    height : parent.height
+    width: 1920
+    height: 1080
     property string dialstring: ""
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
-    Rectangle {
-        color: "#222222";
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 3
-    }
-    /*
+
     Rectangle {
         color: "black";
         anchors.fill: parent
-        border.width: width/20
-        border.color: "red"
     }
-    */
 
     ListModel {
         id: dialModel

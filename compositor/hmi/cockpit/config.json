@@ -1,18 +1,20 @@
 {
     "Rule": {
-        "StatusBar": "100x10:top:1000",
-        "DockBar": "100x20:bottom:1000",
-        "SidePanel": "40x40:middleRight:1000",
-        "MainMenu" : "50x50:middleLeft:1000"
+        "StatusBar": "100x10:topCenter:1000",
+        "DockBar": "100x10:bottomCenter:2000",
+        "SidePanelMedia": "30x40:middleRightTop:3000",
+        "SidePanelHVAC": "30x40:middleRightBottom:3000",
+        "BackGround": "70x80:middleLeft:3000",
+        "MainMenu" : "70x80:middleLeft:3000",
+        "Popup" : "40x40:middleCenter:4000",
+        "FullScreen" : "100x100:middleCenter:4000"
     },
-    "Identity": {
-        "CommandLine": "xyz",
-        "UID": "1000",
-        "IVI_ID_DEFAULT": "0",
-        "IVI_ID_NAVIGATION": "1",
-        "IVI_ID_DIALOG": "3",
-        "IVI_ID_PHONE": "4",
-        "IVI_ID_PROJECTION": "5",
-        "IVI_ID_CAMERA": "6"
+    "Role": {
+        "Default": "BackGround",
+        "Navigation": "SidePanelHVAC",
+        "Dialog": "Popup",
+        "Phone": "SidePanelMedia",
+        "Projection": "FullScreen",
+        "Camera": "FullScreen"
     }
 }

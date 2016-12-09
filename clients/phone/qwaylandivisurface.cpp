@@ -19,53 +19,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
-import QtQuick 2.1
-import "config.js" as Conf
 
-Item {
-    id: sidePanel
-    width: parent.width
-    height: parent.height
+#include "qwaylandivisurface.h"
+#include "phone.h"
 
-    signal launchWidget(string widgetid);
+namespace QtWaylandClient {
 
-    onLaunchWidget: {
-        media.widgetMode = !(widgetid=='media');
-        hvac.visible = (widgetid == 'hvac');
-        dialer.visible = (widgetid == 'dialer');
+QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface)
+    : QtWayland::ivi_surface(ivi_surface)
+{
+}
 
-        if(widgetid == 'media' ||
-            widgetid == 'hvac' ||
-            widgetid == 'dialer')
-            return true;
-        return false;
-    }
+QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface,
+                                       struct ::ivi_controller_surface *iviControllerSurface)
+    : QtWayland::ivi_surface(ivi_surface)
+    , QtWayland::ivi_controller_surface(iviControllerSurface)
+{
+}
 
-    Rectangle {
-        id: panelBackground
-        color: "black"
-        anchors.fill: parent
-    }
+QWaylandIviSurface::~QWaylandIviSurface()
+{
+    ivi_surface::destroy();
+    if (QtWayland::ivi_controller_surface::object())
+        QtWayland::ivi_controller_surface::destroy(0);
+}
 
-    SidePanelMedia {
-        id: media
-        visible: true;
-    }
+void QWaylandIviSurface::ivi_surface_configure(int32_t width, int32_t height)
+{
+    qDebug() << " QWaylandIviSurface::ivi_surface_configure, width = " << width << " height = " << height;
+    ((Phone *) parent())->iviSurfaceConfigure(width, height);
+    //this->mWindow->configure(0, width, height);
+}
 
-    SidePanelHVAC {
-        id: hvac
-        visible: true;
-        anchors.top: media.bottom
-    }
-
-    SidePanelDialer {
-        id: dialer
-        visible: false;
-        anchors.top: media.bottom
-    }
-
-    Component.onCompleted: {
-        Conf.registerObjectItem("SidePanel", sidePanel);
-    }
 }
