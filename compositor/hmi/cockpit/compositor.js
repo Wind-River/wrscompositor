@@ -209,7 +209,7 @@ var Compositor = function() {
             return null;
 
         var parent = this.getParentWindowByRole(role);
-        layer.addSurface(0, 0, parent.width, parent.height, null, layer, surface);
+        layer.addSurface(0, 0, parent.width, parent.height, null, surface);
 
         console.log("createWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
         return parent;
@@ -242,7 +242,7 @@ var Compositor = function() {
         var windowFrame = windowContainerComponent.createObject(parentItem);
 
         windowFrame.surface = surface;
-        windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame, layer, surface);
+        windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame, surface);
         windowFrame.name = role;
         windowFrame.surfaceItem = this.wrscompositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
@@ -316,7 +316,7 @@ var Compositor = function() {
 
         var layer = this.addLayer(order);
         var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, order);
-        var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window);
+        var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window, window.surface);
         window.iviSurface = iviSurface;
 
         switch (position) {

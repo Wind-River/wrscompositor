@@ -174,7 +174,6 @@ namespace WrsIVIModel {
 
         Q_INVOKABLE IVISurface* addSurface(int x = 0, int y = 0, int width = 0, int height = 0,
                                 QObject *qmlWindowFrame = NULL,
-                                IVILayer* parent = NULL,
                                 QWaylandSurface *qWaylandSurface = NULL);
         Q_INVOKABLE void removeSurface(IVISurface*);
 
