@@ -203,16 +203,16 @@ var Compositor = function() {
 
         console.log("createWaylandIviSurface, surface's role = ", role);
 
-        var layerId = this.getLayerIdIByRole(role);
-        var layer = this.iviScene.mainScreen.layerById(layerId);
+        var id = this.getLayerIdIByRole(role);
+        var layer = this.iviScene.mainScreen.layerById(id);
         if (layer == null)
-            return false;
+            return null;
 
-        var iviSurface = layer.addSurface(0, 0, 0, 0, null, layer, surface);
-        var parentItem = this.getParentWindowByRole(role);
+        var parent = this.getParentWindowByRole(role);
+        layer.addSurface(0, 0, parent.width, parent.height, null, layer, surface);
 
-        console.log("createWaylandIviSurface, parent's width = ", parentItem.width, " parent's height = ", parentItem.height);
-        return parentItem;
+        console.log("createWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
+        return parent;
     }
 
     this.addSurface = function (surface) {
@@ -263,18 +263,18 @@ var Compositor = function() {
     }
 
     this.addWaylandIviSurface = function(surface, role) {
-        var parentItem = this.getParentWindowByRole(role);
+        var parent = this.getParentWindowByRole(role);
 
-        if (parentItem == null) {
-            console.log("windowAdded, cannot get parent item");
+        if (parent == null) {
+            console.log("windowAdded, cannot get parent window");
             return;
         }
 
         console.log("addWaylandIviSurface, role = ", role);
-        console.log("addWaylandIviSurface, parentItem's width = ", parentItem.width, " parentItem's height = ", parentItem.height);
+        console.log("addWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
 
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowFrame = windowContainerComponent.createObject(parentItem);
+        var windowFrame = windowContainerComponent.createObject(parent);
 
         windowFrame.surface = surface;
         windowFrame.iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);

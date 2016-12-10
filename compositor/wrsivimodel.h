@@ -144,19 +144,9 @@ namespace WrsIVIModel {
         Q_INVOKABLE QObject *qmlWindowFrame() { if (mQmlWindowFrame != NULL) return mQmlWindowFrame; }
         Q_INVOKABLE void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
 
-        void copyQWaylandSurfaceProperties(QWaylandSurface *qWaylandSurface) {
-            this->setWidth(qWaylandSurface->size().width());
-            this->setHeight(qWaylandSurface->size().height());
-            //posiztion - is to be updated by the layout manager from QML
-        }
-
         QWaylandSurface *qWaylandSurface() { return mQWaylandSurface; }
         Q_INVOKABLE void setQWaylandSurface(QWaylandSurface *qWaylandSurface) {
             mQWaylandSurface = qWaylandSurface;
-#if WRSCOMPOSITOR_HMI_CLASSIC
-            setId(wl_resource_get_id(qWaylandSurface->handle()->resource()->handle));
-            copyQWaylandSurfaceProperties(mQWaylandSurface);
-#endif
         }
     signals:
         void propertyChanged();
