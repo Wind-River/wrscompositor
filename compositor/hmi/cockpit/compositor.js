@@ -208,9 +208,7 @@ var Compositor = function() {
         if (layer == null)
             return false;
 
-        var iviSurface = layer.addSurface();
-        this.iviScene.mainScreen.setAppLayer(layer);
-        iviSurface.setQWaylandSurface(surface);
+        var iviSurface = layer.addSurface(0, 0, 0, 0, null, layer, surface);
         var parentItem = this.getParentWindowByRole(role);
 
         console.log("createWaylandIviSurface, parent's width = ", parentItem.width, " parent's height = ", parentItem.height);
@@ -237,8 +235,6 @@ var Compositor = function() {
             return;
         }
 
-        this.iviScene.mainScreen.setAppLayer(layer);
-
         console.log("addWaylandSurface, role = ", role);
         console.log("addWaylandSurface, parentItem's width = ", parentItem.width, " parentItem's height = ", parentItem.height);
 
@@ -246,7 +242,7 @@ var Compositor = function() {
         var windowFrame = windowContainerComponent.createObject(parentItem);
 
         windowFrame.surface = surface;
-        windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame);
+        windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame, layer, surface);
         windowFrame.name = role;
         windowFrame.surfaceItem = this.wrscompositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
@@ -263,7 +259,6 @@ var Compositor = function() {
         windowFrame.scaledWidth = parentItem.width / this.displayWidth;
         windowFrame.scaledHeight = parentItem.height / this.displayHeight;
 
-        this.iviScene.mainScreen.setAppLayer(layer);
         this.addWindow(windowFrame);
     }
 

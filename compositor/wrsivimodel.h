@@ -130,8 +130,8 @@ namespace WrsIVIModel {
 
     public:
         IVISurface(QObject *parent=0);
-        IVISurface(int id, int w, int h, IVILayer* parent=0);
-        IVISurface(int id, int x, int y, int w, int h, IVILayer* parent=0);
+        IVISurface(int id, int w, int h, IVILayer* parent=0, QWaylandSurface *qWaylandSurface=0);
+        IVISurface(int id, int x, int y, int w, int h, IVILayer* parent=0, QWaylandSurface *qWaylandSurface=0);
 
         double opacity() const { return mOpacity; }
         void setOpacity(double o) { mOpacity = o; emit propertyChanged(); }
@@ -139,6 +139,7 @@ namespace WrsIVIModel {
         void setOrientation(int o) { mOrientation = o; emit propertyChanged(); }
         int visibility() const { return mVisibility; }
         void setVisibility(int o) { mVisibility = o; emit propertyChanged(); }
+        IVILayer* getParentLayer() { return mLayer; }
 
         Q_INVOKABLE QObject *qmlWindowFrame() { if (mQmlWindowFrame != NULL) return mQmlWindowFrame; }
         Q_INVOKABLE void setQmlWindowFrame(QObject *obj) { mQmlWindowFrame = obj; }
@@ -181,7 +182,10 @@ namespace WrsIVIModel {
         IVILayer(int id, int w, int h, IVIScreen* parent=0);
         IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent=0);
 
-        Q_INVOKABLE IVISurface* addSurface(int x = 0, int y = 0, int width = 0, int height = 0, QObject *qmlWindowFrame = NULL);
+        Q_INVOKABLE IVISurface* addSurface(int x = 0, int y = 0, int width = 0, int height = 0,
+                                QObject *qmlWindowFrame = NULL,
+                                IVILayer* parent = NULL,
+                                QWaylandSurface *qWaylandSurface = NULL);
         Q_INVOKABLE void removeSurface(IVISurface*);
 
         QQmlListProperty<IVISurface> surfaces() {
@@ -229,14 +233,10 @@ namespace WrsIVIModel {
         Q_INVOKABLE int layerCount() const { return mLayers.count(); }
         Q_INVOKABLE IVILayer *layer(int i) const { return mLayers.at(i); }
         Q_INVOKABLE IVILayer *layerById(int id);
-        Q_INVOKABLE IVILayer *getAppLayer() const { return mAppLayer; }
-        Q_INVOKABLE void setAppLayer(IVILayer* layer) { mAppLayer = layer; }
-
     private:
         QList<IVILayer*>    mLayers; //children
         IVIScene            *mScene; //parent
         QWaylandOutput *    mWaylandOutput; //wayland output associated to this IVI screen
-        IVILayer*           mAppLayer; // application layer
     };
 
     class IVIScene : public IVIRectangle

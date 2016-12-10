@@ -319,16 +319,22 @@ void WrsCompositor::surfaceUnmapped() {
 void WrsCompositor::surfaceDestroyed() {
     TRACE() << "[BEGIN]";
     QWaylandQuickSurface *surface = static_cast<QWaylandQuickSurface *>(sender());
+    WrsIVIModel::IVISurface *iviSurface = this->findIVISurfaceByQWaylandSurface(surface);
+
+    if (iviSurface == NULL) {
+        DEBUG() << " There isn't any IVISurface mapped to qwaylandSurface";
+        return;
+    }
+
     if (surface == m_fullscreenSurface)
         m_fullscreenSurface = 0;
 
-    WrsIVIModel::IVILayer* layer = mIviScene->mainScreen()->getAppLayer();
-    if (layer == NULL) 
+    WrsIVIModel::IVILayer* layer = iviSurface->getParentLayer();
+    if (layer == NULL)
         return;
 
-    // Remove coresponding IVI surface from IVIScene model
-    layer->removeSurface(
-        this->findIVISurfaceByQWaylandSurface(surface));
+    // Remove coresponding IVI surface from IVILayer
+    layer->removeSurface(iviSurface);
 
     emit windowDestroyed(QVariant::fromValue(surface));
     TRACE() << "[END]";

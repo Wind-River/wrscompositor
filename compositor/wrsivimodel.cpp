@@ -68,11 +68,11 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
 /// IVIScreen
 ////////////////////////////////////////////////////////////////////////////////
 
-IVIScreen::IVIScreen(QObject* parent) : IVIRectangle(-1, 0, 0, parent), mScene(0), mAppLayer(NULL)
+IVIScreen::IVIScreen(QObject* parent) : IVIRectangle(-1, 0, 0, parent), mScene(0)
 {
 }
 
-IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) : IVIRectangle(id, w, h, parent), mScene(parent), mAppLayer(NULL)
+IVIScreen::IVIScreen(int id, int w, int h, IVIScene* parent) : IVIRectangle(id, w, h, parent), mScene(parent)
 {
 }
 
@@ -110,8 +110,9 @@ IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
 {
 }
 
-IVISurface* IVILayer::addSurface(int x, int y, int width, int height, QObject *qmlWindowFrame) {
-    IVISurface* surface = new IVISurface(WRS_IVI_ID_SURFACE_DEFAULT, width, height, this);
+IVISurface* IVILayer::addSurface(int x, int y, int width, int height,
+                                QObject *qmlWindowFrame,  IVILayer* parent, QWaylandSurface *qWaylandSurface) {
+    IVISurface* surface = new IVISurface(WRS_IVI_ID_SURFACE_DEFAULT, width, height, parent, qWaylandSurface);
     surface->setX(x);
     surface->setY(y);
     surface->setQmlWindowFrame(qmlWindowFrame);
@@ -128,12 +129,12 @@ IVISurface::IVISurface(QObject *parent) :
 {
 }
 
-IVISurface::IVISurface(int id, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mQWaylandSurface(NULL)
+IVISurface::IVISurface(int id, int w, int h, IVILayer* parent,  QWaylandSurface *qWaylandSurface) :
+    IVIRectangle(id, 0, 0, w, h, parent), mLayer(parent), mQWaylandSurface(qWaylandSurface)
 {
 }
 
-IVISurface::IVISurface(int id, int x, int y, int w, int h, IVILayer* parent) :
-    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mQWaylandSurface(NULL)
+IVISurface::IVISurface(int id, int x, int y, int w, int h, IVILayer* parent, QWaylandSurface *qWaylandSurface) :
+    IVIRectangle(id, x, y, w, h, parent), mLayer(parent), mQWaylandSurface(qWaylandSurface)
 {
 }
