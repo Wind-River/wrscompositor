@@ -405,11 +405,6 @@ WrsIVIModel::IVISurface* WrsCompositor::findIVISurfaceByQWaylandSurface(QWayland
 QString WrsCompositor::getSurfaceRole(QWaylandSurface *qWlSurface) {
     WrsIVIModel::IVISurface* iviSurface = findIVISurfaceByQWaylandSurface(qWlSurface);
 
-    if (!iviSurface)  {
-        DEBUG() << "There isn't IVI Surface mapped to Wayland Surface";
-        return "NotIviSurface";
-    }
-
     if (iviSurface->id() == WRS_IVI_ID_SURFACE_CAMERA) {
         return "Camera";
     } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_DIALOG) {

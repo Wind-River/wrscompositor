@@ -112,7 +112,7 @@ IVILayer::IVILayer(int id, int x, int y, int w, int h, IVIScreen* parent) :
 
 IVISurface* IVILayer::addSurface(int x, int y, int width, int height,
                                 QObject *qmlWindowFrame,  QWaylandSurface *qWaylandSurface) {
-    IVISurface* surface = new IVISurface(WRS_IVI_ID_SURFACE_DEFAULT, width, height, this, qWaylandSurface);
+    IVISurface* surface = new IVISurface(-1, width, height, this, qWaylandSurface);
     surface->setX(x);
     surface->setY(y);
     surface->setQmlWindowFrame(qmlWindowFrame);

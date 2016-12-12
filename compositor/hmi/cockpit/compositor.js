@@ -22,12 +22,17 @@
 
 .pragma library
 
-var surfaceRole = { "WRS_IVI_ID_SURFACE_DEFAULT"    : 0,
-                    "WRS_IVI_ID_SURFACE_NAVIGATION" : 1,
-                    "WRS_IVI_ID_SURFACE_DIALOG"     : 3,
-                    "WRS_IVI_ID_SURFACE_PHONE"      : 4,
-                    "WRS_IVI_ID_SURFACE_PROJECTION" : 5,
-                    "WRS_IVI_ID_SURFACE_CAMERA"     : 6 };
+var ruleObject = function(ruleValue) {
+    this.size = ruleValue.size;
+    this.position = ruleValue.position;
+    this.layerId = ruleValue.layerId;
+    this.surfaceId = ruleValue.surfaceId;
+}
+
+var roleObject = function(roleValue) {
+    this.parent = roleValue.parent;
+    this.surfaceId = roleValue.surfaceId;
+}
 
 var object = function (name, id) {
     this.name = name;
@@ -72,8 +77,8 @@ var Compositor = function() {
     this.iviScene = null;
 
     this.windowList = new Array();
-    this.compositorRule = new Array();
-    this.compositorRole = new Array();
+    this.compositorRuleList = new Array();
+    this.compositorRoleList = new Array();
 
     this.init = function() {
         var request = new XMLHttpRequest();
@@ -104,13 +109,13 @@ var Compositor = function() {
     }
 
     this.loadCompositorRole = function (key, value) {
-        console.log("loadCompositorRole, key = ", key, " value = ", value);
-        this.compositorRole[key] = value;
+        var newRole= new roleObject(value)
+        this.compositorRoleList[key] = newRole;
     }
 
     this.loadCompositorRule = function(key, value) {
-        console.log("loadCompositionRule, key = ", key, " value = ", value);
-        this.compositorRule[key] = value;
+        var newRule = new ruleObject(value);
+        this.compositorRuleList[key] = newRule;
     }
 
     this.setRootObject = function(root) {
@@ -131,16 +136,21 @@ var Compositor = function() {
     }
 
     this.getLayerIdIByRole = function(role) {
-        var roleValue = this.compositorRole[role];
-        var ruleValue = this.compositorRule[roleValue];
-        return parseInt(ruleValue.split(":")[2]);
+        var roleValue = this.compositorRoleList[role];
+        var parent = roleValue.parent;
+
+        var ruleValue= this.compositorRuleList[parent]
+        var layerId = parseInt(ruleValue.layerId);
+
+        return layerId;
     }
 
     this.getParentWindowByRole = function(role) {
-        var parentName = this.compositorRole[role];
+       var roleValue = this.compositorRoleList[role];
+       var parent = roleValue.parent;
 
         for (var i = 0; i < this.windowList.length; i++) {
-            if (this.windowList[i].name == parentName)
+            if (this.windowList[i].name == parent)
                 return this.windowList[i];
         }
 
@@ -175,30 +185,11 @@ var Compositor = function() {
     }
 
     this.createWaylandIviSurface = function(surface, id) {
-        var role;
-        
-        switch (id) {
-            case surfaceRole.WRS_IVI_ID_SURFACE_CAMERA:
-                role = "Camera";
-                break;
-            case surfaceRole.WRS_IVI_ID_SURFACE_DIALOG:
-                role = "Dialog";
-                break;
-            case surfaceRole.WRS_IVI_ID_SURFACE_NAVIGATION:
-                role = "Navigation";
-                break;
-            case surfaceRole.WRS_IVI_ID_SURFACE_PHONE:
-                role = "Phone";
-                break;
-            case surfaceRole.WRS_IVI_ID_SURFACE_PROJECTION:
-                role = "Projection";
-                break;
-            case surfaceRole.WRS_IVI_ID_SURFACE_DEFAULT:
-                role = "Default";
-                break;
-            default:
-                consoel.log("createWaylandIviSurface, Invalid surface Role");
-                return;
+        var role = this.findSurfaceRoleById(id);
+
+        if (role == undefined) {
+            console.log("createWaylandIviSurface, cannot find surface role related to id");
+            return null;
         }
 
         console.log("createWaylandIviSurface, surface's role = ", role);
@@ -211,18 +202,21 @@ var Compositor = function() {
         var parent = this.getParentWindowByRole(role);
         layer.addSurface(0, 0, parent.width, parent.height, null, surface);
 
+
         console.log("createWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
         return parent;
     }
 
     this.addSurface = function (surface) {
-        var role = this.wrscompositor.getSurfaceRole(surface);
+        var iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
 
-        if (role == "NotIviSurface")  {
+        if (iviSurface == null)  {
             this.addWaylandSurface(surface, "Default");
-        } else {
-            this.addWaylandIviSurface(surface, role);
+            return;
         }
+
+        var role = this.findSurfaceRoleById(iviSurface.id);
+        this.addWaylandIviSurface(surface, role);
     }
 
     this.addWaylandSurface = function (surface, role) {
@@ -243,6 +237,7 @@ var Compositor = function() {
 
         windowFrame.surface = surface;
         windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame, surface);
+        windowFrame.iviSurface.id = surface.client.processId;
         windowFrame.name = role;
         windowFrame.surfaceItem = this.wrscompositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
@@ -300,9 +295,10 @@ var Compositor = function() {
     }
 
     this.initWindow = function (ruleKey, ruleValue) {
-        var sizes = ruleValue.split(":")[0];
-        var position = ruleValue.split(":")[1];
-        var order = parseInt(ruleValue.split(":")[2]);
+        var sizes = ruleValue.size;
+        var position = ruleValue.position;
+        var layerId = parseInt(ruleValue.layerId);
+        var surfaceId = parseInt(ruleValue.surfaceId);
 
         var widthScale = parseInt(sizes.split("x")[0]);
         var heightScale = parseInt(sizes.split("x")[1]);
@@ -314,9 +310,10 @@ var Compositor = function() {
         console.log("initWindow, position = " + position, " widthScale =", widthScale, " heightScale =", heightScale);
         console.log("initWindow, targetWidth = ", targetWidth, " targetHeight = ", targetHeight);
 
-        var layer = this.addLayer(order);
-        var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, order);
+        var layer = this.addLayer(layerId);
+        var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, layerId);
         var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window, window.surface);
+        iviSurface.id = surfaceId;
         window.iviSurface = iviSurface;
 
         switch (position) {
@@ -448,10 +445,20 @@ var Compositor = function() {
     }
 
     this.relayoutWindows = function() {
-        for (var ruleKey in this.compositorRule) {
-            var ruleValue = this.compositorRule[ruleKey];
+        for (var ruleKey in this.compositorRuleList) {
+            var ruleValue = this.compositorRuleList[ruleKey];
             this.initWindow(ruleKey, ruleValue)
         }
+    }
+
+    this.findSurfaceRoleById = function(id) {
+        for (var roleKey in this.compositorRoleList) {
+            var roleValue = this.compositorRoleList[roleKey];
+            if (roleValue.surfaceId == id) {
+                return roleKey;
+            }
+        }
+        return undefined;
     }
 
     this.findBySurface = function(surface) {
