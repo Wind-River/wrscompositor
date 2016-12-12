@@ -276,7 +276,7 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
     TRACE() << "[BEGIN]";
 
 #if WRSCOMPOSITOR_HMI_CLASSIC
-    WrsIVIModel::IVILayer* layer = mIviScene->mainScreen()->getAppLayer();
+    WrsIVIModel::IVILayer* layer = mIviScene->mainScreen()->layerById(1000);
     if (layer == NULL)
         return;
 
@@ -351,9 +351,7 @@ void WrsCompositor::windowPropertyChanged(const QString &property, const QVarian
 void WrsCompositor::sizeChanged() {
     TRACE() << "[BEGIN]";
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
-#if WRSCOMPOSITOR_HMI_CLASSIC
-    findIVISurfaceByQWaylandSurface(surface)->copyQWaylandSurfaceProperties(surface);
-#elif WRSCOMPOSITOR_HMI_COCKPIT
+#if WRSCOMPOSITOR_HMI_COCKPIT
     WrsIVIModel::IVISurface *iviSurface = this->findIVISurfaceByQWaylandSurface(surface);
     DEBUG() << "iviSurface's width = " << iviSurface->width() << " iviSurface's height = " << iviSurface->height();
     //Get IVI surface for QWaylandSurface

@@ -58,7 +58,6 @@ IVIScene::IVIScene(QWaylandCompositor* compositor, int w, int h, QObject* parent
 #if WRSCOMPOSITOR_HMI_CLASSIC
      // default layer
      IVILayer* layer = mMainScreen->addLayer(1000); // layer for classic HMI
-     mMainScreen->setAppLayer(layer);
      mMainScreen->layer(mMainScreen->layerCount()-1)->setVisibility(1);
      mMainScreen->layer(mMainScreen->layerCount()-1)->setOpacity(1);
 #endif
