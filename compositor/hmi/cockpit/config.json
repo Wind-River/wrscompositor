@@ -3,76 +3,84 @@
         "StatusBar": {
             "size": "100x10",
             "position": "topCenter",
-            "layerId": "1000",
-            "surfaceId": "1"
+            "opacity": 1.0,
+            "layerId": 1000,
+            "surfaceId": 1
         },
         "DockBar": {
             "size": "100x10",
             "position": "bottomCenter",
-            "layerId": "2000",
-            "surfaceId": "2"
+            "opacity": 1.0,
+            "layerId": 2000,
+            "surfaceId": 2
         },
         "SidePanelMedia": {
             "size":"30x40",
             "position": "middleRightTop",
-            "layerId" :"3000",
-            "surfaceId": "3"
+            "opacity": 1.0,
+            "layerId" : 3000,
+            "surfaceId": 3
         },
         "SidePanelHVAC": {
             "size": "30x40",
             "position": "middleRightBottom",
-            "layerId": "3000",
-            "surfaceId": "4"
+            "opacity": 1.0,
+            "layerId": 3000,
+            "surfaceId": 4
         },
         "BackGround": {
             "size": "70x80",
             "position": "middleLeft",
-            "layerId": "3000",
-            "surfaceId": "5"
+            "opacity": 1.0,
+            "layerId": 3000,
+            "surfaceId": 5
         },
         "MainMenu": {
             "size": "70x80",
             "position": "middleLeft",
-            "layerId": "3000",
-            "surfaceId": "6"
+            "opacity": 0.8,
+            "layerId": 3000,
+            "surfaceId": 6
         },
         "Popup": {
             "size": "40x40",
             "position": "middleCenter",
-            "layerId": "4000",
-            "surfaceId": "7"
+            "opacity": 1.0,
+            "layerId": 4000,
+            "surfaceId": 7
         },
         "FullScreen": {
             "size": "100x100",
             "position": "middleCenter",
-            "layerId": "4000",
-            "surfaceId": "8"
+            "opacity": 1.0,
+            "layerId": 4000,
+            "surfaceId": 8
         }
     },
     "Role": {
         "Default": {
             "parent": "BackGround",
-            "surfaceId": "9"
+            "surfaceId": 9
         },
         "Navigation": {
             "parent": "Popup",
-            "surfaceId": "10"
+            "surfaceId": 10
         },
         "Dialog": {
             "parent": "Popup",
-            "surfaceId": "11"
+            "surfaceId": 11
         },
         "Phone": {
             "parent": "SidePanelMedia",
-            "surfaceId": "12"
+            "surfaceId": 12
         },
         "Projection": {
             "parent": "FullScreen",
-            "surfaceId": "13"
+            "surfaceId": 13
         },
         "Camera": {
             "parent": "FullScreen",
-            "surfaceId": "14"
+            "surfaceId": 14
         }
     }
 }

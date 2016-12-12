@@ -25,20 +25,15 @@ import com.windriver.wrscompositor 1.0
 import "config.js" as Conf
 import "compositor.js" as Logic
 
-Item {
+Rectangle {
     id: mainMenu
     width: parent.width
     height: parent.height
     anchors.fill: parent
+    color: "black"
 
     SystemdDbusClient {
         id: systemd_dbusClient
-    }
-
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.8
     }
 
     Behavior on opacity {
