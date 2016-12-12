@@ -35,12 +35,12 @@
 #include "qwayland-ivi-controller.h"
 #include "qwaylandivisurface.h"
 
-#define WRS_IVI_ID_SURFACE_DEFAULT          0
-#define WRS_IVI_ID_SURFACE_NAVIGATION       1
-#define WRS_IVI_ID_SURFACE_DIALOG           3
-#define WRS_IVI_ID_SURFACE_PHONE            4
-#define WRS_IVI_ID_SURFACE_PROJECTION       5
-#define WRS_IVI_ID_SURFACE_CAMERA           6
+#define WRS_IVI_ID_SURFACE_DEFAULT          9
+#define WRS_IVI_ID_SURFACE_NAVIGATION       10
+#define WRS_IVI_ID_SURFACE_DIALOG           11
+#define WRS_IVI_ID_SURFACE_PHONE            12
+#define WRS_IVI_ID_SURFACE_PROJECTION       13
+#define WRS_IVI_ID_SURFACE_CAMERA           14
 
 class Phone : public QQuickWidget 
 {
