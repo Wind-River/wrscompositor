@@ -25,6 +25,7 @@
 var ruleObject = function(ruleValue) {
     this.size = ruleValue.size;
     this.position = ruleValue.position;
+    this.opacity = ruleValue.opacity;
     this.layerId = ruleValue.layerId;
     this.surfaceId = ruleValue.surfaceId;
 }
@@ -140,7 +141,7 @@ var Compositor = function() {
         var parent = roleValue.parent;
 
         var ruleValue= this.compositorRuleList[parent]
-        var layerId = parseInt(ruleValue.layerId);
+        var layerId = ruleValue.layerId;
 
         return layerId;
     }
@@ -297,8 +298,9 @@ var Compositor = function() {
     this.initWindow = function (ruleKey, ruleValue) {
         var sizes = ruleValue.size;
         var position = ruleValue.position;
-        var layerId = parseInt(ruleValue.layerId);
-        var surfaceId = parseInt(ruleValue.surfaceId);
+        var opacity = ruleValue.opacity;
+        var layerId = ruleValue.layerId;
+        var surfaceId = ruleValue.surfaceId;
 
         var widthScale = parseInt(sizes.split("x")[0]);
         var heightScale = parseInt(sizes.split("x")[1]);
@@ -311,7 +313,7 @@ var Compositor = function() {
         console.log("initWindow, targetWidth = ", targetWidth, " targetHeight = ", targetHeight);
 
         var layer = this.addLayer(layerId);
-        var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, layerId);
+        var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, layerId, opacity);
         var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window, window.surface);
         iviSurface.id = surfaceId;
         window.iviSurface = iviSurface;
@@ -469,13 +471,13 @@ var Compositor = function() {
         return null;
     }
 
-    this.createQmlComponent = function(name, x, y, width, height, order) {
+    this.createQmlComponent = function(name, x, y, width, height, order, opacity) {
         var qmlName = name.concat(".qml");
 
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var component = Qt.createComponent(qmlName);
 
-        var windowFrame = windowContainerComponent.createObject(this.root, {"x": x, "y": y, "width": width, "height": height, "z": order});
+        var windowFrame = windowContainerComponent.createObject(this.root, {"x": x, "y": y, "width": width, "height": height, "z": order, "opacity": opacity});
 
         var surface = component.createObject(windowFrame);
         windowFrame.surface = surface;
