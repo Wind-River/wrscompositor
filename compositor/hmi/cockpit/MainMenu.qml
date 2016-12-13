@@ -23,6 +23,7 @@
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
 import "config.js" as Conf
+import "hmi-controller.js" as Control
 
 Rectangle {
     id: mainMenu
@@ -246,7 +247,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        Conf.registerObjectItem("MainMenu", mainMenu);
+        Control.getInstance().registerObjectItem(mainMenu, "MainMenu");
     }
 
     Keys.onLeftPressed: { nativeAppsView.moveCurrentIndexLeft(); event.accepted = true}

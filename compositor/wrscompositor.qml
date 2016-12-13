@@ -24,12 +24,12 @@ import QtQuick 2.1
 import QtMultimedia 5.0
 import QtGraphicalEffects 1.0
 import "wrscompositor.js" as Logic
+import "hmi-controller.js" as Control
 import "config.js" as Conf
-import com.windriver.automotive 1.0
-import com.windriver.genivi 1.0
 
 Item {
     id: root
+    property var hmiController: null
     property var compositorLogic : null
 
     x: 0
@@ -37,7 +37,6 @@ Item {
     height: windowHeight
     width: windowWidth
 
-    property variant waitProcess: null
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
     onHasFullscreenWindowChanged: {
@@ -48,6 +47,7 @@ Item {
         compositorLogic = Logic.getCompositorInstance();
         if (compositorLogic) {
             compositorLogic.setRootObject(root);
+            compositorLogic.setHmiController(Control.getInstance());
             compositorLogic.setIviScene(iviScene);
             compositorLogic.setWrsCompositor(compositor);
             compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);

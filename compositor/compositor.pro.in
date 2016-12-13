@@ -2,7 +2,7 @@ DBUS_ADAPTORS += projectionmode.xml
 HEADERS += Process.h vna_dbusclient.h wr_dbusclient.h wrscompositor.h projectionmode.h systemd-util.h util.h
 SOURCES += main.cpp Process.cpp vna_dbusclient.cpp wr_dbusclient.cpp wrscompositor.cpp projectionmode.cpp systemd-util.cpp util.cpp
 
-OTHER_FILES = wrscompositor.qml  wrscompositor.js
+OTHER_FILES = wrscompositor.qml  wrscompositor.js hmi-controller.js
 
 LIBS+=-lpam
 

@@ -44,6 +44,7 @@ function getCompositorInstance() {
 
 var Compositor = function() {
     this.wrscompositor = null;
+    this.hmiController = null;
     this.topWindow = null;
     this.bottomWindow = null;
     this.root = 0;
@@ -97,6 +98,10 @@ var Compositor = function() {
 
     this.setRootObject = function(root) {
         this.root = root;
+    }
+
+    this.setHmiController = function(controller) {
+        this.hmiController = controller;
     }
 
     this.setWrsCompositor = function (compositor) {
