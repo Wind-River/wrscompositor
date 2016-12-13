@@ -22,10 +22,35 @@
 
 .pragma library
 
-// DEFAULT CONFIG VARIABLES
-var displayWidth = 0;
-var displayHeight = 0;
-var densityAdjust = 1.0;
-var useWebEngine = 0;
+var object = function(id, name, handler) {
+    this.id = id;
+    this.name = name;
+}
 
-// XXX OVERWRITE DEFAULT CONFIGs FROM HERE
+var hmiConroller = null;
+function getInstance() {
+    if (hmiConroller == null) {
+        hmiConroller = new HmiController();
+    }
+
+    return hmiConroller;
+}
+
+var HmiController = function() {
+    this.objectList = new Array();
+
+    this.registerObjectItem = function(id, name) {
+        var newObject = new object(id, name);
+        this.objectList.push(newObject);
+    }
+
+    this.findObjectByName = function(name) {
+        for (var index = 0; index < this.objectList.length; index++) {
+            var object = this.objectList[index];
+            if (object.name == name) {
+                return object.id;
+            }
+        }
+        return null;
+    }
+}

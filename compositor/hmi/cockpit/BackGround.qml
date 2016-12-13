@@ -22,7 +22,7 @@
 
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
-import "config.js" as Conf
+import "hmi-controller.js" as Control
 
 Image {
     id: background
@@ -32,6 +32,6 @@ Image {
     source: "resources/wallpaper.svg"
 
     Component.onCompleted: {
-        Conf.registerObjectItem("BackGround", background);
+        Control.getInstance().registerObjectItem(background, "BackGround");
     }
 }

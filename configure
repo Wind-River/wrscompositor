@@ -367,6 +367,7 @@ cd compositor/hmi/$HMI_PROFILE
 echo "<RCC>" > $RCPATH
 echo "  <qresource prefix=\"/\">" >> $RCPATH
 echo "    <file>wrscompositor.js</file>" >> $RCPATH
+echo "    <file>hmi-controller.js</file>" >> $RCPATH
 echo "    <file>wrscompositor.qml</file>" >> $RCPATH
 for name in `find . -name '*.qml' -o -name '*.js' -o -name '*.jpg' -o -name '*.png' -o -name '*.svg' -o -name '*.otf' | sed -e "s/.\///"`
 do

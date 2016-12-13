@@ -21,7 +21,7 @@
  */
 
 import QtQuick 2.1
-import "config.js" as Conf
+import "hmi-controller.js" as Control
 import com.windriver.wrscompositor 1.0
 
 Item {
@@ -106,7 +106,7 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     console.log("clicked: " + label);
-                    var mainmenu =  Conf.findObjectIdByName("MainMenu");
+                    var mainmenu =  Control.getInstance().findObjectByName("MainMenu");
 
                     if (appid == 'Applications') {
                         if (mainmenu.visible) mainmenu.hide()
@@ -120,6 +120,6 @@ Item {
     }
 
     Component.onCompleted: {
-        Conf.registerObjectItem("DockBar", dockbar);
+        Control.getInstance().registerObjectItem(dockbar, "DockBar");
     }
 }
