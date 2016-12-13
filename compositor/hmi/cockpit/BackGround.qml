@@ -22,7 +22,7 @@
 
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
-import "compositor.js" as Logic
+import "config.js" as Conf
 
 Image {
     id: background
@@ -32,6 +32,6 @@ Image {
     source: "resources/wallpaper.svg"
 
     Component.onCompleted: {
-    	Logic.registerObjectItem("BackGround", background);
+        Conf.registerObjectItem("BackGround", background);
     }
 }

@@ -23,7 +23,6 @@
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
 import "config.js" as Conf
-import "compositor.js" as Logic
 
 Rectangle {
     id: mainMenu
@@ -247,7 +246,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        Logic.registerObjectItem("MainMenu", mainMenu);
+        Conf.registerObjectItem("MainMenu", mainMenu);
     }
 
     Keys.onLeftPressed: { nativeAppsView.moveCurrentIndexLeft(); event.accepted = true}

@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-.pragma library
-
 var ruleObject = function(ruleValue) {
     this.size = ruleValue.size;
     this.position = ruleValue.position;
@@ -33,28 +31,6 @@ var ruleObject = function(ruleValue) {
 var roleObject = function(roleValue) {
     this.parent = roleValue.parent;
     this.surfaceId = roleValue.surfaceId;
-}
-
-var object = function (name, id) {
-    this.name = name;
-    this.id = id;
-}
-
-var objectList = new Array();
-
-function registerObjectItem (name, id) {
-    var newObject = new object(name, id);
-    objectList.push(newObject);
-}
-
-function findObjectIdByName(name) {
-    for (var index = 0; index < objectList.length; index++) {
-        var object = objectList[index];
-        if (object.name == name) {
-            return object.id;
-        }
-    }
-    return null;
 }
 
 var compositorLogic = null;

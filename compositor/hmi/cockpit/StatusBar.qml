@@ -22,7 +22,6 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
 import "config.js" as Conf
-import "compositor.js" as Logic
 
 Item {
     id: statusBar
@@ -30,7 +29,7 @@ Item {
     height: parent.height
 
     Component.onCompleted: {
-        Logic.registerObjectItem("StatusBar", statusBar);
+        Conf.registerObjectItem("StatusBar", statusBar);
     }
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
