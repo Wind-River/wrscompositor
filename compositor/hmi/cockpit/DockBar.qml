@@ -21,7 +21,7 @@
  */
 
 import QtQuick 2.1
-import "compositor.js" as Logic
+import "config.js" as Conf
 import com.windriver.wrscompositor 1.0
 
 Item {
@@ -106,7 +106,7 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     console.log("clicked: " + label);
-                    var mainmenu =  Logic.findObjectIdByName("MainMenu");
+                    var mainmenu =  Conf.findObjectIdByName("MainMenu");
 
                     if (appid == 'Applications') {
                         if (mainmenu.visible) mainmenu.hide()
@@ -120,6 +120,6 @@ Item {
     }
 
     Component.onCompleted: {
-        Logic.registerObjectItem("DockBar", dockbar);
+        Conf.registerObjectItem("DockBar", dockbar);
     }
 }

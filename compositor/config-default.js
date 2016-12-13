@@ -30,4 +30,26 @@ var displayHeight = 0;
 var densityAdjust = 1.0;
 var useWebEngine = 0;
 
+var object = function (name, id) {
+    this.name = name;
+    this.id = id;
+}
+
+var objectList = new Array();
+
+function registerObjectItem (name, id) {
+    var newObject = new object(name, id);
+    objectList.push(newObject);
+}
+
+function findObjectIdByName(name) {
+    for (var index = 0; index < objectList.length; index++) {
+        var object = objectList[index];
+        if (object.name == name) {
+            return object.id;
+        }
+    }
+    return null;
+}
+
 // XXX OVERWRITE DEFAULT CONFIGs FROM HERE

@@ -23,9 +23,8 @@
 import QtQuick 2.1
 import QtMultimedia 5.0
 import QtGraphicalEffects 1.0
-import "compositor.js" as Logic
+import "wrscompositor.js" as Logic
 import "config.js" as Conf
-import "sprintf.js" as SPrintf
 import com.windriver.automotive 1.0
 import com.windriver.genivi 1.0
 

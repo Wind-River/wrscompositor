@@ -64,11 +64,15 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
 
     if (object == NULL) {
         DEBUG() << "Try to load QML Component";
+#if WRSCOMPOSITOR_HMI_COCKPIT
+        QUrl programUrl = QUrl("qrc:///wrscompositor.qml");
+#else
         QUrl programUrl = QUrl("qrc:///main.qml");
         if(qApp->arguments().contains("--debug"))
             programUrl = QUrl("hmi/" WRSCOMPOSITOR_HMI_PROFILE "/main.qml");
         if(!mProgram.isNull())
             programUrl = QUrl(mProgram);
+#endif
 
         QVariant width = QVariant(size.width());
         QVariant height = QVariant(size.height());
