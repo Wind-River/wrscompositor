@@ -24,8 +24,26 @@ var ruleObject = function(ruleValue) {
     this.size = ruleValue.size;
     this.position = ruleValue.position;
     this.opacity = ruleValue.opacity;
-    this.layerId = ruleValue.layerId;
-    this.surfaceId = ruleValue.surfaceId;
+    this.layer = ruleValue.layer;
+    this.layerId = -1;
+    this.surfaceId =  -1;
+
+    this.setIdByRule = function(layer) {
+        if (layer == "base") {
+            this.layerId = 1000;
+        }
+        else if (layer == "application") {
+            this.layerId = 2000;
+        }
+        else if (layer == "notification") {
+            this.layerId = 2000;
+        } else {
+            console.log("setIdByRule, rule's layer is invalid")
+            return;
+        }
+
+        this.surfaceId = this.layerId + 10;
+    }
 }
 
 var roleObject = function(roleValue) {
@@ -93,6 +111,8 @@ var Compositor = function() {
 
     this.loadCompositorRule = function(key, value) {
         var newRule = new ruleObject(value);
+
+        newRule.setIdByRule();
         this.compositorRuleList[key] = newRule;
     }
 

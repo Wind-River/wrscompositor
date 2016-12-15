@@ -4,57 +4,49 @@
             "size": "100x10",
             "position": "topCenter",
             "opacity": 1.0,
-            "layerId": 1000,
-            "surfaceId": 1
+            "layer": "base"
         },
         "DockBar": {
             "size": "100x10",
             "position": "bottomCenter",
             "opacity": 1.0,
-            "layerId": 2000,
-            "surfaceId": 2
+            "layer": "base"
         },
         "SidePanelMedia": {
             "size":"30x40",
             "position": "middleRightTop",
             "opacity": 1.0,
-            "layerId" : 3000,
-            "surfaceId": 3
+            "layer" : "base"
         },
         "SidePanelHVAC": {
             "size": "30x40",
             "position": "middleRightBottom",
             "opacity": 1.0,
-            "layerId": 3000,
-            "surfaceId": 4
+            "layer": "base"
         },
         "BackGround": {
             "size": "70x80",
             "position": "middleLeft",
             "opacity": 1.0,
-            "layerId": 3000,
-            "surfaceId": 5
+            "layer": "application"
         },
         "MainMenu": {
             "size": "70x80",
             "position": "middleLeft",
             "opacity": 0.8,
-            "layerId": 3000,
-            "surfaceId": 6
+            "layer": "base"
         },
         "Popup": {
             "size": "40x40",
             "position": "middleCenter",
             "opacity": 1.0,
-            "layerId": 4000,
-            "surfaceId": 7
+            "layer": "notification"
         },
         "FullScreen": {
             "size": "100x100",
             "position": "middleCenter",
             "opacity": 1.0,
-            "layerId": 4000,
-            "surfaceId": 8
+            "layer": "application"
         }
     },
     "Role": {
