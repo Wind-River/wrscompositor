@@ -52,27 +52,27 @@
     "Role": {
         "Default": {
             "parent": "BackGround",
-            "surfaceId": 9
+            "surfaceId": 0
         },
         "Navigation": {
             "parent": "Popup",
-            "surfaceId": 10
+            "surfaceId": 1
         },
         "Dialog": {
             "parent": "Popup",
-            "surfaceId": 11
+            "surfaceId": 2
         },
         "Phone": {
             "parent": "SidePanelMedia",
-            "surfaceId": 12
+            "surfaceId": 3
         },
         "Projection": {
             "parent": "FullScreen",
-            "surfaceId": 13
+            "surfaceId": 4
         },
         "Camera": {
             "parent": "FullScreen",
-            "surfaceId": 14
+            "surfaceId": 5
         }
     }
 }
