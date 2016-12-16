@@ -44,7 +44,9 @@
         },
         "Popup": {
             "scale": "40x40",
-            "position": "middleCenter",
+            "position": "undefined",
+            "x": 500,
+            "y": 400,
             "opacity": 1.0,
             "animation": true,
             "layer": "notification"

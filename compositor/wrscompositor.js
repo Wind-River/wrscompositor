@@ -26,8 +26,8 @@ var ruleObject = function(ruleValue) {
     this.opacity = ruleValue.opacity;
     this.layer = ruleValue.layer;
     this.animation = ruleValue.animation;
-    this.x = 0;
-    this.y = 0;
+    this.x = (ruleValue.position == 'undefined') ? ruleValue.x : 0;
+    this.y = (ruleValue.position == 'undefined') ? ruleValue.y : 0;
     this.width = 0;
     this.height = 0;
     this.layerId = -1;
@@ -438,12 +438,8 @@ var Compositor = function() {
 
             case "undefined":
             {
-                // TODO
-            }
-
-            default: {
-                console.log("onPositionAligned, Invalid align");
-                return;
+                console.log("initWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate";
+                break;
             }
         }
 
