@@ -314,6 +314,11 @@ var Compositor = function() {
     this.initWindow = function (ruleKey, ruleValue) {
         var layer = this.addLayer(ruleValue.layerId);
         var window = this.createQmlComponent(ruleKey, ruleValue);
+        if (window == null) {
+            console.log("initWindow, Error  creating qml component")
+            return;
+        }
+
         var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window, window.surface);
         iviSurface.id = ruleValue.surfaceId;
         window.iviSurface = iviSurface;
@@ -438,7 +443,7 @@ var Compositor = function() {
 
             case "undefined":
             {
-                console.log("initWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate";
+                console.log("initWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
                 break;
             }
         }
@@ -473,10 +478,12 @@ var Compositor = function() {
     }
 
     this.createQmlComponent = function(ruleKey, ruleValue) {
-        var qmlName = ruleKey.concat(".qml");
-
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var component = Qt.createComponent(qmlName);
+
+        if (windowContainerComponent.status == Component.Error) {
+            console.log("createQmlComponent, Error loading component:", windowContainerComponent.errorString());
+            return null;
+        }
 
         var windowFrame = 
                 windowContainerComponent.createObject(
@@ -488,8 +495,17 @@ var Compositor = function() {
                      "z": ruleValue.order,
                      "opacity": ruleValue.opacity});
 
-        var surface = component.createObject(windowFrame);
-        windowFrame.surface = surface;
+        if (windowFrame == null) {
+           console.log("createQmlComponent, Error creating object");
+           return null;
+        }
+
+        var component = Qt.createComponent(ruleKey.concat(".qml"));
+        if (component.status == Component.Ready) {
+            var surface = component.createObject(windowFrame);
+            windowFrame.surface = surface;
+        }
+
         windowFrame.name = ruleKey;
         windowFrame.animationsEnabled = ruleValue.animation;
 
