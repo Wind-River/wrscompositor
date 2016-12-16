@@ -21,21 +21,34 @@
  */
 
 var ruleObject = function(ruleValue) {
-    this.size = ruleValue.size;
+    this.scale = ruleValue.scale;
     this.position = ruleValue.position;
     this.opacity = ruleValue.opacity;
     this.layer = ruleValue.layer;
+    this.animation = ruleValue.animation;
+    this.x = 0;
+    this.y = 0;
+    this.width = 0;
+    this.height = 0;
     this.layerId = -1;
-    this.surfaceId =  -1;
+    this.surfaceId = -1;
 
-    this.setIdByRule = function(layer) {
-        if (layer == "base") {
+    this.setSize = function(displayWidth, displayHeight) {
+        var widthScale = parseInt(this.scale.split("x")[0]);
+        var heightScale = parseInt(this.scale.split("x")[1]);
+
+        this.width = displayWidth * widthScale / 100;
+        this.height = displayHeight * heightScale / 100;
+    }
+
+    this.setIdByRule = function() {
+        if (this.layer == "base") {
             this.layerId = 1000;
         }
-        else if (layer == "application") {
+        else if (this.layer == "application") {
             this.layerId = 2000;
         }
-        else if (layer == "notification") {
+        else if (this.layer == "notification") {
             this.layerId = 2000;
         } else {
             console.log("setIdByRule, rule's layer is invalid")
@@ -113,6 +126,8 @@ var Compositor = function() {
         var newRule = new ruleObject(value);
 
         newRule.setIdByRule();
+        newRule.setSize(this.displayWidth, this.displayHeight);
+
         this.compositorRuleList[key] = newRule;
     }
 
@@ -297,29 +312,13 @@ var Compositor = function() {
     }
 
     this.initWindow = function (ruleKey, ruleValue) {
-        var sizes = ruleValue.size;
-        var position = ruleValue.position;
-        var opacity = ruleValue.opacity;
-        var layerId = ruleValue.layerId;
-        var surfaceId = ruleValue.surfaceId;
-
-        var widthScale = parseInt(sizes.split("x")[0]);
-        var heightScale = parseInt(sizes.split("x")[1]);
-
-        var targetWidth = this.displayWidth * widthScale / 100;
-        var targetHeight = this.displayHeight * heightScale / 100;
-
-        console.log("initWindow, ruleKey = ", ruleKey);
-        console.log("initWindow, position = " + position, " widthScale =", widthScale, " heightScale =", heightScale);
-        console.log("initWindow, targetWidth = ", targetWidth, " targetHeight = ", targetHeight);
-
-        var layer = this.addLayer(layerId);
-        var window = this.createQmlComponent(ruleKey, 0, 0, targetWidth, targetHeight, layerId, opacity);
+        var layer = this.addLayer(ruleValue.layerId);
+        var window = this.createQmlComponent(ruleKey, ruleValue);
         var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window, window.surface);
-        iviSurface.id = surfaceId;
+        iviSurface.id = ruleValue.surfaceId;
         window.iviSurface = iviSurface;
 
-        switch (position) {
+        switch (ruleValue.position) {
             case 'topCenter': 
             {
                 this.topWindow = window;
@@ -437,6 +436,11 @@ var Compositor = function() {
                 break;
             }
 
+            case "undefined":
+            {
+                // TODO
+            }
+
             default: {
                 console.log("onPositionAligned, Invalid align");
                 return;
@@ -472,17 +476,26 @@ var Compositor = function() {
         return null;
     }
 
-    this.createQmlComponent = function(name, x, y, width, height, order, opacity) {
-        var qmlName = name.concat(".qml");
+    this.createQmlComponent = function(ruleKey, ruleValue) {
+        var qmlName = ruleKey.concat(".qml");
 
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var component = Qt.createComponent(qmlName);
 
-        var windowFrame = windowContainerComponent.createObject(this.root, {"x": x, "y": y, "width": width, "height": height, "z": order, "opacity": opacity});
+        var windowFrame = 
+                windowContainerComponent.createObject(
+                    this.root,
+                    {"x": ruleValue.x,
+                     "y": ruleValue.y,
+                     "width": ruleValue.width,
+                     "height": ruleValue.height,
+                     "z": ruleValue.order,
+                     "opacity": ruleValue.opacity});
 
         var surface = component.createObject(windowFrame);
         windowFrame.surface = surface;
-        windowFrame.name = name;
+        windowFrame.name = ruleKey;
+        windowFrame.animationsEnabled = ruleValue.animation;
 
         return windowFrame;
     }
