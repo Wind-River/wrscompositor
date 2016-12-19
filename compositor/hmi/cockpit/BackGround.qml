@@ -31,7 +31,22 @@ Image {
 
     source: "resources/wallpaper.svg"
 
+    function eventHandler(event, object) {
+        switch(event) {
+            case Control.Event.WindowAdded:
+                console.log("BackGround, eventHandler receive WindowAdded event");
+                break;
+            case Control.Event.WindowRemoved:
+                console.log("BackGround, eventHandler receive WindowRemoved event");
+                break;
+            default:
+                return;
+        }
+    }
+
     Component.onCompleted: {
+        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
         Control.getInstance().registerObjectItem(background, "BackGround");
+        Control.getInstance().registerEventHandler(background.eventHandler);
     }
 }

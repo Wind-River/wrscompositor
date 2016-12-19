@@ -246,8 +246,23 @@ Rectangle {
         }
     }
 
+    function eventHandler(event, object) {
+        switch(event) {
+            case Control.Event.WindowAdded:
+                console.log("MainMenu, eventHandler receive WindowAdded event");
+                break;
+            case Control.Event.WindowRemoved:
+                console.log("MainMenu, eventHandler receive WindowRemoved event");
+                break;
+            default:
+                return;
+        }
+    }
+
     Component.onCompleted: {
+        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
         Control.getInstance().registerObjectItem(mainMenu, "MainMenu");
+        Control.getInstance().registerEventHandler(mainMenu.eventHandler);
     }
 
     Keys.onLeftPressed: { nativeAppsView.moveCurrentIndexLeft(); event.accepted = true}

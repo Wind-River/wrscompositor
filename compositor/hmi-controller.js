@@ -21,6 +21,9 @@
  */
 
 .pragma library
+.import QtQuick 2.0 as QtQuickModule
+
+var Event = {"WindowAdded" : 0, "WindowRemoved" : 1};
 
 var object = function(id, name, handler) {
     this.id = id;
@@ -37,11 +40,22 @@ function getInstance() {
 }
 
 var HmiController = function() {
+    this.root = 0;
+    this.topWindow = null;
+    this.bottomWindow = null;
     this.objectList = new Array();
+
+    this.setRootObject = function(root) {
+        this.root = root;
+    }
 
     this.registerObjectItem = function(id, name) {
         var newObject = new object(id, name);
         this.objectList.push(newObject);
+    }
+
+    this.registerEventHandler = function(handler) {
+        this.root.sendEvent.connect(handler);
     }
 
     this.findObjectByName = function(name) {
@@ -52,5 +66,175 @@ var HmiController = function() {
             }
         }
         return null;
+    }
+
+    this.createQmlComponent = function(ruleKey, ruleValue) {
+        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
+
+        if (windowContainerComponent.status == QtQuickModule.Component.Error) {
+            console.log("createQmlComponent, Error loading component:", windowContainerComponent.errorString());
+            return null;
+        }
+
+        var windowFrame =
+                windowContainerComponent.createObject(
+                    this.root,
+                    {"x": ruleValue.x,
+                     "y": ruleValue.y,
+                     "width": ruleValue.width,
+                     "height": ruleValue.height,
+                     "z": ruleValue.order,
+                     "opacity": ruleValue.opacity});
+
+        if (windowFrame == null) {
+           console.log("createQmlComponent, Error creating object");
+           return null;
+        }
+
+        var component = Qt.createComponent(ruleKey.concat(".qml"));
+        if (component.status == QtQuickModule.Component.Ready) {
+            var surface = component.createObject(windowFrame);
+            windowFrame.surface = surface;
+        } else
+            console.log("createQmlComponent, Cannot create QML Component, QML name = ", ruleKey.concat(".qml"));
+
+        windowFrame.name = ruleKey;
+        windowFrame.animationsEnabled = ruleValue.animation;
+
+        return windowFrame;
+    }
+
+    this.createDynamicItemObject = function(parentItem, width, height, order) {
+        var newObject = Qt.createQmlObject('import QtQuick 2.0; Rectangle { width: ('+width+'); height: ('+height+'); z: ('+order+'); color: "#00FFFFFF"}', parentItem, "");
+        return newObject;
+    }
+
+    this.layoutWindow = function(window, position) {
+        switch (position) {
+            case 'topCenter':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'topLeft':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'topRight':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'bottomCenter':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'bottomLeft':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'bottomRight':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleCenter':
+            {
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                break;
+            }
+
+            case 'middleCenterTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                      this.root.anchors.top : this.topWindow.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleCenterBottom':
+            {
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleLeft':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                      this.root.top : this.topWindow.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftBottom':
+            {
+                window.anchors.left = this.root.left;
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            case 'middleRight':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                     this.root.top : this.topWindow.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightBottom':
+            {
+                window.anchors.right = this.root.right;
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            case "undefined":
+            {
+                console.log("layoutWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
+                break;
+            }
+        }
+
+        return window;
     }
 }

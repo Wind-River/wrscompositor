@@ -29,6 +29,7 @@ import "config.js" as Conf
 
 Item {
     id: root
+    signal sendEvent(int event, var object);
     property var hmiController: null
     property var compositorLogic : null
 
@@ -44,10 +45,15 @@ Item {
     }
 
     Component.onCompleted: {
-        compositorLogic = Logic.getCompositorInstance();
+        compositorLogic = Logic.getInstance();
+        hmiController = Control.getInstance();
+
+        if (hmiController) {
+            hmiController.setRootObject(root);
+        }
+
         if (compositorLogic) {
-            compositorLogic.setRootObject(root);
-            compositorLogic.setHmiController(Control.getInstance());
+            compositorLogic.setHmiController(hmiController);
             compositorLogic.setIviScene(iviScene);
             compositorLogic.setWrsCompositor(compositor);
             compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);
@@ -68,8 +74,21 @@ Item {
     }
 
     function windowDestroyed(surface) {
-        console.log("surface destroyed ", surface);
-        compositorLogic.destroyWaylandSurface(surface);
+        var windowFrame = compositorLogic.findBySurface(surface);
+        if (!windowFrame) {
+            console.log("windowDestroyed, cannot find surface in windowList");
+            return;
+        }
+
+        console.log('window destroyed '+ surface);
+        windowFrame.destroy();
+
+        compositorLogic.removeWindow(windowFrame);
+
+        if (windowFrame) {
+            console.log("notify WindowRemoved event");
+            root.sendEvent(Control.Event.WindowRemoved, windowFrame);
+        }
     }
 
     function windowAdded(surface) {
@@ -81,6 +100,11 @@ Item {
         console.log(iviScene.mainScreen);
         console.log(iviScene.mainScreen.layerCount());
 
-        compositorLogic.addSurface(surface);
+        var windowFrame = compositorLogic.addSurface(surface);
+
+        if (windowFrame) {
+            console.log("notify WindowAdded event of each qml components for HMI");
+            root.sendEvent(Control.Event.WindowAdded, windowFrame);
+        }
     }
 }
