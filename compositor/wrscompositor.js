@@ -65,7 +65,7 @@ var roleObject = function(roleValue) {
 }
 
 var compositorLogic = null;
-function getCompositorInstance() {
+function getInstance() {
     if (compositorLogic == null) {
         compositorLogic = new Compositor();
     }
@@ -76,9 +76,6 @@ function getCompositorInstance() {
 var Compositor = function() {
     this.wrscompositor = null;
     this.hmiController = null;
-    this.topWindow = null;
-    this.bottomWindow = null;
-    this.root = 0;
 
     this.displayWidth = 0;
     this.displayHeight = 0;
@@ -97,7 +94,7 @@ var Compositor = function() {
                 console.log("onreadystatechange, Done");
 
                 if (request.status == 200) {
-                    var compositor = getCompositorInstance();
+                    var compositor = getInstance();
                     var jsonObject = JSON.parse(request.responseText);
 
                     var ruleData = jsonObject.Rule;
@@ -108,7 +105,10 @@ var Compositor = function() {
                     for (var roleKey in roleData)
                         compositor.loadCompositorRole(roleKey, roleData[roleKey]);
 
-                    compositor.relayoutWindows();
+                    for (var ruleKey in compositor.compositorRuleList) {
+                        var ruleValue = compositor.compositorRuleList[ruleKey];
+                        compositor.initWindow(ruleKey, ruleValue)
+                    }
                 }
             }
         }
@@ -129,10 +129,6 @@ var Compositor = function() {
         newRule.setSize(this.displayWidth, this.displayHeight);
 
         this.compositorRuleList[key] = newRule;
-    }
-
-    this.setRootObject = function(root) {
-        this.root = root;
     }
 
     this.setHmiController = function(controller) {
@@ -225,15 +221,17 @@ var Compositor = function() {
     }
 
     this.addSurface = function (surface) {
+        var windowFrame = null;
         var iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
 
         if (iviSurface == null)  {
-            this.addWaylandSurface(surface, "Default");
-            return;
+            windowFrame = this.addWaylandSurface(surface, "Default");
+        } else {
+            windowFrame = this.addWaylandIviSurface(surface,
+                this.findSurfaceRoleById(iviSurface.id));
         }
 
-        var role = this.findSurfaceRoleById(iviSurface.id);
-        this.addWaylandIviSurface(surface, role);
+        return windowFrame;
     }
 
     this.addWaylandSurface = function (surface, role) {
@@ -243,7 +241,7 @@ var Compositor = function() {
 
         if (parentItem == null) {
             console.log("windowAdded, cannot get parent item");
-            return;
+            return null;
         }
 
         console.log("addWaylandSurface, role = ", role);
@@ -272,6 +270,8 @@ var Compositor = function() {
         windowFrame.scaledHeight = parentItem.height / this.displayHeight;
 
         this.addWindow(windowFrame);
+
+        return windowFrame;
     }
 
     this.addWaylandIviSurface = function(surface, role) {
@@ -279,7 +279,7 @@ var Compositor = function() {
 
         if (parent == null) {
             console.log("windowAdded, cannot get parent window");
-            return;
+            return null;
         }
 
         console.log("addWaylandIviSurface, role = ", role);
@@ -296,167 +296,20 @@ var Compositor = function() {
         windowFrame.surfaceItem.touchEventsEnabled = true;
         windowFrame.iviSurface.setQmlWindowFrame(windowFrame);
         this.addWindow(windowFrame);
-    }
 
-    this.destroyWaylandSurface = function(surface) {
-       var windowFrame = this.findBySurface(surface);
-       if (!windowFrame) {
-            console.log("windowDestroyed, cannot find surface in windowList");
-            return;
-        }
-
-        console.log('window destroyed '+ surface);
-        windowFrame.destroy();
-
-        this.removeWindow(windowFrame);
+        return windowFrame;
     }
 
     this.initWindow = function (ruleKey, ruleValue) {
-        var layer = this.addLayer(ruleValue.layerId);
-        var window = this.createQmlComponent(ruleKey, ruleValue);
+        var window = this.hmiController.createQmlComponent(ruleKey, ruleValue);
         if (window == null) {
             console.log("initWindow, Error  creating qml component")
             return;
         }
 
-        var iviSurface = layer.addSurface(window.x, window.y, window.width, window.height, window, window.surface);
-        iviSurface.id = ruleValue.surfaceId;
-        window.iviSurface = iviSurface;
-
-        switch (ruleValue.position) {
-            case 'topCenter': 
-            {
-                this.topWindow = window;
-                window.anchors.top = this.root.top;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'topLeft': 
-            {
-                this.topWindow = window;
-                window.anchors.top = this.root.top;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'topRight': 
-            {
-                this.topWindow = window;
-                window.anchors.top = this.root.top;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'bottomCenter': 
-            {
-                this.bottomWindow = window;
-                window.anchors.bottom = this.root.bottom;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'bottomLeft': 
-            {
-                this.bottomWindow = window;
-                window.anchors.bottom = this.root.bottom;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'bottomRight':
-            {
-                this.bottomWindow = window;
-                window.anchors.bottom = this.root.bottom;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'middleCenter':
-            {
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                window.anchors.verticalCenter = this.root.verticalCenter;
-                break;
-            }
-
-            case 'middleCenterTop':
-            {
-                window.anchors.top = (this.topWindow == null) ?  
-                                      this.root.anchors.top : this.topWindow.bottom;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'middleCenterBottom': 
-            {
-                window.anchors.bottom = (this.bottomWindow == null) ?  
-                                         this.root.bottom : this.bottomWindow.top;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'middleLeft':
-            {
-                window.anchors.verticalCenter = this.root.verticalCenter;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'middleLeftTop':
-            {
-                window.anchors.top = (this.topWindow == null) ?  
-                                      this.root.top : this.topWindow.bottom;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'middleLeftBottom':
-            {
-                window.anchors.left = this.root.left;
-                window.anchors.bottom = (this.bottomWindow == null) ?  
-                                         this.root.bottom : this.bottomWindow.top;
-                break;
-            }
-
-            case 'middleRight':
-            {
-                window.anchors.verticalCenter = this.root.verticalCenter;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'middleRightTop':
-            {
-                window.anchors.top = (this.topWindow == null) ?  
-                                     this.root.top : this.topWindow.bottom;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'middleRightBottom':
-            {
-                window.anchors.right = this.root.right;
-                window.anchors.bottom = (this.bottomWindow == null) ?  
-                                         this.root.bottom : this.bottomWindow.top;
-                break;
-            }
-
-            case "undefined":
-            {
-                console.log("initWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
-                break;
-            }
-        }
-
-        this.addWindow(window);
-
-    }
-
-    this.relayoutWindows = function() {
-        for (var ruleKey in this.compositorRuleList) {
-            var ruleValue = this.compositorRuleList[ruleKey];
-            this.initWindow(ruleKey, ruleValue)
-        }
+        window.iviSurface = this.addLayer(ruleValue.layerId).addSurface(window.x, window.y, window.width, window.height, window, window.surface);
+        window.iviSurface.id = ruleValue.surfaceId;
+        this.addWindow(this.hmiController.layoutWindow(window, ruleValue.position));
     }
 
     this.findSurfaceRoleById = function(id) {
@@ -476,44 +329,4 @@ var Compositor = function() {
         }
         return null;
     }
-
-    this.createQmlComponent = function(ruleKey, ruleValue) {
-        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-
-        if (windowContainerComponent.status == Component.Error) {
-            console.log("createQmlComponent, Error loading component:", windowContainerComponent.errorString());
-            return null;
-        }
-
-        var windowFrame = 
-                windowContainerComponent.createObject(
-                    this.root,
-                    {"x": ruleValue.x,
-                     "y": ruleValue.y,
-                     "width": ruleValue.width,
-                     "height": ruleValue.height,
-                     "z": ruleValue.order,
-                     "opacity": ruleValue.opacity});
-
-        if (windowFrame == null) {
-           console.log("createQmlComponent, Error creating object");
-           return null;
-        }
-
-        var component = Qt.createComponent(ruleKey.concat(".qml"));
-        if (component.status == Component.Ready) {
-            var surface = component.createObject(windowFrame);
-            windowFrame.surface = surface;
-        }
-
-        windowFrame.name = ruleKey;
-        windowFrame.animationsEnabled = ruleValue.animation;
-
-        return windowFrame;
-    }
-
-    this.createDynamicItemObject = function(parentItem, width, height, order) {
-        var newObject = Qt.createQmlObject('import QtQuick 2.0; Rectangle { width: ('+width+'); height: ('+height+'); z: ('+order+'); color: "#00FFFFFF"}', parentItem, "");
-        return newObject;
-    }
- }
+}

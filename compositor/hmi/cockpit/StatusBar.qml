@@ -29,8 +29,23 @@ Item {
     width: parent.width
     height: parent.height
 
+    function eventHandler(event, object) {
+        switch(event) {
+            case Control.Event.WindowAdded:
+                console.log("StatusBar, eventHandler receive WindowAdded event");
+                break;
+            case Control.Event.WindowRemoved:
+                console.log("StatusBar, eventHandler receive WindowRemoved event");
+                break;
+            default:
+                return;
+        }
+    }
+
     Component.onCompleted: {
-         Control.getInstance().registerObjectItem(statusBar, "StatusBar");
+        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
+        Control.getInstance().registerObjectItem(statusBar, "StatusBar");
+        Control.getInstance().registerEventHandler(statusBar.eventHandler);
     }
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
