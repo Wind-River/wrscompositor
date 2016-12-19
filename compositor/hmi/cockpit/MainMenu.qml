@@ -32,9 +32,7 @@ Rectangle {
     anchors.fill: parent
     color: "black"
 
-    SystemdDbusClient {
-        id: systemd_dbusClient
-    }
+    property variant currentWindow: null 
 
     Behavior on opacity {
         NumberAnimation { easing.type: Easing.InCubic; duration: 400; }
@@ -68,7 +66,6 @@ Rectangle {
             description: "Web Browsing"
             exec: "/usr/share/qt5/examples/webkitwidgets/browser/browser"
             multiple: false
-            systemd: false
             iconPath: "icons/native-web.png"
         }
         ListElement {
@@ -76,7 +73,6 @@ Rectangle {
             description: "Navigation"
             exec: "/usr/bin/skobblernavi"
             multiple: false
-            systemd: false
             iconPath: "icons/native-map-location.png"
             unitFile: "skobblernavi.service"
         }
@@ -85,7 +81,6 @@ Rectangle {
             description: "Media"
             exec: "/usr/bin/mediaplayer"
             multiple: false
-            systemd: false
             iconPath: "icons/native-video.png"
             unitFile: "mediaplayer.service"
         }
@@ -94,7 +89,6 @@ Rectangle {
             description: "Phone"
             exec: "/usr/bin/phone"
             multiple: false
-            systemd: false
             iconPath: "icons/native-phone.png"
             unitFile: "phone.service"
         }
@@ -104,68 +98,11 @@ Rectangle {
         id: nativeAppsDelegate
         Item {
             id: delegateItem
-            property variant window: null
+            property variant process: null
             property bool pressed: false
             width: ((nativeAppsView.cellWidth * 0.8) | 0)
             height: ((nativeAppsView.cellHeight * 0.8) | 0)
 
-            function launch() {
-                var pid = systemd ? systemd_unit.pid : process.pid;
-                window = systemd ? systemd_unit.window : process.window;
-                console.log('launch: '+ systemd ? unitFile : exec);
-                console.log('pid: ' + pid);
-                if (!multiple) {
-                    console.log('no multiple');
-                    if (pid != 0) {
-                        console.log('no pid');
-                        if(window != null) {
-                            console.log('has window ' + window);
-                            root.raiseWindow(window);
-                        }
-                        return;
-                    }
-                }
-                if (systemd) systemd_dbusClient.startUnit(unitFile);
-                else process.execute(exec);
-            }
-
-            function quit() {
-                if (systemd) systemd_dbusClient.stopUnit(unitFile);
-                else process.quit();
-            }
-
-            SystemdUnit {
-                id: systemd_unit
-                unitPath: systemd?unitFile:""
-                property variant window: null
-                property variant cmd: unitFile
-
-                onPidChanged: {
-                    console.log("onPidChanged, pid = " + pid);
-                    root.waitProcess = systemd_unit;
-                }
-                Component.onCompleted: {
-                    if (systemd)
-                        systemd_dbusClient.registerUnit(systemd_unit);
-                }
-                function setWindow(window) {
-                    console.log('setWindow '+ window);
-                    systemd_unit.window = window;
-                }
-            }
-
-            Process {
-                id: process
-                property variant window: null
-                onPidChanged: {
-                    console.log('program launched');
-                    root.waitProcess = process
-                }
-                function setWindow(window) {
-                    console.log('setWindow '+window);
-                    process.window = window
-                }
-            }
             Image {
                 id: appIcon
                 source: iconPath
@@ -176,12 +113,12 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         nativeAppsView.currentIndex = index;
-                        launch();
+                        delegateItem.process.launch();
                     }
                 }
                 Image {
                     id: quitButton
-                    visible: (systemd) ? systemd_unit.pid != 0 : process.pid != 0
+                    visible: delegateItem.process.getPid() != 0
                     enabled: visible
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -195,9 +132,7 @@ Rectangle {
                         id: quitArea
                         anchors.fill: parent
                         onClicked: {
-                            console.log('quit ' + systemd ? systemd_unit.pid : process.pid);
-                            if (systemd) systemd_dbusClient.stopUnit(unitFile);
-                            else process.quit()
+                            delegateItem.process.quit();
                         }
                     }
                 }
@@ -212,6 +147,11 @@ Rectangle {
                 style: Text.Outline
                 styleColor: "white"
                 smooth: true
+            }
+
+            Component.onCompleted: {
+                /* hmi-controller.js's API: create Process object to launch specific application */
+                delegateItem.process = Control.getInstance().createProcessUnit(exec);
             }
         }
     }
@@ -248,12 +188,22 @@ Rectangle {
 
     function eventHandler(event, object) {
         switch(event) {
-            case Control.Event.WindowAdded:
+            case Control.Event.WindowAdded: {
                 console.log("MainMenu, eventHandler receive WindowAdded event");
+                mainMenu.currentWindow = object;
+                if(mainMenu.visible)
+                    mainMenu.hide();
+
                 break;
-            case Control.Event.WindowRemoved:
+            }
+
+            case Control.Event.WindowRemoved: {
                 console.log("MainMenu, eventHandler receive WindowRemoved event");
+                if(mainMenu.currentWindow == object)
+                    mainMenu.currentWindow = null;
                 break;
+            }
+
             default:
                 return;
         }

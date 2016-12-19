@@ -25,12 +25,37 @@
 
 var Event = {"WindowAdded" : 0, "WindowRemoved" : 1};
 
+var waitProcess = null;
+var hmiConroller = null;
+
 var object = function(id, name, handler) {
     this.id = id;
     this.name = name;
 }
 
-var hmiConroller = null;
+var Process = function(cmd, object) {
+    this.cmd = cmd;
+    this.object = object;
+
+    this.getPid = function() {
+        return this.object.pid;
+    }
+
+    this.launch = function() {
+        var pid = this.object.pid;
+        if (pid != 0) {
+            console.log('no pid');
+            return;
+        }
+        this.object.execute(this.cmd);
+    }
+
+    this.quit = function() {
+        console.log('quit ' + this.object.pid);
+        this.object.quit();
+    }
+}
+
 function getInstance() {
     if (hmiConroller == null) {
         hmiConroller = new HmiController();
@@ -40,13 +65,45 @@ function getInstance() {
 }
 
 var HmiController = function() {
+    this.systemdDbusClient = null;
     this.root = 0;
     this.topWindow = null;
     this.bottomWindow = null;
-    this.objectList = new Array();
 
-    this.setRootObject = function(root) {
+    this.objectList = new Array();
+    this.processList = new Array();
+
+    this.init = function(root) {
         this.root = root;
+
+        this.systemdDbusClient = Qt.createQmlObject(' \
+            import QtQuick 2.1; \
+            import com.windriver.wrscompositor 1.0; \
+            SystemdDbusClient { \
+                id: systemd_dbusClient; \
+            }',
+            this.root, "");
+    }
+
+    this.createProcessUnit = function(cmd) {
+        var controller = this;
+        var object =  Qt.createQmlObject(' \
+            import QtQuick 2.1; \
+            import com.windriver.wrscompositor 1.0; \
+            Process { \
+                id: process; \
+                property var hmiController: controller; \
+                onPidChanged: { \
+                    console.log("Process, changed pid"); \
+                    if (process.hmiController) \
+                        hmiController.waitProcess = process; \
+                } \
+            }',
+            this.root, "");
+
+        var process = new Process(cmd, object);
+        this.processList.push(process);
+        return process;
     }
 
     this.registerObjectItem = function(id, name) {
@@ -102,11 +159,6 @@ var HmiController = function() {
         windowFrame.animationsEnabled = ruleValue.animation;
 
         return windowFrame;
-    }
-
-    this.createDynamicItemObject = function(parentItem, width, height, order) {
-        var newObject = Qt.createQmlObject('import QtQuick 2.0; Rectangle { width: ('+width+'); height: ('+height+'); z: ('+order+'); color: "#00FFFFFF"}', parentItem, "");
-        return newObject;
     }
 
     this.layoutWindow = function(window, position) {

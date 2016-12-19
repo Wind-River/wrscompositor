@@ -49,7 +49,7 @@ Item {
         hmiController = Control.getInstance();
 
         if (hmiController) {
-            hmiController.setRootObject(root);
+            hmiController.init(root);
         }
 
         if (compositorLogic) {
