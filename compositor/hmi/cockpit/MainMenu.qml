@@ -191,9 +191,6 @@ Rectangle {
             case Control.Event.WindowAdded: {
                 console.log("MainMenu, eventHandler receive WindowAdded event");
                 mainMenu.currentWindow = object;
-                if(mainMenu.visible)
-                    mainMenu.hide();
-
                 break;
             }
 

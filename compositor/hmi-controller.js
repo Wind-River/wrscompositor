@@ -140,7 +140,7 @@ var HmiController = function() {
                      "y": ruleValue.y,
                      "width": ruleValue.width,
                      "height": ruleValue.height,
-                     "z": ruleValue.order,
+                     "z": ruleValue.layerId,
                      "opacity": ruleValue.opacity});
 
         if (windowFrame == null) {

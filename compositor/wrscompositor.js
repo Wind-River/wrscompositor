@@ -49,7 +49,7 @@ var ruleObject = function(ruleValue) {
             this.layerId = 2000;
         }
         else if (this.layer == "notification") {
-            this.layerId = 2000;
+            this.layerId = 3000;
         } else {
             console.log("setIdByRule, rule's layer is invalid")
             return;
