@@ -80,10 +80,8 @@ public:
     Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface); 
 
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
-#if WRSCOMPOSITOR_HMI_COCKPIT
     void createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource, 
                                     uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id);
-#endif
     QWaylandQuickSurface *fullscreenSurface() const;
     void loadQmlComponent(const QSize &size);
     Q_INVOKABLE QWaylandSurfaceItem *item(QWaylandSurface *surf);
