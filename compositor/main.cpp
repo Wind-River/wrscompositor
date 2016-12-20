@@ -35,7 +35,6 @@
 
 #include "Process.h"
 #include "systemd-util.h"
-//#include "vna_dbusclient.h"
 #include "wr_dbusclient.h"
 #include "projectionmode.h"
 
@@ -342,17 +341,15 @@ int main(int argc, char *argv[])
 
     qInfo() << "Starting wrscompositor ... with uid " << getuid();
 
+    qInfo() << "Generating qt5_eglfs_kms.json";
+    QProcess::startDetached("/usr/share/wrscompositor/update-qt-eglfs-kms-conf");
+
     QSettings settings(WRSCOMPOSITOR_MANUFACTURER, WRSCOMPOSITOR_PRODUCT_NAME);
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->availableGeometry();
-#if 0
-    QDesktopWidget d;
-    QRect screenGeometry = d.screenGeometry();
-#endif
     qmlRegisterType<Process>("com.windriver.wrscompositor", 1, 0, "Process");
     qmlRegisterType<SystemdDbusClient>("com.windriver.wrscompositor", 1, 0, "SystemdDbusClient");
     qmlRegisterType<SystemdUnit>("com.windriver.wrscompositor", 1, 0, "SystemdUnit");
-    //qmlRegisterType<VNADBusClient>("com.windriver.automotive", 1, 0, "VNADBusClient");
     qmlRegisterType<WRDBusClient>("com.windriver.automotive", 1, 0, "WRDBusClient");
     qmlRegisterType<ProjectionMode>("com.windriver.automotive", 1, 0, "ProjectionMode");
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR

@@ -53,8 +53,6 @@ bool Process::execute(const QString &cmd)
     env << QString("WAYLAND_DISPLAY=%1").arg(Process::WAYLAND_DISPlAY);
     env << QString("WRSCOMPOSITOR_WINDOW_DEFAULT_WIDTH=%1").arg(mWDW);
     env << QString("WRSCOMPOSITOR_WINDOW_DEFAULT_HEIGHT=%1").arg(mWDH);
-    //env << "LD_LIBRARY_PATH=/opt/workspaces/wl/out/lib";
-    //env << "QT_XCB_GL_INTEGRATION=xcb_egl";
     mProcess->setEnvironment(env);
 #endif
     mProcess->setWorkingDirectory(getenv("HOME"));
