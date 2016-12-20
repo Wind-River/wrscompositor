@@ -390,6 +390,11 @@ echo "PREFIX=$PREFIX" > clients/phone/phone.pro
 cat clients/phone/phone.pro.in >> clients/phone/phone.pro
 echo $'\r'"Generating phone.pro .................................... Done"
 
+printf "Generating camera.pro ..."
+echo "PREFIX=$PREFIX" > clients/camera/camera.pro
+cat clients/camera/camera.pro.in >> clients/camera/camera.pro
+echo $'\r'"Generating camera.pro .................................... Done"
+
 if [ "$MANUAL_QMAKE" = "0" ]; then
     $QMAKEPATH $OPTARGS && echo "Makefile generated"
 else
