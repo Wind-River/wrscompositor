@@ -1,67 +1,71 @@
 {
-    "Rule": {
-        "StatusBar": {
-            "scale": "100x10",
-            "position": "topCenter",
-            "opacity": 1.0,
-            "animation": true,
-            "layer": "base"
-        },
-        "DockBar": {
-            "scale": "100x10",
-            "position": "bottomCenter",
-            "opacity": 1.0,
-            "animation": true,
-            "layer": "base"
-        },
-        "SidePanelMedia": {
-            "scale":"30x40",
-            "position": "middleRightTop",
-            "opacity": 1.0,
-            "animation": true,
-            "layer" : "base"
-        },
-        "SidePanelHVAC": {
-            "scale": "30x40",
-            "position": "middleRightBottom",
-            "opacity": 1.0,
-            "animation": true,
-            "layer": "base"
+    "Layout": {
+        "Hmi": {
+            "StatusBar": {
+                "scale": "100x10",
+                "position": "topCenter",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "base"
+            },
+            "DockBar": {
+                "scale": "100x10",
+                "position": "bottomCenter",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "base"
+            },
+            "SidePanelMedia": {
+                "scale":"30x40",
+                "position": "middleRightTop",
+                "opacity": 1.0,
+                "animation": true,
+                "layer" : "base"
+            },
+            "SidePanelHVAC": {
+                "scale": "30x40",
+                "position": "middleRightBottom",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "base"
+            },
+            "MainMenu": {
+                "scale": "70x80",
+                "position": "middleLeft",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "base"
+            }
         },
         "BackGround": {
-            "scale": "70x80",
-            "position": "middleLeft",
-            "opacity": 1.0,
-            "animation": true,
-            "layer": "application"
-        },
-        "MainMenu": {
-            "scale": "70x80",
-            "position": "middleLeft",
-            "opacity": 0.8,
-            "animation": true,
-            "layer": "application"
-        },
-        "Popup": {
-            "scale": "40x40",
-            "position": "undefined",
-            "x": 500,
-            "y": 400,
-            "opacity": 1.0,
-            "animation": true,
-            "layer": "notification"
-        },
-        "FullScreen": {
-            "scale": "100x100",
-            "position": "middleCenter",
-            "opacity": 1.0,
-            "animation": true,
-            "layer": "notification"
+            "Application": {
+                "scale": "70x80",
+                "position": "middleLeft",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "application"
+            },
+            "Popup": {
+                "scale": "40x40",
+                "position": "undefined",
+                "x": 500,
+                "y": 400,
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "notification"
+            },
+            "FullScreen": {
+                "scale": "100x100",
+                "position": "middleCenter",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "notification"
+            }
         }
     },
     "Role": {
         "Default": {
-            "parent": "BackGround",
+            "parent": "Application",
             "surfaceId": 0
         },
         "Navigation": {

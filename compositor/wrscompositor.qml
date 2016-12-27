@@ -53,7 +53,7 @@ Item {
         }
 
         if (compositorLogic) {
-            compositorLogic.setHmiController(hmiController);
+            compositorLogic.setRoot(root);
             compositorLogic.setIviScene(iviScene);
             compositorLogic.setWrsCompositor(compositor);
             compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);
@@ -106,5 +106,13 @@ Item {
             console.log("notify WindowAdded event of each qml components for HMI");
             root.sendEvent(Control.Event.WindowAdded, windowFrame);
         }
+    }
+
+    function hideWindow(window) {
+        compositorLogic.hideWindow(window);
+    }
+
+    function showWindow(window) {
+        compositorLogic.showWindow(window);
     }
 }

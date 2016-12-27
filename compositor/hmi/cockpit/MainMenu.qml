@@ -41,11 +41,13 @@ Rectangle {
     function show() {
         mainMenu.visible = true
         mainMenu.focus = true
+        Control.getInstance().hideWindow(currentWindow);
     }
 
     function hide() {
         mainMenu.visible = false
         mainMenu.focus = true
+        Control.getInstance().showWindow(currentWindow);
     }
 
     function launchNative(appid) {
@@ -211,11 +213,4 @@ Rectangle {
         Control.getInstance().registerObjectItem(mainMenu, "MainMenu");
         Control.getInstance().registerEventHandler(mainMenu.eventHandler);
     }
-
-    Keys.onLeftPressed: { nativeAppsView.moveCurrentIndexLeft(); event.accepted = true}
-    Keys.onRightPressed: { nativeAppsView.moveCurrentIndexRight(); event.accepted = true}
-    Keys.onUpPressed: { nativeAppsView.moveCurrentIndexUp(); event.accepted = true}
-    Keys.onDownPressed: { nativeAppsView.moveCurrentIndexDown(); event.accepted = true}
-    Keys.onReturnPressed: { nativeAppsView.currentItem.pressed = true; nativeAppsView.currentItem.launch(); event.accepted = true}
-    Keys.onReleased: { nativeAppsView.currentItem.pressed = false; if(event.key == Qt.Key_F2) { nativeAppsView.currentItem.quit(); event.accepted = true }}
 }
