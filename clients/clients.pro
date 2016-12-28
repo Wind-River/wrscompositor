@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = mediaplayer skobblernavi phone camera
+SUBDIRS = libs mediaplayer skobblernavi phone camera
