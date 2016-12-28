@@ -23,66 +23,23 @@
 #include "skobblernavi.h"
 
 SkobblerNavi::SkobblerNavi(QWidget* parent)
-    : QWebView(parent), mSurfaceId(WRS_IVI_ID_SURFACE_NAVIGATION) {
+    : QWebView(parent), QWaylandIviExtension() {
 
     QUrl url = QUrl("qrc:///html5/index.html");
     load(url);
-
-
-    if (!QGuiApplication::platformNativeInterface() || !QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("wl_display")) {
-    	qDebug() << "This application requires a wayland plugin";
-    	QCoreApplication::quit();
-    	return;
-    }
-
-    QtWaylandClient::QWaylandIntegration *wayland_integration = static_cast<QtWaylandClient::QWaylandIntegration *>(QGuiApplicationPrivate::platformIntegration());
-
-    QtWaylandClient::QWaylandDisplay *wayland_display = wayland_integration->display();
-    wayland_display->addRegistryListener(registryIvi, this);
 }
 
 SkobblerNavi::~SkobblerNavi() {
-    delete mIviApplication;
-    delete mIviController;
-    delete mIviSurface;
 }
 
-void SkobblerNavi::registryIvi(void *data,
-                               struct wl_registry *registry,
-                               uint32_t id,
-                               const QString &interface,
-                               uint32_t version)
-{
-    SkobblerNavi *navi = static_cast<SkobblerNavi *>(data);
-
-    //qDebug() << "SkobblerNavi::registryIvi, interface = " << interface;
-
-    if (interface == QStringLiteral("ivi_application"))
-        navi->mIviApplication = new QtWayland::ivi_application(registry, id, version);
-
-    // if (interface == QStringLiteral("ivi_controller"))
-    //  navi->mIviController = new QtWayland::ivi_controller(registry, id, version);
-}
-
-bool SkobblerNavi::createSurface() {
-    if (!this->windowHandle())
-        return false;
-
+void SkobblerNavi::surfaceConfigure(int width, int height) {
     QtWaylandClient::QWaylandWindow *window = (QtWaylandClient::QWaylandWindow *) this->windowHandle()->handle();
 
-    if (!window)
-        return false;
-
-    if (window->screen() != 0) {
-        if (window->isInitialized()) {
-            struct ivi_surface *surface = mIviApplication->surface_create(mSurfaceId, window->object());
-            // struct ::ivi_controller_surface *controller = mIviController->ivi_controller::surface_create(mSurfaceId);
-
-            mIviSurface = new QtWaylandClient::QWaylandIviSurface(surface, window);
-        }
+    if (window) {
+        qDebug() << "SkobblerNavi::surfaceConfigure, configure QWaylandWindow size " << width << "," << height;
+        window->configure(0, width, height);
     }
 
-    return true;
 }
 
 bool SkobblerNavi::event(QEvent *event) {
@@ -90,7 +47,8 @@ bool SkobblerNavi::event(QEvent *event) {
     //qDebug() << "SkobblerNavi::event, event's type = " << event->type();
 
     if (event->type() == QEvent::PlatformSurface) {
-        ret = this->createSurface();
+        QWindow *window = this->windowHandle();
+        ret = this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_NAVIGATION);
     }
 
     return ret;

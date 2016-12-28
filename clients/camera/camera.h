@@ -26,42 +26,17 @@
 #include <QQuickItem>
 #include <QQuickWidget>
 #include <QApplication>
-#include <QtGui/private/qguiapplication_p.h>
-#include <QtGui/qpa/qplatformnativeinterface.h>
-#include <QtWaylandClient/private/qwaylandintegration_p.h>
-#include <QtWaylandClient/private/qwaylandwindow_p.h>
-#include <QtWaylandClient/private/qwaylanddisplay_p.h>
-#include "qwayland-ivi-application.h"
-#include "qwayland-ivi-controller.h"
-#include "qwaylandivisurface.h"
+#include "qwaylandiviextension.h"
 
-#define WRS_IVI_ID_SURFACE_DEFAULT          0
-#define WRS_IVI_ID_SURFACE_NAVIGATION       1
-#define WRS_IVI_ID_SURFACE_DIALOG           2
-#define WRS_IVI_ID_SURFACE_PHONE            3
-#define WRS_IVI_ID_SURFACE_PROJECTION       4
-#define WRS_IVI_ID_SURFACE_CAMERA           5
-
-class Camera : public QQuickWidget 
+class Camera : public QQuickWidget, public QtWaylandClient::QWaylandIviExtension 
 {
 public:
     Camera(QWidget* parent = 0);
-    void iviSurfaceConfigure(int width, int height);
     ~Camera();
 
 protected:
-   bool event(QEvent *event);
-
-private:
-	static void registryIvi(void *data, struct wl_registry *registry,
-		uint32_t id, const QString &interface, uint32_t version);
-    bool createSurface();
-    
-private:
-    QtWayland::ivi_application *mIviApplication;
-    QtWayland::ivi_controller *mIviController;
-    QtWaylandClient::QWaylandIviSurface *mIviSurface;
-    uint32_t mSurfaceId;
+    void surfaceConfigure(int width, int height);
+    bool event(QEvent *event);
 };
 
 #endif

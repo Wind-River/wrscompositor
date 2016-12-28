@@ -23,46 +23,14 @@
 #include "camera.h"
 
 Camera::Camera(QWidget * parent)
-    :  QQuickWidget(parent), mSurfaceId(WRS_IVI_ID_SURFACE_CAMERA) {
-
+    :  QQuickWidget(parent) {
     setSource(QUrl("qrc:///main.qml"));
-
-    if (!QGuiApplication::platformNativeInterface() || !QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("wl_display")) {
-    	qDebug() << "This application requires a wayland plugin";
-    	QCoreApplication::quit();
-    	return;
-    }
-
-    QtWaylandClient::QWaylandIntegration *wayland_integration = static_cast<QtWaylandClient::QWaylandIntegration *>(QGuiApplicationPrivate::platformIntegration());
-
-    QtWaylandClient::QWaylandDisplay *wayland_display = wayland_integration->display();
-    wayland_display->addRegistryListener(registryIvi, this);
 }
 
 Camera::~Camera() {
-    delete mIviApplication;
-    delete mIviController;
-    delete mIviSurface;
 }
 
-void Camera::registryIvi(void *data,
-                               struct wl_registry *registry,
-                               uint32_t id,
-                               const QString &interface,
-                               uint32_t version)
-{
-     Camera *camera = static_cast<Camera *>(data);
-
-    //qDebug() << "Camera::registryIvi, interface = " << interface;
-
-    if (interface == QStringLiteral("ivi_application"))
-        camera->mIviApplication = new QtWayland::ivi_application(registry, id, version);
-
-    // if (interface == QStringLiteral("ivi_controller"))
-    //  camera->mIviController = new QtWayland::ivi_controller(registry, id, version);
-}
-
-void Camera::iviSurfaceConfigure(int width, int height) {
+void Camera::surfaceConfigure(int width, int height) {
     qDebug() << __func__ << __LINE__;
 
     QtWaylandClient::QWaylandWindow *window = 
@@ -81,35 +49,13 @@ void Camera::iviSurfaceConfigure(int width, int height) {
    }
 }
 
-bool Camera::createSurface() {
-    if (!this->windowHandle())
-        return false;
-
-    QtWaylandClient::QWaylandWindow *window = 
-                            (QtWaylandClient::QWaylandWindow *) this->windowHandle()->handle();
-
-    if (!window)
-        return false;
-
-    if (window->screen() != 0) {
-        if (window->isInitialized()) {
-            struct ivi_surface *surface = mIviApplication->surface_create(mSurfaceId, window->object());
-            // struct ::ivi_controller_surface *controller = mIviController->ivi_controller::surface_create(mSurfaceId);
-
-            mIviSurface = new QtWaylandClient::QWaylandIviSurface(surface);
-            mIviSurface->setParent(this);
-        }
-    }
-
-    return true;
-}
-
 bool Camera::event(QEvent *event) {
     bool ret = QWidget::event(event);
     //qDebug() << "Camera::event, event's type = " << event->type();
 
     if (event->type() == QEvent::PlatformSurface) {
-        ret = this->createSurface();
+        QWindow *window = this->windowHandle();
+        ret = this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_CAMERA);
     }
 
     return ret;

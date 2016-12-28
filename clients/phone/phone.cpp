@@ -23,46 +23,15 @@
 #include "phone.h"
 
 Phone::Phone(QWidget * parent)
-    :  QQuickWidget(parent), mSurfaceId(WRS_IVI_ID_SURFACE_PHONE) {
+    :  QQuickWidget(parent), QWaylandIviExtension() {
 
     setSource(QUrl("qrc:///main.qml"));
-
-    if (!QGuiApplication::platformNativeInterface() || !QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("wl_display")) {
-    	qDebug() << "This application requires a wayland plugin";
-    	QCoreApplication::quit();
-    	return;
-    }
-
-    QtWaylandClient::QWaylandIntegration *wayland_integration = static_cast<QtWaylandClient::QWaylandIntegration *>(QGuiApplicationPrivate::platformIntegration());
-
-    QtWaylandClient::QWaylandDisplay *wayland_display = wayland_integration->display();
-    wayland_display->addRegistryListener(registryIvi, this);
 }
 
 Phone::~Phone() {
-    delete mIviApplication;
-    delete mIviController;
-    delete mIviSurface;
 }
 
-void Phone::registryIvi(void *data,
-                               struct wl_registry *registry,
-                               uint32_t id,
-                               const QString &interface,
-                               uint32_t version)
-{
-     Phone *phone = static_cast<Phone *>(data);
-
-    //qDebug() << "Phone::registryIvi, interface = " << interface;
-
-    if (interface == QStringLiteral("ivi_application"))
-        phone->mIviApplication = new QtWayland::ivi_application(registry, id, version);
-
-    // if (interface == QStringLiteral("ivi_controller"))
-    //  phone->mIviController = new QtWayland::ivi_controller(registry, id, version);
-}
-
-void Phone::iviSurfaceConfigure(int width, int height) {
+void Phone::surfaceConfigure(int width, int height) {
     qDebug() << __func__ << __LINE__;
 
     QtWaylandClient::QWaylandWindow *window = 
@@ -81,35 +50,13 @@ void Phone::iviSurfaceConfigure(int width, int height) {
    }
 }
 
-bool Phone::createSurface() {
-    if (!this->windowHandle())
-        return false;
-
-    QtWaylandClient::QWaylandWindow *window = 
-                            (QtWaylandClient::QWaylandWindow *) this->windowHandle()->handle();
-
-    if (!window)
-        return false;
-
-    if (window->screen() != 0) {
-        if (window->isInitialized()) {
-            struct ivi_surface *surface = mIviApplication->surface_create(mSurfaceId, window->object());
-            // struct ::ivi_controller_surface *controller = mIviController->ivi_controller::surface_create(mSurfaceId);
-
-            mIviSurface = new QtWaylandClient::QWaylandIviSurface(surface);
-            mIviSurface->setParent(this);
-        }
-    }
-
-    return true;
-}
-
 bool Phone::event(QEvent *event) {
     bool ret = QWidget::event(event);
     //qDebug() << "Phone::event, event's type = " << event->type();
 
     if (event->type() == QEvent::PlatformSurface) {
-        ret = this->createSurface();
+        QWindow *window = this->windowHandle();
+        ret = this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_PHONE);
     }
 
     return ret;
