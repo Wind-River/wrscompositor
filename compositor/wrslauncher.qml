@@ -23,31 +23,18 @@
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
 import "config.js" as Conf
-import "hmi-controller.js" as Control
 
 Rectangle {
-    id: mainMenu
+    id: launcher
     width: parent.width
     height: parent.height
-    anchors.fill: parent
     color: "black"
 
-    property variant currentWindow: null 
+    property int windowDefaultWidth: Conf.displayWidth
+    property int windowDefaultHeight: Conf.displayHeight
 
-    Behavior on opacity {
-        NumberAnimation { easing.type: Easing.InCubic; duration: 400; }
-    }
-
-    function show() {
-        mainMenu.visible = true
-        mainMenu.focus = true
-        Control.getInstance().hideWindow(currentWindow);
-    }
-
-    function hide() {
-        mainMenu.visible = false
-        mainMenu.focus = true
-        Control.getInstance().showWindow(currentWindow);
+    SystemdDbusClient {
+        id: systemd_dbusClient
     }
 
     function launchNative(appid) {
@@ -68,6 +55,7 @@ Rectangle {
             description: "Web Browsing"
             exec: "/usr/share/qt5/examples/webkitwidgets/browser/browser"
             multiple: false
+            systemd: false
             iconPath: "icons/native-web.png"
         }
         ListElement {
@@ -75,6 +63,7 @@ Rectangle {
             description: "Navigation"
             exec: "/usr/bin/skobblernavi"
             multiple: false
+            systemd: false
             iconPath: "icons/native-map-location.png"
             unitFile: "skobblernavi.service"
         }
@@ -83,6 +72,7 @@ Rectangle {
             description: "Media"
             exec: "/usr/bin/mediaplayer"
             multiple: false
+            systemd: false
             iconPath: "icons/native-video.png"
             unitFile: "mediaplayer.service"
         }
@@ -91,6 +81,7 @@ Rectangle {
             description: "Phone"
             exec: "/usr/bin/phone"
             multiple: false
+            systemd: false
             iconPath: "icons/native-phone.png"
             unitFile: "phone.service"
         }
@@ -100,10 +91,69 @@ Rectangle {
         id: nativeAppsDelegate
         Item {
             id: delegateItem
-            property variant process: null
+            property variant window: null
             property bool pressed: false
             width: ((nativeAppsView.cellWidth * 0.8) | 0)
             height: ((nativeAppsView.cellHeight * 0.8) | 0)
+
+            function launch() {
+                var pid = systemd ? systemd_unit.pid : process.pid;
+                window = systemd ? systemd_unit.window : process.window;
+                console.log('launch: '+ systemd ? unitFile : exec);
+                console.log('pid: ' + pid);
+                if (!multiple) {
+                    console.log('no multiple');
+                    if(pid != 0) {
+                        console.log('no pid');
+                        if(window != null) {
+                            console.log('has window ' + window);
+                            root.raiseWindow(window);
+                        }
+                        return;
+                    }
+                }
+                if (systemd) systemd_dbusClient.startUnit(unitFile);
+                else process.execute(exec);
+            }
+
+            function quit() {
+                if (systemd) systemd_dbusClient.stopUnit(unitFile);
+                else process.quit();
+            }
+
+            SystemdUnit {
+                id: systemd_unit
+                unitPath: systemd?unitFile:""
+                property variant window: null
+                property variant cmd: unitFile
+
+                onPidChanged: {
+                    console.log("onPidChanged, pid = " + pid);
+                    root.waitProcess = systemd_unit;
+                }
+                Component.onCompleted: {
+                    if (systemd) systemd_dbusClient.registerUnit(systemd_unit);
+                }
+                function setWindow(window) {
+                    console.log('setWindow '+ window);
+                    systemd_unit.window = window;
+                }
+            }
+
+            Process {
+                id: process
+                property variant window: null
+                windowDefaultWidth: launcher.windowDefaultWidth
+                windowDefaultHeight: launcher.windowDefaultHeight
+                onPidChanged: {
+                    console.log('program launched');
+                    root.waitProcess = process
+                }
+                function setWindow(window) {
+                    console.log('setWindow '+window);
+                    process.window = window
+                }
+            }
 
             Image {
                 id: appIcon
@@ -115,12 +165,13 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         nativeAppsView.currentIndex = index;
-                        delegateItem.process.launch();
+                        launch();
+
                     }
                 }
                 Image {
                     id: quitButton
-                    visible: delegateItem.process.getPid() != 0
+                    visible: (systemd) ? systemd_unit.pid != 0 : process.pid != 0
                     enabled: visible
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -134,7 +185,9 @@ Rectangle {
                         id: quitArea
                         anchors.fill: parent
                         onClicked: {
-                            delegateItem.process.quit();
+                            console.log('quit ' + systemd ? systemd_unit.pid : process.pid);
+                            if (systemd) systemd_dbusClient.stopUnit(unitFile);
+                            else process.quit()
                         }
                     }
                 }
@@ -149,11 +202,6 @@ Rectangle {
                 style: Text.Outline
                 styleColor: "white"
                 smooth: true
-            }
-
-            Component.onCompleted: {
-                /* hmi-controller.js's API: create Process object to launch specific application */
-                delegateItem.process = Control.getInstance().createProcessUnit(exec);
             }
         }
     }
@@ -188,29 +236,6 @@ Rectangle {
         }
     }
 
-    function eventHandler(event, object) {
-        switch(event) {
-            case Control.Event.WindowAdded: {
-                console.log("MainMenu, eventHandler receive WindowAdded event");
-                mainMenu.currentWindow = object;
-                break;
-            }
-
-            case Control.Event.WindowRemoved: {
-                console.log("MainMenu, eventHandler receive WindowRemoved event");
-                if(mainMenu.currentWindow == object)
-                    mainMenu.currentWindow = null;
-                break;
-            }
-
-            default:
-                return;
-        }
-    }
-
     Component.onCompleted: {
-        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
-        Control.getInstance().registerObjectItem(mainMenu, "MainMenu");
-        Control.getInstance().registerEventHandler(mainMenu.eventHandler);
     }
 }

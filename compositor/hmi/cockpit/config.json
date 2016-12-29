@@ -29,7 +29,7 @@
                 "animation": true,
                 "layer": "base"
             },
-            "MainMenu": {
+            "WallPaper": {
                 "scale": "70x80",
                 "position": "middleLeft",
                 "opacity": 1.0,
@@ -37,10 +37,24 @@
                 "layer": "base"
             }
         },
-        "BackGround": {
-            "Application": {
+        "Workspace": { 
+            "Default": {
                 "scale": "70x80",
                 "position": "middleLeft",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "application"
+            },
+            "Launcher": {
+                "scale": "70x80",
+                "position": "middleLeft",
+                "opacity": 0.8,
+                "animation": true,
+                "layer": "home"
+            },
+            "Phone": {
+                "scale":"30x40",
+                "position": "middleRightTop",
                 "opacity": 1.0,
                 "animation": true,
                 "layer": "application"
@@ -65,7 +79,7 @@
     },
     "Role": {
         "Default": {
-            "parent": "Application",
+            "parent": "Default",
             "surfaceId": 0
         },
         "Navigation": {
@@ -77,7 +91,7 @@
             "surfaceId": 2
         },
         "Phone": {
-            "parent": "SidePanelMedia",
+            "parent": "Phone",
             "surfaceId": 3
         },
         "Projection": {

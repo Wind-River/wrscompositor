@@ -25,35 +25,11 @@
 
 var Event = {"WindowAdded" : 0, "WindowRemoved" : 1};
 
-var waitProcess = null;
 var hmiConroller = null;
 
 var object = function(id, name, handler) {
     this.id = id;
     this.name = name;
-}
-
-var Process = function(cmd, object) {
-    this.cmd = cmd;
-    this.object = object;
-
-    this.getPid = function() {
-        return this.object.pid;
-    }
-
-    this.launch = function() {
-        var pid = this.object.pid;
-        if (pid != 0) {
-            console.log('no pid');
-            return;
-        }
-        this.object.execute(this.cmd);
-    }
-
-    this.quit = function() {
-        console.log('quit ' + this.object.pid);
-        this.object.quit();
-    }
 }
 
 function getInstance() {
@@ -65,43 +41,16 @@ function getInstance() {
 }
 
 var HmiController = function() {
-    this.systemdDbusClient = null;
     this.root = null;
 
+    this.topWindow = null;
+    this.bottomWindow = null;
+
+    this.windowList = new Array();
     this.objectList = new Array();
-    this.processList = new Array();
 
-    this.init = function(root) {
+    this.setRoot = function(root) {
         this.root = root;
-
-        this.systemdDbusClient = Qt.createQmlObject(' \
-            import QtQuick 2.1; \
-            import com.windriver.wrscompositor 1.0; \
-            SystemdDbusClient { \
-                id: systemd_dbusClient; \
-            }',
-            this.root, "");
-    }
-
-    this.createProcessUnit = function(cmd) {
-        var controller = this;
-        var object =  Qt.createQmlObject(' \
-            import QtQuick 2.1; \
-            import com.windriver.wrscompositor 1.0; \
-            Process { \
-                id: process; \
-                property var hmiController: controller; \
-                onPidChanged: { \
-                    console.log("Process, changed pid"); \
-                    if (process.hmiController) \
-                        hmiController.waitProcess = process; \
-                } \
-            }',
-            this.root, "");
-
-        var process = new Process(cmd, object);
-        this.processList.push(process);
-        return process;
     }
 
     this.registerObjectItem = function(id, name) {
@@ -123,11 +72,265 @@ var HmiController = function() {
         return null;
     }
 
+    this.createLauncherWindow = function() {
+        var window = this.findWindowByName("Launcher");
+        if (window == null) {
+            console.log("createLauncherWindow(), Error finding Window for Launcher");
+            return;
+        }
+
+        var component = Qt.createComponent("wrslauncher.qml");
+        if (component.status == QtQuickModule.Component.Ready) {
+            var surface = component.createObject(window);
+            window.surface = surface;
+        } else {
+            console.log("createLauncherWindow(), Error creating wrslauncher object");
+            return;
+        }
+
+        console.log("createLauncherWindow, Success to create launcher object");
+    }
+
+    this.destroyLauncherWindow = function() {
+        var window = this.findWindowByName("Launcher");
+        if (window == null) {
+            console.log("destroyLauncherWindow(), Error finding Window for Launcher");
+            return;
+        }
+
+        console.log("destroyLauncherWindow, Success to destory launcher object");
+        window.surface.destroy();
+    }
+
+    this.createQmlComponent = function(layoutKey, layoutValue) {
+        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
+
+        if (windowContainerComponent.status == QtQuickModule.Component.Error) {
+            console.log("createQmlComponent, Error loading component:", windowContainerComponent.errorString());
+            return null;
+        }
+
+        var windowFrame =
+                windowContainerComponent.createObject(
+                    this.root,
+                    {"x": layoutValue.x,
+                    "y": layoutValue.y,
+                    "width": layoutValue.width,
+                    "height": layoutValue.height,
+                    "z": layoutValue.layerId,
+                    "opacity": layoutValue.opacity});
+
+        if (windowFrame == null) {
+            console.log("createQmlComponent, Error creating object");
+            return null;
+        }
+
+        var component = Qt.createComponent(layoutKey.concat(".qml"));
+        if (component.status == QtQuickModule.Component.Ready) {
+            var surface = component.createObject(windowFrame);
+            windowFrame.surface = surface;
+        } else
+            console.log("createQmlComponent, Cannot create QML Component, QML name = ", layoutKey.concat(".qml"));
+
+        windowFrame.name = layoutKey;
+        windowFrame.animationsEnabled = layoutValue.animation;
+
+        return windowFrame;
+    }
+
+    this.layoutWindow = function(window, position) {
+        switch (position) {
+            case 'topCenter':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'topLeft':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'topRight':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'bottomCenter':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'bottomLeft':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'bottomRight':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleCenter':
+            {
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                break;
+            }
+
+            case 'middleCenterTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                      this.root.anchors.top : this.topWindow.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleCenterBottom':
+            {
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleLeft':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                      this.root.top : this.topWindow.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftBottom':
+            {
+                window.anchors.left = this.root.left;
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            case 'middleRight':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                     this.root.top : this.topWindow.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightBottom':
+            {
+                window.anchors.right = this.root.right;
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            case "undefined":
+            {
+                console.log("layoutWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
+                break;
+            }
+        }
+
+        this.addWindow(window);
+    }
+
+    this.hideLauncherWindow = function() {
+        var window = this.findWindowByName("Launcher");
+        if (window == null) {
+            console.log("hideLauncherWindow(), Error hide Window for Launcher");
+            return;
+        }
+
+        window.visible = false;
+    }
+
+    this.showLauncherWindow = function() {
+        var window = this.findWindowByName("Launcher");
+        if (window == null) {
+            console.log("showLauncherWindow(), Error show Window for Launcher");
+            return;
+        }
+
+        window.visible = true;
+    }
+
     this.hideWindow = function(window) {
-        this.root.hideWindow(window);
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i] == window) {
+                this.windowList[i].visible = false;
+            }
+        }
     }
 
     this.showWindow = function(window) {
-        this.root.showWindow(window);
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i] == window) {
+                this.windowList[i].visible = true;
+            }
+        }
+    }
+
+    this.addWindow = function(window) {
+        this.windowList.push(window);
+    }
+
+    this.removeWindow = function(window) {
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i] == window) {
+                this.windowList.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    this.findBySurface = function(surface) {
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i].surface == surface)
+                return this.windowList[i];
+        }
+        return null;
+    }
+
+    this.findWindowByName = function(name) {
+        for (var i = 0; i < this.windowList.length; i++) {
+            if (this.windowList[i].name == name) {
+                return this.windowList[i];
+            }
+        }
+
+        return null;
     }
 }

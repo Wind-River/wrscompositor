@@ -358,6 +358,7 @@ echo "  <qresource prefix=\"/\">" >> $RCPATH
 echo "    <file>wrscompositor.js</file>" >> $RCPATH
 echo "    <file>hmi-controller.js</file>" >> $RCPATH
 echo "    <file>wrscompositor.qml</file>" >> $RCPATH
+echo "    <file>wrslauncher.qml</file>" >> $RCPATH
 echo "    <file>WindowFrame.qml</file>" >> $RCPATH
 for name in `find . -name '*.qml' -o -name '*.js' -o -name '*.jpg' -o -name '*.png' -o -name '*.svg' -o -name '*.otf' | sed -e "s/.\///"`
 do

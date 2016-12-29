@@ -29,7 +29,6 @@ import "config.js" as Conf
 
 Item {
     id: root
-    signal sendEvent(int event, var object);
     property var hmiController: null
     property var compositorLogic : null
 
@@ -37,6 +36,8 @@ Item {
     y: 0
     height: windowHeight
     width: windowWidth
+
+    signal sendEvent(int event, var object);
 
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
@@ -49,10 +50,11 @@ Item {
         hmiController = Control.getInstance();
 
         if (hmiController) {
-            hmiController.init(root);
+            hmiController.setRoot(root);
         }
 
         if (compositorLogic) {
+            compositorLogic.setHmiController(hmiController);
             compositorLogic.setRoot(root);
             compositorLogic.setIviScene(iviScene);
             compositorLogic.setWrsCompositor(compositor);
@@ -69,25 +71,23 @@ Item {
     }
 
     function waylandIviSurfaceCreated(surface, id) {
-        console.log("surface created, id = ", id); 
+        console.log("surface created, id = ", id);
         return compositorLogic.createWaylandIviSurface(surface, id);
     }
 
     function windowDestroyed(surface) {
-        var windowFrame = compositorLogic.findBySurface(surface);
+        var windowFrame = hmiController.findBySurface(surface);
         if (!windowFrame) {
             console.log("windowDestroyed, cannot find surface in windowList");
             return;
         }
 
         console.log('window destroyed '+ surface);
-        windowFrame.destroy();
+        windowFrame.surface.destroy();
 
-        compositorLogic.removeWindow(windowFrame);
-
-        if (windowFrame) {
+        if (windowFrame.surface) {
             console.log("notify WindowRemoved event");
-            root.sendEvent(Control.Event.WindowRemoved, windowFrame);
+            root.sendEvent(Control.Event.WindowRemoved, windowFrame.surface);
         }
     }
 
@@ -106,13 +106,5 @@ Item {
             console.log("notify WindowAdded event of each qml components for HMI");
             root.sendEvent(Control.Event.WindowAdded, windowFrame);
         }
-    }
-
-    function hideWindow(window) {
-        compositorLogic.hideWindow(window);
-    }
-
-    function showWindow(window) {
-        compositorLogic.showWindow(window);
     }
 }
