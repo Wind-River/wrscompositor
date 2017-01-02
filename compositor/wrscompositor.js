@@ -116,7 +116,8 @@ var Compositor = function() {
                     }
 
                     var hmiController = compositor.getHmiController();
-                    hmiController.createLauncherWindow();
+                    var launcherList = jsonObject.Launcher;
+                    hmiController.createLauncherWindow(launcherList);
                 }
             }
         }

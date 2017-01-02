@@ -40,46 +40,39 @@ Item {
         id: apps
         ListElement {
             label: "Navigation"
-            appid: "Navigation"
             status: "off"
             iconPath: "resources/navigation.png"
         }
         ListElement {
             label: "Climate"
-            appid: "Climate"
             status: "off"
             iconPath: "resources/climate.png"
             iconScale: 0.6
         }
         ListElement {
             label: "Media"
-            appid: "Media"
             status: "off"
             iconPath: "resources/media.png"
             iconScale: 0.9
         }
         ListElement {
             label: "Phone"
-            appid: "Phone"
             status: "off"
             iconPath: "resources/phone.png"
             iconScale: 0.6
         }
         ListElement {
             label: "Applications"
-            appid: "Applications"
             status: "off"
             iconPath: "resources/applications.png"
         }
         ListElement {
             label: "Diagnostics"
-            appid: "Diagnostics"
             status: "off"
             iconPath: "resources/diagnostics.png"
         }
         ListElement {
             label: "Settings"
-            appid: "settings"
             status: "off"
             iconPath: "resources/settings.png"
         }
@@ -115,12 +108,14 @@ Item {
                     console.log("clicked: " + label);
                     if (status == "off") {
                         apps.setProperty(index, "status", "on");
-                        if (appid == "Applications") {
+                        if (label == "Applications") {
                             Control.getInstance().showLauncherWindow();
+                        } else {
+                            Control.getInstance().launchNative(label);
                         }
                     } else {
                         apps.setProperty(index, "status", "off");
-                        if (appid == "Applications") {
+                        if (label == "Applications") {
                             Control.getInstance().hideLauncherWindow();
                         }
                     }

@@ -22,6 +22,7 @@
 
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
+import "hmi-controller.js" as Control
 import "config.js" as Conf
 
 Rectangle {
@@ -32,59 +33,14 @@ Rectangle {
 
     property int windowDefaultWidth: Conf.displayWidth
     property int windowDefaultHeight: Conf.displayHeight
+    property var launcherList: 'undefined'
 
     SystemdDbusClient {
         id: systemd_dbusClient
     }
 
-    function launchNative(appid) {
-        for (var i = 0; i < nativeAppsView.count; i++) {
-            var app = nativeAppsView.model.get(i);
-            if (appid == app.description) {
-                console.log("launchNative, app = ", appid);
-                var delegateItem = nativeAppsView.getDelegateInstanceAt(i);
-                delegateItem.launch();
-            }
-        }
-    }
-
     ListModel {
         id: nativeApps
-        ListElement {
-            label: "Web Browsing"
-            description: "Web Browsing"
-            exec: "/usr/share/qt5/examples/webkitwidgets/browser/browser"
-            multiple: false
-            systemd: false
-            iconPath: "icons/native-web.png"
-        }
-        ListElement {
-            label: "Navigation"
-            description: "Navigation"
-            exec: "/usr/bin/skobblernavi"
-            multiple: false
-            systemd: false
-            iconPath: "icons/native-map-location.png"
-            unitFile: "skobblernavi.service"
-        }
-        ListElement {
-            label: "Media"
-            description: "Media"
-            exec: "/usr/bin/mediaplayer"
-            multiple: false
-            systemd: false
-            iconPath: "icons/native-video.png"
-            unitFile: "mediaplayer.service"
-        }
-        ListElement {
-            label: "Phone"
-            description: "Phone"
-            exec: "/usr/bin/phone"
-            multiple: false
-            systemd: false
-            iconPath: "icons/native-phone.png"
-            unitFile: "phone.service"
-        }
     }
 
     Component {
@@ -236,6 +192,34 @@ Rectangle {
         }
     }
 
+    function launchNative(name) {
+        for (var i = 0; i < nativeAppsView.count; i++) {
+            var app = nativeAppsView.model.get(i);
+            if (app.label == name) {
+                console.log("launchNative, app = ", name);
+                var delegateItem = nativeAppsView.getDelegateInstanceAt(i);
+                delegateItem.launch();
+            }
+        }
+    }
+
     Component.onCompleted: {
+        if (launcherList == 'undefined') {
+            console.log("wrslauncher Error, Invalid launcherList");
+            return;
+        }
+
+        for (var name in launcherList) {
+            console.log("wrslauncher, Loading launcher, ", name);
+            var launcher = launcherList[name];
+            nativeApps.append({
+                "label": name,
+                "exec": launcher.path,
+                "multiple": launcher.multiple,
+                "systemd": launcher.systemd,
+                "iconPath": launcher.icon,
+                "unitFile": launcher.unitFile,
+                });
+        }
     }
 }

@@ -37,7 +37,7 @@
                 "layer": "base"
             }
         },
-        "Workspace": { 
+        "Workspace": {
             "Default": {
                 "scale": "70x80",
                 "position": "middleLeft",
@@ -101,6 +101,36 @@
         "Camera": {
             "parent": "FullScreen",
             "surfaceId": 5
+        }
+    },
+    "Launcher": {
+        "Web Browsing": {
+            "icon" : "icons/native-web.png",
+            "path" : "/usr/bin/brower",
+            "unitFile": "brower.service",
+            "multiple": false,
+            "systemd": false
+        },
+        "Navigation": {
+            "icon" : "icons/native-map-location.png",
+            "path" : "/usr/bin/skobblernavi",
+            "unitFile": "skobblernavi.service",
+            "multiple": false,
+            "systemd": false
+        },
+        "Media": {
+            "icon" : "icons/native-video.png",
+            "path" : "/usr/bin/mediaplayer",
+            "unitFile": "mediaplayer.service",
+            "multiple": false,
+            "systemd": false
+        },
+        "Phone": {
+            "icon" : "icons/native-phone.png",
+            "path" : "/usr/bin/phone",
+            "unitFile": "phone.service",
+            "multiple": false,
+            "systemd": false
         }
     }
 }

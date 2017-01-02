@@ -62,17 +62,7 @@ var HmiController = function() {
         this.root.sendEvent.connect(handler);
     }
 
-    this.findObjectByName = function(name) {
-        for (var index = 0; index < this.objectList.length; index++) {
-            var object = this.objectList[index];
-            if (object.name == name) {
-                return object.id;
-            }
-        }
-        return null;
-    }
-
-    this.createLauncherWindow = function() {
+    this.createLauncherWindow = function(launcherList) {
         var window = this.findWindowByName("Launcher");
         if (window == null) {
             console.log("createLauncherWindow(), Error finding Window for Launcher");
@@ -81,7 +71,8 @@ var HmiController = function() {
 
         var component = Qt.createComponent("wrslauncher.qml");
         if (component.status == QtQuickModule.Component.Ready) {
-            var surface = component.createObject(window);
+            var surface = component.createObject(window,
+                                        {"launcherList": launcherList});
             window.surface = surface;
         } else {
             console.log("createLauncherWindow(), Error creating wrslauncher object");
@@ -267,6 +258,17 @@ var HmiController = function() {
         this.addWindow(window);
     }
 
+    this.launchNative = function(name) {
+        var window = this.findWindowByName("Launcher");
+        if (window == null) {
+            console.log("hmi-controller's launchNative(), Error launcher native applcation", name);
+            return;
+        }
+
+        console.log("hmi-controller's launchNative(), launcher native applcation", name);
+        window.surface.launchNative(name);
+    }
+
     this.hideLauncherWindow = function() {
         var window = this.findWindowByName("Launcher");
         if (window == null) {
@@ -314,6 +316,16 @@ var HmiController = function() {
                 break;
             }
         }
+    }
+
+    this.findObjectByName = function(name) {
+        for (var index = 0; index < this.objectList.length; index++) {
+            var object = this.objectList[index];
+            if (object.name == name) {
+                return object.id;
+            }
+        }
+        return null;
     }
 
     this.findBySurface = function(surface) {
