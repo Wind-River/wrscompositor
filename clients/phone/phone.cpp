@@ -31,15 +31,15 @@ Phone::Phone(QWidget * parent)
 Phone::~Phone() {
 }
 
-void Phone::surfaceConfigure(int width, int height) {
+void Phone::surfaceConfigure(QWindow *window, int width, int height) {
     qDebug() << __func__ << __LINE__;
 
-    QtWaylandClient::QWaylandWindow *window = 
-                            (QtWaylandClient::QWaylandWindow *) this->windowHandle()->handle();
+    QtWaylandClient::QWaylandWindow *qWaylandWindow =
+                            (QtWaylandClient::QWaylandWindow *) window->handle();
 
-    if (window) {
+    if (qWaylandWindow) {
         qDebug() << "Phone::iviSurfaceConfigure, configure QWaylandWindow size " << width << "," << height;
-        window->configure(0, width, height);
+        qWaylandWindow->configure(0, width, height);
     }
 
     QQuickItem *object = rootObject();

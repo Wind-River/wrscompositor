@@ -72,7 +72,7 @@ public:
     void iviSurfaceConfigure(int width, int height);
 
 protected:
-    virtual void surfaceConfigure(int width, int height);
+    virtual void surfaceConfigure(QWindow* window, int width, int height);
 
 private:
     static void registryIvi(void *data, struct wl_registry *registry,
@@ -82,6 +82,7 @@ private:
     QtWayland::ivi_application *mIviApplication;
     QtWayland::ivi_controller *mIviController;
     QWaylandIviSurface *mIviSurface;
+    QWindow * mWindow;
 };
 
 }

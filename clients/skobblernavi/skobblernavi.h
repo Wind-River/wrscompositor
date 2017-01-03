@@ -36,7 +36,7 @@ public:
     ~SkobblerNavi();
 
 protected:
-    void surfaceConfigure(int width, int height);
+    void surfaceConfigure(QWindow *window, int width, int height);
     bool event(QEvent *event);
 };
 

@@ -32,12 +32,12 @@ SkobblerNavi::SkobblerNavi(QWidget* parent)
 SkobblerNavi::~SkobblerNavi() {
 }
 
-void SkobblerNavi::surfaceConfigure(int width, int height) {
-    QtWaylandClient::QWaylandWindow *window = (QtWaylandClient::QWaylandWindow *) this->windowHandle()->handle();
+void SkobblerNavi::surfaceConfigure(QWindow *window, int width, int height) {
+    QtWaylandClient::QWaylandWindow *qWaylandWindow = (QtWaylandClient::QWaylandWindow *) window->handle();
 
-    if (window) {
+    if (qWaylandWindow) {
         qDebug() << "SkobblerNavi::surfaceConfigure, configure QWaylandWindow size " << width << "," << height;
-        window->configure(0, width, height);
+        qWaylandWindow->configure(0, width, height);
     }
 
 }

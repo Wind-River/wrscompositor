@@ -58,6 +58,7 @@ QWaylandIviExtension::QWaylandIviExtension()
     : mIviApplication(Q_NULLPTR)
     , mIviController(Q_NULLPTR)
     , mIviSurface(Q_NULLPTR)
+    , mWindow(Q_NULLPTR)
 {
     if (!QGuiApplication::platformNativeInterface() || !QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("wl_display")) {
         qDebug() << "This application requires a wayland plugin";
@@ -78,10 +79,10 @@ QWaylandIviExtension::~QWaylandIviExtension()
 }
 
 void QWaylandIviExtension::iviSurfaceConfigure(int width, int height) {
-    this->surfaceConfigure(width, height);
+    this->surfaceConfigure(mWindow, width, height);
 }
 
-void QWaylandIviExtension::surfaceConfigure(int width, int height) {
+void QWaylandIviExtension::surfaceConfigure(QWindow* window, int width, int height) {
 
 }
 
@@ -117,6 +118,7 @@ bool QWaylandIviExtension::createSurface(QWindow* window, uint32_t role) {
 #if 0
             struct ::ivi_controller_surface *controller = mIviController->ivi_controller::surface_create(mSurfaceId);
 #endif
+            mWindow = window;
             mIviSurface = new QWaylandIviSurface(surface);
             mIviSurface->setParent(this);
             result = true;

@@ -28,14 +28,14 @@
 #include <QApplication>
 #include "qwaylandiviextension.h"
 
-class Camera : public QQuickWidget, public QtWaylandClient::QWaylandIviExtension 
+class Camera : public QQuickWidget, public QtWaylandClient::QWaylandIviExtension
 {
 public:
     Camera(QWidget* parent = 0);
     ~Camera();
 
 protected:
-    void surfaceConfigure(int width, int height);
+    void surfaceConfigure(QWindow *window, int width, int height);
     bool event(QEvent *event);
 };
 
