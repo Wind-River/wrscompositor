@@ -26,6 +26,34 @@ QT_BEGIN_NAMESPACE
 
 namespace QtWaylandClient {
 
+QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface)
+    : QtWayland::ivi_surface(ivi_surface)
+    , mIviExtension(Q_NULLPTR)
+{
+}
+
+QWaylandIviSurface::QWaylandIviSurface(struct ::ivi_surface *ivi_surface,
+                                       struct ::ivi_controller_surface *iviControllerSurface)
+    : QtWayland::ivi_surface(ivi_surface)
+    , QtWayland::ivi_controller_surface(iviControllerSurface)
+    , mIviExtension(Q_NULLPTR)
+{
+}
+
+QWaylandIviSurface::~QWaylandIviSurface()
+{
+    ivi_surface::destroy();
+    if (QtWayland::ivi_controller_surface::object())
+        QtWayland::ivi_controller_surface::destroy(0);
+}
+
+void QWaylandIviSurface::ivi_surface_configure(int32_t width, int32_t height)
+{
+    qDebug() << " QWaylandIviSurface::ivi_surface_configure, width = " << width << " height = " << height;
+    if (mIviExtension != NULL)
+        mIviExtension->iviSurfaceConfigure(width, height);
+}
+
 QWaylandIviExtension::QWaylandIviExtension()
     : mIviApplication(Q_NULLPTR)
     , mIviController(Q_NULLPTR)
@@ -89,7 +117,7 @@ bool QWaylandIviExtension::createSurface(QWindow* window, uint32_t role) {
 #if 0
             struct ::ivi_controller_surface *controller = mIviController->ivi_controller::surface_create(mSurfaceId);
 #endif
-            mIviSurface = new QtWaylandClient::QWaylandIviSurface(surface);
+            mIviSurface = new QWaylandIviSurface(surface);
             mIviSurface->setParent(this);
             result = true;
         }

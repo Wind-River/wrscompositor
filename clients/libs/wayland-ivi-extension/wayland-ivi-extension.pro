@@ -15,8 +15,8 @@ WAYLANDCLIENTSOURCES += \
     ../protocol/ivi-application.xml \
     ../protocol/ivi-controller.xml
 
-LOCAL_SOURCES = qwaylandiviextension.cpp qwaylandivisurface.cpp
-LOCAL_HEADERS = qwaylandiviextension.h qwaylandivisurface.h
+LOCAL_SOURCES = qwaylandiviextension.cpp 
+LOCAL_HEADERS = qwaylandiviextension.h
 
 SOURCES += $$LOCAL_SOURCES
 HEADERS += $$LOCAL_HEADERS

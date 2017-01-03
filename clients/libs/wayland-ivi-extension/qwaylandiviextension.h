@@ -23,6 +23,7 @@
 #ifndef QWAYLANDIVIEXTENSION_H
 #define QWAYLANDIVIEXTENSION_H
 
+#include <QDebug>
 #include <QtGui/private/qguiapplication_p.h>
 #include <QtGui/qpa/qplatformnativeinterface.h>
 #include <QtWaylandClient/private/qwaylandintegration_p.h>
@@ -30,7 +31,6 @@
 #include <QtWaylandClient/private/qwaylanddisplay_p.h>
 #include "qwayland-ivi-application.h"
 #include "qwayland-ivi-controller.h"
-#include "qwaylandivisurface.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -45,7 +45,25 @@ enum IVI_SURFACE_ROLE {
     WRS_IVI_ID_SURFACE_CAMERA = 0x05
 };
 
-class Q_WAYLAND_CLIENT_EXPORT QWaylandIviExtension : public QObject
+class QWaylandIviExtension;
+
+class QWaylandIviSurface : public QtWayland::ivi_surface
+                         , public QtWayland::ivi_controller_surface
+{
+public:
+    QWaylandIviSurface(struct ::ivi_surface *ivi_surface);
+    QWaylandIviSurface(struct ::ivi_surface *ivi_surface,
+                       struct ::ivi_controller_surface *iviControllerSurface);
+    virtual ~QWaylandIviSurface();
+    void setParent(QWaylandIviExtension *extension) {
+        mIviExtension = extension;
+    }
+private:
+    virtual void ivi_surface_configure(int32_t width, int32_t height) Q_DECL_OVERRIDE;
+    QWaylandIviExtension *mIviExtension;
+};
+
+class Q_WAYLAND_CLIENT_EXPORT QWaylandIviExtension
 {
 public:
     QWaylandIviExtension();
@@ -54,7 +72,7 @@ public:
     void iviSurfaceConfigure(int width, int height);
 
 protected:
-virtual void surfaceConfigure(int width, int height);
+    virtual void surfaceConfigure(int width, int height);
 
 private:
     static void registryIvi(void *data, struct wl_registry *registry,
@@ -63,7 +81,7 @@ private:
 private:
     QtWayland::ivi_application *mIviApplication;
     QtWayland::ivi_controller *mIviController;
-    QtWaylandClient::QWaylandIviSurface *mIviSurface;
+    QWaylandIviSurface *mIviSurface;
 };
 
 }
