@@ -24,19 +24,19 @@
 #define CAMERA_H
 
 #include <QQuickItem>
-#include <QQuickWidget>
+#include <QQuickView>
 #include <QApplication>
 #include "qwaylandiviextension.h"
 
-class Camera : public QQuickWidget, public QtWaylandClient::QWaylandIviExtension
+class Camera : public QQuickView, public QtWaylandClient::QWaylandIviExtension
 {
 public:
-    Camera(QWidget* parent = 0);
+    Camera(QWindow* parent = 0);
     ~Camera();
 
 protected:
     void surfaceConfigure(QWindow *window, int width, int height);
-    bool event(QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 
 #endif

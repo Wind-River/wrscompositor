@@ -37,7 +37,7 @@ public:
 
 protected:
     void surfaceConfigure(QWindow *window, int width, int height);
-    bool event(QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 
 #endif

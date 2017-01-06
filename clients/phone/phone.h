@@ -24,19 +24,19 @@
 #define PHONE_H
 
 #include <QQuickItem>
-#include <QQuickWidget>
+#include <QQuickView>
 #include <QApplication>
 #include "qwaylandiviextension.h"
 
-class Phone : public QQuickWidget, public QtWaylandClient::QWaylandIviExtension
+class Phone : public QQuickView, public QtWaylandClient::QWaylandIviExtension
 {
 public:
-    Phone(QWidget* parent = 0);
+    Phone(QWindow* parent = 0);
     ~Phone();
 
 protected:
-   void surfaceConfigure(QWindow *window, int width, int height);
-   bool event(QEvent *event);
+    void surfaceConfigure(QWindow *window, int width, int height);
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 
 #endif

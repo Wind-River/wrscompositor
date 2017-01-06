@@ -22,10 +22,11 @@
 
 #include "phone.h"
 
-Phone::Phone(QWidget * parent)
-    :  QQuickWidget(parent), QWaylandIviExtension() {
+Phone::Phone(QWindow * parent)
+    :  QQuickView(parent), QWaylandIviExtension() {
 
     setSource(QUrl("qrc:///main.qml"));
+    installEventFilter(this);
 }
 
 Phone::~Phone() {
@@ -50,14 +51,35 @@ void Phone::surfaceConfigure(QWindow *window, int width, int height) {
    }
 }
 
-bool Phone::event(QEvent *event) {
-    bool ret = QWidget::event(event);
-    //qDebug() << "Phone::event, event's type = " << event->type();
+bool Phone::eventFilter(QObject *obj, QEvent *event) {
+    //qDebug() << "Phone::eventFilter, event " << event;
+    QWindow *window = qobject_cast<QWindow*>(obj);
 
-    if (event->type() == QEvent::PlatformSurface) {
-        QWindow *window = this->windowHandle();
-        ret = this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_PHONE);
+    switch (event->type()) {
+        case QEvent::Close:
+        {
+            qDebug() << "Phone has closed";
+            window->destroy();
+            break;
+        }
+
+        case QEvent::PlatformSurface:
+        {
+            QPlatformSurfaceEvent::SurfaceEventType eventType =
+                static_cast<QPlatformSurfaceEvent *>(event)->surfaceEventType();
+
+            if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
+                qDebug() << "Phone has created surface";
+                this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_PHONE);
+            } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
+                qDebug() << "Phone has destroyed surface";
+            }
+            break;
+        }
+
+        default:
+            break;
     }
 
-    return ret;
+    return QObject::eventFilter(obj, event);
 }

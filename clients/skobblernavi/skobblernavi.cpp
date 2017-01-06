@@ -27,6 +27,7 @@ SkobblerNavi::SkobblerNavi(QWidget* parent)
 
     QUrl url = QUrl("qrc:///html5/index.html");
     load(url);
+    installEventFilter(this);
 }
 
 SkobblerNavi::~SkobblerNavi() {
@@ -42,14 +43,35 @@ void SkobblerNavi::surfaceConfigure(QWindow *window, int width, int height) {
 
 }
 
-bool SkobblerNavi::event(QEvent *event) {
-    bool ret = QWebView::event(event);
-    //qDebug() << "SkobblerNavi::event, event's type = " << event->type();
+bool SkobblerNavi::eventFilter(QObject *obj, QEvent *event) {
+    //qDebug() << "SkobblerNavi::eventFilter, event " << event;
+    QWebView *webview = qobject_cast<QWebView*>(obj);
 
-    if (event->type() == QEvent::PlatformSurface) {
-        QWindow *window = this->windowHandle();
-        ret = this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_NAVIGATION);
+    switch (event->type()) {
+        case QEvent::Close:
+        {
+            qDebug() << "SkobberNavi has closed";
+            webview->windowHandle()->destroy();
+            break;
+        }
+
+        case QEvent::PlatformSurface:
+        {
+            QPlatformSurfaceEvent::SurfaceEventType eventType =
+                static_cast<QPlatformSurfaceEvent *>(event)->surfaceEventType();
+
+            if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
+                qDebug() << "SkobberNavi has created surface";
+                this->createSurface(webview->windowHandle(), QtWaylandClient::WRS_IVI_ID_SURFACE_NAVIGATION);
+            } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
+                qDebug() << "SkobberNavi has destroyed surface";
+            }
+            break;
+        }
+
+        default:
+            break;
     }
 
-    return ret;
+    return QObject::eventFilter(obj, event);
 }

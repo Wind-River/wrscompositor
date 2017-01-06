@@ -22,9 +22,10 @@
 
 #include "camera.h"
 
-Camera::Camera(QWidget * parent)
-    :  QQuickWidget(parent) {
+Camera::Camera(QWindow * parent)
+    :  QQuickView(parent) {
     setSource(QUrl("qrc:///main.qml"));
+    installEventFilter(this);
 }
 
 Camera::~Camera() {
@@ -49,14 +50,35 @@ void Camera::surfaceConfigure(QWindow *window, int width, int height) {
    }
 }
 
-bool Camera::event(QEvent *event) {
-    bool ret = QWidget::event(event);
-    //qDebug() << "Camera::event, event's type = " << event->type();
+bool Camera::eventFilter(QObject *obj, QEvent *event) {
+    //qDebug() << "Camera::eventFilter, event " << event;
+    QWindow *window = qobject_cast<QWindow*>(obj);
 
-    if (event->type() == QEvent::PlatformSurface) {
-        QWindow *window = this->windowHandle();
-        ret = this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_CAMERA);
+    switch (event->type()) {
+        case QEvent::Close:
+        {
+            qDebug() << "Camera has closed";
+            window->destroy();
+            break;
+        }
+
+        case QEvent::PlatformSurface:
+        {
+            QPlatformSurfaceEvent::SurfaceEventType eventType =
+                static_cast<QPlatformSurfaceEvent *>(event)->surfaceEventType();
+
+            if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
+                qDebug() << "Camera has created surface";
+                this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_CAMERA);
+            } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
+                qDebug() << "Camera has destroyed surface";
+            }
+            break;
+        }
+
+        default:
+            break;
     }
 
-    return ret;
+    return QObject::eventFilter(obj, event);
 }

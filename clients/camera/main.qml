@@ -24,8 +24,8 @@ import QtQuick 2.1
 
 Image {
     id: camera
-    width: 1280
-    height: 1024
+    width: Screen.width
+    height: Screen.height
 
     source: "resources/camera.jpg"
 

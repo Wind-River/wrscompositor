@@ -24,8 +24,9 @@ import QtQuick 2.1
 
 Item {
     id: root
-    width: 1920
-    height: 1080
+    width: Screen.width
+    height: Screen.height
+
     property string dialstring: ""
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }
