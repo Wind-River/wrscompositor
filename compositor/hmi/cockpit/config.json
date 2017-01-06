@@ -52,7 +52,7 @@
                 "animation": true,
                 "layer": "home"
             },
-            "Phone": {
+            "Widget": {
                 "scale":"30x40",
                 "position": "middleRightTop",
                 "opacity": 1.0,
@@ -91,7 +91,7 @@
             "surfaceId": 2
         },
         "Phone": {
-            "parent": "Phone",
+            "parent": "Widget",
             "surfaceId": 3
         },
         "Projection": {
