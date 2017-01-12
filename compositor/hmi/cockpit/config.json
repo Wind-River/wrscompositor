@@ -35,6 +35,13 @@
                 "opacity": 1.0,
                 "animation": true,
                 "layer": "base"
+            },
+            "Launcher": {
+                "scale": "70x80",
+                "position": "middleLeft",
+                "opacity": 0.8,
+                "animation": true,
+                "layer": "home"
             }
         },
         "Workspace": {
@@ -45,16 +52,23 @@
                 "animation": true,
                 "layer": "application"
             },
-            "Launcher": {
-                "scale": "70x80",
-                "position": "middleLeft",
-                "opacity": 0.8,
+            "Default-Plus": {
+                "scale": "100x90",
+                "position": "middleCenterTop",
+                "opacity": 1.0,
                 "animation": true,
-                "layer": "home"
+                "layer": "application"
             },
             "Widget": {
                 "scale":"30x40",
                 "position": "middleRightTop",
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "application"
+            },
+            "Projection": {
+                "scale": "100x100",
+                "position": "middleCenter",
                 "opacity": 1.0,
                 "animation": true,
                 "layer": "application"
@@ -68,7 +82,7 @@
                 "animation": true,
                 "layer": "notification"
             },
-            "FullScreen": {
+            "Camera": {
                 "scale": "100x100",
                 "position": "middleCenter",
                 "opacity": 1.0,
@@ -79,28 +93,28 @@
     },
     "Role": {
         "Default": {
-            "parent": "Default",
-            "surfaceId": 0
+            "workspace": "Default",
+            "id": 0
         },
         "Navigation": {
-            "parent": "Popup",
-            "surfaceId": 1
+            "workspace": "Default",
+            "id": 1
         },
         "Dialog": {
-            "parent": "Popup",
-            "surfaceId": 2
+            "workspace": "Popup",
+            "id": 2
         },
         "Phone": {
-            "parent": "Widget",
-            "surfaceId": 3
+            "workspace": "Widget",
+            "id": 3
         },
-        "Projection": {
-            "parent": "FullScreen",
-            "surfaceId": 4
+        "Connectivity": {
+            "workspace": "Projection",
+            "id": 4
         },
         "Camera": {
-            "parent": "FullScreen",
-            "surfaceId": 5
+            "workspace": "Camera",
+            "id": 5
         }
     },
     "Launcher": {

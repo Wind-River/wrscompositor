@@ -21,8 +21,8 @@
  */
 
 import QtQuick 2.1
-import "hmi-controller.js" as Control
 import com.windriver.wrscompositor 1.0
+import "hmi-interface.js" as Interface
 
 Item {
     id: dockbar
@@ -109,14 +109,14 @@ Item {
                     if (status == "off") {
                         apps.setProperty(index, "status", "on");
                         if (label == "Applications") {
-                            Control.getInstance().showLauncherWindow();
+                            Interface.showLauncherWindow();
                         } else {
-                            Control.getInstance().launchNative(label);
+                            Interface.launchNative(label);
                         }
                     } else {
                         apps.setProperty(index, "status", "off");
                         if (label == "Applications") {
-                            Control.getInstance().hideLauncherWindow();
+                            Interface.hideLauncherWindow();
                         }
                     }
                 }
@@ -126,10 +126,10 @@ Item {
 
     function eventHandler(event, object) {
         switch(event) {
-            case Control.Event.WindowAdded:
+            case Interface.Event.WindowAdded:
                 console.log("DockBar, eventHandler receive WindowAdded event");
                 break;
-            case Control.Event.WindowRemoved:
+            case Interface.Event.WindowRemoved:
                 console.log("DockBar, eventHandler receive WindowRemoved event");
                 break;
             default:
@@ -138,8 +138,8 @@ Item {
     }
 
     Component.onCompleted: {
-        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
-        Control.getInstance().registerObjectItem(dockbar, "DockBar");
-        Control.getInstance().registerEventHandler(dockbar.eventHandler);
+        /* hmi-interface.js's API: each QML for HMI should register object id and event handler */
+        Interface.registerComponent(dockbar, "DockBar");
+        Interface.registerEventHandler(dockbar.eventHandler);
     }
 }

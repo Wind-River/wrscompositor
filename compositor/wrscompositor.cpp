@@ -238,7 +238,7 @@ void WrsCompositor::resizeEvent(QResizeEvent *event)
     loadQmlComponent(event->size());
 }
 
-void WrsCompositor::createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource, 
+void WrsCompositor::createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource,
                                 uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id) {
     TRACE() << "[BEGIN]";
 
@@ -264,7 +264,7 @@ void WrsCompositor::createIviApplicationSurface(QtWaylandServer::ivi_application
     iviSurface->setHeight(parentHeight.toInt());
     iviSurface->addResourceForClient(surface->client, iviApplicationSurface->resource()->handle);
 
-    connect(qWlsurface, SIGNAL(sizeChanged()), 
+    connect(qWlsurface, SIGNAL(sizeChanged()),
         this, SLOT(sizeChanged()));
 
     TRACE() << "[END]";
@@ -393,7 +393,7 @@ QString WrsCompositor::getSurfaceRole(QWaylandSurface *qWlSurface) {
     } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_PHONE) {
         return "Phone";
     } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_PROJECTION) {
-        return "Projection";
+        return "Connectivity";
     } else {
         Util u;
         return u.getCmdForPid(qWlSurface->client()->processId());

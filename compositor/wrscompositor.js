@@ -20,62 +20,232 @@
  * THE SOFTWARE.
  */
 
-var layoutObject = function(layoutValue) {
-    this.scale = layoutValue.scale;
-    this.position = layoutValue.position;
-    this.opacity = layoutValue.opacity;
-    this.layer = layoutValue.layer;
-    this.animation = layoutValue.animation;
-    this.x = (layoutValue.position == 'undefined') ? layoutValue.x : 0;
-    this.y = (layoutValue.position == 'undefined') ? layoutValue.y : 0;
+.import QtQuick 2.0 as QtQuickModule
+
+var Layout = function(key, value) {
+    this.name = key;
+    this.scale = value.scale;
+    this.position = value.position;
+    this.opacity = value.opacity;
+    this.layer = value.layer;
+    this.animation = value.animation;
+    this.x = (value.position == 'undefined') ? value.x : 0;
+    this.y = (value.position == 'undefined') ? value.y : 0;
     this.width = 0;
     this.height = 0;
     this.layerId = -1;
     this.surfaceId = -1;
+    this.window = null;
 
-    this.setSize = function(displayWidth, displayHeight) {
+    this.init = function(displayWidth, displayHeight) {
         var widthScale = parseInt(this.scale.split("x")[0]);
         var heightScale = parseInt(this.scale.split("x")[1]);
 
         this.width = displayWidth * widthScale / 100;
         this.height = displayHeight * heightScale / 100;
-    }
 
-    this.setIdByLayout = function() {
         if (this.layer == "base") {
             this.layerId = 1000;
         } else if (this.layer == "application") {
             this.layerId = 2000;
-        } else if (this.layer == "notification") {
-            this.layerId = 3000;
         } else if (this.layer == "home") {
+            this.layerId = 3000;
+        } else if (this.layer == "notification") {
             this.layerId = 4000;
         } else {
-            console.log("setIdByLayout, layout's layer is invalid")
+            console.log("init(), layout's layer is invalid")
             return;
         }
 
         this.surfaceId = this.layerId + 10;
     }
-}
 
-var roleObject = function(roleValue) {
-    this.parent = roleValue.parent;
-    this.surfaceId = roleValue.surfaceId;
-}
+    this.createWindow = function(parent) {
+        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
 
-var compositorLogic = null;
-function getInstance() {
-    if (compositorLogic == null) {
-        compositorLogic = new Compositor();
+        if (windowContainerComponent.status ==
+                                QtQuickModule.Component.Error) {
+            console.log("createWindow, Error loading component:",
+                                windowContainerComponent.errorString());
+            return;
+        }
+
+        this.window =
+                windowContainerComponent.createObject(
+                    parent,
+                    {"x": this.x,
+                    "y": this.y,
+                    "width": this.width,
+                    "height": this.height,
+                    "z": this.layerId,
+                    "opacity": this.opacity});
+
+        if (this.window == null) {
+            console.log("createQmlComponent, Error creating object");
+            return;
+        }
+
+        var component = Qt.createComponent(this.name.concat(".qml"));
+        if (component.status == QtQuickModule.Component.Ready) {
+            var surface = component.createObject(this.window);
+            this.window.surface = surface;
+            console.log("createQmlComponent, create QML Component, QML name = ",
+                                            this.name.concat(".qml"));
+        }
+
+        this.window.name = this.name;
+        this.window.animationsEnabled = this.animation;
     }
 
-    return compositorLogic;
+    this.getWindow = function() {
+        return this.window;
+    }
+
+}
+
+var Role = function(key, value) {
+    this.name = key;
+    this.workspace = value.workspace;
+    this.id = value.id;
+    this.window = null;
+
+    this.init = function(layoutList) {
+        for (var i = 0; i < layoutList.length; i++) {
+            var layout = layoutList[i];
+            if (layout.name == this.workspace) {
+                this.window = layout.getWindow();
+                return;
+            }
+        }
+        console.log("Role's init(), \
+            Cannot assign Role's window mapped to Workspace");
+    }
+
+    this.getWindow = function() {
+        return this.window;
+    }
+
+    this.getOrder = function() {
+        return this.window.z;
+    }
+}
+
+var WindowList = function() {
+    this.defaultWindowList = new Array();
+    this.widgetWindowList = new Array();
+    this.popupWindowList = new Array();
+
+    this.addDefaultWindow = function(window) {
+        console.log("addDefaultWindow, window'name = ", window.name);
+        this.defaultWindowList.push(window);
+    }
+
+    this.removeDefaultWindow = function(window) {
+        for (var i = 0; i < this.defaultWindowList.length; i++) {
+            if (this.defaultWindowList[i] == window) {
+                console.log("removeDefaultWindow, window'name = ", window.name);
+                this.defaultWindowList.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    this.hideDefaultWindow = function(window) {
+        for (var i = 0; i < this.defaultWindowList.length; i++) {
+            if (this.defaultWindowList[i] == window) {
+                this.defaultWindowList[i].visible = false;
+                break;
+            }
+        }
+    }
+
+    this.showDefaultWindow = function(window) {
+        for (var i = 0; i < this.defaultWindowList.length; i++) {
+            if (this.defaultWindowList[i] == window) {
+                this.defaultWindowList[i].visible = true;
+                break;
+            }
+        }
+    }
+
+    this.addWidgetWindow = function(window) {
+        console.log("addWidgetWindow, window'name = ", window.name);
+        this.widgetWindowList.push(window);
+    }
+
+    this.removeWidgetWindow = function(window) {
+        for (var i = 0; i < this.widgetWindowList.length; i++) {
+            if (this.widgetWindowList[i] == window) {
+                console.log("removeWidgetWindow, window'name = ", window.name);
+                this.widgetWindowList.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    this.hideWidgetWindow = function(window) {
+        for (var i = 0; i < this.widgetWindowList.length; i++) {
+            if (this.widgetWindowList[i] == window) {
+                this.widgetWindowList[i].visible = false;
+                break;
+            }
+        }
+    }
+
+    this.showWidgetWindow = function(window) {
+        for (var i = 0; i < this.widgetWindowList.length; i++) {
+            if (this.widgetWindowList[i] == window) {
+                this.widgetWindowList[i].visible = true;
+                break;
+            }
+        }
+    }
+
+    this.addPopupWindow = function(window) {
+        console.log("addPopupWindow, window'name = ", window.name);
+        this.popupWindowList.push(window);
+    }
+
+    this.removePopupWindow = function(window) {
+        for (var i = 0; i < this.popupWindowList.length; i++) {
+            if (this.popupWindowList[i] == window) {
+                console.log("removePopupWindow, window'name = ", window.name);
+                this.popupWindowList.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    this.hidePopupWindow = function(window) {
+        for (var i = 0; i < this.popupWindowList.length; i++) {
+            if (this.popupWindowList[i] == window) {
+                this.popupWindowList[i].visible = false;
+                break;
+            }
+        }
+    }
+
+    this.showPopupWindow = function(window) {
+        for (var i = 0; i < this.popupWindowList.length; i++) {
+            if (this.popupWindowList[i] == window) {
+                this.popupWindowList[i].visible = true;
+                break;
+            }
+        }
+    }
+}
+
+var compositor = null;
+function getInstance() {
+    if (compositor == null) {
+        compositor = new Compositor();
+    }
+
+    return compositor;
 }
 
 var Compositor = function() {
     this.wrscompositor = null;
-    this.hmiController = null;
 
     this.displayWidth = 0;
     this.displayHeight = 0;
@@ -83,6 +253,11 @@ var Compositor = function() {
     this.root = null;
     this.iviScene = null;
 
+    this.topWindow = null;
+    this.bottomWindow = null;
+    this.launcherWindow = null;
+
+    this.windowList = new WindowList();
     this.layoutList = new Array();
     this.roleList = new Array();
 
@@ -110,14 +285,9 @@ var Compositor = function() {
                     for (var roleKey in roleData)
                         compositor.loadCompositorRole(roleKey, roleData[roleKey]);
 
-                    for (var layoutKey in compositor.layoutList) {
-                        var layoutValue = compositor.layoutList[layoutKey];
-                        compositor.initWindow(layoutKey, layoutValue)
-                    }
-
-                    var hmiController = compositor.getHmiController();
+                    var layout =  compositor.findLayoutByName("Launcher");
                     var launcherList = jsonObject.Launcher;
-                    hmiController.createLauncherWindow(launcherList);
+                    compositor.createLauncherWindow(layout.window, launcherList);
                 }
             }
         }
@@ -127,33 +297,30 @@ var Compositor = function() {
     }
 
     this.loadCompositorRole = function (key, value) {
-        var role= new roleObject(value)
-        this.roleList[key] = role;
+        var role = new Role(key, value);
+        role.init(this.layoutList);
+        this.roleList.push(role);
     }
 
     this.loadCompositorLayout = function(key, value) {
-        var layout = new layoutObject(value);
+        var layout = new Layout(key, value);
+        layout.init(this.displayWidth, this.displayHeight);
+        layout.createWindow(this.root);
 
-        layout.setIdByLayout();
-        layout.setSize(this.displayWidth, this.displayHeight);
-
-        this.layoutList[key] = layout;
-    }
-
-    this.setHmiController = function(hmiController) {
-        this.hmiController = hmiController;
-    }
-
-    this.getHmiController = function() {
-        return this.hmiController;
+        var window = layout.getWindow();
+        window.iviSurface = this.addIviLayer(layout.layerId).addSurface(
+                                window.x, window.y, window.width, window.height, window, window.surface);
+        window.iviSurface.id = layout.surfaceId;
+        this.layoutWindow(window, value.position);
+        this.layoutList.push(layout);
     }
 
     this.setRoot = function(root) {
         this.root = root;
     }
 
-    this.getRoot = function() {
-        return this.root;
+    this.getLauncherWindow = function() {
+        return this.launcherWindow;
     }
 
     this.setWrsCompositor = function (compositor) {
@@ -169,24 +336,28 @@ var Compositor = function() {
         this.displayWidth = width;
     }
 
-    this.getLayerIdIByRole = function(role) {
-        var roleValue = this.roleList[role];
-        var parent = roleValue.parent;
+    this.createWaylandIviSurface = function(surface, id) {
+        var role = this.findSurfaceRoleById(id);
 
-        var layoutValue= this.layoutList[parent]
-        var layerId = layoutValue.layerId;
+        if (role == null) {
+            console.log("createWaylandIviSurface, cannot find surface role related to id");
+            return null;
+        }
 
-        return layerId;
+        console.log("createWaylandIviSurface, surface's role = ", role.name);
+
+        var parent = role.getWindow();
+        var id = role.getOrder();
+        var layer = this.addIviLayer(id);
+        if (layer == null)
+            return null;
+
+        layer.addSurface(0, 0, parent.width, parent.height, null, surface);
+        console.log("createWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
+        return parent;
     }
 
-    this.getParentWindowByRole = function(role) {
-       var roleValue = this.roleList[role];
-       var parent = roleValue.parent;
-
-        return this.hmiController.findWindowByName(parent);
-    }
-
-    this.addLayer = function(id) {
+    this.addIviLayer = function(id) {
         var layer = this.iviScene.mainScreen.layerById(id);
         if (layer != null) {
             console.log("Layer has already be created. Layer = ", id);
@@ -200,63 +371,35 @@ var Compositor = function() {
         return layer;
     }
 
-    this.createWaylandIviSurface = function(surface, id) {
-        var role = this.findSurfaceRoleById(id);
-
-        if (role == undefined) {
-            console.log("createWaylandIviSurface, cannot find surface role related to id");
-            return null;
-        }
-
-        console.log("createWaylandIviSurface, surface's role = ", role);
-
-        var id = this.getLayerIdIByRole(role);
-        var layer = this.iviScene.mainScreen.layerById(id);
-        if (layer == null)
-            return null;
-
-        var parent = this.getParentWindowByRole(role);
-        layer.addSurface(0, 0, parent.width, parent.height, null, surface);
-
-
-        console.log("createWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
-        return parent;
-    }
-
-    this.addSurface = function (surface) {
-        var windowFrame = null;
+    this.addSurface = function(surface) {
+        var window = null;
         var iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
 
         if (iviSurface == null)  {
-            windowFrame = this.addWaylandSurface(surface, "Default");
+            window = this.addWaylandSurface(surface, 0);
         } else {
-            windowFrame = this.addWaylandIviSurface(surface,
-                this.findSurfaceRoleById(iviSurface.id));
+            window = this.addWaylandIviSurface(surface, iviSurface.id);
         }
 
-        return windowFrame;
+        return window;
     }
 
-    this.addWaylandSurface = function (surface, role) {
-        var parentItem = this.getParentWindowByRole(role);
-        var layerId = this.getLayerIdIByRole(role);
+    this.addWaylandSurface = function(surface, id) {
+        var role = this.findSurfaceRoleById(id);
+        var parent = role.getWindow();
+        var layerId = role.getOrder();
         var layer = this.iviScene.mainScreen.layerById(layerId);
 
-        if (parentItem == null) {
-            console.log("windowAdded, cannot get parent item");
-            return null;
-        }
-
-        console.log("addWaylandSurface, role = ", role);
-        console.log("addWaylandSurface, parentItem's width = ", parentItem.width, " parentItem's height = ", parentItem.height);
+        console.log("addWaylandSurface, role = ", role.name);
 
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowFrame = windowContainerComponent.createObject(parentItem);
+        var windowFrame = windowContainerComponent.createObject(parent);
 
+        windowFrame.rootParent = parent;
         windowFrame.surface = surface;
         windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame, surface);
         windowFrame.iviSurface.id = surface.client.processId;
-        windowFrame.name = role;
+        windowFrame.name = role.name;
         windowFrame.surfaceItem = this.wrscompositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
         windowFrame.surfaceItem.touchEventsEnabled = true;
@@ -267,31 +410,31 @@ var Compositor = function() {
         windowFrame.animationsEnabled = true;
         windowFrame.targetX = 0;
         windowFrame.targetY = 0;
-        windowFrame.targetWidth = parentItem.width;
-        windowFrame.targetHeight = parentItem.height;
-        windowFrame.scaledWidth = parentItem.width / this.displayWidth;
-        windowFrame.scaledHeight = parentItem.height / this.displayHeight;
+        windowFrame.targetWidth = parent.width;
+        windowFrame.targetHeight = parent.height;
+        windowFrame.scaledWidth = parent.width / this.displayWidth;
+        windowFrame.scaledHeight = parent.height / this.displayHeight;
 
         return windowFrame;
     }
 
-    this.addWaylandIviSurface = function(surface, role) {
-        var parent = this.getParentWindowByRole(role);
-
-        if (parent == null) {
-            console.log("windowAdded, cannot get parent window");
+    this.addWaylandIviSurface = function(surface, id) {
+        var role = this.findSurfaceRoleById(id);
+        if (role == null) {
+            console.log("windowAdded, cannot get Surface Role by Id");
             return null;
         }
 
-        console.log("addWaylandIviSurface, role = ", role);
-        console.log("addWaylandIviSurface, parent's width = ", parent.width, " parent's height = ", parent.height);
+        console.log("addWaylandIviSurface, role = ", role.name);
 
+        var parent = role.getWindow();
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame = windowContainerComponent.createObject(parent);
 
+        windowFrame.rootParent = parent;
         windowFrame.surface = surface;
         windowFrame.iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
-        windowFrame.name = role;
+        windowFrame.name = role.name;
         windowFrame.surfaceItem = this.wrscompositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
         windowFrame.surfaceItem.touchEventsEnabled = true;
@@ -300,25 +443,238 @@ var Compositor = function() {
         return windowFrame;
     }
 
-    this.initWindow = function (layoutKey, layoutValue) {
-        var window = this.hmiController.createQmlComponent(layoutKey, layoutValue);
-        if (window == null) {
-            console.log("initWindow, Error  creating qml component")
-            return;
-        }
+    this.hideWindow = function(window) {
+        var parent = window.rootParent;
 
-        window.iviSurface = this.addLayer(layoutValue.layerId).addSurface(window.x, window.y, window.width, window.height, window, window.surface);
-        window.iviSurface.id = layoutValue.surfaceId;
-        this.hmiController.layoutWindow(window, layoutValue.position);
+        switch (parent.name) {
+        case 'Default':
+            this.windowList.hideDefaultWindow(window);
+            break;
+        case 'Widget':
+            this.windowList.hideWidgetWindow(window);
+            break;
+        case 'Popup':
+            this.windowList.hidePopupWindow(window);
+            break;
+        default:
+        }
+    }
+
+    this.showWindow = function(window) {
+        var parent = window.rootParent;
+
+        switch (parent.name) {
+        case 'Default':
+            this.windowList.showDefaultWindow(window);
+            break;
+        case 'Widget':
+            this.windowList.showWidgetWindow(window);
+            break;
+        case 'Popup':
+            this.windowList.showPopupWindow(window);
+            break;
+        default:
+        }
+    }
+
+    this.addWindow = function(window) {
+        var parent = window.rootParent;
+
+        switch (parent.name) {
+        case 'Default':
+            this.windowList.addDefaultWindow(window);
+            break;
+        case 'Widget':
+            this.windowList.addWidgetWindow(window);
+            break;
+        case 'Popup':
+            this.windowList.addPopupWindow(window);
+            break;
+        default:
+        }
+    }
+
+    this.removeWindow = function(window) {
+        var parent = window.rootParent;
+
+        switch (parent.name) {
+        case 'Default':
+            this.windowList.removeDefaultWindow(window);
+            break;
+        case 'Widget':
+            this.windowList.removeWidgetWindow(window);
+            break;
+        case 'Popup':
+            this.windowList.removePopupWindow(window);
+            break;
+        default:
+        }
     }
 
     this.findSurfaceRoleById = function(id) {
-        for (var roleKey in this.roleList) {
-            var roleValue = this.roleList[roleKey];
-            if (roleValue.surfaceId == id) {
-                return roleKey;
+        for (var i = 0; i < this.roleList.length; i++) {
+            var role = this.roleList[i];
+            if (role.id == id)
+                return role;
+        }
+
+        return null;
+    }
+
+    this.findLayoutByName = function(name) {
+        for (var i = 0; i < this.layoutList.length; i++) {
+            var layout = this.layoutList[i];
+            if (layout.name == name)
+                return layout;
+        }
+
+        return null;
+    }
+
+    this.createLauncherWindow = function(launcherWindow, launcherList) {
+        var component = Qt.createComponent("wrslauncher.qml");
+        if (component.status == QtQuickModule.Component.Ready) {
+            var surface = component.createObject(launcherWindow,
+                                        {"launcherList": launcherList});
+            launcherWindow.surface = surface;
+        } else {
+            console.log("createLauncherWindow(), Error creating wrslauncher object");
+            return;
+        }
+
+        this.launcherWindow = launcherWindow;
+        console.log("createLauncherWindow, Success to create launcher object");
+    }
+
+    this.destroyLauncherWindow = function() {
+        console.log("destroyLauncherWindow, Success to destory launcher object");
+        this.launcherWindow.surface.destroy();
+    }
+
+    this.layoutWindow = function(window, position) {
+        switch (position) {
+            case 'topCenter':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'topLeft':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'topRight':
+            {
+                this.topWindow = window;
+                window.anchors.top = this.root.top;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'bottomCenter':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'bottomLeft':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'bottomRight':
+            {
+                this.bottomWindow = window;
+                window.anchors.bottom = this.root.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleCenter':
+            {
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                break;
+            }
+
+            case 'middleCenterTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                      this.root.anchors.top : this.topWindow.bottom;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleCenterBottom':
+            {
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                window.anchors.horizontalCenter = this.root.horizontalCenter;
+                break;
+            }
+
+            case 'middleLeft':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                      this.root.top : this.topWindow.bottom;
+                window.anchors.left = this.root.left;
+                break;
+            }
+
+            case 'middleLeftBottom':
+            {
+                window.anchors.left = this.root.left;
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            case 'middleRight':
+            {
+                window.anchors.verticalCenter = this.root.verticalCenter;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightTop':
+            {
+                window.anchors.top = (this.topWindow == null) ?
+                                     this.root.top : this.topWindow.bottom;
+                window.anchors.right = this.root.right;
+                break;
+            }
+
+            case 'middleRightBottom':
+            {
+                window.anchors.right = this.root.right;
+                window.anchors.bottom = (this.bottomWindow == null) ?
+                                         this.root.bottom : this.bottomWindow.top;
+                break;
+            }
+
+            case "undefined":
+            {
+                console.log("layoutWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
+                break;
             }
         }
-        return undefined;
     }
 }

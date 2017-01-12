@@ -22,7 +22,6 @@
 
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
-import "hmi-controller.js" as Control
 import "config.js" as Conf
 
 Rectangle {

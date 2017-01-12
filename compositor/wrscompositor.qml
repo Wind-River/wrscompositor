@@ -24,12 +24,11 @@ import QtQuick 2.1
 import QtMultimedia 5.0
 import QtGraphicalEffects 1.0
 import "wrscompositor.js" as Logic
-import "hmi-controller.js" as Control
+import "hmi-interface.js" as Interface
 import "config.js" as Conf
 
 Item {
     id: root
-    property var hmiController: null
     property var compositorLogic : null
 
     x: 0
@@ -37,7 +36,8 @@ Item {
     height: windowHeight
     width: windowWidth
 
-    signal sendEvent(int event, var object);
+    signal sendEvent(int event, var arg);
+    signal sendRequest(int request, var arg);
 
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
@@ -46,21 +46,18 @@ Item {
     }
 
     Component.onCompleted: {
+        Interface.wrsCompositor = root;
         compositorLogic = Logic.getInstance();
-        hmiController = Control.getInstance();
-
-        if (hmiController) {
-            hmiController.setRoot(root);
-        }
 
         if (compositorLogic) {
-            compositorLogic.setHmiController(hmiController);
             compositorLogic.setRoot(root);
             compositorLogic.setIviScene(iviScene);
             compositorLogic.setWrsCompositor(compositor);
             compositorLogic.setDisplaySize(Conf.displayWidth, Conf.displayHeight);
             compositorLogic.init();
         }
+
+        root.sendRequest.connect(requestHandler);
     }
 
     onWidthChanged: {
@@ -70,25 +67,65 @@ Item {
         Conf.displayHeight = height;
     }
 
+    function requestHandler(request, arg) {
+        var window = 'undefined';
+
+        switch(request) {
+            case Interface.Request.HideWindow:
+            {
+                compositorLogic.hideWindow(arg);
+                break;
+            }
+
+            case Interface.Request.ShowWindow:
+            {
+                compositorLogic.showWindow(arg);
+                break;
+            }
+
+            case Interface.Request.LaunchNative:
+            {
+                window = compositorLogic.getLauncherWindow();
+                window.surface.launchNative(arg);
+                break;
+            }
+
+            case Interface.Request.HideLauncherWindow:
+            {
+                window = compositorLogic.getLauncherWindow();
+                window.visible = false;
+                break;
+            }
+
+            case Interface.Request.ShowLauncherWindow:
+            {
+                window = compositorLogic.getLauncherWindow();
+                window.visible = true;
+                break;
+            }
+        }
+    }
+
     function waylandIviSurfaceCreated(surface, id) {
         console.log("surface created, id = ", id);
         return compositorLogic.createWaylandIviSurface(surface, id);
     }
 
     function windowDestroyed(surface) {
-        var windowFrame = hmiController.findBySurface(surface);
-        if (!windowFrame) {
-            console.log("windowDestroyed, cannot find surface in windowList");
+        var surfaceItem = compositor.item(surface);
+        var window = surfaceItem.parent;
+
+        if (window == null) {
+            console.log("windowDestroyed, Cannot get surface's parent");
             return;
         }
 
         console.log('window destroyed '+ surface);
-        windowFrame.surface.destroy();
+        compositorLogic.removeWindow(window);
+        window.destroy();
 
-        if (windowFrame.surface) {
-            console.log("notify WindowRemoved event");
-            root.sendEvent(Control.Event.WindowRemoved, windowFrame.surface);
-        }
+        console.log("notify WindowRemoved event");
+        root.sendEvent(Interface.Event.WindowRemoved, window);
     }
 
     function windowAdded(surface) {
@@ -100,11 +137,15 @@ Item {
         console.log(iviScene.mainScreen);
         console.log(iviScene.mainScreen.layerCount());
 
-        var windowFrame = compositorLogic.addSurface(surface);
-
-        if (windowFrame) {
-            console.log("notify WindowAdded event of each qml components for HMI");
-            root.sendEvent(Control.Event.WindowAdded, windowFrame);
+        var window = compositorLogic.addSurface(surface);
+        if (window == null) {
+            console.log("windowAdded, cannot add surface in windowFrame");
+            return;
         }
+
+        compositorLogic.addWindow(window);
+
+        console.log("notify WindowAdded event of each qml components for HMI");
+        root.sendEvent(Interface.Event.WindowAdded, window);
     }
 }
