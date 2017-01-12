@@ -22,7 +22,7 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
 import "config.js" as Conf
-import "hmi-controller.js" as Control
+import "hmi-interface.js" as Interface
 
 Item {
     id: statusBar
@@ -31,10 +31,10 @@ Item {
 
     function eventHandler(event, object) {
         switch(event) {
-            case Control.Event.WindowAdded:
+            case Interface.Event.WindowAdded:
                 console.log("StatusBar, eventHandler receive WindowAdded event");
                 break;
-            case Control.Event.WindowRemoved:
+            case Interface.Event.WindowRemoved:
                 console.log("StatusBar, eventHandler receive WindowRemoved event");
                 break;
             default:
@@ -43,9 +43,9 @@ Item {
     }
 
     Component.onCompleted: {
-        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
-        Control.getInstance().registerObjectItem(statusBar, "StatusBar");
-        Control.getInstance().registerEventHandler(statusBar.eventHandler);
+        /* hmi-interface.js's API: each QML for HMI should register object id and event handler */
+        Interface.registerObjectItem(statusBar, "StatusBar");
+        Interface.registerEventHandler(statusBar.eventHandler);
     }
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }

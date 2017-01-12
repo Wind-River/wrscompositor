@@ -80,27 +80,27 @@
     "Role": {
         "Default": {
             "parent": "Default",
-            "surfaceId": 0
+            "id": 0
         },
         "Navigation": {
             "parent": "Popup",
-            "surfaceId": 1
+            "id": 1
         },
         "Dialog": {
             "parent": "Popup",
-            "surfaceId": 2
+            "id": 2
         },
         "Phone": {
             "parent": "Widget",
-            "surfaceId": 3
+            "id": 3
         },
         "Projection": {
             "parent": "FullScreen",
-            "surfaceId": 4
+            "id": 4
         },
         "Camera": {
             "parent": "FullScreen",
-            "surfaceId": 5
+            "id": 5
         }
     },
     "Launcher": {

@@ -22,7 +22,7 @@
 
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
-import "hmi-controller.js" as Control
+import "hmi-interface.js" as Interface
 
 Image {
     id: background
@@ -33,10 +33,10 @@ Image {
 
     function eventHandler(event, object) {
         switch(event) {
-            case Control.Event.WindowAdded:
+            case Interface.Event.WindowAdded:
                 console.log("BackGround, eventHandler receive WindowAdded event");
                 break;
-            case Control.Event.WindowRemoved:
+            case Interface.Event.WindowRemoved:
                 console.log("BackGround, eventHandler receive WindowRemoved event");
                 break;
             default:
@@ -45,8 +45,8 @@ Image {
     }
 
     Component.onCompleted: {
-        /* hmi-controller.js's API: each QML for HMI should register object id and event handler */
-        Control.getInstance().registerObjectItem(background, "BackGround");
-        Control.getInstance().registerEventHandler(background.eventHandler);
+        /* hmi-interface.js's API: each QML for HMI should register object id and event handler */
+        Interface.registerObjectItem(background, "BackGround");
+        Interface.registerEventHandler(background.eventHandler);
     }
 }

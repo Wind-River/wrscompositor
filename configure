@@ -356,7 +356,7 @@ cd compositor/hmi/$HMI_PROFILE
 echo "<RCC>" > $RCPATH
 echo "  <qresource prefix=\"/\">" >> $RCPATH
 echo "    <file>wrscompositor.js</file>" >> $RCPATH
-echo "    <file>hmi-controller.js</file>" >> $RCPATH
+echo "    <file>hmi-interface.js</file>" >> $RCPATH
 echo "    <file>wrscompositor.qml</file>" >> $RCPATH
 echo "    <file>wrslauncher.qml</file>" >> $RCPATH
 echo "    <file>WindowFrame.qml</file>" >> $RCPATH
