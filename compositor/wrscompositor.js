@@ -22,6 +22,15 @@
 
 .import QtQuick 2.0 as QtQuickModule
 
+var SurfaceRole = {
+    WRS_IVI_ID_SURFACE_DEFAULT: 0,
+    WRS_IVI_ID_SURFACE_NAVIGATION: 1,
+    WRS_IVI_ID_SURFACE_DIALOG: 2,
+    WRS_IVI_ID_SURFACE_PHONE: 3,
+    WRS_IVI_ID_SURFACE_PROJECTION: 4,
+    WRS_IVI_ID_SURFACE_CAMERA: 5
+};
+
 var Layout = function(key, value) {
     this.name = key;
     this.scale = value.scale;
@@ -168,6 +177,10 @@ var WindowList = function() {
         }
     }
 
+    this.getDefaultWindowList = function() {
+        return this.defaultWindowList;
+    }
+
     this.addWidgetWindow = function(window) {
         console.log("addWidgetWindow, window'name = ", window.name);
         this.widgetWindowList.push(window);
@@ -201,6 +214,10 @@ var WindowList = function() {
         }
     }
 
+    this.getWidgetWindowList = function() {
+        return this.widgetWindowList;
+    }
+
     this.addPopupWindow = function(window) {
         console.log("addPopupWindow, window'name = ", window.name);
         this.popupWindowList.push(window);
@@ -232,6 +249,10 @@ var WindowList = function() {
                 break;
             }
         }
+    }
+
+    this.getPopupWindowList = function() {
+        return this.popupWindowList;
     }
 }
 
@@ -371,51 +392,18 @@ var Compositor = function() {
         return layer;
     }
 
-    this.addSurface = function(surface) {
+    this.addWaylandSurface = function(surface) {
         var window = null;
         var iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
 
-        if (iviSurface == null)  {
-            window = this.addWaylandSurface(surface, 0);
-        } else {
-            window = this.addWaylandIviSurface(surface, iviSurface.id);
+        if (iviSurface == null) {
+            console.log("addWaylandSurface, surface cannot have iviSurface");
+            return null;
         }
 
+        window = this.addWaylandIviSurface(surface, iviSurface.id);
         return window;
-    }
 
-    this.addWaylandSurface = function(surface, id) {
-        var role = this.findSurfaceRoleById(id);
-        var parent = role.getWindow();
-        var layerId = role.getOrder();
-        var layer = this.iviScene.mainScreen.layerById(layerId);
-
-        console.log("addWaylandSurface, role = ", role.name);
-
-        var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowFrame = windowContainerComponent.createObject(parent);
-
-        windowFrame.rootParent = parent;
-        windowFrame.surface = surface;
-        windowFrame.iviSurface = layer.addSurface(0, 0, surface.size.width, surface.size.height, windowFrame, surface);
-        windowFrame.iviSurface.id = surface.client.processId;
-        windowFrame.name = role.name;
-        windowFrame.surfaceItem = this.wrscompositor.item(surface);
-        windowFrame.surfaceItem.parent = windowFrame;
-        windowFrame.surfaceItem.touchEventsEnabled = true;
-        windowFrame.iviSurface.setQmlWindowFrame(windowFrame);
-        windowFrame.iviSurface.setQWaylandSurface(surface);
-        windowFrame.width = surface.size.width;
-        windowFrame.height = surface.size.height;
-        windowFrame.animationsEnabled = true;
-        windowFrame.targetX = 0;
-        windowFrame.targetY = 0;
-        windowFrame.targetWidth = parent.width;
-        windowFrame.targetHeight = parent.height;
-        windowFrame.scaledWidth = parent.width / this.displayWidth;
-        windowFrame.scaledHeight = parent.height / this.displayHeight;
-
-        return windowFrame;
     }
 
     this.addWaylandIviSurface = function(surface, id) {
@@ -431,7 +419,10 @@ var Compositor = function() {
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
         var windowFrame = windowContainerComponent.createObject(parent);
 
-        windowFrame.rootParent = parent;
+        windowFrame.rootBackground = parent;
+        windowFrame.targetWidth = parent.width;
+        windowFrame.targetHeight = parent.height;
+        windowFrame.animationsEnabled = parent.animationsEnabled;
         windowFrame.surface = surface;
         windowFrame.iviSurface = this.wrscompositor.findIVISurfaceByQWaylandSurface(surface);
         windowFrame.name = role.name;
@@ -444,7 +435,7 @@ var Compositor = function() {
     }
 
     this.hideWindow = function(window) {
-        var parent = window.rootParent;
+        var parent = window.rootBackground;
 
         switch (parent.name) {
         case 'Default':
@@ -461,7 +452,7 @@ var Compositor = function() {
     }
 
     this.showWindow = function(window) {
-        var parent = window.rootParent;
+        var parent = window.rootBackground;
 
         switch (parent.name) {
         case 'Default':
@@ -478,7 +469,7 @@ var Compositor = function() {
     }
 
     this.addWindow = function(window) {
-        var parent = window.rootParent;
+        var parent = window.rootBackground;
 
         switch (parent.name) {
         case 'Default':
@@ -495,7 +486,7 @@ var Compositor = function() {
     }
 
     this.removeWindow = function(window) {
-        var parent = window.rootParent;
+        var parent = window.rootBackground;
 
         switch (parent.name) {
         case 'Default':
@@ -511,10 +502,48 @@ var Compositor = function() {
         }
     }
 
+    this.resizeDefaultWindow = function(fullsize) {
+        var layout = this.findLayoutByName(
+            fullsize ? "Default-Plus" : "Default");
+        var resizeWidth = layout.getWindow().width;
+        var resizeHeight = layout.getWindow().height;
+        var defaultWindowList = this.windowList.getDefaultWindowList();
+
+        for (var i = 0; i < defaultWindowList.length; i++) {
+            var defaultWindow = defaultWindowList[i];
+            if (defaultWindow.animationsEnabled) {
+                // When window have the effect of animation,
+                // compositor have to scale window's size.
+                console.log("resizeDefaultWindow, Window have animation in changing size");
+                defaultWindow.scaledWidth =
+                                    resizeWidth / defaultWindow.targetWidth;
+                defaultWindow.scaledHeight =
+                                    resizeHeight / defaultWindow.targetHeight;
+            } else {
+                // When window don't have the effect of animation,
+                // compositor have to send window's size to client
+                // and client should configure the window's size
+                console.log("resizeDefaultWindow, Window don't have animation in changing size");
+                this.wrscompositor.changeIVISurfaceSize(
+                    defaultWindow.surface, resizeWidth, resizeHeight);
+            }
+        }
+    }
+
     this.findSurfaceRoleById = function(id) {
         for (var i = 0; i < this.roleList.length; i++) {
             var role = this.roleList[i];
             if (role.id == id)
+                return role;
+        }
+
+        return null;
+    }
+
+    this.findSurfaceRoleByName = function(name) {
+        for (var i = 0; i < this.roleList.length; i++) {
+            var role = this.roleList[i];
+            if (role.name == name)
                 return role;
         }
 

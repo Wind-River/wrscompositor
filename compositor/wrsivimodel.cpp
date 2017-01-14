@@ -25,7 +25,6 @@
 
 #include "wrsivimodel.h"
 #include "wrslogging.h"
-#include "wrsiviplatformconstants.h"
 #include "config.h"
 
 using namespace WrsIVIModel;
@@ -118,7 +117,7 @@ void IVILayer::removeSurface(IVISurface* surface) {
 }
 
 IVISurface::IVISurface(QObject *parent) :
-    IVIRectangle(WRS_IVI_ID_SURFACE_DEFAULT, 0, 0, 0, 0, parent), mLayer(NULL), mQWaylandSurface(NULL)
+    IVIRectangle(-1, 0, 0, 0, 0, parent), mLayer(NULL), mQWaylandSurface(NULL)
 {
 }
 

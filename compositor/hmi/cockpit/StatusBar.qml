@@ -21,6 +21,8 @@
  */
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import "config.js" as Conf
 import "hmi-interface.js" as Interface
 
@@ -106,27 +108,35 @@ Item {
         onTriggered: dateTime2.text = Qt.formatDateTime(new Date(), "dddd MMMM dd")
     }
 
-    Image {
-        id: wifi
-        source: "resources/wifi-symbol.png"
+    Button {
+        id: defaultSizeButton
         anchors.left: dateTime2.right
         anchors.leftMargin: parent.width/70
         anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
+        width: statusBar.height * 1.5
         height: statusBar.height * 0.3
-        smooth: true
-    }
-    Image {
-        id: rssi
-        source: "resources/signal-symbol.png"
-        anchors.left: wifi.right
-        anchors.leftMargin: parent.width/70
-        anchors.verticalCenter: parent.verticalCenter
-        width: (height*sourceSize.width)/sourceSize.height
-        height: statusBar.height * 0.3
-        smooth: true
+        text: "Toogle DefaultSize"
+        onClicked: {
+            console.log("Clicked defaultSizeButton");
+            Interface.resizeDefaultWindow(false);
+        }
+        scale: (defaultSizeButton.pressed? 0.9 : 1.0)
     }
 
+    Button {
+        id: fullSizeButton
+        anchors.left: defaultSizeButton.right
+        anchors.leftMargin: parent.width/70
+        anchors.verticalCenter: parent.verticalCenter
+        width: statusBar.height * 1.5
+        height: statusBar.height * 0.3
+        text: "Toogle FullSize"
+        onClicked: {
+            console.log("Clicked fullSizeButton");
+            Interface.resizeDefaultWindow(true);
+        }
+        scale: (fullSizeButton.pressed? 0.9 : 1.0)
+    }
 
     Image {
         id: weather

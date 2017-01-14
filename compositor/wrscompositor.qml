@@ -103,6 +103,13 @@ Item {
                 window.visible = true;
                 break;
             }
+
+            case Interface.Request.ResizeDefaultWindow:
+            {
+                var fullsize = arg;
+                compositorLogic.resizeDefaultWindow(fullsize);
+                break;
+            }
         }
     }
 
@@ -137,7 +144,7 @@ Item {
         console.log(iviScene.mainScreen);
         console.log(iviScene.mainScreen.layerCount());
 
-        var window = compositorLogic.addSurface(surface);
+        var window = compositorLogic.addWaylandSurface(surface);
         if (window == null) {
             console.log("windowAdded, cannot add surface in windowFrame");
             return;

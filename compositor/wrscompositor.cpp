@@ -26,7 +26,6 @@
 #include "wrsiviapplication.h"
 #include "wrsivisurface.h"
 #include "wrslogging.h"
-#include "wrsiviplatformconstants.h"
 #include "util.h"
 
 #include <QProcess>
@@ -381,23 +380,21 @@ WrsIVIModel::IVISurface* WrsCompositor::findIVISurfaceByQWaylandSurface(QWayland
     return NULL;
 }
 
-QString WrsCompositor::getSurfaceRole(QWaylandSurface *qWlSurface) {
-    WrsIVIModel::IVISurface* iviSurface = findIVISurfaceByQWaylandSurface(qWlSurface);
+void WrsCompositor::changeIVISurfaceSize(QWaylandSurface *qWlSurface, int targetWidth, int targetHeight) {
+    TRACE() << "[BEGIN]";
 
-    if (iviSurface->id() == WRS_IVI_ID_SURFACE_CAMERA) {
-        return "Camera";
-    } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_DIALOG) {
-        return "Dialog";
-    } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_NAVIGATION) {
-        return "Navigation";
-    } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_PHONE) {
-        return "Phone";
-    } else if (iviSurface->id() == WRS_IVI_ID_SURFACE_PROJECTION) {
-        return "Connectivity";
-    } else {
-        Util u;
-        return u.getCmdForPid(qWlSurface->client()->processId());
-    }
+    QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(qWlSurface);
+    WrsIVIModel::IVISurface *iviSurface = this->findIVISurfaceByQWaylandSurface(surface);
+
+    iviSurface->setWidth(targetWidth);
+    iviSurface->setHeight(targetHeight);
+
+    QtWaylandServer::ivi_surface::Resource::fromResource(
+        iviSurface->getResourceForClient(surface->client()->client())
+        )->ivi_surface_object->send_configure(
+        targetWidth, targetHeight);
+
+    TRACE() << "[END]";
 }
 
 #endif

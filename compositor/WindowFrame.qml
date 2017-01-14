@@ -30,6 +30,8 @@ Item {
 
     x: targetX
     y: targetY
+    width: targetWidth
+    height: targetHeight
 
     property real targetX
     property real targetY
@@ -39,7 +41,7 @@ Item {
     property real scaledWidth: 1.0
     property real scaledHeight: 1.0
 
-    property variant rootParent: null
+    property variant rootBackground: null
     property variant surface: null
     property variant surfaceItem: null
     property variant iviSurface: null

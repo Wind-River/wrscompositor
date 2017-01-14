@@ -77,10 +77,9 @@ public:
     WrsIVIModel::IVIScene * getIviScene() { return mIviScene;}
     WrsIVIModel::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
     Q_INVOKABLE WrsIVIModel::IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
-    Q_INVOKABLE QString getSurfaceRole(QWaylandSurface *qWlSurface); 
-
+    Q_INVOKABLE void changeIVISurfaceSize(QWaylandSurface *qWlSurface, int targetWidth, int targetHeight);
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
-    void createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource, 
+    void createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource,
                                     uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id);
     QWaylandQuickSurface *fullscreenSurface() const;
     void loadQmlComponent(const QSize &size);

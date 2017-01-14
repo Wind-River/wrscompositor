@@ -31,6 +31,7 @@ var Request = { "HideWindow" : 0,
                 "LaunchNative": 2,
                 "HideLauncherWindow" : 3,
                 "ShowLauncherWindow" : 4,
+                "ResizeDefaultWindow" : 5
               }; // From hmi components to wrscompoisitor.js
 
 
@@ -84,3 +85,6 @@ function showWindow(window) {
     wrsCompositor.sendRequest(Request.ShowWindow, window);
 }
 
+function resizeDefaultWindow(fullsize) {
+    wrsCompositor.sendRequest(Request.ResizeDefaultWindow, fullsize);
+}
