@@ -19,14 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- 
+
 import QtQuick 2.0
 import QtMultimedia 5.0
 import Qt.labs.folderlistmodel 2.1
 
 Item {
     id: root
-    anchors.fill: parent
+    width: Screen.width
+    height: Screen.height
 
     Playlist {
         id: playlist

@@ -28,18 +28,88 @@
 #include <QtGui/QGuiApplication>
 #include <QtQuick/QQuickItem>
 #include <QtQuick/QQuickView>
+#include "qwaylandiviextension.h"
+
+class MediaPlayer : public QQuickView, public QtWaylandClient::QWaylandIviExtension
+{
+public:
+    MediaPlayer(QWindow* parent = 0);
+    ~MediaPlayer();
+
+protected:
+    void surfaceConfigure(QWindow *window, int width, int height);
+    bool eventFilter(QObject *obj, QEvent *event);
+};
+
+MediaPlayer::MediaPlayer(QWindow * parent)
+    :  QQuickView(parent), QWaylandIviExtension() {
+    setSource(QUrl("qrc:///main.qml"));
+    installEventFilter(this);
+}
+
+MediaPlayer::~MediaPlayer()
+{
+
+}
+
+void MediaPlayer::surfaceConfigure(QWindow *window, int width, int height) {
+    qDebug() << __func__ << __LINE__;
+
+    QtWaylandClient::QWaylandWindow *qWaylandWindow =
+                            (QtWaylandClient::QWaylandWindow *) window->handle();
+
+    if (qWaylandWindow) {
+        qDebug() << "MediaPlayer::iviSurfaceConfigure, configure QWaylandWindow size " << width << "," << height;
+        qWaylandWindow->configure(0, width, height);
+    }
+
+    QQuickItem *object = rootObject();
+    if (object) {
+        qDebug() << "MediaPlayer::iviSurfaceConfigure, configure QQuickItem size " << width << "," << height;
+       object->setWidth(width);
+       object->setHeight(height);
+   }
+}
+
+bool MediaPlayer::eventFilter(QObject *obj, QEvent *event) {
+    //qDebug() << "MediaPlayer::eventFilter, event " << event;
+    QWindow *window = qobject_cast<QWindow*>(obj);
+
+    switch (event->type()) {
+        case QEvent::Close:
+        {
+            qDebug() << "MediaPlayer has closed";
+            window->destroy();
+            break;
+        }
+
+        case QEvent::PlatformSurface:
+        {
+            QPlatformSurfaceEvent::SurfaceEventType eventType =
+                static_cast<QPlatformSurfaceEvent *>(event)->surfaceEventType();
+
+            if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
+                qDebug() << "MediaPlayer has created surface";
+                this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_DEFAULT);
+            } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
+                qDebug() << "MediaPlayer has destroyed surface";
+            }
+            break;
+        }
+
+        default:
+            break;
+    }
+
+    return QObject::eventFilter(obj, event);
+}
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    QQuickView viewer;
-    viewer.setSource(QUrl("qrc:///main.qml"));
-    QObject::connect(viewer.engine(), SIGNAL(quit()), &viewer, SLOT(close()));
-
-    viewer.showFullScreen();
-    viewer.show();
+    MediaPlayer media;
+    media.show();
 
     return app.exec();
 }
-
