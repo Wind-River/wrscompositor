@@ -31,6 +31,8 @@ var SurfaceRole = {
     WRS_IVI_ID_SURFACE_CAMERA: 5
 };
 
+var topWindow = null;
+var bottomWindow = null;
 var Layout = function(key, value) {
     this.name = key;
     this.scale = value.scale;
@@ -44,9 +46,11 @@ var Layout = function(key, value) {
     this.height = 0;
     this.layerId = -1;
     this.surfaceId = -1;
-    this.window = null;
 
-    this.init = function(displayWidth, displayHeight) {
+    this.window = null;
+    this.background = null;
+
+    this.init = function(background, displayWidth, displayHeight) {
         var widthScale = parseInt(this.scale.split("x")[0]);
         var heightScale = parseInt(this.scale.split("x")[1]);
 
@@ -67,9 +71,14 @@ var Layout = function(key, value) {
         }
 
         this.surfaceId = this.layerId + 10;
+        this.background = background;
     }
 
-    this.createWindow = function(parent) {
+    this.getWindow = function() {
+        return this.window;
+    }
+
+    this.createWindow = function() {
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
 
         if (windowContainerComponent.status ==
@@ -81,7 +90,7 @@ var Layout = function(key, value) {
 
         this.window =
                 windowContainerComponent.createObject(
-                    parent,
+                    this.background,
                     {"x": this.x,
                     "y": this.y,
                     "width": this.width,
@@ -106,10 +115,85 @@ var Layout = function(key, value) {
         this.window.animationsEnabled = this.animation;
     }
 
-    this.getWindow = function() {
-        return this.window;
+    this.layoutWindow = function() {
+        switch (this.position) {
+            case 'topCenter':
+                topWindow = this.window;
+                this.window.anchors.top = this.background.top;
+                this.window.anchors.horizontalCenter = this.background.horizontalCenter;
+                break;
+            case 'topLeft':
+                topWindow = this.window;
+                this.window.anchors.top = this.background.top;
+                this.window.anchors.left = this.background.left;
+                break;
+            case 'topRight':
+                topWindow = this.window;
+                this.window.anchors.top = this.background.top;
+                this.window.anchors.right = this.background.right;
+                break;
+            case 'bottomCenter':
+                bottomWindow = this.window;
+                this.window.anchors.bottom = this.background.bottom;
+                this.window.anchors.horizontalCenter = this.background.horizontalCenter;
+                break;
+            case 'bottomLeft':
+                bottomWindow = this.window;
+                this.window.anchors.bottom = this.background.bottom;
+                this.window.anchors.left = this.background.left;
+                break;
+            case 'bottomRight':
+                bottomWindow = this.window;
+                this.window.anchors.bottom = this.background.bottom;
+                this.window.anchors.right = this.background.right;
+                break;
+            case 'middleCenter':
+                this.window.anchors.horizontalCenter = this.background.horizontalCenter;
+                this.window.anchors.verticalCenter = this.background.verticalCenter;
+                break;
+            case 'middleCenterTop':
+                this.window.anchors.top = (topWindow == null) ?
+                                      this.background.anchors.top : topWindow.bottom;
+                this.window.anchors.horizontalCenter = this.background.horizontalCenter;
+                break;
+            case 'middleCenterBottom':
+                this.window.anchors.bottom = (bottomWindow == null) ?
+                                         this.background.bottom : bottomWindow.top;
+                this.window.anchors.horizontalCenter = this.background.horizontalCenter;
+                break;
+            case 'middleLeft':
+                this.window.anchors.verticalCenter = this.background.verticalCenter;
+                this.window.anchors.left = this.background.left;
+                break;
+            case 'middleLeftTop':
+                this.window.anchors.top = (topWindow == null) ?
+                                      this.background.top : topWindow.bottom;
+                this.window.anchors.left = this.background.left;
+                break;
+            case 'middleLeftBottom':
+                this.window.anchors.left = this.background.left;
+                this.window.anchors.bottom = (bottomWindow == null) ?
+                                         this.background.bottom : bottomWindow.top;
+                break;
+            case 'middleRight':
+                this.window.anchors.verticalCenter = this.background.verticalCenter;
+                this.window.anchors.right = this.background.right;
+                break;
+            case 'middleRightTop':
+                this.window.anchors.top = (topWindow == null) ?
+                                     this.background.top : topWindow.bottom;
+                this.window.anchors.right = this.background.right;
+                break;
+            case 'middleRightBottom':
+                this.window.anchors.right = this.background.right;
+                this.window.anchors.bottom = (bottomWindow == null) ?
+                                         this.background.bottom : bottomWindow.top;
+                break;
+            case "undefined":
+                console.log("layoutWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
+                break;
+        }
     }
-
 }
 
 var Role = function(key, value) {
@@ -136,6 +220,42 @@ var Role = function(key, value) {
 
     this.getOrder = function() {
         return this.window.z;
+    }
+}
+
+var WrsLauncher = function(window, list) {
+    this.launcherWindow = window;
+    this.launcherList = list;
+
+    this.createLauncher = function() {
+        var component = Qt.createComponent("wrslauncher.qml");
+        if (component.status == QtQuickModule.Component.Ready) {
+            var surface = component.createObject(this.launcherWindow,
+                                        {"launcherList": this.launcherList});
+            this.launcherWindow.surface = surface;
+        } else {
+            console.log("createLauncherWindow(), Error creating wrslauncher object");
+            return;
+        }
+
+        console.log("createLauncherWindow, Success to create launcher object");
+    }
+
+    this.destroyLauncher = function() {
+        console.log("destroyLauncherWindow, Success to destory launcher object");
+        this.launcherWindow.surface.destroy();
+    }
+
+    this.hideLauncher = function() {
+        this.launcherWindow.visible = false;
+    }
+
+    this.showLauncher = function() {
+        this.launcherWindow.visible = true;
+    }
+
+    this.launchNative = function(name) {
+        this.launcherWindow.surface.launchNative(name);
     }
 }
 
@@ -273,10 +393,7 @@ var Compositor = function() {
 
     this.root = null;
     this.iviScene = null;
-
-    this.topWindow = null;
-    this.bottomWindow = null;
-    this.launcherWindow = null;
+    this.launcher = null;
 
     this.windowList = new WindowList();
     this.layoutList = new Array();
@@ -308,7 +425,9 @@ var Compositor = function() {
 
                     var layout =  compositor.findLayoutByName("Launcher");
                     var launcherList = jsonObject.Launcher;
-                    compositor.createLauncherWindow(layout.window, launcherList);
+                    var launcher = new WrsLauncher(layout.window, launcherList);
+                    launcher.createLauncher();
+                    compositor.setLauncher(launcher);
                 }
             }
         }
@@ -325,23 +444,29 @@ var Compositor = function() {
 
     this.loadCompositorLayout = function(key, value) {
         var layout = new Layout(key, value);
-        layout.init(this.displayWidth, this.displayHeight);
-        layout.createWindow(this.root);
+
+        layout.init(this.root, this.displayWidth, this.displayHeight);
+        layout.createWindow();
+        layout.layoutWindow();
 
         var window = layout.getWindow();
         window.iviSurface = this.addIviLayer(layout.layerId).addSurface(
                                 window.x, window.y, window.width, window.height, window, window.surface);
         window.iviSurface.id = layout.surfaceId;
-        this.layoutWindow(window, value.position);
+
         this.layoutList.push(layout);
+    }
+
+    this.getLauncher = function() {
+        return this.launcher;
+    }
+
+    this.setLauncher = function(launcher) {
+        this.launcher = launcher;
     }
 
     this.setRoot = function(root) {
         this.root = root;
-    }
-
-    this.getLauncherWindow = function() {
-        return this.launcherWindow;
     }
 
     this.setWrsCompositor = function (compositor) {
@@ -558,152 +683,5 @@ var Compositor = function() {
         }
 
         return null;
-    }
-
-    this.createLauncherWindow = function(launcherWindow, launcherList) {
-        var component = Qt.createComponent("wrslauncher.qml");
-        if (component.status == QtQuickModule.Component.Ready) {
-            var surface = component.createObject(launcherWindow,
-                                        {"launcherList": launcherList});
-            launcherWindow.surface = surface;
-        } else {
-            console.log("createLauncherWindow(), Error creating wrslauncher object");
-            return;
-        }
-
-        this.launcherWindow = launcherWindow;
-        console.log("createLauncherWindow, Success to create launcher object");
-    }
-
-    this.destroyLauncherWindow = function() {
-        console.log("destroyLauncherWindow, Success to destory launcher object");
-        this.launcherWindow.surface.destroy();
-    }
-
-    this.layoutWindow = function(window, position) {
-        switch (position) {
-            case 'topCenter':
-            {
-                this.topWindow = window;
-                window.anchors.top = this.root.top;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'topLeft':
-            {
-                this.topWindow = window;
-                window.anchors.top = this.root.top;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'topRight':
-            {
-                this.topWindow = window;
-                window.anchors.top = this.root.top;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'bottomCenter':
-            {
-                this.bottomWindow = window;
-                window.anchors.bottom = this.root.bottom;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'bottomLeft':
-            {
-                this.bottomWindow = window;
-                window.anchors.bottom = this.root.bottom;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'bottomRight':
-            {
-                this.bottomWindow = window;
-                window.anchors.bottom = this.root.bottom;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'middleCenter':
-            {
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                window.anchors.verticalCenter = this.root.verticalCenter;
-                break;
-            }
-
-            case 'middleCenterTop':
-            {
-                window.anchors.top = (this.topWindow == null) ?
-                                      this.root.anchors.top : this.topWindow.bottom;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'middleCenterBottom':
-            {
-                window.anchors.bottom = (this.bottomWindow == null) ?
-                                         this.root.bottom : this.bottomWindow.top;
-                window.anchors.horizontalCenter = this.root.horizontalCenter;
-                break;
-            }
-
-            case 'middleLeft':
-            {
-                window.anchors.verticalCenter = this.root.verticalCenter;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'middleLeftTop':
-            {
-                window.anchors.top = (this.topWindow == null) ?
-                                      this.root.top : this.topWindow.bottom;
-                window.anchors.left = this.root.left;
-                break;
-            }
-
-            case 'middleLeftBottom':
-            {
-                window.anchors.left = this.root.left;
-                window.anchors.bottom = (this.bottomWindow == null) ?
-                                         this.root.bottom : this.bottomWindow.top;
-                break;
-            }
-
-            case 'middleRight':
-            {
-                window.anchors.verticalCenter = this.root.verticalCenter;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'middleRightTop':
-            {
-                window.anchors.top = (this.topWindow == null) ?
-                                     this.root.top : this.topWindow.bottom;
-                window.anchors.right = this.root.right;
-                break;
-            }
-
-            case 'middleRightBottom':
-            {
-                window.anchors.right = this.root.right;
-                window.anchors.bottom = (this.bottomWindow == null) ?
-                                         this.root.bottom : this.bottomWindow.top;
-                break;
-            }
-
-            case "undefined":
-            {
-                console.log("layoutWindow, Don't align WindowFrame. WindowFrame is placed by (x,y) coordinate");
-                break;
-            }
-        }
     }
 }

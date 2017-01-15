@@ -68,48 +68,35 @@ Item {
     }
 
     function requestHandler(request, arg) {
-        var window = 'undefined';
+        var launcher = compositorLogic.getLauncher();
 
         switch(request) {
             case Interface.Request.HideWindow:
-            {
+                console.log("requestHandler, HideWindow Request");
                 compositorLogic.hideWindow(arg);
                 break;
-            }
-
             case Interface.Request.ShowWindow:
-            {
+                console.log("requestHandler, ShowWindow Request");
                 compositorLogic.showWindow(arg);
                 break;
-            }
-
             case Interface.Request.LaunchNative:
-            {
-                window = compositorLogic.getLauncherWindow();
-                window.surface.launchNative(arg);
+                console.log("requestHandler, LaunchNative Request");
+                var name = arg;
+                launcher.launchNative(name);
                 break;
-            }
-
             case Interface.Request.HideLauncherWindow:
-            {
-                window = compositorLogic.getLauncherWindow();
-                window.visible = false;
+                console.log("requestHandler, HideLauncherWindow Request");
+                launcher.hideLauncher();
                 break;
-            }
-
             case Interface.Request.ShowLauncherWindow:
-            {
-                window = compositorLogic.getLauncherWindow();
-                window.visible = true;
+                console.log("requestHandler, ShowLauncherWindow Request");
+                launcher.showLauncher();
                 break;
-            }
-
             case Interface.Request.ResizeDefaultWindow:
-            {
+                console.log("requestHandler, ResizeDefaultWindow Request");
                 var fullsize = arg;
                 compositorLogic.resizeDefaultWindow(fullsize);
                 break;
-            }
         }
     }
 
