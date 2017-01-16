@@ -107,7 +107,8 @@ var Layout = function(key, value) {
                     "width": width,
                     "height": height,
                     "z": layerId,
-                    "opacity": opacity});
+                    "opacity": opacity,
+                    "name": name});
 
         if (window == null) {
             console.log("createQmlComponent, Error creating object");
@@ -122,7 +123,6 @@ var Layout = function(key, value) {
                                             name.concat(".qml"));
         }
 
-        window.name = name;
         window.animationsEnabled = animation;
     }
 
@@ -257,7 +257,9 @@ var WrsLauncher = function(window, list) {
         var component = Qt.createComponent("wrslauncher.qml");
         if (component.status == QtQuickModule.Component.Ready) {
             var surface = component.createObject(launcherWindow,
-                                        {"launcherList": launcherList});
+                                        { "launcherList": launcherList,
+                                          "visible": false,
+                                          "color": "black"});
             launcherWindow.surface = surface;
         } else {
             console.log("createLauncherWindow(), Error creating wrslauncher object");
@@ -273,11 +275,11 @@ var WrsLauncher = function(window, list) {
     }
 
     this.hideLauncher = function() {
-        launcherWindow.visible = false;
+        launcherWindow.surface.visible = false;
     }
 
     this.showLauncher = function() {
-        launcherWindow.visible = true;
+        launcherWindow.surface.visible = true;
     }
 
     this.launchNative = function(name) {
@@ -310,7 +312,10 @@ var WindowList = function() {
     this.hideDefaultWindow = function(window) {
         for (var i = 0; i < defaultWindowList.length; i++) {
             if (defaultWindowList[i] == window) {
-                defaultWindowList[i].visible = false;
+                if (defaultWindowList[i].animationsEnabled)
+                    defaultWindowList[i].hideAnimate();
+                else
+                    defaultWindowList[i].visible = false;
                 break;
             }
         }
@@ -319,8 +324,33 @@ var WindowList = function() {
     this.showDefaultWindow = function(window) {
         for (var i = 0; i < defaultWindowList.length; i++) {
             if (defaultWindowList[i] == window) {
-                defaultWindowList[i].visible = true;
+                if (defaultWindowList[i].animationsEnabled)
+                    defaultWindowList[i].showAnimate();
+                else
+                    defaultWindowList[i].visible = true;
                 break;
+            }
+        }
+    }
+
+    this.hideDefaultWindowList = function() {
+        for (var i = 0; i < defaultWindowList.length; i++) {
+            if (defaultWindowList[i]) {
+                if (defaultWindowList[i].animationsEnabled)
+                    defaultWindowList[i].hideAnimate();
+                else
+                    defaultWindowList[i].visible = false;
+            }
+        }
+    }
+
+    this.showDefaultWindowList = function() {
+        for (var i = 0; i < defaultWindowList.length; i++) {
+            if (defaultWindowList[i]) {
+                if (defaultWindowList[i].animationsEnabled)
+                    defaultWindowList[i].showAnimate();
+                else
+                    defaultWindowList[i].visible = true;
             }
         }
     }
@@ -347,7 +377,10 @@ var WindowList = function() {
     this.hideWidgetWindow = function(window) {
         for (var i = 0; i < widgetWindowList.length; i++) {
             if (widgetWindowList[i] == window) {
-                widgetWindowList[i].visible = false;
+                if (widgetWindowList[i].animationsEnabled)
+                    widgetWindowList[i].hideAnimate();
+                else
+                    widgetWindowList[i].visible = false;
                 break;
             }
         }
@@ -356,8 +389,33 @@ var WindowList = function() {
     this.showWidgetWindow = function(window) {
         for (var i = 0; i < widgetWindowList.length; i++) {
             if (widgetWindowList[i] == window) {
-                widgetWindowList[i].visible = true;
+                if (widgetWindowList[i].animationsEnabled)
+                    widgetWindowList[i].showAnimate();
+                else
+                    widgetWindowList[i].visible = true;
                 break;
+            }
+        }
+    }
+
+    this.hideWidgetWindowList = function() {
+        for (var i = 0; i < widgetWindowList.length; i++) {
+            if (widgetWindowList[i]) {
+                if (widgetWindowList[i].animationsEnabled)
+                    widgetWindowList[i].hideAnimate();
+                else
+                    widgetWindowList[i].visible = false;
+            }
+        }
+    }
+
+    this.showWidgetWindowList = function() {
+        for (var i = 0; i < widgetWindowList.length; i++) {
+            if (widgetWindowList[i]) {
+                if (widgetWindowList[i].animationsEnabled)
+                    widgetWindowList[i].showAnimate();
+                else
+                    widgetWindowList[i].visible = true;
             }
         }
     }
@@ -384,7 +442,10 @@ var WindowList = function() {
     this.hidePopupWindow = function(window) {
         for (var i = 0; i < popupWindowList.length; i++) {
             if (popupWindowList[i] == window) {
-                popupWindowList[i].visible = false;
+                if (popupWindowList[i].animationsEnabled)
+                    popupWindowList[i].hideAnimate();
+                else
+                    popupWindowList[i].visible = false;
                 break;
             }
         }
@@ -393,8 +454,33 @@ var WindowList = function() {
     this.showPopupWindow = function(window) {
         for (var i = 0; i < popupWindowList.length; i++) {
             if (popupWindowList[i] == window) {
-                popupWindowList[i].visible = true;
+                if (popupWindowList[i].animationsEnabled)
+                    popupWindowList[i].showAnimate();
+                else
+                    popupWindowList[i].visible = true;
                 break;
+            }
+        }
+    }
+
+    this.hidePopupWindowList = function() {
+        for (var i = 0; i < popupWindowList.length; i++) {
+            if (popupWindowList[i]) {
+                if (popupWindowList[i].animationsEnabled)
+                    popupWindowList[i].hideAnimate();
+                else
+                    popupWindowList[i].visible = false;
+            }
+        }
+    }
+
+    this.showPopupWindowList = function() {
+        for (var i = 0; i < popupWindowList.length; i++) {
+            if (popupWindowList[i]) {
+                if (popupWindowList[i].animationsEnabled)
+                    popupWindowList[i].showAnimate();
+                else
+                    popupWindowList[i].visible = true;
             }
         }
     }
@@ -546,6 +632,21 @@ var Compositor = function() {
 
     }
 
+    this.hideWindowList = function(name)  {
+        switch (name) {
+        case 'Default':
+            windowList.hideDefaultWindowList();
+            break;
+        case 'Widget':
+            windowList.hideWidgetWindowList();
+            break;
+        case 'Popup':
+            windowList.hidePopupWindowList();
+            break;
+        default:
+        }
+    }
+
     this.hideWindow = function(window) {
         var parent = window.rootBackground;
 
@@ -558,6 +659,21 @@ var Compositor = function() {
             break;
         case 'Popup':
             windowList.hidePopupWindow(window);
+            break;
+        default:
+        }
+    }
+
+    this.showWindowList = function(name) {
+        switch (name) {
+        case 'Default':
+            windowList.showDefaultWindowList();
+            break;
+        case 'Widget':
+            windowList.showWidgetWindowList();
+            break;
+        case 'Popup':
+            windowList.showPopupWindowList();
             break;
         default:
         }
@@ -698,15 +814,16 @@ var Compositor = function() {
 
         var parent = role.getWindow();
         var windowContainerComponent = Qt.createComponent("WindowFrame.qml");
-        var windowFrame = windowContainerComponent.createObject(parent);
+        var windowFrame = windowContainerComponent.createObject(parent,
+                                    { "opacity": parent.opacity,
+                                      "targetWidth": parent.width,
+                                      "targetHeight": parent.height,
+                                      "animationsEnabled": parent.animationsEnabled,
+                                      "rootBackground": parent,
+                                      "name":  role.getRoleName()});
 
-        windowFrame.rootBackground = parent;
-        windowFrame.targetWidth = parent.width;
-        windowFrame.targetHeight = parent.height;
-        windowFrame.animationsEnabled = parent.animationsEnabled;
         windowFrame.surface = surface;
         windowFrame.iviSurface = wrscompositor.findIVISurfaceByQWaylandSurface(surface);
-        windowFrame.name = role.getRoleName();
         windowFrame.surfaceItem = wrscompositor.item(surface);
         windowFrame.surfaceItem.parent = windowFrame;
         windowFrame.surfaceItem.touchEventsEnabled = true;

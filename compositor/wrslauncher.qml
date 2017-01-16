@@ -28,7 +28,6 @@ Rectangle {
     id: launcher
     width: parent.width
     height: parent.height
-    color: "black"
 
     property int windowDefaultWidth: Conf.displayWidth
     property int windowDefaultHeight: Conf.displayHeight

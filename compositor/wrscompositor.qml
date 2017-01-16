@@ -68,35 +68,55 @@ Item {
     }
 
     function requestHandler(request, arg) {
-        var launcher = compositorLogic.getLauncher();
-
         switch(request) {
             case Interface.Request.HideWindow:
-                console.log("requestHandler, HideWindow Request");
-                compositorLogic.hideWindow(arg);
-                break;
             case Interface.Request.ShowWindow:
-                console.log("requestHandler, ShowWindow Request");
-                compositorLogic.showWindow(arg);
+            {
+                var window = arg;
+                if (request == Interface.Request.HideWindow) {
+                    console.log("requestHandler, HideWindow Request");
+                    compositorLogic.hideWindow(window);
+                } else {
+                    console.log("requestHandler, ShowWindow Request");
+                    compositorLogic.showWindow(window);
+                }
                 break;
+            }
+
             case Interface.Request.LaunchNative:
-                console.log("requestHandler, LaunchNative Request");
-                var name = arg;
-                launcher.launchNative(name);
-                break;
             case Interface.Request.HideLauncherWindow:
-                console.log("requestHandler, HideLauncherWindow Request");
-                launcher.hideLauncher();
-                break;
             case Interface.Request.ShowLauncherWindow:
-                console.log("requestHandler, ShowLauncherWindow Request");
-                launcher.showLauncher();
+            {
+                var launcher = compositorLogic.getLauncher();
+
+                if (request == Interface.Request.LaunchNative) {
+                    console.log("requestHandler, LaunchNative Request");
+                    var name = arg;
+                    launcher.launchNative(name);
+                } else if (request == Interface.Request.HideLauncherWindow) {
+                    console.log("requestHandler, HideLauncherWindow Request");
+                    launcher.hideLauncher();
+                } else if (request == Interface.Request.ShowLauncherWindow) {
+                    console.log("requestHandler, ShowLauncherWindow Request");
+                    launcher.showLauncher();
+                }
                 break;
+            }
+
             case Interface.Request.ResizeDefaultWindow:
+            {
                 console.log("requestHandler, ResizeDefaultWindow Request");
                 var fullsize = arg;
+                if (fullsize) {
+                    compositorLogic.hideWindowList("Widget");
+                    compositorLogic.hideWindowList("Popup");
+                } else {
+                    compositorLogic.showWindowList("Widget");
+                    compositorLogic.showWindowList("Popup");
+                }
                 compositorLogic.resizeDefaultWindow(fullsize);
                 break;
+            }
         }
     }
 

@@ -78,10 +78,56 @@ Item {
     Behavior on scaledWidth {
        enabled: container.animationsEnabled;
        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
-   }
+    }
 
-   Behavior on scaledHeight {
+    Behavior on scaledHeight {
        enabled: container.animationsEnabled;
        NumberAnimation { easing.type: Easing.InCubic; duration: 200; }
-   }
+    }
+
+    states: [
+        State {
+            name: "show"
+            PropertyChanges { target: container
+                              opacity: (rootBackground != null) ? rootBackground.opacity : container.opacity
+                              visible: true
+                            }
+        },
+        State {
+            name: "hide"
+            PropertyChanges { target: container; opacity: 0.0; visible: false }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "show"
+            to: "hide"
+            ParallelAnimation {
+                NumberAnimation { target: container; properties: "visible"; duration: 500 }
+                NumberAnimation { target: container; properties: "opacity"; duration: 500 }
+            }
+        },
+        Transition {
+            from: "hide"
+            to: "show"
+            ParallelAnimation {
+                NumberAnimation { target: container; properties: "visible"; duration: 500 }
+                NumberAnimation { target: container; properties: "opacity"; duration: 500 }
+            }
+        }
+    ]
+
+    function hideAnimate() {
+        container.state = 'hide';
+    }
+
+    function showAnimate() {
+        container.state = 'show';
+    }
+
+    Component.onCompleted: {
+        console.log("WindowFrame.qml at first-time, name: ", container.name);
+        container.state = 'show';
+    }
 }
