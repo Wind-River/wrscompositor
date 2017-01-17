@@ -23,6 +23,7 @@
 import QtQuick 2.1
 import com.windriver.wrscompositor 1.0
 import "config.js" as Conf
+import "hmi-interface.js" as Interface
 
 Rectangle {
     id: launcher
@@ -61,7 +62,7 @@ Rectangle {
                         console.log('no pid');
                         if(window != null) {
                             console.log('has window ' + window);
-                            root.raiseWindow(window);
+                            Interface.raiseWindow(window);
                         }
                         return;
                     }
@@ -77,19 +78,18 @@ Rectangle {
 
             SystemdUnit {
                 id: systemd_unit
-                unitPath: systemd?unitFile:""
+                unitPath: systemd? unitFile:""
                 property variant window: null
                 property variant cmd: unitFile
-
                 onPidChanged: {
-                    console.log("onPidChanged, pid = " + pid);
-                    root.waitProcess = systemd_unit;
+                    console.log("SystemUnit's onPidChanged, pid = " + pid);
+                    Interface.launchedNative(systemd_unit);
                 }
                 Component.onCompleted: {
                     if (systemd) systemd_dbusClient.registerUnit(systemd_unit);
                 }
                 function setWindow(window) {
-                    console.log('setWindow '+ window);
+                    console.log("SystemUnit's setWindow " + window);
                     systemd_unit.window = window;
                 }
             }
@@ -100,11 +100,11 @@ Rectangle {
                 windowDefaultWidth: launcher.windowDefaultWidth
                 windowDefaultHeight: launcher.windowDefaultHeight
                 onPidChanged: {
-                    console.log('program launched');
-                    root.waitProcess = process
+                    console.log("Process's onPidChanged, pid = " + pid);
+                    Interface.launchedNative(process);
                 }
                 function setWindow(window) {
-                    console.log('setWindow '+window);
+                    console.log("Process's setWindow " + window);
                     process.window = window
                 }
             }

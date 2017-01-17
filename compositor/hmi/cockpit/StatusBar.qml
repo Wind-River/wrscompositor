@@ -35,11 +35,11 @@ Item {
         var window = arg;
 
         switch(event) {
-            case Interface.Event.WindowAdded:
-                console.log("StatusBar, eventHandler receive WindowAdded event");
+            case Interface.COMPOSITOR_EVENT.ADD_WINDOW:
+                console.log("StatusBar, eventHandler receive ADD_WINDOW Event");
                 break;
-            case Interface.Event.WindowRemoved:
-                console.log("StatusBar, eventHandler receive WindowRemoved event");
+            case Interface.COMPOSITOR_EVENT.REMOVE_WINDOW:
+                console.log("StatusBar, eventHandler receive REMOVE_WINDOW Event");
                 break;
             default:
                 return;
@@ -49,7 +49,7 @@ Item {
     Component.onCompleted: {
         /* hmi-interface.js's API: each QML for HMI should register object id and event handler */
         Interface.registerComponent(statusBar, "StatusBar");
-        Interface.registerEventHandler(statusBar.eventHandler);
+        Interface.registerNotifyEventHandler(statusBar.eventHandler);
     }
 
     FontLoader { id: tungsten; source: "fonts/Tungsten-Light.otf" }

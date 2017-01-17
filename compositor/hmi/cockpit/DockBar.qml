@@ -126,11 +126,11 @@ Item {
 
     function eventHandler(event, object) {
         switch(event) {
-            case Interface.Event.WindowAdded:
-                console.log("DockBar, eventHandler receive WindowAdded event");
+            case Interface.COMPOSITOR_EVENT.ADD_WINDOW:
+                console.log("DockBar, eventHandler receive ADD_WINDOW event");
                 break;
-            case Interface.Event.WindowRemoved:
-                console.log("DockBar, eventHandler receive WindowRemoved event");
+            case Interface.COMPOSITOR_EVENT.REMOVE_WINDOW:
+                console.log("DockBar, eventHandler receive REMOVE_WINDOW event");
                 break;
             default:
                 return;
@@ -140,6 +140,6 @@ Item {
     Component.onCompleted: {
         /* hmi-interface.js's API: each QML for HMI should register object id and event handler */
         Interface.registerComponent(dockbar, "DockBar");
-        Interface.registerEventHandler(dockbar.eventHandler);
+        Interface.registerNotifyEventHandler(dockbar.eventHandler);
     }
 }

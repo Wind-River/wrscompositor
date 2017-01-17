@@ -29,6 +29,7 @@ import "config.js" as Conf
 
 Item {
     id: root
+    property variant launchedNativeClient: null
     property var compositorLogic : null
 
     x: 0
@@ -36,8 +37,8 @@ Item {
     height: windowHeight
     width: windowWidth
 
+    signal notifyEvent(int event, var arg);
     signal sendEvent(int event, var arg);
-    signal sendRequest(int request, var arg);
 
     property bool hasFullscreenWindow: typeof compositor != "undefined" && compositor.fullscreenSurface !== null
 
@@ -57,7 +58,7 @@ Item {
             compositorLogic.init();
         }
 
-        root.sendRequest.connect(requestHandler);
+        root.sendEvent.connect(eventHandler);
     }
 
     onWidthChanged: {
@@ -67,45 +68,49 @@ Item {
         Conf.displayHeight = height;
     }
 
-    function requestHandler(request, arg) {
-        switch(request) {
-            case Interface.Request.HideWindow:
-            case Interface.Request.ShowWindow:
+    function eventHandler(event, arg) {
+        switch(event) {
+            case Interface.HMI_EVENT.HIDE_WINDOW:
+            case Interface.HMI_EVENT.SHOW_WINDOW:
+            case Interface.HMI_EVENT.RAISE_WINDOW:
             {
                 var window = arg;
-                if (request == Interface.Request.HideWindow) {
-                    console.log("requestHandler, HideWindow Request");
+                if (event == Interface.HMI_EVENT.HIDE_WINDOW) {
+                    console.log("eventHandler, HIDE_WINDOW Event");
                     compositorLogic.hideWindow(window);
-                } else {
-                    console.log("requestHandler, ShowWindow Request");
+                } else if (event == Interface.HMI_EVENT.SHOW_WINDOW) {
+                    console.log("eventHandler, SHOW_WINDOW Event");
                     compositorLogic.showWindow(window);
+                } else {
+                    console.log("eventHandler, RAISE_WINDOW Event");
+                    compositorLogic.raiseWindow(window);
                 }
                 break;
             }
 
-            case Interface.Request.LaunchNative:
-            case Interface.Request.HideLauncherWindow:
-            case Interface.Request.ShowLauncherWindow:
+            case Interface.HMI_EVENT.LAUNCH_NATIVE:
+            case Interface.HMI_EVENT.HIDE_LAUNCHER_WINDOW:
+            case Interface.HMI_EVENT.SHOW_LAUNCHER_WINDOW:
             {
                 var launcher = compositorLogic.getLauncher();
 
-                if (request == Interface.Request.LaunchNative) {
-                    console.log("requestHandler, LaunchNative Request");
+                if (event == Interface.HMI_EVENT.LAUNCH_NATIVE) {
+                    console.log("eventHandler, LAUNCH_NATIVE Event");
                     var name = arg;
                     launcher.launchNative(name);
-                } else if (request == Interface.Request.HideLauncherWindow) {
-                    console.log("requestHandler, HideLauncherWindow Request");
+                } else if (event == Interface.HMI_EVENT.HIDE_LAUNCHER_WINDOW) {
+                    console.log("eventHandler, HIDE_LAUNCHER_WINDOW Event");
                     launcher.hideLauncher();
-                } else if (request == Interface.Request.ShowLauncherWindow) {
-                    console.log("requestHandler, ShowLauncherWindow Request");
+                } else if (event == Interface.HMI_EVENT.SHOW_LAUNCHER_WINDOW) {
+                    console.log("eventHandler, SHOW_LAUNCHER_WINDOW Event");
                     launcher.showLauncher();
                 }
                 break;
             }
 
-            case Interface.Request.ResizeDefaultWindow:
+            case Interface.HMI_EVENT.RESIZE_DEFAULT_WINDOW:
             {
-                console.log("requestHandler, ResizeDefaultWindow Request");
+                console.log("eventHandler, RESIZE_DEFAULT_WINDOW Event");
                 var fullsize = arg;
                 if (fullsize) {
                     compositorLogic.hideWindowList("Widget");
@@ -115,6 +120,13 @@ Item {
                     compositorLogic.showWindowList("Popup");
                 }
                 compositorLogic.resizeDefaultWindow(fullsize);
+                break;
+            }
+
+            case Interface.HMI_EVENT.LAUNCHED_NATIVE:
+            {
+                console.log("eventHandler, LAUNCHED_NATIVE Event");
+                root.launchedNativeClient = arg;
                 break;
             }
         }
@@ -138,8 +150,8 @@ Item {
         compositorLogic.removeWindow(window);
         window.destroy();
 
-        console.log("notify WindowRemoved event");
-        root.sendEvent(Interface.Event.WindowRemoved, window);
+        console.log("notify REMOVE_WINDOW Event");
+        root.notifyEvent(Interface.COMPOSITOR_EVENT.REMOVE_WINDOW, window);
     }
 
     function windowAdded(surface) {
@@ -157,9 +169,14 @@ Item {
             return;
         }
 
+        if (root.launchedNativeClient &&
+            root.launchedNativeClient.pid == surface.client.processId) {
+            root.launchedNativeClient.setWindow(window);
+        }
+
         compositorLogic.addWindow(window);
 
-        console.log("notify WindowAdded event of each qml components for HMI");
-        root.sendEvent(Interface.Event.WindowAdded, window);
+        console.log("notify ADD_WINDOW Event");
+        root.notifyEvent(Interface.COMPOSITOR_EVENT.ADD_WINDOW, window);
     }
 }

@@ -245,6 +245,10 @@ var Role = function(key, value) {
     this.getRoleName = function() {
         return name;
     }
+
+    this.getWorkspace = function() {
+        return workspace;
+    }
 }
 
 var WrsLauncher = function(window, list) {
@@ -287,206 +291,87 @@ var WrsLauncher = function(window, list) {
     }
 }
 
-var WindowList = function() {
+var WindowManager = function() {
     // private member variables
-    var defaultWindowList = new Array();
-    var widgetWindowList = new Array();
-    var popupWindowList = new Array();
+    var windowList = new Array();
+    var currentWindows = new Array();
 
     // public member functions
-    this.addDefaultWindow = function(window) {
-        console.log("addDefaultWindow, window'name = ", window.name);
-        defaultWindowList.push(window);
+    this.init = function(name) {
+        windowList[name] = new Array();
     }
 
-    this.removeDefaultWindow = function(window) {
-        for (var i = 0; i < defaultWindowList.length; i++) {
-            if (defaultWindowList[i] == window) {
-                console.log("removeDefaultWindow, window'name = ", window.name);
-                defaultWindowList.splice(i, 1);
+    this.addWindow = function(name, window) {
+        console.log("addWindow, window'name = ", window.name);
+        windowList[name].push(window);
+        currentWindows[name] = window;
+    }
+
+    this.removeWindow = function(name, window) {
+        for (var i = 0; i < windowList[name].length; i++) {
+            if (windowList[name][i] == window) {
+                console.log("removeWindow, window'name = ", window.name);
+                windowList[name].splice(i, 1);
+                if (currentWindows[name] == window) {
+                    currentWindows[name] = null;
+                }
                 break;
             }
         }
     }
 
-    this.hideDefaultWindow = function(window) {
-        for (var i = 0; i < defaultWindowList.length; i++) {
-            if (defaultWindowList[i] == window) {
-                if (defaultWindowList[i].animationsEnabled)
-                    defaultWindowList[i].hideAnimate();
+    this.hideWindow = function(name, window) {
+        for (var i = 0; i < windowList[name].length; i++) {
+            if (windowList[name][i] == window) {
+                if (windowList[name][i].animationsEnabled)
+                    windowList[name][i].hideAnimate();
                 else
-                    defaultWindowList[i].visible = false;
+                    windowList[name][i].visible = false;
                 break;
             }
         }
     }
 
-    this.showDefaultWindow = function(window) {
-        for (var i = 0; i < defaultWindowList.length; i++) {
-            if (defaultWindowList[i] == window) {
-                if (defaultWindowList[i].animationsEnabled)
-                    defaultWindowList[i].showAnimate();
+    this.showWindow = function(name, window) {
+        for (var i = 0; i < windowList[name].length; i++) {
+            if (windowList[name][i] == window) {
+                if (windowList[name][i].animationsEnabled)
+                    windowList[name][i].showAnimate();
                 else
-                    defaultWindowList[i].visible = true;
+                    windowList[name][i].visible = true;
                 break;
             }
         }
     }
 
-    this.hideDefaultWindowList = function() {
-        for (var i = 0; i < defaultWindowList.length; i++) {
-            if (defaultWindowList[i]) {
-                if (defaultWindowList[i].animationsEnabled)
-                    defaultWindowList[i].hideAnimate();
-                else
-                    defaultWindowList[i].visible = false;
-            }
+    this.showWindowList = function(name) {
+        for (var i = 0; i < windowList[name].length; i++) {
+            if (windowList[name][i].animationsEnabled)
+                windowList[name][i].showAnimate();
+            else
+                windowList[name][i].visible = true;
         }
     }
 
-    this.showDefaultWindowList = function() {
-        for (var i = 0; i < defaultWindowList.length; i++) {
-            if (defaultWindowList[i]) {
-                if (defaultWindowList[i].animationsEnabled)
-                    defaultWindowList[i].showAnimate();
-                else
-                    defaultWindowList[i].visible = true;
-            }
+    this.hideWindowList = function(name) {
+        for (var i = 0; i < windowList[name].length; i++) {
+            if (windowList[name][i].animationsEnabled)
+                windowList[name][i].hideAnimate();
+            else
+                windowList[name][i].visible = false;
         }
     }
 
-    this.getDefaultWindowList = function() {
-        return defaultWindowList;
+    this.getWindowList = function(name) {
+        return windowList[name];
     }
 
-    this.addWidgetWindow = function(window) {
-        console.log("addWidgetWindow, window'name = ", window.name);
-        widgetWindowList.push(window);
+    this.getCurrentWindow = function(name) {
+        return currentWindows[name];
     }
 
-    this.removeWidgetWindow = function(window) {
-        for (var i = 0; i < widgetWindowList.length; i++) {
-            if (widgetWindowList[i] == window) {
-                console.log("removeWidgetWindow, window'name = ", window.name);
-                widgetWindowList.splice(i, 1);
-                break;
-            }
-        }
-    }
-
-    this.hideWidgetWindow = function(window) {
-        for (var i = 0; i < widgetWindowList.length; i++) {
-            if (widgetWindowList[i] == window) {
-                if (widgetWindowList[i].animationsEnabled)
-                    widgetWindowList[i].hideAnimate();
-                else
-                    widgetWindowList[i].visible = false;
-                break;
-            }
-        }
-    }
-
-    this.showWidgetWindow = function(window) {
-        for (var i = 0; i < widgetWindowList.length; i++) {
-            if (widgetWindowList[i] == window) {
-                if (widgetWindowList[i].animationsEnabled)
-                    widgetWindowList[i].showAnimate();
-                else
-                    widgetWindowList[i].visible = true;
-                break;
-            }
-        }
-    }
-
-    this.hideWidgetWindowList = function() {
-        for (var i = 0; i < widgetWindowList.length; i++) {
-            if (widgetWindowList[i]) {
-                if (widgetWindowList[i].animationsEnabled)
-                    widgetWindowList[i].hideAnimate();
-                else
-                    widgetWindowList[i].visible = false;
-            }
-        }
-    }
-
-    this.showWidgetWindowList = function() {
-        for (var i = 0; i < widgetWindowList.length; i++) {
-            if (widgetWindowList[i]) {
-                if (widgetWindowList[i].animationsEnabled)
-                    widgetWindowList[i].showAnimate();
-                else
-                    widgetWindowList[i].visible = true;
-            }
-        }
-    }
-
-    this.getWidgetWindowList = function() {
-        return widgetWindowList;
-    }
-
-    this.addPopupWindow = function(window) {
-        console.log("addPopupWindow, window'name = ", window.name);
-        popupWindowList.push(window);
-    }
-
-    this.removePopupWindow = function(window) {
-        for (var i = 0; i < popupWindowList.length; i++) {
-            if (popupWindowList[i] == window) {
-                console.log("removePopupWindow, window'name = ", window.name);
-                popupWindowList.splice(i, 1);
-                break;
-            }
-        }
-    }
-
-    this.hidePopupWindow = function(window) {
-        for (var i = 0; i < popupWindowList.length; i++) {
-            if (popupWindowList[i] == window) {
-                if (popupWindowList[i].animationsEnabled)
-                    popupWindowList[i].hideAnimate();
-                else
-                    popupWindowList[i].visible = false;
-                break;
-            }
-        }
-    }
-
-    this.showPopupWindow = function(window) {
-        for (var i = 0; i < popupWindowList.length; i++) {
-            if (popupWindowList[i] == window) {
-                if (popupWindowList[i].animationsEnabled)
-                    popupWindowList[i].showAnimate();
-                else
-                    popupWindowList[i].visible = true;
-                break;
-            }
-        }
-    }
-
-    this.hidePopupWindowList = function() {
-        for (var i = 0; i < popupWindowList.length; i++) {
-            if (popupWindowList[i]) {
-                if (popupWindowList[i].animationsEnabled)
-                    popupWindowList[i].hideAnimate();
-                else
-                    popupWindowList[i].visible = false;
-            }
-        }
-    }
-
-    this.showPopupWindowList = function() {
-        for (var i = 0; i < popupWindowList.length; i++) {
-            if (popupWindowList[i]) {
-                if (popupWindowList[i].animationsEnabled)
-                    popupWindowList[i].showAnimate();
-                else
-                    popupWindowList[i].visible = true;
-            }
-        }
-    }
-
-    this.getPopupWindowList = function() {
-        return popupWindowList;
+    this.setCurrentWindow = function(name, window) {
+        currentWindows[name] = window;
     }
 }
 
@@ -510,7 +395,7 @@ var Compositor = function() {
     var viScene = null;
     var launcher = null;
 
-    var windowList = new WindowList();
+    var windowManager = new WindowManager();
     var layoutList = new Array();
     var roleList = new Array();
 
@@ -540,13 +425,22 @@ var Compositor = function() {
                         compositor.loadCompositorRole(roleKey, roleData[roleKey]);
 
                     var launcherList = jsonObject.Launcher;
+                    compositor.loadWindowManager();
                     compositor.loadCompositorLauncher(launcherList);
+
                 }
             }
         }
 
         request.open("GET", "file:///usr/share/wrscompositor/config.json", true);
         request.send();
+    }
+
+    this.loadWindowManager = function() {
+        for (var i=0 ; i < roleList.length ; i++) {
+            var role = roleList[i];
+            windowManager.init(role.getWorkspace());
+        }
     }
 
     this.loadCompositorRole = function (key, value) {
@@ -633,101 +527,46 @@ var Compositor = function() {
     }
 
     this.hideWindowList = function(name)  {
-        switch (name) {
-        case 'Default':
-            windowList.hideDefaultWindowList();
-            break;
-        case 'Widget':
-            windowList.hideWidgetWindowList();
-            break;
-        case 'Popup':
-            windowList.hidePopupWindowList();
-            break;
-        default:
-        }
+        windowManager.hideWindowList(name);
     }
 
     this.hideWindow = function(window) {
         var parent = window.rootBackground;
 
-        switch (parent.name) {
-        case 'Default':
-            windowList.hideDefaultWindow(window);
-            break;
-        case 'Widget':
-            windowList.hideWidgetWindow(window);
-            break;
-        case 'Popup':
-            windowList.hidePopupWindow(window);
-            break;
-        default:
-        }
+        windowManager.hideWindow(parent.name, window);
+    }
+
+    this.raiseWindow = function(window) {
+        var parent = window.rootBackground;
+        var currentWindow = windowManager.getCurrentWindow(parent.name);
+
+        if (currentWindow != null)
+            currentWindow.visible = false;
+
+        window.visible = true;
+        windowManager.setCurrentWindow(parent.name, window);
     }
 
     this.showWindowList = function(name) {
-        switch (name) {
-        case 'Default':
-            windowList.showDefaultWindowList();
-            break;
-        case 'Widget':
-            windowList.showWidgetWindowList();
-            break;
-        case 'Popup':
-            windowList.showPopupWindowList();
-            break;
-        default:
-        }
+        windowManager.showWindowList(name);
     }
 
     this.showWindow = function(window) {
         var parent = window.rootBackground;
 
-        switch (parent.name) {
-        case 'Default':
-            windowList.showDefaultWindow(window);
-            break;
-        case 'Widget':
-            windowList.showWidgetWindow(window);
-            break;
-        case 'Popup':
-            windowList.showPopupWindow(window);
-            break;
-        default:
-        }
+        windowManager.showWindow(parent.name, window);
     }
 
     this.addWindow = function(window) {
         var parent = window.rootBackground;
 
-        switch (parent.name) {
-        case 'Default':
-            windowList.addDefaultWindow(window);
-            break;
-        case 'Widget':
-            windowList.addWidgetWindow(window);
-            break;
-        case 'Popup':
-            windowList.addPopupWindow(window);
-            break;
-        default:
-        }
+        windowManager.addWindow(parent.name, window);
     }
 
     this.removeWindow = function(window) {
         var parent = window.rootBackground;
 
-        switch (parent.name) {
-        case 'Default':
-            windowList.removeDefaultWindow(window);
-            break;
-        case 'Widget':
-            windowList.removeWidgetWindow(window);
-            break;
-        case 'Popup':
-            windowList.removePopupWindow(window);
-            break;
-        default:
-        }
+        windowManager.removeWindow(parent.name, window);
     }
 
     this.resizeDefaultWindow = function(fullsize) {
@@ -735,7 +574,7 @@ var Compositor = function() {
             fullsize ? "Default-Plus" : "Default");
         var resizeWidth = layout.getWindow().width;
         var resizeHeight = layout.getWindow().height;
-        var defaultWindowList = windowList.getDefaultWindowList();
+        var defaultWindowList = windowManager.getWindowList("Default");
 
         for (var i = 0; i < defaultWindowList.length; i++) {
             var defaultWindow = defaultWindowList[i];
@@ -830,5 +669,13 @@ var Compositor = function() {
         windowFrame.iviSurface.setQmlWindowFrame(windowFrame);
 
         return windowFrame;
+    }
+
+    function raiseWindow(window) {
+        if (root.currentWindow != null)
+            root.currentWindow.visible = false
+
+        root.currentWindow = window
+        root.currentWindow.visible = true
     }
 }

@@ -22,17 +22,20 @@
 
 .pragma library
 
-var Event = { "WindowAdded" : 0,
-              "WindowRemoved" : 1
-            }; // From wrscompositor.js to hmi componets
+var COMPOSITOR_EVENT = { "ADD_WINDOW" : 0,
+                         "REMOVE_WINDOW" : 1
+                       };
 
-var Request = { "HideWindow" : 0,
-                "ShowWindow" : 1,
-                "LaunchNative": 2,
-                "HideLauncherWindow" : 3,
-                "ShowLauncherWindow" : 4,
-                "ResizeDefaultWindow" : 5
-              }; // From hmi components to wrscompoisitor.js
+
+var HMI_EVENT = { "HIDE_WINDOW" : 0,
+                  "SHOW_WINDOW" : 1,
+                  "RAISE_WINDOW" : 2,
+                  "LAUNCH_NATIVE": 3,
+                  "LAUNCHED_NATIVE": 4,
+                  "HIDE_LAUNCHER_WINDOW" : 5,
+                  "SHOW_LAUNCHER_WINDOW" : 6,
+                  "RESIZE_DEFAULT_WINDOW" : 7,
+                };
 
 
 var wrsCompositor = null;
@@ -50,9 +53,9 @@ function registerComponent(id, name)
     componentList.push(obj);
 }
 
-function registerEventHandler(handler)
+function registerNotifyEventHandler(handler)
 {
-    wrsCompositor.sendEvent.connect(handler);
+    wrsCompositor.notifyEvent.connect(handler);
 }
 
 function findComponentByName(name) {
@@ -66,25 +69,33 @@ function findComponentByName(name) {
 }
 
 function launchNative(name) {
-    wrsCompositor.sendRequest(Request.LaunchNative, name);
+    wrsCompositor.sendEvent(HMI_EVENT.LAUNCH_NATIVE, name);
+}
+
+function launchedNative(launcher) {
+    wrsCompositor.sendEvent(HMI_EVENT.LAUNCHED_NATIVE, launcher);
 }
 
 function hideLauncherWindow() {
-    wrsCompositor.sendRequest(Request.HideLauncherWindow, null);
+    wrsCompositor.sendEvent(HMI_EVENT.HIDE_LAUNCHER_WINDOW, null);
 }
 
 function showLauncherWindow() {
-    wrsCompositor.sendRequest(Request.ShowLauncherWindow, null);
+    wrsCompositor.sendEvent(HMI_EVENT.SHOW_LAUNCHER_WINDOW, null);
 }
 
 function hideWindow(window) {
-    wrsCompositor.sendRequest(Request.HideWindow, window);
+    wrsCompositor.sendEvent(HMI_EVENT.HIDE_WINDOW, window);
 }
 
 function showWindow(window) {
-    wrsCompositor.sendRequest(Request.ShowWindow, window);
+    wrsCompositor.sendEvent(HMI_EVENT.SHOW_WINDOW, window);
 }
 
 function resizeDefaultWindow(fullsize) {
-    wrsCompositor.sendRequest(Request.ResizeDefaultWindow, fullsize);
+    wrsCompositor.sendEvent(HMI_EVENT.RESIZE_DEFAULT_WINDOW, fullsize);
+}
+
+function raiseWindow(window) {
+    wrsCompositor.sendEvent(HMI_EVENT.RAISE_WINDOW, window);
 }

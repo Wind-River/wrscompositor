@@ -33,11 +33,11 @@ Image {
 
     function eventHandler(event, object) {
         switch(event) {
-            case Interface.Event.WindowAdded:
-                console.log("BackGround, eventHandler receive WindowAdded event");
+            case Interface.COMPOSITOR_EVENT.ADD_WINDOW:
+                console.log("BackGround, eventHandler receive ADD_WINDOW Event");
                 break;
-            case Interface.Event.WindowRemoved:
-                console.log("BackGround, eventHandler receive WindowRemoved event");
+            case Interface.COMPOSITOR_EVENT.REMOVE_WINDOW:
+                console.log("BackGround, eventHandler receive REMOVE_WINDOW Event");
                 break;
             default:
                 return;
@@ -47,6 +47,6 @@ Image {
     Component.onCompleted: {
         /* hmi-interface.js's API: each QML for HMI should register object id and event handler */
         Interface.registerComponent(background, "BackGround");
-        Interface.registerEventHandler(background.eventHandler);
+        Interface.registerNotifyEventHandler(background.eventHandler);
     }
 }
