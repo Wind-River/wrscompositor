@@ -366,12 +366,20 @@ var WindowManager = function() {
         return windowList[name];
     }
 
+    this.getAllWindowList = function() {
+        return windowList;
+    }
+
     this.getCurrentWindow = function(name) {
         return currentWindows[name];
     }
 
     this.setCurrentWindow = function(name, window) {
         currentWindows[name] = window;
+    }
+
+    this.checkCurrentWindow = function (name) {
+        return  (currentWindows[name] == null) ? false : true;
     }
 }
 
@@ -570,12 +578,34 @@ var Compositor = function() {
     }
 
     this.resizeDefaultWindow = function(fullsize) {
-        var layout = findLayoutByName(
-            fullsize ? "Default-Plus" : "Default");
+        var isDefaultWindowRunning =
+            windowManager.checkCurrentWindow("Default");
+
+        if (!isDefaultWindowRunning) {
+            console.log("resizeDefaultWindow, there is no default-window on compositor");
+            return;
+        }
+
+        var layout = findLayoutByName(fullsize ?
+                                     "Default-Plus" : "Default");
+
         var resizeWidth = layout.getWindow().width;
         var resizeHeight = layout.getWindow().height;
-        var defaultWindowList = windowManager.getWindowList("Default");
 
+        var windowList = windowManager.getAllWindowList();
+        for (var name in windowList) {
+            if (name == 'Default')
+                continue;
+
+            // except for default-window, all of other windows should hide and show.
+            if (fullsize) {
+                compositorLogic.hideWindowList(name);
+            } else {
+                compositorLogic.showWindowList(name);
+            }
+        }
+
+        var defaultWindowList = windowManager.getWindowList("Default");
         for (var i = 0; i < defaultWindowList.length; i++) {
             var defaultWindow = defaultWindowList[i];
             if (defaultWindow.animationsEnabled) {

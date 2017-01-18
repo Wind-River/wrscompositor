@@ -112,13 +112,6 @@ Item {
             {
                 console.log("eventHandler, RESIZE_DEFAULT_WINDOW Event");
                 var fullsize = arg;
-                if (fullsize) {
-                    compositorLogic.hideWindowList("Widget");
-                    compositorLogic.hideWindowList("Popup");
-                } else {
-                    compositorLogic.showWindowList("Widget");
-                    compositorLogic.showWindowList("Popup");
-                }
                 compositorLogic.resizeDefaultWindow(fullsize);
                 break;
             }
