@@ -20,12 +20,13 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.1
+import QtQuick 2.2
+import QtQuick.Window 2.2
 
 Item {
     id: root
-    width: Screen.width
-    height: Screen.height
+    width: Screen.width / 2
+    height: Screen.height / 2
 
     property string dialstring: ""
 
@@ -140,5 +141,3 @@ Item {
             dialstring = "";
     }
 }
-
-
