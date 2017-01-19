@@ -14,6 +14,8 @@ TEMPLATE = lib
 WAYLANDCLIENTSOURCES += \
     ../protocol/ivi-application.xml \
     ../protocol/ivi-controller.xml \
+    ../protocol/input-method.xml \
+    ../protocol/text.xml
 
 LOCAL_SOURCES = qwaylandiviextension.cpp
 LOCAL_HEADERS = qwaylandiviextension.h
