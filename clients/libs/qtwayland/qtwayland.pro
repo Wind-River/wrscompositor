@@ -1,7 +1,7 @@
 QT += gui-private quick qml
 QT += waylandclient-private
 CONFIG += wayland-scanner staticlib
-TARGET = WrsQtWaylandIviExtension
+TARGET = WrsQtWayland
 TEMPLATE = lib
 
 !contains(QT_CONFIG, no-pkg-config) {
@@ -13,9 +13,9 @@ TEMPLATE = lib
 
 WAYLANDCLIENTSOURCES += \
     ../protocol/ivi-application.xml \
-    ../protocol/ivi-controller.xml
+    ../protocol/ivi-controller.xml \
 
-LOCAL_SOURCES = qwaylandiviextension.cpp 
+LOCAL_SOURCES = qwaylandiviextension.cpp
 LOCAL_HEADERS = qwaylandiviextension.h
 
 SOURCES += $$LOCAL_SOURCES

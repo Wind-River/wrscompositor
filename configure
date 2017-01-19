@@ -379,32 +379,32 @@ echo $'\r'"Generating vt-handler.pro .................................... Done"
 printf "Generating mediaplayer.pro ..."
 echo "PREFIX=$PREFIX" > clients/mediaplayer/mediaplayer.pro
 echo "QT += gui_private waylandclient-private" >> clients/mediaplayer/mediaplayer.pro
-echo "INCLUDEPATH += ../libs/wayland-ivi-extension" >> clients/mediaplayer/mediaplayer.pro
-echo "LIBS += -L../libs/wayland-ivi-extension -lWrsQtWaylandIviExtension -lwayland-client -lwayland-cursor" >> clients/mediaplayer/mediaplayer.pro
+echo "INCLUDEPATH += ../libs/qtwayland" >> clients/mediaplayer/mediaplayer.pro
+echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-cursor" >> clients/mediaplayer/mediaplayer.pro
 cat clients/mediaplayer/mediaplayer.pro.in >> clients/mediaplayer/mediaplayer.pro
 echo $'\r'"Generating mediaplayer.pro .................................... Done"
 
 printf "Generating skobblernavi.pro ..."
 echo "PREFIX=$PREFIX" > clients/skobblernavi/skobblernavi.pro
 echo "QT += gui_private waylandclient-private" >> clients/skobblernavi/skobblernavi.pro
-echo "INCLUDEPATH += ../libs/wayland-ivi-extension" >> clients/skobblernavi/skobblernavi.pro
-echo "LIBS += -L../libs/wayland-ivi-extension -lWrsQtWaylandIviExtension -lwayland-client -lwayland-cursor" >> clients/skobblernavi/skobblernavi.pro
+echo "INCLUDEPATH += ../libs/qtwayland" >> clients/skobblernavi/skobblernavi.pro
+echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-cursor" >> clients/skobblernavi/skobblernavi.pro
 cat clients/skobblernavi/skobblernavi.pro.in >> clients/skobblernavi/skobblernavi.pro
 echo $'\r'"Generating skobblernavi.pro .................................... Done"
 
 printf "Generating phone.pro ..."
 echo "PREFIX=$PREFIX" > clients/phone/phone.pro
 echo "QT += gui_private waylandclient-private" >> clients/phone/phone.pro
-echo "INCLUDEPATH += ../libs/wayland-ivi-extension" >> clients/phone/phone.pro
-echo "LIBS += -L../libs/wayland-ivi-extension -lWrsQtWaylandIviExtension -lwayland-client -lwayland-cursor" >> clients/phone/phone.pro
+echo "INCLUDEPATH += ../libs/qtwayland" >> clients/phone/phone.pro
+echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-cursor" >> clients/phone/phone.pro
 cat clients/phone/phone.pro.in >> clients/phone/phone.pro
 echo $'\r'"Generating phone.pro .................................... Done"
 
 printf "Generating camera.pro ..."
 echo "PREFIX=$PREFIX" > clients/camera/camera.pro
 echo "QT += gui_private waylandclient-private" >> clients/camera/camera.pro
-echo "INCLUDEPATH += ../libs/wayland-ivi-extension" >> clients/camera/camera.pro
-echo "LIBS += -L../libs/wayland-ivi-extension -lWrsQtWaylandIviExtension -lwayland-client -lwayland-cursor" >> clients/camera/camera.pro
+echo "INCLUDEPATH += ../libs/qtwayland" >> clients/camera/camera.pro
+echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-cursor" >> clients/camera/camera.pro
 cat clients/camera/camera.pro.in >> clients/camera/camera.pro
 echo $'\r'"Generating camera.pro .................................... Done"
 

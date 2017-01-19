@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = wayland-ivi-extension
+SUBDIRS = qtwayland
