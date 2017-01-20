@@ -17,8 +17,8 @@ WAYLANDCLIENTSOURCES += \
     ../protocol/input-method.xml \
     ../protocol/text.xml
 
-LOCAL_SOURCES = qwaylandiviextension.cpp
-LOCAL_HEADERS = qwaylandiviextension.h
+LOCAL_SOURCES = qwayland-common.cpp qwaylandinputmethod.cpp
+LOCAL_HEADERS = qwayland-common.h qwaylandinputmethod.h
 
 SOURCES += $$LOCAL_SOURCES
 HEADERS += $$LOCAL_HEADERS

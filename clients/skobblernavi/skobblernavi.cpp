@@ -22,8 +22,8 @@
 
 #include "skobblernavi.h"
 
-SkobblerNavi::SkobblerNavi(QWidget* parent)
-    : QWebView(parent), QWaylandIviExtension() {
+SkobblerNavi::SkobblerNavi(uint32_t role)
+    : QWebView(), QWaylandCommon(role) {
 
     QUrl url = QUrl("qrc:///html5/index.html");
     load(url);
@@ -33,15 +33,13 @@ SkobblerNavi::SkobblerNavi(QWidget* parent)
 SkobblerNavi::~SkobblerNavi() {
 }
 
-void SkobblerNavi::surfaceConfigure(QWindow *window, int width, int height) {
-    QtWaylandClient::QWaylandWindow *qWaylandWindow = (QtWaylandClient::QWaylandWindow *) window->handle();
+void SkobblerNavi::configureIviSurface(QWindow *window, int width, int height) {
+    QtWaylandClient::QWaylandWindow *qWaylandWindow =
+                    (QtWaylandClient::QWaylandWindow *) window->handle();
 
-    if (qWaylandWindow) {
-        qDebug() << "SkobblerNavi::surfaceConfigure, configure QWaylandWindow size " << width << "," << height;
-        qWaylandWindow->configure(0, width, height);
-    }
-
-}
+    qDebug() << "skobblerNavi::configureIviSurface, configure QWaylandWindow size " << width << "," << height;
+    QWaylandCommon::configureIviSurface(window, width, height);
+ }
 
 bool SkobblerNavi::eventFilter(QObject *obj, QEvent *event) {
     //qDebug() << "SkobblerNavi::eventFilter, event " << event;
@@ -62,7 +60,7 @@ bool SkobblerNavi::eventFilter(QObject *obj, QEvent *event) {
 
             if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
                 qDebug() << "SkobberNavi has created surface";
-                this->createSurface(webview->windowHandle(), QtWaylandClient::WRS_IVI_ID_SURFACE_NAVIGATION);
+                this->createIviSurface(webview->windowHandle());
             } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
                 qDebug() << "SkobberNavi has destroyed surface";
             }

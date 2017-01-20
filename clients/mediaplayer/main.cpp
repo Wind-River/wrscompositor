@@ -28,22 +28,22 @@
 #include <QtGui/QGuiApplication>
 #include <QtQuick/QQuickItem>
 #include <QtQuick/QQuickView>
-#include "qwaylandiviextension.h"
+#include "qwayland-common.h"
 
-class MediaPlayer : public QQuickView, public QtWaylandClient::QWaylandIviExtension
+class MediaPlayer : public QQuickView,
+                    public QtWaylandClient::QWaylandCommon
 {
 public:
-    MediaPlayer(QWindow* parent = 0);
+    MediaPlayer(uint32_t role);
     ~MediaPlayer();
 
 protected:
-    void surfaceConfigure(QWindow *window, int width, int height);
+    void configureIviSurface(QWindow *window, int width, int height);
     bool eventFilter(QObject *obj, QEvent *event);
 };
 
-MediaPlayer::MediaPlayer(QWindow * parent)
-    :  QQuickView(parent), QWaylandIviExtension() {
-    setSource(QUrl("qrc:///main.qml"));
+MediaPlayer::MediaPlayer(uint32_t role)
+    :  QQuickView(QUrl("qrc:///main.qml")), QWaylandCommon(role) {
     installEventFilter(this);
 }
 
@@ -52,23 +52,18 @@ MediaPlayer::~MediaPlayer()
 
 }
 
-void MediaPlayer::surfaceConfigure(QWindow *window, int width, int height) {
-    qDebug() << __func__ << __LINE__;
-
-    QtWaylandClient::QWaylandWindow *qWaylandWindow =
-                            (QtWaylandClient::QWaylandWindow *) window->handle();
-
-    if (qWaylandWindow) {
-        qDebug() << "MediaPlayer::iviSurfaceConfigure, configure QWaylandWindow size " << width << "," << height;
-        qWaylandWindow->configure(0, width, height);
+void MediaPlayer::configureIviSurface(QWindow *window, int width, int height) {
+    QQuickView *view = static_cast<QQuickView *>(window);
+    if (view != NULL) {
+        QQuickItem *object = view->rootObject();
+        if (object) {
+            qDebug() << "MediaPlayer::configureIviSurface, configure QQuickItem size " << width << "," << height;
+            object->setWidth(width);
+            object->setHeight(height);
+        }
     }
 
-    QQuickItem *object = rootObject();
-    if (object) {
-        qDebug() << "MediaPlayer::iviSurfaceConfigure, configure QQuickItem size " << width << "," << height;
-       object->setWidth(width);
-       object->setHeight(height);
-   }
+    QWaylandCommon::configureIviSurface(window, width, height);
 }
 
 bool MediaPlayer::eventFilter(QObject *obj, QEvent *event) {
@@ -90,7 +85,7 @@ bool MediaPlayer::eventFilter(QObject *obj, QEvent *event) {
 
             if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
                 qDebug() << "MediaPlayer has created surface";
-                this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_DEFAULT);
+                this->createIviSurface(window);
             } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
                 qDebug() << "MediaPlayer has destroyed surface";
             }
@@ -107,8 +102,9 @@ bool MediaPlayer::eventFilter(QObject *obj, QEvent *event) {
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    uint32_t role =  QtWaylandClient::WRS_IVI_ID_SURFACE_DEFAULT;
 
-    MediaPlayer media;
+    MediaPlayer media(role);
     media.show();
 
     return app.exec();

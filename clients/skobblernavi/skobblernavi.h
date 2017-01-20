@@ -27,16 +27,17 @@
 #include <QtNetwork>
 #include <QtWebKitWidgets>
 #include <QtGui/QGuiApplication>
-#include "qwaylandiviextension.h"
+#include "qwayland-common.h"
 
-class SkobblerNavi : public QWebView, public QtWaylandClient::QWaylandIviExtension
+class SkobblerNavi : public QWebView,
+                     public QtWaylandClient::QWaylandCommon
 {
 public:
-    SkobblerNavi(QWidget* parent = 0);
+    SkobblerNavi(uint32_t role);
     ~SkobblerNavi();
 
 protected:
-    void surfaceConfigure(QWindow *window, int width, int height);
+    void configureIviSurface(QWindow *window, int width, int height);
     bool eventFilter(QObject *obj, QEvent *event);
 };
 

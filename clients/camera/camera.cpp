@@ -22,32 +22,26 @@
 
 #include "camera.h"
 
-Camera::Camera(QWindow * parent)
-    :  QQuickView(parent) {
-    setSource(QUrl("qrc:///main.qml"));
+Camera::Camera(uint32_t role)
+    :  QQuickView(QUrl("qrc:///main.qml")), QWaylandCommon(role) {
     installEventFilter(this);
 }
 
 Camera::~Camera() {
 }
 
-void Camera::surfaceConfigure(QWindow *window, int width, int height) {
-    qDebug() << __func__ << __LINE__;
-
-    QtWaylandClient::QWaylandWindow *qWaylandWindow =
-                            (QtWaylandClient::QWaylandWindow *) window->handle();
-
-    if (qWaylandWindow) {
-        qDebug() << "Camera::iviSurfaceConfigure, configure QWaylandWindow size " << width << "," << height;
-        qWaylandWindow->configure(0, width, height);
+void Camera::configureIviSurface(QWindow *window, int width, int height) {
+    QQuickView *view = static_cast<QQuickView *>(window);
+    if (view != NULL) {
+        QQuickItem *object = view->rootObject();
+        if (object) {
+            qDebug() << "Camera::configureIviSurface, configure QQuickItem size " << width << "," << height;
+            object->setWidth(width);
+            object->setHeight(height);
+        }
     }
 
-    QQuickItem *object = rootObject();
-    if (object) {
-        qDebug() << "Camera::iviSurfaceConfigure, configure QQuickItem size " << width << "," << height;
-       object->setWidth(width);
-       object->setHeight(height);
-   }
+    QWaylandCommon::configureIviSurface(window, width, height);
 }
 
 bool Camera::eventFilter(QObject *obj, QEvent *event) {
@@ -69,7 +63,7 @@ bool Camera::eventFilter(QObject *obj, QEvent *event) {
 
             if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
                 qDebug() << "Camera has created surface";
-                this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_CAMERA);
+                this->createIviSurface(window);
             } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
                 qDebug() << "Camera has destroyed surface";
             }

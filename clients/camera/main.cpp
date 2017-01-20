@@ -25,8 +25,9 @@
 int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
+    uint32_t role =  QtWaylandClient::WRS_IVI_ID_SURFACE_CAMERA;
 
-    Camera camera;
+    Camera camera(role);
     camera.show();
 
     return app.exec();

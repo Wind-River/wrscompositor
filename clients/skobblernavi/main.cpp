@@ -25,9 +25,10 @@
 int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
+    uint32_t role = QtWaylandClient::WRS_IVI_ID_SURFACE_NAVIGATION;
 
-    SkobblerNavi w;
-    w.show();
+    SkobblerNavi navi(role);
+    navi.show();
 
     return app.exec();
 }

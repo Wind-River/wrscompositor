@@ -26,16 +26,17 @@
 #include <QQuickItem>
 #include <QQuickView>
 #include <QApplication>
-#include "qwaylandiviextension.h"
+#include "qwayland-common.h"
 
-class Phone : public QQuickView, public QtWaylandClient::QWaylandIviExtension
+class Phone : public QQuickView,
+              public QtWaylandClient::QWaylandCommon
 {
 public:
-    Phone(QWindow* parent = 0);
+    Phone(uint32_t role);
     ~Phone();
 
 protected:
-    void surfaceConfigure(QWindow *window, int width, int height);
+    void configureIviSurface(QWindow *window, int width, int height);
     bool eventFilter(QObject *obj, QEvent *event);
 };
 

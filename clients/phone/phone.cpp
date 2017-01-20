@@ -22,34 +22,30 @@
 
 #include "phone.h"
 
-Phone::Phone(QWindow * parent)
-    :  QQuickView(parent), QWaylandIviExtension() {
-
-    setSource(QUrl("qrc:///main.qml"));
+Phone::Phone(uint32_t role)
+    :  QQuickView(QUrl("qrc:///main.qml")), QWaylandCommon(role)  {
     installEventFilter(this);
 }
 
 Phone::~Phone() {
 }
 
-void Phone::surfaceConfigure(QWindow *window, int width, int height) {
-    qDebug() << __func__ << __LINE__;
-
+void Phone::configureIviSurface(QWindow *window, int width, int height) {
     QtWaylandClient::QWaylandWindow *qWaylandWindow =
-                            (QtWaylandClient::QWaylandWindow *) window->handle();
+                    (QtWaylandClient::QWaylandWindow *) window->handle();
 
-    if (qWaylandWindow) {
-        qDebug() << "Phone::iviSurfaceConfigure, configure QWaylandWindow size " << width << "," << height;
-        qWaylandWindow->configure(0, width, height);
+    QQuickView *view = static_cast<QQuickView *>(window);
+    if (view != NULL) {
+        QQuickItem *object = view->rootObject();
+        if (object) {
+            qDebug() << "Phone::configureIviSurface, configure QQuickItem size " << width << "," << height;
+            object->setWidth(width);
+            object->setHeight(height);
+        }
     }
 
-    QQuickItem *object = rootObject();
-    if (object) {
-        qDebug() << "Phone::iviSurfaceConfigure, configure QQuickItem size " << width << "," << height;
-       object->setWidth(width);
-       object->setHeight(height);
-   }
-}
+    QWaylandCommon::configureIviSurface(window, width, height);
+ }
 
 bool Phone::eventFilter(QObject *obj, QEvent *event) {
     //qDebug() << "Phone::eventFilter, event " << event;
@@ -70,7 +66,7 @@ bool Phone::eventFilter(QObject *obj, QEvent *event) {
 
             if (eventType == QPlatformSurfaceEvent::SurfaceCreated) {
                 qDebug() << "Phone has created surface";
-                this->createSurface(window, QtWaylandClient::WRS_IVI_ID_SURFACE_PHONE);
+                this->createIviSurface(window);
             } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
                 qDebug() << "Phone has destroyed surface";
             }

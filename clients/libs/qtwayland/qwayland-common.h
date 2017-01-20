@@ -20,17 +20,20 @@
  * THE SOFTWARE.
  */
 
-#ifndef QWAYLANDIVIEXTENSION_H
-#define QWAYLANDIVIEXTENSION_H
+#ifndef QWAYLAND_COMMON_H
+#define QWAYLAND_COMMON_H
 
 #include <QDebug>
 #include <QtGui/private/qguiapplication_p.h>
 #include <QtGui/qpa/qplatformnativeinterface.h>
+#include <QtWaylandClient/private/qwaylanddisplay_p.h>
 #include <QtWaylandClient/private/qwaylandintegration_p.h>
 #include <QtWaylandClient/private/qwaylandwindow_p.h>
-#include <QtWaylandClient/private/qwaylanddisplay_p.h>
+
+#include "qwaylandinputmethod.h"
 #include "qwayland-ivi-application.h"
 #include "qwayland-ivi-controller.h"
+#include "qwayland-input-method.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -42,10 +45,11 @@ enum IVI_SURFACE_ROLE {
     WRS_IVI_ID_SURFACE_DIALOG = 0x02,
     WRS_IVI_ID_SURFACE_PHONE = 0x03,
     WRS_IVI_ID_SURFACE_PROJECTION = 0x04,
-    WRS_IVI_ID_SURFACE_CAMERA = 0x05
+    WRS_IVI_ID_SURFACE_CAMERA = 0x05,
+    WRS_IVI_ID_SURFACE_KEYBOARD = 0x06
 };
 
-class QWaylandIviExtension;
+class QWaylandCommon;
 
 class QWaylandIviSurface : public QtWayland::ivi_surface
                          , public QtWayland::ivi_controller_surface
@@ -54,39 +58,63 @@ public:
     QWaylandIviSurface(struct ::ivi_surface *ivi_surface);
     QWaylandIviSurface(struct ::ivi_surface *ivi_surface,
                        struct ::ivi_controller_surface *iviControllerSurface);
-    virtual ~QWaylandIviSurface();
-    void setParent(QWaylandIviExtension *extension) {
-        mIviExtension = extension;
+    ~QWaylandIviSurface();
+    void setQWaylandCommon(QWaylandCommon *common) {
+        mWaylandCommon = common;
     }
 private:
     virtual void ivi_surface_configure(int32_t width, int32_t height) Q_DECL_OVERRIDE;
-    QWaylandIviExtension *mIviExtension;
+    QtWaylandClient::QWaylandCommon *mWaylandCommon;
 };
 
-class Q_WAYLAND_CLIENT_EXPORT QWaylandIviExtension
+class Q_WAYLAND_CLIENT_EXPORT QWaylandCommon
 {
 public:
-    QWaylandIviExtension();
-    ~QWaylandIviExtension();
-    bool createSurface(QWindow *window, uint32_t role);
-    void iviSurfaceConfigure(int width, int height);
+    QWaylandCommon(uint32_t role = 0);
+    ~QWaylandCommon();
 
-protected:
-    virtual void surfaceConfigure(QWindow* window, int width, int height);
+    QtWayland::ivi_application* getIviAppliation() {
+        return mIviApplication;
+    }
+    QtWayland::ivi_controller* getIviController() {
+        return mIviController;
+    }
+
+    QtWayland::wl_input_panel* getWaylandInputPanel() {
+        return mWaylandInputPanel;
+    }
+
+    QtWaylandClient::QWaylandInputMethod* getWaylandInputMethod() {
+        return mWaylandInputMethod;
+    }
+
+    bool createIviSurface(QWindow *window);
+    void ivi_surface_configure(int width, int height);
+    virtual void configureIviSurface(QWindow *window, int width, int height);
+
+    struct wl_display* getWaylandDisplay();
+    struct wl_output* getWaylandOutput();
+    struct wl_surface* getWaylandSurface(QWindow *window);
 
 private:
     static void registryIvi(void *data, struct wl_registry *registry,
-            uint32_t id, const QString &interface, uint32_t version);
+        uint32_t id, const QString &interface, uint32_t version);
 
 private:
+    QWindow * mWindow;
+    QtWaylandClient::QWaylandDisplay *mWaylandDisplay;
     QtWayland::ivi_application *mIviApplication;
     QtWayland::ivi_controller *mIviController;
-    QWaylandIviSurface *mIviSurface;
-    QWindow * mWindow;
+    QtWaylandClient::QWaylandIviSurface *mIviSurface;
+
+    QtWayland::wl_input_panel *mWaylandInputPanel;
+    QtWaylandClient::QWaylandInputMethod *mWaylandInputMethod;
+
+    uint32_t mRole;
 };
 
 }
 
 QT_END_NAMESPACE
 
-#endif // QWAYLANDIVIEXTENSION_H
+#endif

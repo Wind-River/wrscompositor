@@ -20,24 +20,27 @@
  * THE SOFTWARE.
  */
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef QWAYLANDINPUTMETHOD_H
+#define QWAYLANDINPUTMETHOD_H
 
-#include <QQuickItem>
-#include <QQuickView>
-#include <QApplication>
-#include "qwayland-common.h"
+#include "qwayland-input-method.h"
 
-class Camera : public QQuickView,
-               public QtWaylandClient::QWaylandCommon
+QT_BEGIN_NAMESPACE
+
+namespace QtWaylandClient {
+
+class QWaylandInputMethod : public QtWayland::wl_input_method
 {
 public:
-    Camera(uint32_t role);
-    ~Camera();
+    QWaylandInputMethod(struct ::wl_registry *registry, int id, int version);
 
 protected:
-    void configureIviSurface(QWindow *window, int width, int height);
-    bool eventFilter(QObject *obj, QEvent *event);
+    void input_method_activate(struct ::wl_input_method_context *id);
+    void input_method_deactivate(struct ::wl_input_method_context *context);
 };
 
-#endif
+}
+
+QT_END_NAMESPACE
+
+#endif // QWAYLANDINPUTMETHOD_H

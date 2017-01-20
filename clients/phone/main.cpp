@@ -25,9 +25,10 @@
 int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
+    uint32_t role = QtWaylandClient::WRS_IVI_ID_SURFACE_PHONE;
 
-    Phone w;
-    w.show();
+    Phone phone(role);
+    phone.show();
 
     return app.exec();
 }
