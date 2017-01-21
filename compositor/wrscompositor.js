@@ -221,7 +221,8 @@ var Role = function(key, value) {
     this.init = function(layoutList) {
         for (var i = 0; i < layoutList.length; i++) {
             var layout = layoutList[i];
-            if (layout.getName() == workspace) {
+            var name = layout.getName();
+            if (name.indexOf(workspace) != -1) {
                 window = layout.getWindow();
                 return;
             }

@@ -59,7 +59,7 @@
                 "animation": true,
                 "layer": "application"
             },
-            "Widget": {
+            "Widget-1": {
                 "scale":"30x40",
                 "position": "middleRightTop",
                 "opacity": 1.0,
@@ -73,7 +73,7 @@
                 "animation": true,
                 "layer": "application"
             },
-            "Popup": {
+            "Popup-1": {
                 "scale": "40x40",
                 "position": "undefined",
                 "x": 500,
@@ -101,11 +101,11 @@
             "id": 1
         },
         "Dialog": {
-            "workspace": "Popup",
+            "workspace": "Popup-1",
             "id": 2
         },
         "Phone": {
-            "workspace": "Widget",
+            "workspace": "Widget-1",
             "id": 3
         },
         "Connectivity": {
