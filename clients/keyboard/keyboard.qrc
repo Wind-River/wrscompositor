@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>InputPanel.qml</file>
+        <file>KeyButton.qml</file>
+        <file>KeyModel.qml</file>
+        <file>resources/backspace.svg</file>
+        <file>resources/enter.svg</file>
+        <file>resources/global.svg</file>
+        <file>resources/hidekeyboard.svg</file>
+        <file>resources/shift-gray.svg</file>
+        <file>resources/shift-green.svg</file>
+        <file>fonts/Tungsten-Light.otf</file>
+    </qresource>
+</RCC>

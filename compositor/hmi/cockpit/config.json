@@ -66,6 +66,15 @@
                 "animation": true,
                 "layer": "application"
             },
+            "Widget-2": {
+                "scale": "40x40",
+                "position": "undefined",
+                "x": 500,
+                "y": 400,
+                "opacity": 1.0,
+                "animation": true,
+                "layer": "application"
+            },
             "Projection": {
                 "scale": "100x100",
                 "position": "middleCenter",
@@ -115,12 +124,16 @@
         "Camera": {
             "workspace": "Camera",
             "id": 5
+        },
+        "Keyboard": {
+            "workspace": "Widget-2",
+            "id": 6
         }
     },
     "Launcher": {
         "Web Browsing": {
             "icon" : "icons/native-web.png",
-            "path" : "/usr/bin/brower",
+            "path" : "/usr/bin/textinput",
             "unitFile": "brower.service",
             "multiple": false,
             "systemd": false

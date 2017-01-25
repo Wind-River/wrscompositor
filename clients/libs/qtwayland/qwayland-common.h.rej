@@ -1,0 +1,12 @@
+--- clients/libs/qtwayland/qwayland-common.h
++++ clients/libs/qtwayland/qwayland-common.h
+@@ -45,7 +45,8 @@
+     WRS_IVI_ID_SURFACE_DIALOG = 0x02,
+     WRS_IVI_ID_SURFACE_PHONE = 0x03,
+     WRS_IVI_ID_SURFACE_PROJECTION = 0x04,
+-    WRS_IVI_ID_SURFACE_CAMERA = 0x05
++    WRS_IVI_ID_SURFACE_CAMERA = 0x05,
++    WRS_IVI_ID_SURFACE_KEYBOARD = 0x06
+ };
+ 
+ class QWaylandCommon;

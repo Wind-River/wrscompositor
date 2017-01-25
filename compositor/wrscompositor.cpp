@@ -33,7 +33,7 @@
 
 WrsCompositor::WrsCompositor(const QString &display, const QString &program)
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
-        : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension)
+        : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension | TextInputExtension)
               , m_fullscreenSurface(0), mIviScene(0), mProgram(program)
 
 #endif

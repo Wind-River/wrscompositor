@@ -408,6 +408,22 @@ echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-curs
 cat clients/camera/camera.pro.in >> clients/camera/camera.pro
 echo $'\r'"Generating camera.pro .................................... Done"
 
+printf "Generating keyboard.pro ..."
+echo "PREFIX=$PREFIX" > clients/keyboard/keyboard.pro
+echo "QT += gui_private waylandclient-private" >> clients/keyboard/keyboard.pro
+echo "INCLUDEPATH += ../libs/qtwayland" >> clients/keyboard/keyboard.pro
+echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-cursor" >> clients/keyboard/keyboard.pro
+cat clients/keyboard/keyboard.pro.in >> clients/keyboard/keyboard.pro
+echo $'\r'"Generating keyboard.pro .................................... Done"
+
+printf "Generating textinput.pro ..."
+echo "PREFIX=$PREFIX" > clients/textinput/textinput.pro
+echo "QT += gui_private waylandclient-private" >> clients/textinput/textinput.pro
+echo "INCLUDEPATH += ../libs/qtwayland" >> clients/textinput/textinput.pro
+echo "LIBS += -L../libs/qtwayland -lWrsQtWayland -lwayland-client -lwayland-cursor" >> clients/textinput/textinput.pro
+cat clients/textinput/textinput.pro.in >> clients/textinput/textinput.pro
+echo $'\r'"Generating textinput.pro .................................... Done"
+
 if [ "$MANUAL_QMAKE" = "0" ]; then
     $QMAKEPATH $OPTARGS && echo "Makefile generated"
 else
