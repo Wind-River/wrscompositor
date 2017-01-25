@@ -508,7 +508,7 @@ var Compositor = function() {
             return null;
         }
 
-        console.log("createWaylandIviSurface, surface's role = ", role.name);
+        console.log("createWaylandIviSurface, surface's role = ", role.getRoleName());
 
         var parent = role.getWindow();
         var id = role.getOrder();
