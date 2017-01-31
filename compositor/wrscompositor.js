@@ -27,8 +27,9 @@ var SurfaceRole = {
     WRS_IVI_ID_SURFACE_NAVIGATION: 1,
     WRS_IVI_ID_SURFACE_DIALOG: 2,
     WRS_IVI_ID_SURFACE_PHONE: 3,
-    WRS_IVI_ID_SURFACE_PROJECTION: 4,
-    WRS_IVI_ID_SURFACE_CAMERA: 5
+    WRS_IVI_ID_SURFACE_CONNECTIVITY: 4,
+    WRS_IVI_ID_SURFACE_CAMERA: 5,
+    WRS_IVI_ID_SURFACE_KEYBOARD: 6
 };
 
 var Layout = function(key, value) {
@@ -401,8 +402,9 @@ var Compositor = function() {
     var displayHeight = 0;
 
     var root = null;
-    var viScene = null;
+    var iviScene = null;
     var launcher = null;
+    var inputPanel = null;
 
     var windowManager = new WindowManager();
     var layoutList = new Array();
@@ -578,6 +580,18 @@ var Compositor = function() {
         windowManager.removeWindow(parent.name, window);
     }
 
+    this.showInputPanel = function() {
+        var parent = inputPanel.rootBackground;
+        console.log("showInputPanel's parent.name = ", parent.name);
+        parent.visible = true;
+    }
+
+    this.hideInputPanel = function() {
+        var parent = inputPanel.rootBackground;
+        console.log("hideInputPanel's parent.name = ", parent.name);
+        parent.visible = false;
+    }
+
     this.resizeDefaultWindow = function(fullsize) {
         var isDefaultWindowRunning =
             windowManager.checkCurrentWindow("Default");
@@ -690,7 +704,8 @@ var Compositor = function() {
                                       "targetHeight": parent.height,
                                       "animationsEnabled": parent.animationsEnabled,
                                       "rootBackground": parent,
-                                      "name":  role.getRoleName()});
+                                      "name": role.getRoleName(),
+                                      "roleId": role.getRoleId()});
 
         windowFrame.surface = surface;
         windowFrame.iviSurface = wrscompositor.findIVISurfaceByQWaylandSurface(surface);
@@ -698,6 +713,12 @@ var Compositor = function() {
         windowFrame.surfaceItem.parent = windowFrame;
         windowFrame.surfaceItem.touchEventsEnabled = true;
         windowFrame.iviSurface.setQmlWindowFrame(windowFrame);
+
+        if (SurfaceRole.WRS_IVI_ID_SURFACE_KEYBOARD == id &&
+            wrscompositor.checkInputPanelSurface(surface)) {
+            inputPanel = windowFrame;
+            hideInputPanel();
+        }
 
         return windowFrame;
     }

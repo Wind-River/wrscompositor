@@ -34,7 +34,7 @@
 WrsCompositor::WrsCompositor(const QString &display, const QString &program)
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
         : QWaylandQuickCompositor(display.toUtf8().constData(), DefaultExtensions | SubSurfaceExtension | TextInputExtension)
-              , m_fullscreenSurface(0), mIviScene(0), mProgram(program)
+              , m_fullscreenSurface(0), mIviScene(0), mProgram(program), mCompositor(QWaylandCompositor::handle())
 
 #endif
 {
@@ -48,9 +48,7 @@ WrsCompositor::WrsCompositor(const QString &display, const QString &program)
     setClientFullScreenHint(true);
     connect(this, SIGNAL(afterRendering()), this, SLOT(sendCallbacks()));
 #endif
-#if WRSCOMPOSITOR_VIRTUAL_KEYBOARD
     defaultInputDevice()->handle()->setCapabilities(QWaylandInputDevice::Touch | QWaylandInputDevice::Pointer | QWaylandInputDevice::Keyboard);
-#endif
 }
 
 WrsCompositor::~WrsCompositor() {
@@ -105,6 +103,8 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
 
         QObject::connect(this, SIGNAL(windowAdded(QVariant)), rootObject(), SLOT(windowAdded(QVariant)));
         QObject::connect(this, SIGNAL(windowResized(QVariant)), rootObject(), SLOT(windowResized(QVariant)));
+        QObject::connect(this, SIGNAL(showInputPanel()), rootObject(), SLOT(showInputPanel()));
+        QObject::connect(this, SIGNAL(hideInputPanel()), rootObject(), SLOT(hideInputPanel()));
 #endif
         connect(qApp, SIGNAL(focusObjectChanged(QObject*)), this, SLOT(slotFocusObjectChanged(QObject*)));
         QObject::connect(this, SIGNAL(windowDestroyed(QVariant)), rootObject(), SLOT(windowDestroyed(QVariant)));
@@ -114,6 +114,7 @@ void WrsCompositor::loadQmlComponent(const QSize &size)
         QObject::connect(rootObject(), SIGNAL(closeClonedWindowRequested(QVariant)), this, SLOT(slotCloseClonedWindow(QVariant)));
         QObject::connect(this, SIGNAL(swappedWindowRestored(QVariant)), rootObject(), SLOT(swappedWindowRestored(QVariant)));
 #endif
+
     } else {
         DEBUG() << "Try to update window size in QML Component";
         QQuickItem *item = qobject_cast<QQuickItem*>(object);
@@ -286,10 +287,8 @@ void WrsCompositor::surfaceCreated(QWaylandSurface *surface) {
 
 void WrsCompositor::surfaceMapped() {
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
-
     emit windowAdded(QVariant::fromValue(surface));
 }
-
 
 void WrsCompositor::surfaceUnmapped() {
     QWaylandQuickSurface *surface = qobject_cast<QWaylandQuickSurface *>(sender());
@@ -395,6 +394,57 @@ void WrsCompositor::changeIVISurfaceSize(QWaylandSurface *qWlSurface, int target
         targetWidth, targetHeight);
 
     TRACE() << "[END]";
+}
+
+bool WrsCompositor::checkInputPanelSurface(QWaylandSurface *qwlSurface) {
+    bool found = false;
+
+    if (qwlSurface->hasInputPanelSurface()) {
+        QtWayland::Surface *surface =  qwlSurface->handle();
+        QtWayland::InputPanelSurface *inputPanelSurface = surface->inputPanelSurface();
+        QtWayland::InputPanelSurface::Type type = inputPanelSurface->type();
+        QtWaylandServer::wl_input_panel_surface::position position = inputPanelSurface->position();
+        if (position ==
+            QtWaylandServer::wl_input_panel_surface::position_center_bottom) {
+            DEBUG() << "found InputPanel's Surface";
+            found = true;
+        }
+
+        if (mCompositor != NULL) {
+            QtWayland::InputPanel* inputpanel = mCompositor->inputPanel();
+            QWaylandInputPanel* qwlInputPanel = inputpanel->handle();
+            connect(qwlInputPanel, SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
+            connect(qwlInputPanel, SIGNAL(focusChanged()), this, SLOT(inputPanelFocusChanged()));
+            connect(qwlInputPanel, SIGNAL(cursorRectangleChanged()), this, SLOT(inputPanelCursorRectangleChanged()));
+        }
+    }
+    return found;
+}
+
+void WrsCompositor::inputPanelVisibleChanged()
+{
+    QtWayland::InputPanel* inputpanel = mCompositor->inputPanel();
+    QWaylandInputPanel* qwlInputPanel = inputpanel->handle();
+
+    bool visible = qwlInputPanel->visible();
+
+    DEBUG() << "visible = " << visible;
+    if (visible)
+        emit showInputPanel();
+    /*
+    else
+        emit hideInputPanel();
+    */
+}
+
+void WrsCompositor::inputPanelFocusChanged()
+{
+    DEBUG();
+}
+
+void WrsCompositor::inputPanelCursorRectangleChanged()
+{
+    DEBUG();
 }
 
 #endif

@@ -30,13 +30,16 @@
 #include <QtCompositor/qwaylandquickcompositor.h>
 #include <QtCompositor/qwaylandquicksurface.h>
 #include <QtCompositor/qwaylandquickoutput.h>
+#include <QtCompositor/qwaylandinputpanel.h>
 #include "qwayland-server-ivi-controller.h"
 #include "qwayland-server-ivi-application.h"
 
 //Compositor requires access to private classes on QtCompositor framework
-#include <QtCompositor/private/qwlcompositor_p.h>
 #include <QtCompositor/private/qwloutput_p.h>
+#include <QtCompositor/private/qwlsurface_p.h>
 #include <QtCompositor/private/qwlsubsurface_p.h>
+#include <QtCompositor/private/qwlinputpanel_p.h>
+#include <QtCompositor/private/qwlinputpanelsurface_p.h>
 #include <QtCompositor/private/qwlinputdevice_p.h>
 #include <QtCompositor/private/qwayland-server-wayland.h>
 
@@ -78,6 +81,7 @@ public:
     WrsIVIModel::IVISurface* findSurfaceByResource(struct ::wl_resource *rsc);
     Q_INVOKABLE WrsIVIModel::IVISurface* findIVISurfaceByQWaylandSurface(QWaylandSurface *qWlSurface);
     Q_INVOKABLE void changeIVISurfaceSize(QWaylandSurface *qWlSurface, int targetWidth, int targetHeight);
+    Q_INVOKABLE bool checkInputPanelSurface(QWaylandSurface *qwlSurface);
 #if WRSCOMPOSITOR_WAYLAND_COMPOSITOR
     void createIviApplicationSurface(QtWaylandServer::ivi_application::Resource *resource,
                                     uint32_t ivi_id, struct ::wl_resource *surface, uint32_t id);
@@ -107,6 +111,8 @@ signals:
     void windowResized(QVariant surface);
     void fullscreenSurfaceChanged();
     void windowDestroyed(QVariant surface);
+    void showInputPanel();
+    void hideInputPanel();
 
 public slots:
     //void destroyWindow(QVariant window);
@@ -119,6 +125,9 @@ private slots:
     void windowPropertyChanged(const QString &property, const QVariant &value);
     void sizeChanged();
     void sendCallbacks();
+    void inputPanelVisibleChanged();
+    void inputPanelFocusChanged();
+    void inputPanelCursorRectangleChanged();
 
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -132,12 +141,14 @@ private:
 #endif
     QWaylandQuickOutput                     *mMainOutput;
     QWaylandQuickSurface                    *m_fullscreenSurface;
-    WrsIVIModel::IVIScene     *mIviScene;
+    WrsIVIModel::IVIScene                   *mIviScene;
     QString                                 mProgram;
 
     WrsIviController                        *mIviController;
     WrsIviApplication                       *mIviApplication;
     WrsIviSurface                           *mIviSurface;
+
+    QtWayland::Compositor                   *mCompositor;
 #endif
 
 

@@ -8,11 +8,9 @@
  */
 
 import QtQuick 2.0
-import QtQuick.Window 2.0
 
 Item {
     id: inputpanel
-    property bool active: false
 
     MouseArea {
         anchors.fill: parent

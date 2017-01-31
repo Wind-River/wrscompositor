@@ -46,6 +46,7 @@ Item {
     property variant surfaceItem: null
     property variant iviSurface: null
     property string name: ""
+    property int roleId: -1
 
     property bool animationsEnabled: false
 

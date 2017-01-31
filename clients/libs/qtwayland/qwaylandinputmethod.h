@@ -24,19 +24,46 @@
 #define QWAYLANDINPUTMETHOD_H
 
 #include "qwayland-input-method.h"
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
 namespace QtWaylandClient {
 
+class QWaylandInputMethodContext : public QtWayland::wl_input_method_context
+{
+public:
+    QWaylandInputMethodContext(struct ::wl_input_method_context *context);
+    uint32_t getSerial() {
+        return mSerial;
+    }
+
+protected:
+    void input_method_context_surrounding_text(const QString &text, uint32_t cursor, uint32_t anchor);
+    void input_method_context_reset();
+    void input_method_context_content_type(uint32_t hint, uint32_t purpose);
+    void input_method_context_invoke_action(uint32_t button, uint32_t index);
+    void input_method_context_commit_state(uint32_t serial);
+    void input_method_context_preferred_language(const QString &language);
+
+private:
+    uint32_t mSerial;
+};
+
 class QWaylandInputMethod : public QtWayland::wl_input_method
 {
 public:
     QWaylandInputMethod(struct ::wl_registry *registry, int id, int version);
+    QWaylandInputMethodContext* getQWaylandInputMethodContext() {
+        return mContext;
+    }
 
 protected:
     void input_method_activate(struct ::wl_input_method_context *id);
     void input_method_deactivate(struct ::wl_input_method_context *context);
+
+private:
+    QWaylandInputMethodContext* mContext;
 };
 
 }

@@ -26,17 +26,58 @@ QT_BEGIN_NAMESPACE
 
 namespace QtWaylandClient {
 
+QWaylandInputMethodContext::QWaylandInputMethodContext(struct ::wl_input_method_context *context)
+    : wl_input_method_context(context), mSerial(0)
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+}
+
+void QWaylandInputMethodContext::input_method_context_surrounding_text(const QString &text, uint32_t cursor, uint32_t anchor)
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+}
+
+void QWaylandInputMethodContext::input_method_context_reset()
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+}
+
+void QWaylandInputMethodContext::input_method_context_content_type(uint32_t hint, uint32_t purpose)
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+}
+
+void QWaylandInputMethodContext::input_method_context_invoke_action(uint32_t button, uint32_t index)
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+}
+
+void QWaylandInputMethodContext::input_method_context_commit_state(uint32_t serial)
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+    mSerial = serial;
+}
+
+void QWaylandInputMethodContext::input_method_context_preferred_language(const QString &language)
+{
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+}
+
 QWaylandInputMethod::QWaylandInputMethod(struct ::wl_registry *registry, int id, int version)
-    : wl_input_method (registry, id, version)
+    : wl_input_method (registry, id, version), mContext(NULL)
 {
 }
 
 void QWaylandInputMethod::input_method_activate(struct ::wl_input_method_context *id)
 {
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+    mContext = new QWaylandInputMethodContext(id);
 }
 
 void QWaylandInputMethod::input_method_deactivate(struct ::wl_input_method_context *context)
 {
+    qDebug() << "[QWaylandInputMethodContext]" << __FILE__ << ":" << __LINE__ << "(" << __func__ << ")";
+    delete mContext;
 }
 
 }

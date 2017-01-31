@@ -67,10 +67,10 @@
                 "layer": "application"
             },
             "Widget-2": {
-                "scale": "40x40",
+                "scale": "100x30",
                 "position": "undefined",
-                "x": 500,
-                "y": 400,
+                "x": 0,
+                "y": 738,
                 "opacity": 1.0,
                 "animation": true,
                 "layer": "application"

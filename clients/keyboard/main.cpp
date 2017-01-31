@@ -32,17 +32,30 @@
 class Keyboard : public QQuickView,
                  public QtWaylandClient::QWaylandCommon
 {
+    Q_OBJECT
 public:
-    Keyboard(uint32_t role);
+    Keyboard(uint32_t role, QWindow *parent = Q_NULLPTR);
     ~Keyboard();
+
+    Q_INVOKABLE void sendKeyCode(const QString &keycode);
+    Q_INVOKABLE void sendSpecialKeyCode(const QString &keycode);
 
 protected:
     void configureIviSurface(QWindow *window, int width, int height);
     bool eventFilter(QObject *obj, QEvent *event);
+
+private:
+    QtWaylandClient::QWaylandInputMethod *mWaylandInputMethod;
 };
 
-Keyboard::Keyboard(uint32_t role)
-    :  QQuickView(QUrl("qrc:///InputPanel.qml")), QWaylandCommon(role) {
+Keyboard::Keyboard(uint32_t role, QWindow *parent) : QQuickView(parent)
+    , QWaylandCommon(role)
+    , mWaylandInputMethod(getWaylandInputMethod())
+{
+    QUrl programUrl = QUrl("qrc:///InputPanel.qml");
+    rootContext()->setContextProperty("virutalKeyboard", this);
+    setSource(programUrl);
+
     installEventFilter(this);
 }
 
@@ -50,6 +63,20 @@ Keyboard::~Keyboard()
 {
 
 }
+
+void Keyboard::sendKeyCode(const QString &keycode) {
+    QtWaylandClient::QWaylandInputMethodContext* context =
+                            mWaylandInputMethod->getQWaylandInputMethodContext();
+    uint32_t serial = context->getSerial();
+
+    context->commit_string(serial, keycode);
+    qDebug() << "Keyboard::sendKeyCode(), keycode = " << keycode;
+}
+
+void Keyboard::sendSpecialKeyCode(const QString &keycode) {
+    qDebug() << "Keyboard::sendSpecialKeyCode(), keycode = " << keycode;
+}
+
 
 void Keyboard::configureIviSurface(QWindow *window, int width, int height) {
     QQuickView *view = static_cast<QQuickView *>(window);
@@ -92,8 +119,11 @@ bool Keyboard::eventFilter(QObject *obj, QEvent *event) {
                 struct ::wl_output *output =
                                 this->getWaylandOutput();
 
-                wl_input_panel_surface_set_toplevel(ips,
-                                output, WL_INPUT_PANEL_SURFACE_POSITION_CENTER_BOTTOM);
+                QtWayland::wl_input_panel_surface *inputPanelSurface =
+                            new QtWayland::wl_input_panel_surface(ips);
+                inputPanelSurface->set_toplevel(
+                                   output, WL_INPUT_PANEL_SURFACE_POSITION_CENTER_BOTTOM);
+
             } else if (eventType == QPlatformSurfaceEvent::SurfaceAboutToBeDestroyed) {
                 qDebug() << "Keyboard has destroyed surface";
             }
@@ -117,3 +147,5 @@ int main(int argc, char *argv[])
 
     return app.exec();
 }
+
+#include "main.moc"

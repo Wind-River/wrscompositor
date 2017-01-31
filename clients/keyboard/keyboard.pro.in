@@ -1,4 +1,4 @@
-QT += quick multimedia
+QT += quickwidgets widgets quick
 
 LOCAL_SOURCES = main.cpp
 LOCAL_HEADERS =

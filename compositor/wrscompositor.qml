@@ -172,4 +172,14 @@ Item {
         console.log("notify ADD_WINDOW Event");
         root.notifyEvent(Interface.COMPOSITOR_EVENT.ADD_WINDOW, window);
     }
+
+    function showInputPanel() {
+        console.log("!!!!!!!!!!!!!!!!!!! wrscompositor.qml's showInputPanel");
+        compositorLogic.showInputPanel();
+    }
+
+    function hideInputPanel() {
+        console.log("!!!!!!!!!!!!!!!!!!! wrscompositor.qml's hideInputPanel");
+        compositorLogic.hideInputPanel();
+    }
 }
